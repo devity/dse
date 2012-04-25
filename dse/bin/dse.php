@@ -160,9 +160,11 @@ if($DoUpdate){
 	$BackupDir=$vars['DSE']['DSE_BACKUP_DIR_DSE']."/".$Date_str;
 	
 	$Command="mkdir -p ".$BackupDir;
+	print "$Command\n";
 	`$Command`;
 	
 	$Command="cp -rf ".$vars['DSE']['DSE_BIN']." ".$BackupDir."/.";
+	print "$Command\n";
 	`$Command`;
 	
 	
