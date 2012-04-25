@@ -18,10 +18,12 @@ $ScriptName="dse";
 
 $parameters = array(
   'h' => 'help',
+  'u' => 'update',
   
 );
 $flag_help_lines = array(
   'h' => "\thelp - this message",
+  'u' => "\nupdate - this message",
 
 );
 
@@ -66,11 +68,19 @@ foreach (array_keys($options) as $opt) switch ($opt) {
   		$ShowUsage=TRUE;
 		$DidSomething=TRUE;
 		break;
+	case 'u':
+  	case 'update':
+  		$DoUpdate=TRUE;
+		$DidSomething=TRUE;
+		break;
 	
-
 
 }
 
+if($DoUpdate){
+	$o=`/scripts/dse_git_pull 2>&1`;
+	print $o;
+}
 
 if($argv[1]=="configure"){
 	$PassArgString=""; for($PassArgString_i=1;$PassArgString_i<sizeof($argv);$PassArgString_i++) $PassArgString.=" ".$argv[$PassArgString_i];
@@ -83,7 +93,8 @@ if($argv[1]=="configure"){
 	$DidSomething=TRUE;
 }
 if($DidSomething){
-	$vars[shell_colors_reset_foreground]='';	print getColoredString("","white","black");
+	print getColoredString("$ScriptName Done. Exiting (0)","black","green");
+	$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
 	exit(0);
 }
 
