@@ -4,3 +4,22 @@ A collection of command line utilities, testing & analitic scripts, server manag
 
 
 
+Commands in /dse/bin
+ atime 			- return unix time int of arg1's access time
+ backup_etc 	- backs up /etc
+ bh				- bash history grepper for arg1
+ btop 			- bottle top - system bottle-neck analyzer
+ dsizeof		- returns size in bytes of arg1
+ fss			- find string
+ grep2exe		- returns script name for a string on ps output lines
+ grep2pid		- returns PID for a string on ps output lines
+ http_stress	- multi-threaded web-site stress tester
+ memcache-top	- top for memcache
+ mysqltuner		- mysqld config analyzer based on http://github.com/rackerhacker/MySQLTuner-perl
+ pid2exe		- returns the script name for a PID
+ rpms_extract	- rebuilds as near as possible a .rpm file for an installed package
+ server_backup  - backup all server config and data
+ server_log_status - saves a copy of the output of over a dozen commands like ps, lsof, vmtstat, nmap, iostat, printenv, etc
+ server_monitor - server health monitor that takes actions (run scripts, send emails, etc) at various configurable thresholds
+ vibk			- backup arg1 then edit with vi
+ 
