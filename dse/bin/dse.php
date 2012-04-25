@@ -154,8 +154,22 @@ if($ShowUsage){
 	print $Usage;
 }
 if($DoUpdate){
-	$o=`/scripts/dse_git_pull 2>&1`;
+	
+	
+	$Date_str=date("YmdGis");
+	$BackupDir=$vars['DSE']['DSE_BACKUP_DIR_DSE']."/".$Date_str;
+	
+	$Command="mkdir -p ".$BackupDir;
+	`$Command`;
+	
+	$Command="cp -rf ".$vars['DSE']['DSE_BIN']." ".$BackupDir."/.";
+	`$Command`;
+	
+	
+	$Command="/scripts/dse_git_pull 2>&1";
+	$o=`$Command`;
 	print $o;
+	
 }
 
 

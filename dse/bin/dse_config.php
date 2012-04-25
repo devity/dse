@@ -4,9 +4,13 @@ if(!$vars['DSE']){
 	$vars['DSE']=array();
 }
 
-$vars['DSE']['DSE_ROOT']=getenv("DSE_ROOT");
+$vars['DSE']['DSE_ROOT']="/dse"; //=getenv("DSE_ROOT");
+$vars['DSE']['DSE_BIN']=$vars['DSE']['DSE_ROOT']."/bin";
 
 $vars['DSE']['DSE_CONFIG_DIR']="/etc/dse";
+
+$vars['DSE']['DSE_BACKUP_DIR']="/backup";
+$vars['DSE']['DSE_BACKUP_DIR_DSE']=$vars['DSE']['DSE_BACKUP_DIR']."/dse";
 
 
 $vars['DSE']['DSE_CONFIG_FILE_GLOBAL']=$vars['DSE']['DSE_CONFIG_DIR']."/"."dse.conf";
