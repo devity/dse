@@ -1,5 +1,5 @@
-   ________/                                                \
-  /                  dse - Devity Server Environment         |__________ ___ __ _  _    _
+   ________/                                     \
+  /           dse - Devity Server Environment     \______ ___ __ _  _    _
   |  
   |    A collection of command line utilities, testing & analitic scripts, 
  /   server managment tools & more.
@@ -15,43 +15,41 @@
 |
  \________ ___ ___ ___ ___ __ __ __ _ _ _  _  _    _     _     _
  /  Install dse with:
-|     # 1:   get a copy of the dse repository contents:
-|              1.a.1>  git clone git://github.com/devity/dse.git
-                     or
-|              1.b.1> download https://github.com/devity/dse/tarball/master and save as a .tar.gz
-               1.b.2> then upzip and install to final destination
+    # 1:   get a copy of the dse repository contents:
+             1.a.1>  git clone git://github.com/devity/dse.git
+                   or
+             1.b.1> download https://github.com/devity/dse/tarball/master and save as a .tar.gz
+             1.b.2> then upzip and install to final destination
            
-      # 2:   from whatever directory dse ends up in, start an interactive install/configuration with:
-                  ./dse/bin/dse-install
-|
-      # 3:   later, re-run the same dse configuration that occures during install with:
-                  /dse/bin/dse-configure
-|
+    # 2:   from whatever directory dse ends up in, start an interactive install/configuration with:
+                ./dse/bin/dse-install
+    # 3:   later, re-run the same dse configuration that occures during install with:
+                /dse/bin/dse-configure
  \_______ ___ ___ ___ ___ __ __ __ _ _ _  _  _    _     _     _
  /  Optional Install Steps:
-| #      update your PATH to include /dse/bin or as appropriate
-| 
-|
+  #      update your PATH to include /dse/bin or as appropriate
+
  \________ ___ ___ ___ ___ __ __ __ _ _ _  _  _    _     _     _
  /  dse Commands:     ( /dse/bin  Scripts )
 |     These scripts exist as their native language extension e.g. 'bottle_top.php' and as a soft link with no extension, in this case both 'bottle_top' and 'btop'
 +------ ---- --- -- - - -  -   -     -
 |  atime          - return unix time int of arg1's access time
-|  backup_etc     - backs up /etc
+   backup_etc     - backs up /etc
    bh             - bash history grepper for arg1
    btop           - bottle top - system bottle-neck analyzer
-|  dsizeof        - returns size in bytes of arg1
+   dsizeof        - returns size in bytes of arg1
    dse            - script that sets dse variables, get's status, provieds help, etc
-|  fss            - find string
+   fss            - find string
    grep2exe       - returns script name for a string on ps output lines
    grep2pid       - returns PID for a string on ps output lines
-|  http_stress    - multi-threaded web-site stress tester
+   http_stress    - multi-threaded web-site stress tester
    memcache-top   - top for memcache
    mysqltuner     - mysqld config analyzer based on http://github.com/rackerhacker/MySQLTuner-perl
    pid2exe        - returns the script name for a PID
    rpms_extract   - rebuilds as near as possible a .rpm file for an installed package
-|  server_backup  - backup all server config and data
+   server_backup  - backup all server config and data
    server_log_status - saves a copy of the output of over a dozen commands like ps, lsof, vmtstat, nmap, iostat, printenv, etc
    server_monitor - server health monitor that takes actions (run scripts, send emails, etc) at various configurable thresholds
    vibk           - backup arg1 then edit with vi
- 
+|
+ \_______ ___ ___ ___ ___ __ __ __ _ _ _  _  _    _     _     _
