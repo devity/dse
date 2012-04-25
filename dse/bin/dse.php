@@ -171,7 +171,7 @@ if($DoUpdate){
 	
 	$Command="/scripts/dse_git_pull 2>&1";
 	$o=`$Command`;
-	//print $o;
+	print $o;
 	
 }
 
