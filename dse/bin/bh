@@ -9,6 +9,8 @@ $RunCommands=FALSE;
 $RunInBackground=FALSE;
 $Verbosity=3;
 //fsdf
+$Verbosity=0;
+
 $parameters = array(
   'h' => 'help',
   'r' => 'run',
