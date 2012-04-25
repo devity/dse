@@ -186,8 +186,7 @@ while($DoLoop && ($MaxLoops==0 || $Loops<$MaxLoops)){
 		sbp_cursor_postion(0,0);
 		print getColoredString("*", 'yellow', 'black')." ".getColoredString(trim(`hostname`)."            ".trim(`date`),'cyan','black');	
 		$SleepLeft_str=getColoredString($SleepLeft,"yellow","black");
-		print "       Next: ${SleepLeft_str}s  ";
-	
+		
 		$Load_str=getColoredString("$Load", 'yellow', 'black');
 		$Loops_str=getColoredString($Loops+1, 'yellow', 'black');
 		
@@ -213,7 +212,7 @@ while($DoLoop && ($MaxLoops==0 || $Loops<$MaxLoops)){
 		}
 		
 		
-		$str= "  Loop: $Loops_str / $MaxLoops      $Load_str   \n";
+		$str= "   Loop: $Loops_str / $MaxLoops  Next: ${SleepLeft_str}s      $Load_str   \n";
 		print $str;
 		
 	

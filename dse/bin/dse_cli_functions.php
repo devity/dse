@@ -1179,7 +1179,7 @@ function getColoredString($string, $foreground_color = null, $background_color =
 	$vars[shell_foreground_colors]['white'] = '1;37';
 	$vars[shell_foreground_colors]['grey'] = '0;2';
 	$vars[shell_foreground_colors]['lightest_grey'] = '1;37';
-	$vars[shell_foreground_colors]['light_grey'] = '9;37';
+	$vars[shell_foreground_colors]['light_grey'] = '6;37';
 	$vars[shell_foreground_colors]['dark_grey'] = '1;30';
 	$vars[shell_foreground_colors]['black'] = '0;30';
 	
@@ -1192,7 +1192,7 @@ function getColoredString($string, $foreground_color = null, $background_color =
 	$vars[shell_foreground_colors]['blink_green'] = '5;92';
 	$vars[shell_foreground_colors]['green'] = '0;92';
 	$vars[shell_foreground_colors]['bold_green'] = '1;92';
-	$vars[shell_foreground_colors]['dark_green'] = '2;92';
+	$vars[shell_foreground_colors]['dark_green'] = '2;32';
 	
 	$vars[shell_foreground_colors]['blink_yellow'] = '5;93';
 	$vars[shell_foreground_colors]['brown'] = '10;33';
@@ -1205,6 +1205,7 @@ function getColoredString($string, $foreground_color = null, $background_color =
 	
 	$vars[shell_foreground_colors]['purple'] = '0;35';
 	$vars[shell_foreground_colors]['light_purple'] = '1;35';
+	$vars[shell_foreground_colors]['dark_purple'] = '2;35';
 	
 	$vars[shell_foreground_colors]['dark_cyan'] = '0;36';
 	$vars[shell_foreground_colors]['cyan'] = '1;36';
