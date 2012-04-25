@@ -137,7 +137,7 @@ if($argv[1]=="help"){
 ";
 	$DidSomething=TRUE;
 }
-
+ 
 if($argv[1]=="configure"){
 	$PassArgString=""; for($PassArgString_i=1;$PassArgString_i<sizeof($argv);$PassArgString_i++) $PassArgString.=" ".$argv[$PassArgString_i];
 	print `/dse/bin/dse-configure $PassArgString`;
