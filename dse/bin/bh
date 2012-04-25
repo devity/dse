@@ -7,10 +7,7 @@ $DefaultLinesBackToLimitWithTail=10000;
 $CaseInsensitiveFlag="";
 $RunCommands=FALSE;
 $RunInBackground=FALSE;
-$Verbosity=3;
-//fsdf
-=======
->>>>>>> 0f3a6187c4eee93609b7ad2cd14a9ae3905534d4
+
 $Verbosity=0;
 
 $parameters = array(

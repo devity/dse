@@ -90,7 +90,8 @@ if(!$OutputHumanReadable){
 	$Bytes=$size*$BLOCKSIZE;
 	print "$Bytes";
 }else{
-	print "$size";
+	//$Size_str=dse_file_size_to_readable($Bytes);
+	print "$size\n";
 }
 
 

@@ -1,6 +1,8 @@
    ________/                                     \
   /           dse - Devity Server Environment     \______ ___ __ _  _    _
   |  
+  |    dse is rather new and experimental at this stage. Provide feedback!
+  |  
   |    A collection of command line utilities, testing & analitic scripts, 
  /   server managment tools & more.
 /
@@ -17,6 +19,7 @@
  /  Install dse with:
     # 1:   get a copy of the dse repository contents:
              1.a.1>  git clone git://github.com/devity/dse.git
+             		 sudo yum install git-core     #if necessary
                    or
              1.b.1> download https://github.com/devity/dse/tarball/master and save as a .tar.gz
              1.b.2> then upzip and install to final destination
@@ -27,7 +30,15 @@
                 /dse/bin/dse-configure
  \_______ ___ ___ ___ ___ __ __ __ _ _ _  _  _    _     _     _
  /  Optional Install Steps:
-  #      update your PATH to include /dse/bin or as appropriate
+#  update your PATH to include /dse/bin or as appropriate
+      add the following line to /etc/profile or appropriate:
+      	PATH=$PATH:/dse/bin ;export PATH 
+#  link to or copy the downloaded dse directory to /dse or as appropriate
+      from the same directory you issued the git clone, 
+      	to copy:   sudo cp -rf dse/dse /.
+      	to move:   sudo mv -rf dse/dse /.
+      	to link:   sudo ln -s $PWD/dse/dse /dse
+
 
  \________ ___ ___ ___ ___ __ __ __ _ _ _  _  _    _     _     _
  /  dse Commands:     ( /dse/bin  Scripts )
