@@ -160,17 +160,18 @@ if($DoUpdate){
 	$BackupDir=$vars['DSE']['DSE_BACKUP_DIR_DSE']."/".$Date_str;
 	
 	$Command="mkdir -p ".$BackupDir;
-	print "$Command\n";
+	//print "$Command\n";
 	`$Command`;
 	
+	print "Backing up ".$vars['DSE']['DSE_BIN']." to $BackupDir\n";
 	$Command="cp -rf ".$vars['DSE']['DSE_BIN']." ".$BackupDir."/.";
-	print "$Command\n";
+	//print "$Command\n";
 	`$Command`;
 	
 	
 	$Command="/scripts/dse_git_pull 2>&1";
 	$o=`$Command`;
-	print $o;
+	//print $o;
 	
 }
 
