@@ -1126,7 +1126,7 @@ function test_all_shell_colors(){
 	print "\n\n";
 	
 	print "\n\nBackground Codes: ";
-	for($p1=0;$p1<=110;$p1++){
+	for($p1=0;$p1<=510;$p1++){
 		$background_color="$p1";
 		$foreground_color="white";
 		print "". getColoredString($background_color, $foreground_color, $background_color)."  ";
@@ -1233,7 +1233,18 @@ function getColoredString($string, $foreground_color = null, $background_color =
 	
 	$colored_string = "";
 	$colored_string .= "\033[0m";
-	if( intval($foreground_color)<=0 && isset($vars[shell_foreground_colors][$foreground_color])) {
+	if($background_color=="black"){
+	}else{
+		if( (intval($background_color)<=0 || $background_color=="0") && isset($vars[shell_background_colors][$background_color])) {
+			$colored_string .= "\033[" . $vars[shell_background_colors][$background_color] . "m";
+		}elseif( intval($background_color)<=0 ) {
+			$colored_string .= "\033[" . $vars[shell_foreground_colors]['red'] . "m";
+			$colored_string .= " Unknown Shell Bckground Color: ($background_color) ";
+		}else{
+			$colored_string .= "\033[" . $background_color . "m";
+		}
+	}
+	if( (intval($foreground_color)<=0 || $foreground_color=="0") && isset($vars[shell_foreground_colors][$foreground_color])) {
 		$colored_string .= "\033[" . $vars[shell_foreground_colors][$foreground_color] . "m";
 	}elseif( intval($foreground_color)<=0 ) {
 		$colored_string .= "\033[" . $vars[shell_foreground_colors]['red'] . "m";
@@ -1241,14 +1252,8 @@ function getColoredString($string, $foreground_color = null, $background_color =
 	}else{
 		$colored_string .= "\033[" . $foreground_color . "m";
 	}
-	if( intval($background_color)<=0 && isset($vars[shell_background_colors][$background_color])) {
-		$colored_string .= "\033[" . $vars[shell_background_colors][$background_color] . "m";
-	}elseif( intval($background_color)<=0 ) {
-		$colored_string .= "\033[" . $vars[shell_foreground_colors]['red'] . "m";
-		$colored_string .= " Unknown Shell Bckground Color: ($background_color) ";
-	}else{
-		$colored_string .= "\033[" . $background_color . "m";
-	}
+	
+	
 	$colored_string .=  $string;
 	if($vars[shell_colors_reset_foreground]!=""){
 		$colored_string .= "\033[0m";
