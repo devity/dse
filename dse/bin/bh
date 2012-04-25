@@ -7,7 +7,7 @@ $DefaultLinesBackToLimitWithTail=10000;
 $CaseInsensitiveFlag="";
 $RunCommands=FALSE;
 $RunInBackground=FALSE;
-$Verbosity=3;
+$Verbosity=0;
 
 $parameters = array(
   'h' => 'help',
