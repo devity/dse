@@ -157,14 +157,14 @@ if($DoUpdate){
 	
 	
 	$Date_str=date("YmdGis");
-	$BackupDir=$vars['DSE']['DSE_BACKUP_DIR_DSE']."/".$Date_str;
+	$BackupDir=$vars['DSE']['DSE_BACKUP_DIR_DSE']."/".$Date_str."/dse";
 	
 	$Command="mkdir -p ".$BackupDir;
 	//print "$Command\n";
 	`$Command`;
 	
-	print "Backing up ".$vars['DSE']['DSE_BIN']." to $BackupDir\n";
-	$Command="cp -rf ".$vars['DSE']['DSE_BIN']." ".$BackupDir."/.";
+	print "Backing up ".$vars['DSE']['DSE_ROOT']." to $BackupDir\n";
+	$Command="cp -rf ".$vars['DSE']['DSE_ROOT']." ".$BackupDir."/.";
 	//print "$Command\n";
 	`$Command`;
 	
