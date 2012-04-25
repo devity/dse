@@ -77,10 +77,6 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 
 }
 
-if($DoUpdate){
-	$o=`/scripts/dse_git_pull 2>&1`;
-	print $o;
-}
 
 if($argv[1]=="configure"){
 	$PassArgString=""; for($PassArgString_i=1;$PassArgString_i<sizeof($argv);$PassArgString_i++) $PassArgString.=" ".$argv[$PassArgString_i];
@@ -98,7 +94,7 @@ if($DidSomething){
 	exit(0);
 }
 
-if($Verbosity>=2){
+if($Verbosity>1){
 	//print getColoredString("","black","black");
 	print getColoredString("    ########======-----________   ", 'light_blue', 'black');
 	print getColoredString($ScriptName,"yellow","black");
@@ -155,10 +151,15 @@ if($argv[1]=="configure"){
 if($ShowUsage){
 	print $Usage;
 }
+if($DoUpdate){
+	$o=`/scripts/dse_git_pull 2>&1`;
+	print $o;
+}
 
 
 if($DidSomething){
-	$vars[shell_colors_reset_foreground]='';	print getColoredString("","white","black");
+	print getColoredString("$ScriptName Done. Exiting (0)","black","green");
+	$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
 	exit(0);
 }
 
