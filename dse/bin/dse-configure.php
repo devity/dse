@@ -8,6 +8,7 @@ include_once ("dse_config.php");
 
 
 $vars[shell_colors_reset_foreground]='light_grey';
+$vars[shell_colors_reset_background]='black';
 $Start=time();
 $Verbosity=3;
 
@@ -124,18 +125,23 @@ if($ShowUsage){
 
 
 if($ListVars){
-	print "\nPATH: ".getenv("PATH")."\n";
+	$Body="";
+	//$Body.= " PATH = ".getenv("PATH")."\n";
 	
-	
-	print "\ndse Config Variables: \n";
+	$vars['DSE']['PATH']=getenv("PATH");
+
 	foreach($vars['DSE'] as $k=>$v){
-		print "  $k = $v\n";
+		if($v){
+			$Body.=" $k = ".getColoredString($v,"yellow","black")."\n";
+		}
 	}
-  	print "\n";
+  	
+  	print dse_output_box("Config Variables:",$Body,"yellow","grey","light_grey");
+
 }
 
 if($DidSomething){
-	$vars[shell_colors_reset_foreground]='';	print getColoredString("","white","black");
+	$vars[shell_colors_reset_foreground]='';	print getColoredString("","white","black","black","black");
 	exit(0);
 }
 

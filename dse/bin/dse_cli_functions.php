@@ -1,5 +1,37 @@
 <?
 
+function dse_output_box($Title,$Body,$TitleColor="",$BorderColor="",$BodyColor="",$BGColor="",$BGBorderColor=""){
+	global $vars;
+	
+	if(!$BGColor)			$BGColor=$vars[shell_colors_reset_background];
+	if(!$BGBorderColor)		$BGBorderColor=$BGColor;
+	if(!$BodyColor)		$BodyColor=$vars[shell_colors_reset_foreground];
+	if(!$TitleColor)		$TitleColor=$BodyColor;
+	if(!$BorderColor)		$BorderColor=$TitleColor;
+	
+	$tbr="";
+	
+	$tbr.=getColoredString("   _ __ ___ ___________/[ ", $BorderColor, $BGBorderColor);
+	$tbr.=getColoredString($Title, $TitleColor, $BGBorderColor);
+	$tbr.=getColoredString(" ]\____________ ___ __ _\n", $BorderColor, $BGBorderColor);
+	$n=0;
+	foreach(split("\n",$Body) as $L){
+		if($L){
+			if($n==0){
+				$bc=" /";
+			}else{
+				$bc="| ";
+			}
+			$tbr.=getColoredString($bc, $BorderColor, $BGBorderColor);
+			$tbr.=getColoredString(" $L\n", $BodyColor, $BGColor);
+			$n++;
+		}
+	}	
+	$tbr.=getColoredString(" \_______________________________ ______ ___ __ _  _\n", $BorderColor, $BGBorderColor);
+	return $tbr;
+}
+
+
 function dse_file_size_to_readable($size){
 	if($size<1024){
 		return number_format($size,0)."B";

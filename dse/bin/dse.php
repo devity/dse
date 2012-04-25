@@ -9,6 +9,7 @@ include_once ("dse_config.php");
 
 
 $vars[shell_colors_reset_foreground]='light_grey';
+$vars[shell_colors_reset_background]='black';
 $Start=time();
 $Verbosity=3;
 
