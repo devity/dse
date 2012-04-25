@@ -78,17 +78,18 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 }
 
 
+$EarlyExit=FALSE;
 if($argv[1]=="configure"){
 	$PassArgString=""; for($PassArgString_i=1;$PassArgString_i<sizeof($argv);$PassArgString_i++) $PassArgString.=" ".$argv[$PassArgString_i];
 	print `/dse/bin/dse-configure $PassArgString`;
-	$DidSomething=TRUE;
+	$EarlyExit=TRUE;
 }elseif($argv[1]=="install"){
 	$PassArgString=""; for($PassArgString_i=1;$PassArgString_i<sizeof($argv);$PassArgString_i++) $PassArgString.=" ".$argv[$PassArgString_i];
 	print exec("dse-install $PassArgString");
 	print "44444 dse-install $PassArgString\n";
-	$DidSomething=TRUE;
+	$EarlyExit=TRUE;
 }
-if($DidSomething){
+if($EarlyExit){
 	print getColoredString("$ScriptName Done. Exiting (0)","black","green");
 	$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
 	exit(0);
