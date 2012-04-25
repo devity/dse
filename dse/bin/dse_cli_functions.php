@@ -1,5 +1,19 @@
 <?
 
+function dse_file_size_to_readable($size){
+	if($size<1024){
+		return number_format($size,0)."B";
+	}elseif($size<1024*1024){
+		return number_format($size/1024,0)."kB";
+	}elseif($size<1024*1024*1024){
+		return number_format($size/(1024*1024),1)."MB";
+	}elseif($size<1024*1024*1024*1024){
+		return number_format($size/(1024*1024*1024),2)."GB";
+	}else{
+		return number_format($size,0)."B";
+	}
+}
+
 
 function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 	global $vars;
