@@ -20,10 +20,11 @@ $dir=dirname("$backup_dir$file.$DATE_TIME_NOW");
 `cp $file $backup_dir$file.$DATE_TIME_NOW`;
 `echo "$TIME_NOW cp $file $backup_dir$file.$DATE_TIME_NOW" >> $log_file`;
 print "backing up to: $backup_dir$file.$DATE_TIME_NOW\n";
-//system("vi $file");
+//`/usr/bin/vim $file`;
+//system("/usr/bin/vim $file");
 //pcntl_exec("/usr/bin/vim",array($file));
-exec("/usr/bin/vim",array($file));
-//passtru("/usr/bin/vim",array($file));
+//exec("/usr/bin/vim $file");
+passthru("/usr/bin/vim $file");
 
 print "$file saved. backup at $backup_dir$file.$DATE_TIME_NOW\n";
 exit();

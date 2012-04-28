@@ -1,5 +1,26 @@
 <?
 
+function dse_say($Text,$Volume="",$Voice="Victoria"){
+	global $vars;
+	$CurrentVolume=`/dmp/bin/volume_get`;
+	if($Volume){
+		//=$Volume;
+	}else{
+		if($vars[say_volume]==""){
+			$Volume=intval($CurrentVolume/2);
+			if($vars[say_volume]<10){
+				$vars[say_volume]=10;
+			}
+		}else{
+			$Volume=$vars[say_volume];
+		}
+	}
+	`/dmp/bin/volume_set $Volume`;
+	`say --voice=$Voice $Text`;
+	`/dmp/bin/volume_set $CurrentVolume`;
+	
+}
+
 function dse_output_box($Title,$Body,$TitleColor="",$BorderColor="",$BodyColor="",$BGColor="",$BGBorderColor=""){
 	global $vars;
 	
@@ -79,6 +100,44 @@ function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 
 
 
+
+function strcut($haystack,$pre,$post=""){
+	global $strcut_post_haystack;
+	//print "in strcut<br>";
+	$strcut_post_haystack="";
+	if($pre=="" || !(stristr($haystack,$pre)===FALSE)){
+		if($pre==""){
+		}else{
+			//if($haystack && $pre){
+				$haystack=substr($haystack,stripos($haystack,$pre)+strlen($pre));
+			//}else{
+			//	$haystack=$haystack; //==""
+			//}
+		}	
+		//$t=strpos($haystack,$post); 	
+		//print "t=strpos(haystack,$post)=$t<br>";
+		if( $post!='' && !(strstr($haystack,$post)===FALSE)){			//$post="" ||
+		//print "post marker found.<br>";
+			if($post==""){
+				$r=$haystack;
+				$strcut_post_haystack="";
+			}else{
+			
+			
+				$r=substr($haystack,0,strpos($haystack,$post));
+				if($haystack && $post){
+					$strcut_post_haystack=substr($haystack,stripos($haystack,$post)+strlen($post));
+				}
+			}		
+		}else{
+			$r=$haystack;
+			$strcut_post_haystack="";
+		}		
+	}else{		
+		$r="";
+	}
+	return $r;
+}
 
 
 
@@ -1233,7 +1292,7 @@ function getColoredString($string, $foreground_color = null, $background_color =
 	
 	$colored_string = "";
 	$colored_string .= "\033[0m";
-	if($background_color=="black"){
+	if(TRUE || $background_color=="black"){
 	}else{
 		if( (intval($background_color)<=0 || $background_color=="0") && isset($vars[shell_background_colors][$background_color])) {
 			$colored_string .= "\033[" . $vars[shell_background_colors][$background_color] . "m";
@@ -1516,5 +1575,196 @@ function dse_get_proc_io_as_array($PID){
 }
 
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+function ddab_log($line){
+	global $LogFile;
+	$fh = fopen($LogFile, 'a') or die("can't open log file for append: $LogFile");
+	$d=@date("Y/m/d H:i.s");
+	fwrite($fh, $d." - ".$line."\n");
+	fclose($fh);
+}
+
+$BackupLocationsCleanedArray=array();
+
+function ddab_recursive_do_dir($Dir){
+	global $ExcludedDirectoriesArray,$ExcludedExtensionsArray,$ExcludedDirectoriesPartialArray;
+	global $BackupDirectoryName, $BytesNeededTotal, $LogFile, $StatusFile, $StatusOutput;
+	global $BackupLocationRoot;
+	global $DoClean,$BytesCleanedTotal;
+	global $BackupLocationsCleanedArray;
+	$warn_size_limit=1000*1000;
+	
+	//print "ddab_recursive_do_dir($Dir)\n";
+	$ls=`ls -1a $Dir`;
+	foreach(split("\n",$ls) as $filename){
+		//print "$filename \n";
+		
+		if($filename && $filename!="." && $filename!=".."){
+			$filename_parts=pathinfo($filename);
+			//print_r($filename_parts);
+			$filename_extension=$filename_parts['extension'];
+			$full_filename=$Dir."/".$filename;
+			$full_filename=str_replace("//", "/", $full_filename);
+			$do=TRUE;
+			if(is_dir($full_filename)){
+				foreach($ExcludedDirectoriesArray as $xDir){
+					if($xDir!="" && $xDir==$filename){
+						$do=FALSE; 
+						if($xDir!=".ddab"){
+							$msg=" ******SKIPPED DIRECTORY: $filename/\n";
+							$StatusOutput.=$msg; print $msg;
+						}
+					}
+				}
+				foreach($ExcludedDirectoriesPartialArray as $xDir){
+					if($xDir!="" && !(strstr($filename,$xDir)===FALSE)){
+						$do=FALSE; 
+						$msg=" ******SKIPPED DIRECTORY: $filename/\n";
+						$StatusOutput.=$msg; print $msg;
+					}
+				}
+			}
+			foreach($ExcludedExtensionsArray as $xExt){
+				if($xExt!="" && $xExt==$filename_extension){
+					$do=FALSE;
+					$size=filesize($full_filename);
+					$size_str=number_format($size);
+					$msg= " ******SKIPPED FILE: $filename ($size_str B)\n";
+					$StatusOutput.=$msg; print $msg;
+				}
+			}
+					
+			
+			if($do){
+				if(is_dir($full_filename)){
+					$full_filename.="/";
+				}else{
+					
+				}
+				
+				if(is_dir($full_filename)){
+					print "$full_filename \n"; 
+					$BytesNeededTotal_tmp=$BytesNeededTotal;
+					$BytesNeededTotal=0;
+					ddab_recursive_do_dir($full_filename);
+					global $BytesNeededTotal;
+					$BytesNeededTotal+=$BytesNeededTotal_tmp;
+				}else{
+					print "$full_filename "; 
+					if($BackupLocationRoot){
+						$BackupLocation=$BackupLocationRoot."/".$Dir."/".$BackupDirectoryName."/";
+					}else{
+						$BackupLocation=$Dir."/".$BackupDirectoryName."/";					
+					}			
+					$BackupLocation=str_replace("//", "/", $BackupLocation);
+					$BackupFile=$BackupLocation."/".$filename;
+					$BackupFile=str_replace("//", "/", $BackupFile);
+					
+					if($DoClean){
+						if(!$BackupLocationsCleanedArray[$BackupLocation]){
+							$Command="dsizeof \"$BackupLocation\"";
+							$BytesCleaned=`$Command`;
+							$BackupLocationsCleanedArray[$BackupLocation]=$BytesCleaned;
+							$BytesCleanedTotal+=$BytesCleaned;
+							//print "$Command => $BytesCleaned\n";
+						//	global $rrmdir_test_only;	$rrmdir_test_only=TRUE;
+							rrmdir($BackupLocation);
+						}else{
+							
+						}
+					}else{
+						if(!file_exists($BackupLocation)){
+							//print "%%%%%% $BackupLocation \n";
+							mkdir($BackupLocation,0777,TRUE);
+						}
+						if(!file_exists($BackupFile)){
+							$Command="cp -fp \"$full_filename\" \"$BackupFile\"";
+							print `$Command`;
+							$BytesNeededTotal+=filesize($full_filename);
+							if(filesize($full_filename)>$warn_size_limit){
+								$msg= " ************* BIG file: $full_filename  =".filesize($full_filename)." Bytes\n";
+								$StatusOutput.=$msg; print $msg;
+							}
+							ddab_log("NEW FILE: $full_filename");
+								print " - NEW ****** ";
+						}else{
+							if(filesize($full_filename)!=filesize($BackupFile) 
+							
+							){
+							//|| filemtime($full_filename)!=filemtime($BackupFile)
+								$BytesNeededTotal+=filesize($full_filename);
+								$mtime=filemtime($BackupFile);
+								$full_filename_parts=pathinfo($full_filename);
+								$full_filename_extension=$full_filename_parts['extension'];
+								$BackupFile_archive=$BackupFile.".".@date("Ymd-His").".".$full_filename_extension;
+								$Command="cp -fp \"$BackupFile\" \"$BackupFile_archive\"";
+								print "Cmd=$Command \n";
+								print `$Command`;
+								$Command="cp -fp \"$full_filename\" \"$BackupFile\"";
+								print "Cmd=$Command \n";
+								print `$Command`;
+								ddab_log("UPDATED FILE: $full_filename");
+								print " - UPDATED ******";
+							}else{
+								print " - OK ";
+							}	
+						}
+					}
+					print "\n";
+				}
+			}
+		}
+//$BytesNeededTotal_str=$BytesNeededTotal;//number_format($BytesNeededTotal,0);
+//print "BytesNeededTotal=$BytesNeededTotal_str\n";
+
+	}
+}
+
+
+function rrmdir($dir) {
+	global $rrmdir_test_only;
+   	if (is_dir($dir)) {
+     $objects = scandir($dir);
+     foreach ($objects as $object) {
+       if ($object !="" && $object != "." && $object != "..") {
+         if (filetype($dir."/".$object) == "dir") {
+         	if($rrmdir_test_only){
+         		print " rrmdir($dir/$object); \n";
+         	}else{
+         		rrmdir($dir."/".$object); 
+         	}
+         }else {
+         	if($rrmdir_test_only){
+         		print "unlink($dir/$object); \n";
+         	}else{
+         		unlink($dir."/".$object);
+        	}
+         }
+       }
+     }
+     reset($objects);
+     rmdir($dir);
+   }
+ }
+ 
+ 
+
+
+
+
+function http_lynx_get($URL){
+	$URL=str_replace("\"","%34",$URL);
+	$URL=str_replace("\n","",$URL);
+	//return `/usr/bin/lynx -connect_timeout=10 -source "$URL"`;	
+	return `/opt/local/bin/wget -qO- "$URL"`;	
+}
+
+function http_get($URL,$PostData=""){
+	global $vars;
+	return http_lynx_get($URL);
+}
+ 
 
 ?>
