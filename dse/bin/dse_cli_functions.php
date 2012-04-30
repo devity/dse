@@ -3,12 +3,12 @@
 function md5_of_file($f){
 	global $vars;
 	$sw_vers=trim(`which md5 2>&1`);
-	if(!(strstr($sw_vers,"no md5 is")===FALSE)){
+	if((strstr($sw_vers,"no md5 is")===FALSE)){
 		$m=`md5 -q $f`;
 		return ($m);
 	}else{
 		$sw_vers=trim(`which md5sum 2>&1`);
-		if(!(strstr($sw_vers,"no md5sum is")===FALSE)){
+		if((strstr($sw_vers,"no md5sum is")===FALSE)){
 			$m=`md5sum $f`;
 			$m=strcut($m,""," ");
 			return ($m);
@@ -22,6 +22,7 @@ function files_are_same($f1,$f2){
 	global $vars;
 	$m1=`md5 -q $f1`;
 	$m2=`md5 -q $f2`;
+	//print "files_are_same:md5: $m1==$m2<br>";
 	return ($m1==$m2);
 }
 
