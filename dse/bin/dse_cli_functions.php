@@ -776,12 +776,17 @@ function dse_is_osx(){
 	if(isset($vars['DSE']['IS_OSX'])){
 		return $vars['DSE']['IS_OSX'];
 	}
-	$OSXVersion =trim(`sw_vers `);
-	$OSXVersion =trim(strcut($OSXVersion,"ProductName:","\n"));
-	if($OSXVersion=="Mac OS X"){
-		$vars['DSE']['IS_OSX']=TRUE;
-	}else{
+	$sw_vers=trim(`which`);
+	if(strstr($sw_vers,"no sw_vers is")===FALSE){
 		$vars['DSE']['IS_OSX']=FALSE;
+	}else{
+		$OSXVersion =trim(`sw_vers `);
+		$OSXVersion =trim(strcut($OSXVersion,"ProductName:","\n"));
+		if($OSXVersion=="Mac OS X"){
+			$vars['DSE']['IS_OSX']=TRUE;
+		}else{
+			$vars['DSE']['IS_OSX']=FALSE;
+		}
 	}
 	return $vars['DSE']['IS_OSX'];
 }
