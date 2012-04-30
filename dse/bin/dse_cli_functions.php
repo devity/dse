@@ -2,16 +2,16 @@
 function md5_of_file($f){
         global $vars;
         $sw_vers=trim(`which md5 2>&1`);
-print "sw=$sw_vers\n";
+//print "sw=$sw_vers\n";
         if((strstr($sw_vers,"no md5 in")===FALSE)){
-print "using md5\n";
+//print "using md5\n";
                 $m=`md5 -q $f`;
                 return ($m);
         }else{
 
                 $sw_vers=trim(`which md5sum 2>&1`);
                 if((strstr($sw_vers,"no md5sum in")===FALSE)){
-print "using md5sum\n";
+//print "using md5sum\n";
 
                         $m=`md5sum $f`;
                         $m=strcut($m,""," ");
@@ -831,7 +831,7 @@ function dse_is_osx(){
 		return $vars['DSE']['IS_OSX'];
 	}
 	$sw_vers=trim(`which sw_vers 2>&1`);
-	if(strstr($sw_vers,"no sw_vers in")===FALSE){
+	if(!(strstr($sw_vers,"no sw_vers in")===FALSE)){
 		$vars['DSE']['IS_OSX']=FALSE;
 	}else{
 		$OSXVersion =trim(`sw_vers `);
