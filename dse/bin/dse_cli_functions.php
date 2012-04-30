@@ -24,8 +24,8 @@ print "using md5sum\n";
 
 function files_are_same($f1,$f2){
 	global $vars;
-	$m1=`md5 -q $f1`;
-	$m2=`md5 -q $f2`;
+	$m1=md5_of_file($f1);
+	$m2=md5_of_file($f2);
 	//print "files_are_same:md5: $m1==$m2<br>";
 	return ($m1==$m2);
 }
