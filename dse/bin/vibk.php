@@ -1,32 +1,46 @@
 #!/usr/bin/php
-<?
+<?php
+error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
-error_reporting(E_ALL & ~E_NOTICE);
+include_once ("/dse/bin/dse_cli_functions.php");
+include_once ("/dse/bin/dse_config.php");
 
-$backup_dir="/backup/changed_files";
-$log_file="/var/log/vibk.log";
 
-$Script=$argv[0];
-$Script=trim(`which $Script`);
-print "Script: $Script\n";
+// ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
+$vars['DSE']['SCRIPT_NAME']="VIBK";
+$vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="invokes vim after making backup";
+$vars['DSE']['VIBK_VERSION']="v0.02b";
+$vars['DSE']['VIBK_VERSION_DATE']="2012/04/30";
+$vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+// ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
+
+
+print "Script: ".$vars['DSE']['SCRIPT_FILENAME']."\n";
+
 $file=$argv[1];
 if($file==basename($file)){
 	$file=trim(`pwd`)."/".$file;	
 }
 $TIME_NOW=time();
 $DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
-$dir=dirname("$backup_dir$file.$DATE_TIME_NOW");
+
+$dir=dirname($vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']."$file.$DATE_TIME_NOW");
 `mkdir -p $dir`;
-`cp $file $backup_dir$file.$DATE_TIME_NOW`;
-`echo "$TIME_NOW cp $file $backup_dir$file.$DATE_TIME_NOW" >> $log_file`;
-print "backing up to: $backup_dir$file.$DATE_TIME_NOW\n";
+
+$Command ="cp $file ".$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']."$file.$DATE_TIME_NOW";
+`$Command`;
+
+$Command="echo \"$TIME_NOW cp $file ".$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']."$file.$DATE_TIME_NOW\" >> ".$vars['DSE']['DSE_VIBK_LOG_FILE'];
+`$Command`;
+
+print "backing up to: ".$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']."$file.$DATE_TIME_NOW\n";
 //`/usr/bin/vim $file`;
 //system("/usr/bin/vim $file");
 //pcntl_exec("/usr/bin/vim",array($file));
 //exec("/usr/bin/vim $file");
 passthru("/usr/bin/vim $file");
 
-print "$file saved. backup at $backup_dir$file.$DATE_TIME_NOW\n";
+print "$file saved. backup at ".$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']."$file.$DATE_TIME_NOW\n";
 exit();
 
 

@@ -23,7 +23,7 @@ if($RunningPID!=""){
 	print "Already running as PID: $pa[1]    under user: $pa[0] \n";
 	exit();
 }
-$CfgFile=$vars['DSE']['DSE_DSM_CONFIG_FILE'];
+$CfgFile=$vars['DSE']['DSM_CONFIG_FILE'];
 
 $Verbosity=0;
 $StatusOutput="";

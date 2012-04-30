@@ -2,9 +2,8 @@
 <?
 error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
-
-include_once ("dse_cli_functions.php");
-include_once ("dse_config.php");
+include_once ("/dse/bin/dse_cli_functions.php");
+include_once ("/dse/bin/dse_config.php");
 
 
 $vars[shell_colors_reset_foreground]='light_grey';

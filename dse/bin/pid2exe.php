@@ -1,7 +1,9 @@
 #!/usr/bin/php
 <?
+error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
-error_reporting(E_ALL & ~E_NOTICE);
+include_once ("/dse/bin/dse_cli_functions.php");
+include_once ("/dse/bin/dse_config.php");
 $Verbosity=3;
 
 

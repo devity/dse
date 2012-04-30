@@ -1,5 +1,9 @@
 #!/usr/bin/php
 <?
+error_reporting(E_ALL && ~E_NOTICE);
+ini_set('display_errors','On');	
+include_once ("/dse/bin/dse_cli_functions.php");
+include_once ("/dse/bin/dse_config.php");
 
 $Log="/var/log/publish.log";
 $Date_str=date("F j, Y, g:i a");

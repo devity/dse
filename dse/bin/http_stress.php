@@ -2,19 +2,19 @@
 <?
 error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
-include_once ("dse_cli_functions.php");
-include_once ("dse_config.php");
+include_once ("/dse/bin/dse_cli_functions.php");
+include_once ("/dse/bin/dse_config.php");
 
-$RunTime=60;
-$Threads=5;
+
 $Verbosity=0;
-
+$Threads=$vars['DSE']['HTTP_STRESS_DEFAULT_THREADS'];
+$RunTime=$vars['DSE']['HTTP_STRESS_DEFAULT_RUNLENGTH'];
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="HTTP Stress Test";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="Multi-threaded HTTP Stress Tester.";
-$vars['DSE']['DSE_HTTP_STRESS_VERSION']="v0.06b";
-$vars['DSE']['DSE_HTTP_STRESS_VERSION_DATE']="2012/04/30";
+$vars['DSE']['HTTP_STRESS_VERSION']="v0.06b";
+$vars['DSE']['HTTP_STRESS_VERSION_DATE']="2012/04/30";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
@@ -104,10 +104,10 @@ $End=$StartTime+$RunTime;
 $StartLoad=get_load();
   
 
-$Command="cat ".$vars['DSE']['DSE_HTTP_STRESS_INPUT_URLS_FILE'];
+$Command="cat ".$vars['DSE']['HTTP_STRESS_INPUT_URLS_FILE'];
 $URLsRaw=`$Command`;
 if($URLsRaw==""){
-	print "Error opening: ".$vars['DSE']['DSE_HTTP_STRESS_INPUT_URLS_FILE']."\n";
+	print "Error opening: ".$vars['DSE']['HTTP_STRESS_INPUT_URLS_FILE']."\n";
 	exit(-2);
 }
 $URLsArray=split("\n",$URLsRaw);
@@ -123,10 +123,10 @@ if($Verbosity>=2){
 
 if($Threads>0 && !$IsSubprocess){
 	print "Starting in multi-threaded mode. # Threads=$Threads\n";
-	if(file_exists($vars['DSE']['DSE_HTTP_STRESS_THREAD_LOG_FILE'])){
-		$Command ="rm ".$vars['DSE']['DSE_HTTP_STRESS_THREAD_LOG_FILE'];
+	if(file_exists($vars['DSE']['HTTP_STRESS_THREAD_LOG_FILE'])){
+		$Command ="rm ".$vars['DSE']['HTTP_STRESS_THREAD_LOG_FILE'];
 		`$Command`;
-		$Command ="touch ".$vars['DSE']['DSE_HTTP_STRESS_THREAD_LOG_FILE'];
+		$Command ="touch ".$vars['DSE']['HTTP_STRESS_THREAD_LOG_FILE'];
 		`$Command`;
 	}
 }else{
@@ -232,7 +232,7 @@ if($Threads>0 && !$IsSubprocess){
 		
 	
 	$log_line="threads=$Threads:runstart=$StartTime:runlength=$RunTime:actualruntime=$ActualRunTime:loadstart=$StartLoad:loadend=$EndLoad:loads=$Loads:lps=$LoadsPerSecond:sizeavg=$AvgSizeRaw:sizetotal=$TotalSize:Mbps=$Mbps";
-	$Command="echo $log_line >> ".$vars['DSE']['DSE_HTTP_STRESS_LOG_FILE'];
+	$Command="echo $log_line >> ".$vars['DSE']['HTTP_STRESS_LOG_FILE'];
 	print `$Command`;
 	
 
