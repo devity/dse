@@ -771,18 +771,94 @@ function deleteFromArray(&$array, $deleteIt, $useOldKeys = FALSE, $useDeleteItAs
 
 
 
+function dse_is_osx(){
+	global $vars;
+	if(isset($vars['DSE']['IS_OSX'])){
+		return $vars['DSE']['IS_OSX'];
+	}
+	$OSXVersion =trim(`sw_vers `);
+	$OSXVersion =trim(strcut($OSXVersion,"ProductName:","\n"));
+	if($OSXVersion=="Mac OS X"){
+		$vars['DSE']['IS_OSX']=TRUE;
+	}else{
+		$vars['DSE']['IS_OSX']=FALSE;
+	}
+	return $vars['DSE']['IS_OSX'];
+}
 
 
-
-function get_load(){	
-	$this_loadavg=`cat /proc/loadavg`;
-	if($this_loadavg!=""){  
-		$loadaggA=split("	",$this_loadavg);
-		return number_format($loadaggA[0],3);
+function get_load(){
+	global $vars;
+	if(dse_is_osx()){
+		$this_loadavg=`uptime 2>&1`;
+		$this_loadavg=strcut($this_loadavg,"oad averages: ","\n");
+		if($this_loadavg!=""){  
+			$loadaggA=split('\s',$this_loadavg);
+			return number_format($loadaggA[0],3);
+		}
+	}else{
+		$this_loadavg=`cat /proc/loadavg 2>&1`;
+		if($this_loadavg!=""){  
+			$loadaggA=split('\t',$this_loadavg);
+			return number_format($loadaggA[0],3);
+		}
 	}
 	return -1;
 }
 
+
+
+function readline_timeout($sec, $def){ 
+    return trim(shell_exec('bash -c ' . 
+        escapeshellarg('phprlto=' . 
+            escapeshellarg($def) . ';' . 
+            'read -n 1 -t ' . ((int)$sec) . ' phprlto;' . 
+            'echo "$phprlto"'))); 
+} 
+
+
+function dse_cli_get_paramaters_array($parameters_details){
+	global $vars;
+	$parameters=array();
+	foreach($parameters_details as $p){
+		$parameters[$p[0]]=$p[1];
+	}
+	return $parameters;
+}
+
+
+
+function dse_cli_get_usage($parameters_details){
+	global $vars;
+
+	$Usage="\n   ". $vars['DSE']['SCRIPT_NAME']." - " . $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF'] . "\n";
+	$Usage.="       part of https://github.com/devity/dse  - by Louy of Devity.com\n\n";
+	$Usage.=getColoredString("command line usage:","yellow","black");
+	$Usage.=getColoredString(" ". $vars['DSE']['SCRIPT_FILENAME'],"cyan","black");
+	$Usage.=getColoredString(" (options)","dark_cyan","black");
+	$Usage.="\n\noptions: \n";
+	foreach($parameters_details as $parameter){
+		$f=$parameter[0];
+		$flag=$parameter[1];
+		$details=$parameter[2];
+		$f=str_replace(":","",$f);
+		$flag=str_replace(":","",$flag);
+		
+		$indent="";
+		if(strlen($flag)<9){
+			$indent="\t";
+		}
+		$indent.="\t- ";
+		
+		if($f!=""){
+			$Usage.=" -${f}, --${flag}$indent $details\n";
+		}else{
+			$Usage.="     --${flag}$indent $details\n";
+		}
+	}
+	$Usage.="\n";
+	return $Usage;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////
 

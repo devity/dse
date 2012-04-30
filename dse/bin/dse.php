@@ -2,50 +2,34 @@
 <?
 error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
-
 include_once ("dse_cli_functions.php");
 include_once ("dse_config.php");
 
 
 
-$vars[shell_colors_reset_foreground]='light_grey';
-$vars[shell_colors_reset_background]='black';
-$Start=time();
-$Verbosity=3;
+$Verbosity=0;
 
-$Script=$argv[0];
 
-$ScriptName="dse";
+// ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
+$vars['DSE']['SCRIPT_NAME']="DSE";
+$vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="main script of Devity Server Environment";
+$vars['DSE']['DSE_DSE_VERSION']="v0.04b";
+$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/04/30";
+$vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+// ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
-$parameters = array(
-  'h' => 'help',
-  'u' => 'update',
-  
+
+$parameters_details = array(
+  array('h','help',"this message"),
+  array('u','update',"updates dse from github"),
+  array('v','update-no-backup',"does a --update w/o backing up current dse install"),
 );
-$flag_help_lines = array(
-  'h' => "\thelp - this message",
-  'u' => "\nupdate - this message",
-
-);
-
-$ScriptName_str=getColoredString($ScriptName, 'yellow', 'black');
-	
-$Usage="   $ScriptName_str - Devity Server Environment Managment Script
-       by Louy of Devity.com
+$parameters=dse_cli_get_paramaters_array($parameters_details);
+$Usage=dse_cli_get_usage($parameters_details);
 
 
-".getColoredString("command line usage:","yellow","black").
-getColoredString(" dse","cyan","black").
-getColoredString(" <args> (options)","dark_cyan","black")."     
-";
-foreach($parameters as $k=>$v){
-	$k2=str_replace(":","",$k);
-	$v2=str_replace(":","",$v);
-	$Usage.=" -${k2}, --${v2}\t".$flag_help_lines[$k]."\n";
-}
-$Usage.="\n\n";
 
-$StartLoad=get_load();
+
 
 $options = _getopt(implode('', array_keys($parameters)),$parameters);
 $pruneargv = array();
@@ -63,6 +47,7 @@ while ($key = array_pop($pruneargv)){
 
 
 $IsSubprocess=FALSE;
+$BackupBeforeUpdate=TRUE;
 foreach (array_keys($options) as $opt) switch ($opt) {
 	case 'h':
   	case 'help':
@@ -71,6 +56,12 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 		break;
 	case 'u':
   	case 'update':
+  		$DoUpdate=TRUE;
+		$DidSomething=TRUE;
+		break;
+	case 'v':
+  	case 'update-no-backup':
+		$BackupBeforeUpdate=FALSE;
   		$DoUpdate=TRUE;
 		$DidSomething=TRUE;
 		break;
@@ -91,7 +82,7 @@ if($argv[1]=="configure"){
 	$EarlyExit=TRUE;
 }
 if($EarlyExit){
-	print getColoredString("$ScriptName Done. Exiting (0)","black","green");
+	print getColoredString($vars['DSE']['SCRIPT_NAME']." Done. Exiting (0)","black","green");
 	$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
 	exit(0);
 }
@@ -99,11 +90,11 @@ if($EarlyExit){
 if($Verbosity>1){
 	//print getColoredString("","black","black");
 	print getColoredString("    ########======-----________   ", 'light_blue', 'black');
-	print getColoredString($ScriptName,"yellow","black");
+	print getColoredString($vars['DSE']['SCRIPT_NAME'],"yellow","black");
 	print getColoredString("   ______-----======########\n", 'light_blue', 'black');
 	print "  ___________ ______ ___ __ _ _   _                      \n";
 	print " /                           Configuration Settings\n";
-	print "|  * Script: $Script\n";
+	print "|  * Script: ".$vars['DSE']['SCRIPT_FILENAME']."\n";
 	print "|  * Verbosity: $Verbosity\n";
 	print " \________________________________________________________ __ _  _   _\n";
 	//print "\n";  
@@ -157,17 +148,20 @@ if($DoUpdate){
 	
 	
 	$Date_str=date("YmdGis");
-	$BackupDir=$vars['DSE']['DSE_BACKUP_DIR_DSE']."/".$Date_str."/dse";
 	
-	$Command="mkdir -p ".$BackupDir;
-	//print "$Command\n";
-	`$Command`;
+	if($BackupBeforeUpdate){
+		$BackupDir=$vars['DSE']['DSE_BACKUP_DIR_DSE']."/".$Date_str."/dse";
+		$Command="mkdir -p ".$BackupDir;
+		//print "$Command\n";
+		`$Command`;
 	
-	print "Backing up ".$vars['DSE']['DSE_ROOT']." to $BackupDir\n";
-	$Command="cp -rf ".$vars['DSE']['DSE_ROOT']." ".$BackupDir."/.";
-	//print "$Command\n";
-	`$Command`;
-	
+		print "Backing up ".$vars['DSE']['DSE_ROOT']." to $BackupDir\n";
+		$Command="cp -rf ".$vars['DSE']['DSE_ROOT']." ".$BackupDir."/.";
+		//print "$Command\n";
+		`$Command`;
+	}else{
+		print "Skipping backing up of current dse install.\n";
+	}
 	
 	$Command="/scripts/dse_git_pull 2>&1";
 	$o=`$Command`;
@@ -175,18 +169,15 @@ if($DoUpdate){
 	
 }
 
-
 if($DidSomething){
-	print getColoredString("$ScriptName Done. Exiting (0)","black","green");
+	print getColoredString($vars['DSE']['SCRIPT_NAME']." Done. Exiting (0)","black","green");
 	$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
 	exit(0);
+}else{
+	print getColoredString("Nothing to do! try --help for usage. ".$vars['DSE']['SCRIPT_NAME']." Done. Exiting (-1)","pink","black");
+	$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
+	exit(-1);
 }
-
-//if($argv[1]=="help"){
-	print $argv[1];
-	
-	exit(0);
-//}
 
 
 
