@@ -776,7 +776,7 @@ function dse_is_osx(){
 	if(isset($vars['DSE']['IS_OSX'])){
 		return $vars['DSE']['IS_OSX'];
 	}
-	$sw_vers=trim(`which`);
+	$sw_vers=trim(`which sw_vers`);
 	if(strstr($sw_vers,"no sw_vers is")===FALSE){
 		$vars['DSE']['IS_OSX']=FALSE;
 	}else{
