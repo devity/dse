@@ -1,5 +1,23 @@
 <?
 
+function md5_of_file($f){
+	global $vars;
+	$sw_vers=trim(`which md5 2>&1`);
+	if(!(strstr($sw_vers,"no md5 is")===FALSE)){
+		$m=`md5 -q $f`;
+		return ($m);
+	}else{
+		$sw_vers=trim(`which md5sum 2>&1`);
+		if(!(strstr($sw_vers,"no md5sum is")===FALSE)){
+			$m=`md5sum $f`;
+			$m=strcut($m,""," ");
+			return ($m);
+		}
+	}
+	print "error in md5_of_file(), no md5 utility found";
+	return -1;
+}
+
 function files_are_same($f1,$f2){
 	global $vars;
 	$m1=`md5 -q $f1`;
