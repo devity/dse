@@ -53,13 +53,16 @@
    backup_etc     - backs up /etc
    bh             - bash history grepper for arg1
    btop           - bottle top - system bottle-neck analyzer
+   dab            - deity automatic backup program
    dsizeof        - returns size in bytes of arg1
-   dse            - script that sets dse variables, get's status, provieds 
+   dse            - script that sets dse variables, get's status, provides 
                      help, etc
+   dsm            - devity server monitor - watches load, processes, hd, etc.
    fss            - find string
    grep2exe       - returns script name for a string on ps output lines
    grep2pid       - returns PID for a string on ps output lines
    http_stress    - multi-threaded web-site stress tester
+   lgt            - returns the intermingled tails of a few /var/log/(s)
    memcache-top   - top for memcache
    mysqltuner     - mysqld config analyzer based on:
                      http://github.com/rackerhacker/MySQLTuner-perl
