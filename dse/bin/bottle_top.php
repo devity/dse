@@ -20,8 +20,8 @@ $Threads=3;
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="Bottle Top";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="top-like system bottleneck analyzer";
-$vars['DSE']['DSE_BTOP_VERSION']="v0.04b";
-$vars['DSE']['DSE_BTOP_VERSION_DATE']="2012/04/30";
+$vars['DSE']['BTOP_VERSION']="v0.04b";
+$vars['DSE']['BTOP_VERSION_DATE']="2012/04/30";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
@@ -41,7 +41,6 @@ $parameters=dse_cli_get_paramaters_array($parameters_details);
 $Usage=dse_cli_get_usage($parameters_details);
 
 
-$StartLoad=get_load();
 
 $options = _getopt(implode('', array_keys($parameters)),$parameters);
 $pruneargv = array();
@@ -97,19 +96,13 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 		if($Verbosity>=2) print "maxloops set to $MaxLoops\n";
 		break;
 	case 'v':
-		$Verbosity=$options['v'];
-		if($Verbosity>=2) print "Verbosity set to $Verbosity\n";
-		break;
 	case 'verbosity':
-		$Verbosity=$options['verbosity'];
+		$Verbosity=$options[$opt];
 		if($Verbosity>=2) print "Verbosity set to $Verbosity\n";
 		break;
 	case 'z':
-		$MaxLoadBeforeExit=$options['z'];
-		if($Verbosity>=2) print "MaxLoadBeforeExit set to $MaxLoadBeforeExit\n";
-		break;
 	case 'maxload':
-		$MaxLoadBeforeExit=$options['maxload'];
+		$MaxLoadBeforeExit=$options[$opt];
 		if($Verbosity>=2) print "MaxLoadBeforeExit set to $MaxLoadBeforeExit\n";
 		break;
 
@@ -139,7 +132,7 @@ if($ShowUsage){
 }
 if($ShowVersion){
 	print "DSE Version: " . $vars['DSE']['DSE_VERSION'] . "  Release Date: " . $vars['DSE']['DSE_VERSION_DATE'] ."\n";
-	print $vars['DSE']['SCRIPT_NAME']." Version: " . $vars['DSE']['DSE_BTOP_VERSION'] . "  Release Date: " . $vars['DSE']['DSE_BTOP_VERSION_DATE'] ."\n";
+	print $vars['DSE']['SCRIPT_NAME']." Version: " . $vars['DSE']['BTOP_VERSION'] . "  Release Date: " . $vars['DSE']['BTOP_VERSION_DATE'] ."\n";
 }
 
 if($DidSomething){

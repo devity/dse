@@ -101,11 +101,8 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 		$DoClean=TRUE;
 		break;
 	case 'v':
-		$Verbosity=$options['v'];
-		if($Verbosity>=2) print "Verbosity set to $Verbosity\n";
-		break;
 	case 'verbosity':
-		$Verbosity=$options['verbosity'];
+		$Verbosity=$options[$opt];
 		if($Verbosity>=2) print "Verbosity set to $Verbosity\n";
 		break;
 

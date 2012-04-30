@@ -54,6 +54,7 @@
    bh             - bash history grepper for arg1
    btop           - bottle top - system bottle-neck analyzer
    dab            - deity automatic backup program
+   detester       - returns system time in a few common formats
    dsizeof        - returns size in bytes of arg1
    dse            - script that sets dse variables, get's status, provides 
                      help, etc

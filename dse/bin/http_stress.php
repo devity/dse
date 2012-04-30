@@ -60,11 +60,8 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 		$Verbosity=0;
 		break;
 	case 't':
-		$Threads=$options['t'];
-		if($Verbosity>=2) print "# Threads set to $Threads\n";
-		break;
 	case 'threads':
-		$Threads=$options['threads'];
+		$Threads=$options[$opt];
 		if($Verbosity>=2) print "# Threads set to $Threads\n";
 		break;
 	case 's':
@@ -74,19 +71,13 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 		if($Verbosity>=2) print "IsSubprocess set to TRUE\n";
 		break;
 	case 'v':
-		$Verbosity=$options['v'];
-		if($Verbosity>=2) print "Verbosity set to $Verbosity\n";
-		break;
 	case 'verbosity':
-		$Verbosity=$options['verbosity'];
+		$Verbosity=$options[$opt];
 		if($Verbosity>=2) print "Verbosity set to $Verbosity\n";
 		break;
 	case 'r':
-		$RunTime=$options['r'];
-		if($Verbosity>=2) print "RunTime set to $RunTime\n";
-		break;
 	case 'runtime':
-		$RunTime=$options['runtime'];
+		$RunTime=$options[$opt];
 		if($Verbosity>=2) print "RunTime set to $RunTime\n";
 		break;
 
@@ -314,7 +305,10 @@ if($Threads>0 && !$IsSubprocess){
 	}
 }
 
-exit();
+print getColoredString($vars['DSE']['SCRIPT_NAME']." Done. Exiting (0)","black","green");
+$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
+exit(0);
+
 
 
 
