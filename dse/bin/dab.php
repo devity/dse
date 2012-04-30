@@ -1,63 +1,40 @@
 #!/usr/bin/php
 <?php
-$StartTime=time();
 
-$PID=getmypid();
-$RunningPID=trim(`ps ux | grep dab | grep bin/php | grep -v grep | grep -v $PID`);
-if($RunningPID!=""){
-	$RunningPID=str_replace("  "," ",$RunningPID);
-	$RunningPID=str_replace("  "," ",$RunningPID);
-	$RunningPID=str_replace("  "," ",$RunningPID);
-	$RunningPID=str_replace("  "," ",$RunningPID);
-	$RunningPID=str_replace("  "," ",$RunningPID);
-	$RunningPID=str_replace("  "," ",$RunningPID);
-	$pa=split(" ",$RunningPID);
-	print "Already running as PID: $pa[1]    under user: $pa[0] \n";
-	exit();
-}
-$CfgFile="/Users/louis/dab.cfg";
 
-$Verbosity=4;
+error_reporting(E_ALL && ~E_NOTICE);
+ini_set('display_errors','On');	
+include_once ("/dse/bin/dse_cli_functions.php");
+include_once ("/dse/bin/dse_config.php");
+//is_already_running();
+$Verbosity=3;
 $StatusOutput="";
 $DidSomething=FALSE;
 
+// ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
+$vars['DSE']['SCRIPT_NAME']="DAB";
+$vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="Devity Automatic Backup";
+$vars['DSE']['DAB_VERSION']="v0.01b";
+$vars['DSE']['DAB_VERSION_DATE']="2012/04/30";
+$vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+// ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
-$parameters = array(
-  'h' => 'help',
-  'c' => 'clean',
-  'q' => 'quiet',
-  's' => 'stats',
-  'v:' => 'verbosity:',
+
+$parameters_details = array(
+  array('h','help',"this message"),
+  array('q','quiet',"same as -v 0"),
+  array('c','clean',"cleans up (DELETES!) all backups of all files and dirs currently matched by the config file"),
+  array('','version',"version info"),
+  array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('s','stats',"statistics"),
+  array('e','edit',"does a vibk dab.conf"),
 );
-$flag_help_lines = array(
-  'h' => "\thelp - this message",
-  'c' => "\tclean - cleans up (DELETES!) all backups of all files and dirs currently matched by the config file",
-  'q' => "quiet - same as -v 0",
-  's' => "stats - statistics0",
-  'v:' => "\tverbosity - 0=none 1=some 2=more 3=debug",
-);
-
-
-$Usage="   Devity automatic backup utility 
-       by Louy of Devity.com
-
-This program should be run by cron. "
-." It will then automatically save coppies of any modified files being monitored whenever they change. "
-." By default it saves the fill version each time, not a diff, for easy history reconstruction. "
-."
-command line usage: dab (options)
-
-";
-foreach($parameters as $k=>$v){
-	$k2=str_replace(":","",$k);
-	$v2=str_replace(":","",$v);
-	$Usage.=" -${k2}, --${v2}\t".$flag_help_lines[$k]."\n";
-}
+$parameters=dse_cli_get_paramaters_array($parameters_details);
+$Usage=dse_cli_get_usage($parameters_details);
 
 
 
-
-if($Verbosity>=3) {print "argv="; print_r($argv); print "\n";}
+if($Verbosity>=4) {print "argv="; print_r($argv); print "\n";}
 
 $options = getopt(implode('', array_keys($parameters)), $parameters);
 $pruneargv = array();
@@ -72,7 +49,7 @@ foreach ($options as $option => $value) {
 while ($key = array_pop($pruneargv)){
 	deleteFromArray($argv,$key,FALSE,TRUE);
 }
-if($Verbosity>=3) {
+if($Verbosity>=4) {
 	print "argv="; print_r($argv); print "\noptions="; print_r($options); print "\n";
 }
 
@@ -80,7 +57,11 @@ if($Verbosity>=3) {
 foreach (array_keys($options) as $opt) switch ($opt) {
 	case 'h':
   	case 'help':
-  		print $Usage;
+  		$ShowUsage=TRUE;
+		$DidSomething=TRUE;
+		break;
+	case 'version':
+		$ShowVersion=TRUE;
 		$DidSomething=TRUE;
 		break;
 	case 'q':
@@ -105,26 +86,36 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 		$Verbosity=$options[$opt];
 		if($Verbosity>=2) print "Verbosity set to $Verbosity\n";
 		break;
+	case 'e':
+	case 'edit':
+		print "Backing up ".$vars['DSE']['DAB_CONFIG_FILE']." and launcing in vim:\n";
+		passthru("/dse/bin/vibk ".$vars['DSE']['DAB_CONFIG_FILE']);
+		$DidSomething=TRUE;
+		break;
 
 }
-
-
-/*
-$STDIN_Content="";
-$fd = fopen("php://stdin", "r"); 
-while (!feof($fd)) {
-	$STDIN_Content .= fread($fd, 1024);
+if($ShowUsage){
+	print $Usage;
+//	exit(0);
 }
-*/
+if($ShowVersion){
+	print "DSE Version: " . $vars['DSE']['DSE_VERSION'] . "  Release Date: " . $vars['DSE']['DSE_VERSION_DATE'] ."\n";
+	print $vars['DSE']['SCRIPT_NAME']." Version: " . $vars['DSE']['DAB_VERSION'] . "  Release Date: " . $vars['DSE']['DAB_VERSION_DATE'] ."\n";
+//	exit(0);
+}
 
 
 $BackupLocation="";
 
 
-$CfgData=file_get_contents($CfgFile);
+$CfgData=file_get_contents($vars['DSE']['DAB_CONFIG_FILE']);
 if($CfgData==""){
-	print "ERROR opening config file: $CfgFile\n";
+	print "ERROR opening config file: ".$vars['DSE']['DAB_CONFIG_FILE']."\n";
+}else{
+	print "Using config file: ".$vars['DSE']['DAB_CONFIG_FILE']."\n";
 }
+print "\n";
+
 $DirectoryArray=array();
 foreach(split("\n",$CfgData) as $Line){
 	if(!(strstr($Line,"#")===FALSE)){
@@ -164,7 +155,9 @@ if($DoShowStats){
 	exit;
 }
 
-
+if($DidSomething){
+	exit(0);
+}
 
 
 $BackupDirectoryName=".ddab";
@@ -213,7 +206,6 @@ if($LogFile){
 }
 
 exit();
-
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -363,70 +355,5 @@ function ddab_recursive_do_dir($Dir){
 }
 
 
-function rrmdir($dir) {
-	global $rrmdir_test_only;
-   	if (is_dir($dir)) {
-     $objects = scandir($dir);
-     foreach ($objects as $object) {
-       if ($object !="" && $object != "." && $object != "..") {
-         if (filetype($dir."/".$object) == "dir") {
-         	if($rrmdir_test_only){
-         		print " rrmdir($dir/$object); \n";
-         	}else{
-         		rrmdir($dir."/".$object); 
-         	}
-         }else {
-         	if($rrmdir_test_only){
-         		print "unlink($dir/$object); \n";
-         	}else{
-         		unlink($dir."/".$object);
-        	}
-         }
-       }
-     }
-     reset($objects);
-     rmdir($dir);
-   }
- }
- 
- 
-
-
-/*
-* This function deletes the given element from a one-dimension array
-* Parameters: $array:    the array (in/out)
-*             $deleteIt: the value which we would like to delete
-*             $useOldKeys: if it is false then the function will re-index the array (from 0, 1, ...)
-*                          if it is true: the function will keep the old keys
-*				$useDeleteItAsIndex: uses deleteIt for compare against array index/key instead of values
-* Returns true, if this value was in the array, otherwise false (in this case the array is same as before)
-*/
-function deleteFromArray(&$array, $deleteIt, $useOldKeys = FALSE, $useDeleteItAsIndex=FALSE ){
-    $tmpArray = array();
-    $found = FALSE;
-   // print "array="; print_r($array); print "\n";
-    foreach($array as $key => $value)
-    {
-    	//print "k=$key v=$value \n";
-        if($useDeleteItAsIndex){
-        	$Match=($key !== $deleteIt)==TRUE;
-        }else{
-        	$Match=($value !== $deleteIt)==TRUE;
-        }
-        
-        if($Match){
-        	if($useOldKeys){
-        	    $tmpArray[$key] = $value;
-            }else{
-                $tmpArray[] = $value;
-            }
-        }else{
-            $found = TRUE;
-        }
-    }
-    $array = $tmpArray;
-    return $found;
-}
- 
  
 ?>

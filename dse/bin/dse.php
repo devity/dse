@@ -23,6 +23,7 @@ $parameters_details = array(
   array('h','help',"this message"),
   array('u','update',"updates dse from github"),
   array('v','update-no-backup',"does a --update w/o backing up current dse install"),
+  array('e','edit',"backs up and launches a vim of ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']),
 );
 $parameters=dse_cli_get_paramaters_array($parameters_details);
 $Usage=dse_cli_get_usage($parameters_details);
@@ -66,6 +67,12 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 		$DidSomething=TRUE;
 		break;
 	
+	case 'e':
+	case 'edit':
+		print "Backing up ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']." and launcing in vim:\n";
+		passthru("/dse/bin/vibk ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']);
+		$DidSomething=TRUE;
+		break;
 
 }
 

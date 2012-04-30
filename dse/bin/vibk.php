@@ -40,7 +40,14 @@ print "backing up to: ".$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']."$file.$DATE_T
 //exec("/usr/bin/vim $file");
 passthru("/usr/bin/vim $file");
 
-print "$file saved. backup at ".$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']."$file.$DATE_TIME_NOW\n";
+if(files_are_same($file,$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']."$file.$DATE_TIME_NOW")){
+	print "No change to $file. backup at ".$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']."$file.$DATE_TIME_NOW removed\n";
+	$Command="rm -f ".$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']."$file.$DATE_TIME_NOW";
+	print `$Command`;
+	
+}else{
+	print "$file saved. backup at ".$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']."$file.$DATE_TIME_NOW\n";
+}
 exit();
 
 
