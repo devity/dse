@@ -38,7 +38,7 @@ print "backing up to: ".$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']."$file.$DATE_T
 //system("/usr/bin/vim $file");
 //pcntl_exec("/usr/bin/vim",array($file));
 //exec("/usr/bin/vim $file");
-passthru("/usr/bin/vim $file");
+passthru("/usr/bin/vim $file 2>&1");
 
 if(files_are_same($file,$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']."$file.$DATE_TIME_NOW")){
 	print "No change to $file. backup at ".$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']."$file.$DATE_TIME_NOW removed\n";

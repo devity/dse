@@ -32,7 +32,6 @@ $Usage=dse_cli_get_usage($parameters_details);
 
 
 
-
 $options = _getopt(implode('', array_keys($parameters)),$parameters);
 $pruneargv = array();
 foreach ($options as $option => $value) {
@@ -67,7 +66,7 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 	case 's':
 	case 'subprocess':
 		$IsSubprocess=TRUE;
-		$Log=$ThreadLog;
+		$Log=$vars['DSE']['HTTP_STRESS_THREAD_LOG_FILE'];
 		if($Verbosity>=2) print "IsSubprocess set to TRUE\n";
 		break;
 	case 'v':
@@ -147,8 +146,9 @@ if($Threads>0 && !$IsSubprocess){
 		
 		sleep(2);
 		
-		if(file_exists($ThreadLog)){
-			$ThreadsDone=intval(trim(`wc -l $ThreadLog`));
+		if(file_exists($vars['DSE']['HTTP_STRESS_THREAD_LOG_FILE'])){
+			$Command="wc -l ".$vars['DSE']['HTTP_STRESS_THREAD_LOG_FILE'];
+			$ThreadsDone=intval(trim(`$Command`));
 			$Done=($ThreadsDone==$Threads);
 		}else{
 			$ThreadsDone=0;	
@@ -159,7 +159,7 @@ if($Threads>0 && !$IsSubprocess){
 		sbp_cursor_postion(0,0);
 		
 		
-		print "$ThreadsDone threads out of $Threads total reported results so far.\n";
+		print "$ThreadsDone threads out of $Threads total reported results so far to: ".$vars['DSE']['HTTP_STRESS_THREAD_LOG_FILE']."\n";
 		
 		$ActualRunTime=time()-$StartTime;
 		$TimeLeft=$RunTime-$ActualRunTime;
@@ -174,7 +174,8 @@ if($Threads>0 && !$IsSubprocess){
 	
 	//show results
 	$Totals_array=array();
-	$Results=`cat $ThreadLog`;
+	$Command="cat ".$vars['DSE']['HTTP_STRESS_THREAD_LOG_FILE'];
+	$Results=`$Command`;
 	$Results_array=split("\n",$Results);
 	$i=1;
 	foreach($Results_array as $Result){
@@ -300,8 +301,9 @@ if($Threads>0 && !$IsSubprocess){
 
 
 if($Threads>0 && !$IsSubprocess){
-	if(file_exists($ThreadLog)){
-		`rm $ThreadLog`;
+	if(file_exists($vars['DSE']['HTTP_STRESS_THREAD_LOG_FILE'])){
+		$Command="rm ".$vars['DSE']['HTTP_STRESS_THREAD_LOG_FILE'];
+		`$Command`;
 	}
 }
 

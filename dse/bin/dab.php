@@ -89,7 +89,7 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 	case 'e':
 	case 'edit':
 		print "Backing up ".$vars['DSE']['DAB_CONFIG_FILE']." and launcing in vim:\n";
-		passthru("/dse/bin/vibk ".$vars['DSE']['DAB_CONFIG_FILE']);
+		passthru("/dse/bin/vibk ".$vars['DSE']['DAB_CONFIG_FILE']." 2>&1");
 		$DidSomething=TRUE;
 		break;
 
