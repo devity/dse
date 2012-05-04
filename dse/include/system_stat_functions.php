@@ -16,7 +16,7 @@ function dse_sysstats_net_listening(){
 	$tbr_array=array();
 	foreach($raw_array as $line){
 		if($line){
-			print "l=$line\n";
+			//print "l=$line\n";
 			$lpa=split("[ ]+",$line);
 			$exe=$lpa[0];
 			$port=$lpa[8];$port=strcut(str_replace("::","",$port),":");
