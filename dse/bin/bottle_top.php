@@ -3,6 +3,7 @@
 error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
 include_once ("/dse/bin/dse_cli_functions.php");
+include_once ("/dse/include/system_stat_functions.php");
 include_once ("/dse/bin/dse_config.php");
 
 
@@ -166,47 +167,40 @@ while($DoLoop && ($MaxLoops==0 || $Loops<$MaxLoops)){
 		$SleepLeft=$ReloadSeconds;
 		while($SleepLeft>0){
 		
-		sbp_cursor_postion(0,0);
-		print getColoredString("*", 'yellow', 'black')." ".getColoredString(trim(`hostname`)."            ".trim(`date`),'cyan','black');	
-		$SleepLeft_str=getColoredString($SleepLeft,"yellow","black");
+			sbp_cursor_postion(0,0);
+			print getColoredString("*", 'yellow', 'black')." ".getColoredString(trim(`hostname`)."            ".trim(`date`),'cyan','black');	
+			$SleepLeft_str=getColoredString($SleepLeft,"yellow","black");
+			
+			$Load_str=getColoredString("$Load", 'yellow', 'black');
+			$Loops_str=getColoredString($Loops+1, 'yellow', 'black');
+			
+			
+			$this_loadavg=`cat /proc/loadavg`;
+			if($this_loadavg!=""){
+				$this_loadavg=str_replace("  ", " ", $this_loadavg); 
+				$this_loadavg=str_replace("  ", " ", $this_loadavg); 
+				$this_loadavg=str_replace("  ", " ", $this_loadavg); 
+				$loadaggA=split(" ",$this_loadavg);
+				$load_1=number_format($loadaggA[0],2);
+				$load_2=number_format($loadaggA[1],2);
+				$load_3=number_format($loadaggA[2],2);
+				$threads=$loadaggA[3];
+				$threadsa=split("/",$threads);
+				$threads_running=$threadsa[0];
+				$threads_total=$threadsa[1];
+				$threads_running=dse_bt_colorize($threads_running,2.001);
+				$threads_str="$threads_running/$threads_total";
+				$last_pid=$loadaggA[4];
+				$load_1_str=dse_bt_colorize($load_1,2.001);
+	 			$Load_str="Load: $load_1_str:$load_2:$load_3    Threads:$threads_str";
+			}
+			
+			
+			$str= "   Loop: $Loops_str / $MaxLoops  Next: ${SleepLeft_str}s      $Load_str   \n";
+			print $str;
 		
-		$Load_str=getColoredString("$Load", 'yellow', 'black');
-		$Loops_str=getColoredString($Loops+1, 'yellow', 'black');
-		
-		
-		$this_loadavg=`cat /proc/loadavg`;
-		if($this_loadavg!=""){
-			$this_loadavg=str_replace("  ", " ", $this_loadavg); 
-			$this_loadavg=str_replace("  ", " ", $this_loadavg); 
-			$this_loadavg=str_replace("  ", " ", $this_loadavg); 
-			$loadaggA=split(" ",$this_loadavg);
-			$load_1=number_format($loadaggA[0],2);
-			$load_2=number_format($loadaggA[1],2);
-			$load_3=number_format($loadaggA[2],2);
-			$threads=$loadaggA[3];
-			$threadsa=split("/",$threads);
-			$threads_running=$threadsa[0];
-			$threads_total=$threadsa[1];
-			$threads_running=dse_bt_colorize($threads_running,2.001);
-			$threads_str="$threads_running/$threads_total";
-			$last_pid=$loadaggA[4];
-			$load_1_str=dse_bt_colorize($load_1,2.001);
- 			$Load_str="Load: $load_1_str:$load_2:$load_3    Threads:$threads_str";
-		}
-		
-		
-		$str= "   Loop: $Loops_str / $MaxLoops  Next: ${SleepLeft_str}s      $Load_str   \n";
-		print $str;
-		
-	
 			//sleep(1);
 			$SleepLeft--;
-			/*
-			$keys="";
-			while (($buf = fgetc($fp, 4096)) != false) {  //fgets is required if we want to handle escape sequenced keys 
-		    	$keys .= $buf; 
-		  	} 
-			 * */
 			$keys=readline_timeout(1, '');
 			if($keys){
 			
@@ -222,6 +216,11 @@ while($DoLoop && ($MaxLoops==0 || $Loops<$MaxLoops)){
 							$o=exec("http_stress > /dev/null 2>&1 &");
 							sbp_cursor_postion(0,0);
 							print getColoredString("http_stress started!\n", 'green', 'black');
+							sleep(1);
+							break;
+						case 'u':
+							$SleepLeft=0;
+							print getColoredString("data gather started!\n", 'green', 'black');
 							sleep(1);
 							break;
 						case '-':
@@ -250,7 +249,7 @@ while($DoLoop && ($MaxLoops==0 || $Loops<$MaxLoops)){
 							print getColoredString("Interactive Commands for ".$vars['DSE']['SCRIPT_NAME'].": \n", 'green', 'black');
 							print "  h - this message\n";
 							print "  s - run http_stress\n";
-							//print "  u - update all\n";
+							print "  u - update all\n";
 							print "  q - quit/exit ".$vars['DSE']['SCRIPT_FILENAME']."\n";
 							print "  - - slow refresh 25%\n";
 							print "  + - speed refresh 25%\n";
@@ -315,168 +314,36 @@ function update_display($keys=""){
 		 	
 	}
 	
-	//first update data before clear so no slow print / flickering
-		//get mysql process info
-		$section_mysql_processes="";
-		$sql_query="SHOW FULL PROCESSLIST";
-		$mysql_processes_raw=`sudo echo "$sql_query" | mysql -u localroot | grep -v PROCESSLIST | grep -v Sleep`;
-		$mysql_processes_line_array=split("\n",$mysql_processes_raw);
-		foreach($mysql_processes_line_array as $k=>$mysql_processes_line){
+	dse_sysstats_net_listening();
+			sleep(9);
 			
-			$tsa=split("\t",$mysql_processes_line);
-			if(intval($tsa[0])>0){
-			//	$ssa=split(" ",$mysql_processes_line);
-				//print "ssa="; print_r($ssa); print "\n";
-				//print "tsa="; print_r($tsa); print "\n";
-				$ID=$tsa[0];
-				$User=$tsa[1];
-				$Host=$tsa[2];
-				$DB=$tsa[3];
-				$Command=$tsa[4];
-				$Time=$tsa[5];
-				$State=$tsa[6];
-				$Info=$tsa[7];
-				$Command=substr($Command,0,100);
-                                $Info=substr($Info,0,100);
-
-				$section_mysql_processes.= "$User $DB $State $Command $Info\n";
-			}
-		}
-		
+		$dse_sysstats_mysql_processlist_array=dse_sysstats_mysql_processlist();
+		$section_mysql_processes=$dse_sysstats_mysql_processlist_array[3];
 		
 	
-		//mysql stats
-		$MysqlStatusVars=array(
-			"Queries", "Slow_queries","Last_query_cost",
-			"Handler_update", "Handler_write", "Handler_delete", 
-			"Select_range", "Select_scan", "Sort_scan", 
-			"Innodb_buffer_pool_pages_free",
-			"Qcache_free_blocks", "Qcache_total_blocks", "Qcache_free_memory", 
-			"Created_tmp_disk_tables", "Created_tmp_tables", 
-			"Key_blocks_unused", "Key_blocks_used", "Key_buffer_fraction_%", 
-			"Open_files", "Open_tables", 
-			"Table_locks_immediate", "Table_locks_waited", 
-			);
-		foreach($MysqlStatusVars as $var_name){
-			$$var_name="";
-		}
-		$section_mysql_stats="";
-		$sql_query="SHOW STATUS ";
-		$mysql_status_raw=`sudo echo "$sql_query" | mysql -u localroot`;
-		$mysql_status_line_array=split("\n",$mysql_status_raw);
-		foreach($mysql_status_line_array as $k=>$mysql_status_line){
-			//	$ssa=split(" ",$mysql_processes_line);
-				//print "ssa="; print_r($ssa); print "\n";
-				$tsa=split("\t",$mysql_status_line);
-				//print "tsa="; print_r($tsa); print "\n";
-				
-				foreach($MysqlStatusVars as $var_name){
-					if($tsa[0]==$var_name){
-						$$var_name=$tsa[1];
-						//$section_mysql_stats.="$var_name=$tsa[1];   -- ";
-					}
-				}
+		$dse_sysstats_mysql_status_array=dse_sysstats_mysql_status();
+		$section_mysql_stats=$dse_sysstats_mysql_status_array[3];
 		
-						
-		}
-		if($Queries){
-			$Slow_percent=number_format(($Slow_queries/$Queries)*10,2);
-		}else{
-			$Slow_percent=0;
-		}
-		
-		global $LastQueries, $LastRunTime;
-		
-		$Qps=($Queries-$LastQueries)/(time()-$LastRunTime);
-		//$section_mysql_stats.= "Qps=($Queries-$LastQueries)/(time()-$LastRunTime);\n";
-
-
-		$Qps_str=number_format($Qps,2);
-		$Qps_str=dse_bt_colorize($Qps_str,100);
-		
-		
-		
-		//$Qcache_free_blocks_str=dse_bt_colorize($Qcache_free_blocks,10,"MINIMUM");
-		//$Qcache_total_blocks_str=dse_bt_colorize($Qcache_total_blocks,20000);
-		$Qcache_free_memory_str=dse_bt_colorize(number_format($Qcache_free_memory/(1024*1024),1),150001000/(1024*1024),"MINIMUM");
-
-		$section_mysql_stats.="Queries :$Queries  Qps:$Qps_str  Slow:$Slow_queries %$Slow_percent ";// LastCost:$Last_query_cost \n";
-		$section_mysql_stats.="Updates: $Handler_update  Delete: $Handler_delete  Write: $Handler_write\n";
-	//	$section_mysql_stats.="Innodb bppf:$Innodb_buffer_pool_pages_free \n";
-		$section_mysql_stats.="Qcache free_blocks:$Qcache_free_blocks  total_blocks:$Qcache_total_blocks free_memory:${Qcache_free_memory_str}MB\n";
-		$section_mysql_stats.="Open: Files: $Open_files  Tables: $Open_tables  \n";
-		//$section_mysql_stats.="Key_blocks_unused:$Key_blocks_unused   Key_blocks_used:$Key_blocks_used   \n";
-		//$section_mysql_stats.="Select_range:$Select_range   Select_scan:$Select_scan   Sort_scan:$Sort_scan  \n";
-	
-		$LastQueries=$Queries;
-		$LastRunTime=time();
-		
-			//"Created_tmp_disk_tables", "Created_tmp_tables", 
-			//"", "", "Key_buffer_fraction_%", 
-		//	"", "", 
-			//"Table_locks_immediate", "Table_locks_waited", 
-		
-	//exit();
-	
-	
 	
 		global $section_files_open;
-		
 		if(($Loops%5)==0 ){
-	//	include_once 'Text/Diff.php'; 
-	//	include_once 'Text/Diff/Renderer.php'; 
-	//	include_once 'Text/Diff/Renderer/inline.php'; 
-			global $lsof_last;
-			$section_files_open="";
-			$lsof=`sudo lsof`;
-			$lsof_a=split("\n",$lsof);
-			$open_files=sizeof($lsof_a);
-			$open_files_str=dse_bt_colorize($open_files,4000);
-			$section_files_open.="lsof open files: $open_files_str      ";
-			/*if($lsof_last){
-				$lsof_last_a=split("\n",$lsof_last);
-				
-				
-				$r=(array_diff($lsof_a, $lsof_last_a));
-				foreach($r as $e){
-					$ea=split("\n",$e);
-					foreach($ea as $ep){	
-						$section_files_open.= $ep."\n";
-					}			
-				}
-				//$diff = &new Text_Diff($lsof,$lsof_last);
-				//$renderer = &new Text_Diff_Renderer_inline();		
-				//$section_files_open.= $renderer->render($diff);
-				
-			}*/
-			$lsof_last=$lsof;
+			$dse_sysstats_files_open_array=dse_sysstats_files_open();
+			$section_files_open=$dse_sysstats_files_open_array[2];
 		}
 		
-		// ********************************************************i*********************************************************
-		// ******************************************   /proc/$PID/io  /proc/$PID/io   *************************************
-		// *****************************************************************************************************************
+		
 		global $section_procio;
-		if(($Loops%20)==0 ){
-		//	dse_proc_io_get(TRUE);
-		}
 		if(($Loops%5)==0 ){
-			$section_procio="";
-			global $procIOs;
-			dse_proc_io_get();
-			$wt=$procIOs[$vars[dse_proc_io_get_last_time]]['TOTAL']['wchar'];
-			$rt=$procIOs[$vars[dse_proc_io_get_last_time]]['TOTAL']['rchar'];
-			$dt=$vars[dse_proc_io_get_last_time]-$vars[dse_proc_io_get_start_time];
-			$wtps=intval($wt/$dt);
-			$rtps=intval($rt/$dt);
-			$wt=number_format($wt/1024,0)."kB";
-			$rt=number_format($rt/1024,0)."kB";
-			$wtps_str=number_format($wtps/1024,0)."kB";
-			$rtps_str=number_format($rtps/1024,0)."kB";
-			$rtps_str=dse_bt_colorize($rtps/1024,8000,"MAXIMUM",$rtps_str);
-			$wtps_str=dse_bt_colorize($wtps/1024,3000,"MAXIMUM",$wtps_str);
-			
-			$section_procio= "/proc/io: w: $wtps_str/s  r: $rtps_str/s\n";// dWb=$wbt ($wbtps/s)    dRb=$rbt ($rbtps/s) \n\n";
+			$dse_sysstats_proc_io_array=dse_sysstats_proc_io();
+			$section_procio=$dse_sysstats_proc_io_array[1];
 		}
+			
+		global $section_net_listening;
+		if(($Loops%5)==0 ){
+			$dse_sysstats_net_listening_array=dse_sysstats_net_listening();
+			$section_net_listening="Ports Listening: ".$dse_sysstats_net_listening_array[3];
+		}	
+			
 			
 		// *****************************************************************************************************************
 		// *********************************************** MEMORY MEMORY MEMORY MEMORY *************************************
@@ -754,9 +621,13 @@ function update_display($keys=""){
 	//print $section_memory;
 	print $section_files_open;
 
+	
 	print $section_procio;
 	
 	print $section_disk;
+	print "\n";
+	
+	print $section_net_listening;
 	print "\n";
 	
 	print $section_httpd;
