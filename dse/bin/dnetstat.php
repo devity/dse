@@ -34,6 +34,7 @@ $parameters_details = array(
   array('','version',"version info"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('o','open',"List OPEN ports"),
+  array('x','xip',"Return External IP Address"),
 );
 $parameters=dse_cli_get_paramaters_array($parameters_details);
 $Usage=dse_cli_get_usage($parameters_details);
@@ -73,6 +74,10 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 	case 'o':
 	case 'open':
 		$ShowOpen=TRUE;
+		break;
+	case 'x':
+	case 'xip':
+		$ShowIP=TRUE;
 		break;
 	case 'v':
 	case 'verbosity':
@@ -122,6 +127,13 @@ if($ShowOpen){
 	$dse_sysstats_net_listening_array=dse_sysstats_net_listening();
 	$section_net_listening=$dse_sysstats_net_listening_array[3];
 	print $section_net_listening."\n";	
+}
+
+if($ShowIP){
+	$ext_info = `curl --silent http://checkip.dyndns.org | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}'`;
+	if($ext_info) { 
+	    print $ext_info;
+	}
 }
 $EndLoad=get_load();  
 $ActualRunTime=time()-$Start;
