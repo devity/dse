@@ -242,19 +242,18 @@ while($DoLoop && ($MaxLoops==0 || $Loops<$MaxLoops)){
 							$vars[shell_colors_reset_foreground]='';	print getColoredString("","white","black");
 							exit(0);
 							break;	
-						case 'h':
+						case 'h':	
+						case '?':
 							cbp_screen_clear();
 							sbp_cursor_postion(0,0);
 							print "\n\n";
 							print getColoredString("Interactive Commands for ".$vars['DSE']['SCRIPT_NAME'].": \n", 'green', 'black');
-							print "  h - this message\n";
-							print "  s - run http_stress\n";
-							print "  u - update all\n";
+							print "  [h,?] - this message\n";
 							print "  q - quit/exit ".$vars['DSE']['SCRIPT_FILENAME']."\n";
+							print "  s - run http_stress\n";
+							print "  u - update/refresh now\n";
 							print "  - - slow refresh 25%\n";
 							print "  + - speed refresh 25%\n";
-							//print "  h - this message\n";
-							
 							sleep(2);
 							break;	
 						default:

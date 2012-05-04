@@ -226,6 +226,7 @@ if($Threads>0 && !$IsSubprocess){
 	$log_line="threads=$Threads:runstart=$StartTime:runlength=$RunTime:actualruntime=$ActualRunTime:loadstart=$StartLoad:loadend=$EndLoad:loads=$Loads:lps=$LoadsPerSecond:sizeavg=$AvgSizeRaw:sizetotal=$TotalSize:Mbps=$Mbps";
 	$Command="echo $log_line >> ".$vars['DSE']['HTTP_STRESS_LOG_FILE'];
 	print `$Command`;
+	print "Logged to: ".$vars['DSE']['HTTP_STRESS_LOG_FILE']."\n";
 	
 
 }else{
