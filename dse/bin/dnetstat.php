@@ -132,7 +132,7 @@ if($ShowOpen){
 if($ShowIP){
 	$ext_info = `curl --silent http://checkip.dyndns.org | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}'`;
 	if($ext_info) { 
-	    print $ext_info;
+	    print trim($ext_info);
 	}
 }
 $EndLoad=get_load();  
