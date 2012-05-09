@@ -32,6 +32,7 @@ $parameters_details = array(
   array('h','help',"this message"),
   array('q','quiet',"same as -v 0"),
   array('f','force',"force program to run even if load is high"),
+  array('e','easy-only',"only get/show least intensive stats"),
   array('','version',"version info"),
   array('s:','reload-seconds:',"seconds between screen refresh"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
@@ -59,6 +60,7 @@ while ($key = array_pop($pruneargv)){
 
 
 $IsSubprocess=FALSE;
+$EasyOnly=FALSE;
 foreach (array_keys($options) as $opt) switch ($opt) {
 	case 'h':
   	case 'help':
@@ -76,6 +78,11 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 	case 'f':
 	case 'force':
 		$ForceHighLoadRun=TRUE;
+		break;
+	case 'e':
+	case 'easy-only':
+		$EasyOnly=TRUE;
+		if($Verbosity>=2) print "EasyOnly set to TRUE\n";
 		break;
 		
 	case 't':
@@ -297,7 +304,7 @@ exit(0);
 
 function update_display($keys=""){
 	//global $c,$t,$tt,$st,$Key,$FoundKeys,$file_scan_last,$file_keys_found,$i1,$i2,$i3,$i4,$ScanContinue,$NoDiplayYet;
-	global $vars,$Loops;
+	global $vars,$Loops,$EasyOnly;
 	global $diskstats_lasttime,$section_httpd;
 	
 	if($keys){
@@ -313,32 +320,34 @@ function update_display($keys=""){
 		 	
 	}
 	
-	dse_sysstats_net_listening();
-			sleep(9);
-			
+		print "dse_sysstats_mysql_processlist()\n";
 		$dse_sysstats_mysql_processlist_array=dse_sysstats_mysql_processlist();
 		$section_mysql_processes=$dse_sysstats_mysql_processlist_array[3];
 		
 	
+		print "dse_sysstats_mysql_status()\n";
 		$dse_sysstats_mysql_status_array=dse_sysstats_mysql_status();
 		$section_mysql_stats=$dse_sysstats_mysql_status_array[3];
 		
 	
 		global $section_files_open;
-		if(($Loops%5)==0 ){
+		if( (!$EasyOnly) && ($Loops%5)==0 ){
+			print "dse_sysstats_files_open()\n";
 			$dse_sysstats_files_open_array=dse_sysstats_files_open();
 			$section_files_open=$dse_sysstats_files_open_array[2];
 		}
 		
 		
 		global $section_procio;
-		if(($Loops%5)==0 ){
+		if( (!$EasyOnly) && ($Loops%5)==0 ){
+			print "dse_sysstats_proc_io()\n";
 			$dse_sysstats_proc_io_array=dse_sysstats_proc_io();
 			$section_procio=$dse_sysstats_proc_io_array[1];
 		}
 			
 		global $section_net_listening;
 		if(($Loops%5)==0 ){
+			print "dse_sysstats_net_listening()\n";
 			$dse_sysstats_net_listening_array=dse_sysstats_net_listening();
 			$section_net_listening="Ports Listening: ".$dse_sysstats_net_listening_array[3];
 		}	
@@ -348,6 +357,8 @@ function update_display($keys=""){
 		// *********************************************** MEMORY MEMORY MEMORY MEMORY *************************************
 		// *****************************************************************************************************************
 	
+	
+		print "section_memory()\n";
 		$section_memory="";
 		$section_cpu="";
 		$unit_size=1024*1024;
@@ -448,6 +459,7 @@ function update_display($keys=""){
 		// *****************************************************************************************************************
 		
 
+		print "section_cpu()\n";
 		$CpuIdle=$oa[15];
 		$CpuUser=$oa[13];
 		$CpuSys=$oa[14];
@@ -499,7 +511,9 @@ function update_display($keys=""){
 		print "grep \"$DateStr\" $LogFileName > $TmpFileName\n";
 		`grep $DateStr $LogFileName > $TmpFileName`;
 		*/
-	if(($Loops%5)==0 ){
+	if( (!$EasyOnly) && ($Loops%5)==0 ){
+		print "section_httpd_log()\n";
+		
 		$LogFileName="/home/httpd/batteriesdirect.com/stats/batteriesdirect.com-custom_log";
 		$TmpFileName="/tmp/dse_log.tmp.".rand(1111111,99999999);
 	
@@ -550,7 +564,8 @@ function update_display($keys=""){
 	}
 
 	global $section_disk;
-	if($Loops<=2 || ($Loops%5)==0 ){
+	if( (!$EasyOnly) &&  ($Loops<=2 || ($Loops%5)==0 ) ){
+		print "section_disk()\n";
 		
 		
 		global $sda1_last,$sda2_last,$diskstats_lasttime;
