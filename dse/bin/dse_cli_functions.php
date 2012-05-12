@@ -30,6 +30,33 @@ function files_are_same($f1,$f2){
 	return ($m1==$m2);
 }
 
+
+function dse_file_backup($file){
+	global $vars;
+
+	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
+	$backupfilename=$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']."$file.$DATE_TIME_NOW";
+	
+	
+	$dir=dirname($backupfilename);
+	`mkdir -p $dir`;
+	
+	$Command="cp $file $backupfilename";
+	`$Command`;
+	
+	$Command="echo \"$TIME_NOW cp $file $backupfilename\" >> ".$vars['DSE']['DSE_VIBK_LOG_FILE'];
+	`$Command`;
+	
+	if(files_are_same($file,$backupfilename)){
+		return $backupfilename;
+	}else{
+		print "Error creating backup: $backupfilename\n";
+		return "";	
+	}
+}
+
+ 
+ 
 function is_already_running($exe="",$ExitOnTrue=TRUE,$MessageOnExit=TRUE){
 	global $vars;
 	if($exe==""){
