@@ -62,6 +62,16 @@ while ($key = array_pop($pruneargv)){
 $IsSubprocess=FALSE;
 $EasyOnly=FALSE;
 foreach (array_keys($options) as $opt) switch ($opt) {
+	case 'q':
+	case 'quiet':
+		$Quiet=TRUE;
+		$Verbosity=0;
+		break;
+	case 'v':
+	case 'verbosity':
+		$Verbosity=$options[$opt];
+		if($Verbosity>=2) print "Verbosity set to $Verbosity\n";
+		break;
 	case 'h':
   	case 'help':
   		$ShowUsage=TRUE;
@@ -70,10 +80,6 @@ foreach (array_keys($options) as $opt) switch ($opt) {
   	case 'version':
   		$ShowVersion=TRUE;
 		$DidSomething=TRUE;
-		break;
-	case 'q':
-	case 'quiet':
-		$Verbosity=0;
 		break;
 	case 'f':
 	case 'force':
@@ -102,11 +108,6 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 	case 'maxloops':
 		$MaxLoops=$options[$opt];
 		if($Verbosity>=2) print "maxloops set to $MaxLoops\n";
-		break;
-	case 'v':
-	case 'verbosity':
-		$Verbosity=$options[$opt];
-		if($Verbosity>=2) print "Verbosity set to $Verbosity\n";
 		break;
 	case 'z':
 	case 'maxload':
