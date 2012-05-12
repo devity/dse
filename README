@@ -60,6 +60,7 @@
    dse            - script that sets dse variables, get's status, provides 
                      help, etc
    dsm            - devity server monitor - watches load, processes, hd, etc.
+   dtmp           - returns a valid, unique full /tmp/ filename
    fss            - find string
    grep2exe       - returns script name for a string on ps output lines
    grep2pid       - returns PID for a string on ps output lines

@@ -8,19 +8,18 @@ include_once ("/dse/bin/dse_config.php");
 $Verbosity=0;
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
-$vars['DSE']['SCRIPT_NAME']="DSE Replace";
+$vars['DSE']['SCRIPT_NAME']="DSE Temp File Name Generator";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="line and string replacer";
 $vars['DSE']['BTOP_VERSION']="v0.01b";
 $vars['DSE']['BTOP_VERSION_DATE']="2012/05/11";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
-$vars['DSE']['SCRIPT_COMMAND_FORMAT']="(options) input_file needle replace";
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $parameters_details = array(
   array('h','help',"this message"),
   array('q','quiet',"same as -v 0"),
-  array('p','pattern',"treat needle as a pattern"),
-  array('s','save',"overwrite argv[1]"),
+//  array('p','pattern',"treat needle as a pattern"),
   array('','version',"version info"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
 );
@@ -52,13 +51,6 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 	case 'q':
 	case 'quiet':
 		$Verbosity=0;
-		break;
-	case 's':
-	case 'save':
-		$DoSaveOverwrite=TRUE;
-	case 'p':
-	case 'pattern':
-		$TreatNeedleAsPattern=TRUE;
 		break;
 	case 'v':
 	case 'verbosity':
@@ -92,45 +84,14 @@ if($DidSomething){
 	exit(0);
 }
 
-
-// *** GET SETTINGS ***
-$Filename=$argv[1];
-$Old=$argv[2];
-$New=$argv[3];
-if($Verbosity>=2) print "Opening $Filename\n";
-if($Verbosity>=2) print "Replacing: $Old\nWith: $New\n";
-
-// *** GET INPUT ***
-if(file_exists($Filename)){
-	$raw=file_get_contents($Filename);
-	$raw_a=split("\n",$raw);
-}else{
-	print "Error Opening $Filename\n";
-	exit(-1);
+$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
+	
+$TmpDir="/tmp/";
+$TmpFile=$TmpDir."dse_tmp_file_${DATE_TIME_NOW}_0".rand(10000,99999);
+while(file_exists($TmpFile)){
+	$TmpFile=$TmpDir."dse_tmp_file_${DATE_TIME_NOW}_0".rand(10000,99999);
 }
-// *** DO REPLACE ***
-$Out="";
-foreach($raw_a as $n=>$line){
-	if($Out!="") $Out.="\n";
-	if($TreatNeedleAsPattern){
-		$line=preg_replace("/$Old/",$New,$line);
-		if($Verbosity>=3) print "preg_replace(\"/$Old/\",$New,$line);\n";
-	}else{
-		$line=str_replace($Old,$New,$line);
-		if($Verbosity>=3) print "str_replace($Old,$New,$line);\n";
-	}	
-	$Out.=$line;
-}
-
-// *** OUTPUT ***
-if($DoSaveOverwrite){
-	$backupfilename=dse_file_backup($Filename);
-	if($Verbosity>=2) print "backing up to: $backupfilename\n";
-	file_put_contents($Filename,$Out);
-	if($Verbosity>=2) print "Saving to/Overwriting $Filename\n";
-}else{
-	print $Out;
-}
+print $TmpFile;
 
 if($Verbosity>=2) print getColoredString("Done. Exiting ".$vars['DSE']['SCRIPT_FILENAME'].". \n\n", 'black', 'green');
 

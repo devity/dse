@@ -24,6 +24,7 @@ $parameters_details = array(
   array('u','update',"updates dse from github"),
   array('v','update-no-backup',"does a --update w/o backing up current dse install"),
   array('e','edit',"backs up and launches a vim of ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']),
+  array('s','set-env',"set shell environment variables"),
 );
 $parameters=dse_cli_get_paramaters_array($parameters_details);
 $Usage=dse_cli_get_usage($parameters_details);
@@ -66,6 +67,11 @@ foreach (array_keys($options) as $opt) switch ($opt) {
   		$DoUpdate=TRUE;
 		$DidSomething=TRUE;
 		break;
+	case 's':
+  	case 'set-env':
+  		$DoSetEnv=TRUE;
+		$DidSomething=TRUE;
+		break;
 	
 	case 'e':
 	case 'edit':
@@ -76,6 +82,13 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 
 }
 
+if($DoSetEnv){
+	putenv ("DSE_MYSQL_CONF_FILE=".$vars['DSE']['MYSQL_CONF_FILE']);
+	exec("export DSE_MYSQL_CONF_FILE");
+	print "#!/bin/bash\n";
+	print "DSE_MYSQL_CONF_FILE=".$vars['DSE']['MYSQL_CONF_FILE']."\nexport DSE_MYSQL_CONF_FILE\n";
+	exit(0);
+}
 
 $EarlyExit=FALSE;
 if($argv[1]=="configure"){

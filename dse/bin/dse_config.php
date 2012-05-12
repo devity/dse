@@ -45,6 +45,9 @@ if(getenv("DSE_BACKUP_DIR")!=""){
 $vars['DSE']['DSE_BACKUP_DIR_DSE']=$vars['DSE']['DSE_BACKUP_DIR']."/dse";
 
 
+$vars['DSE']['MYSQL_CONF_FILE']="/etc/my.cnf";
+
+
 // *********************************************************************************
 // ********* Set colors and such
 $vars['DSE']['USE_ANSI_COLOR']="YES";
