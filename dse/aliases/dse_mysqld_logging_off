@@ -4,4 +4,4 @@ tempname=`/dse/bin/dtmp`.bash;
 /dse/bin/dse --set-env > $tempname
 chmod 770 $tempname
 . $tempname
-sudo /dse/bin/dreplace -v 2 -s -p $DSE_MYSQL_CONF_FILE "^#log=" log=
+sudo /dse/bin/dreplace -v 2 -s -p $DSE_MYSQL_CONF_FILE "^log=" #log=
