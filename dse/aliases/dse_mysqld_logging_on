@@ -1,5 +1,5 @@
 #!/bin/bash
 
-. /bin/php /dse/bin/dse.php --set-env
+. /dse/bin/dse_set-env
 sudo /dse/bin/dreplace -v 2 -s -p $DSE_MYSQL_CONF_FILE "^#log=" "log="
 sudo service mysqld restart
