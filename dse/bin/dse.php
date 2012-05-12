@@ -196,13 +196,13 @@ if($DoUpdate){
 }
 
 if($DidSomething){
-	if(!$Quiet){
+	if(!$Quiet && !$DoSetEnv){
 		print getColoredString($vars['DSE']['SCRIPT_NAME']." Done. Exiting (0)","black","green");
 		$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
 	}
 	if(!$NoExit) exit(0);
 }else{
-	if(!$Quiet){
+	if(!$Quiet && !$DoSetEnv){
 		print getColoredString("Nothing to do! try --help for usage. ".$vars['DSE']['SCRIPT_NAME']." Done. Exiting (-1)","pink","black");
 		$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
 	}
