@@ -1,6 +1,5 @@
 #!/bin/bash
 
-tempname=`/dse/bin/dtmp`.bash;
-. /dse/bin/dse --set-env
+. /bin/php /dse/bin/dse.php --set-env
 sudo /dse/bin/dreplace -v 2 -s -p $DSE_MYSQL_CONF_FILE "^#log=" "log="
 sudo service mysqld restart
