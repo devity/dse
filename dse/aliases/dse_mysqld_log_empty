@@ -5,4 +5,4 @@ tempname=`/dse/bin/dtmp`.bash;
 chmod 770 $tempname
 . $tempname
 rm $tempname
-sudo echo -n > $DSE_MYSQL_CONF_FILE
+sudo echo -n > $DSE_MYSQL_LOG_FILE

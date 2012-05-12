@@ -94,10 +94,12 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 }
 
 if($DoSetEnv){
-	putenv ("DSE_MYSQL_CONF_FILE=".$vars['DSE']['MYSQL_CONF_FILE']);
-	exec("export DSE_MYSQL_CONF_FILE");
+	//putenv ("DSE_MYSQL_CONF_FILE=".$vars['DSE']['MYSQL_CONF_FILE']);
+	//exec("export DSE_MYSQL_CONF_FILE");
 	print "#!/bin/bash\n";
-	print "DSE_MYSQL_CONF_FILE=".$vars['DSE']['MYSQL_CONF_FILE']."\nexport DSE_MYSQL_CONF_FILE\n";
+	print "export DSE_MYSQL_CONF_FILE=".$vars['DSE']['MYSQL_CONF_FILE']."\n";
+	print "export DSE_MYSQL_LOG_FILE=".$vars['DSE']['MYSQL_LOG_FILE']."\n";
+	
 	$NoExit=TRUE;
 }
 

@@ -46,6 +46,7 @@ $vars['DSE']['DSE_BACKUP_DIR_DSE']=$vars['DSE']['DSE_BACKUP_DIR']."/dse";
 
 
 $vars['DSE']['MYSQL_CONF_FILE']="/etc/my.cnf";
+$vars['DSE']['MYSQL_LOG_FILE']="/tmp/mysql_query.log";
 
 
 // *********************************************************************************
