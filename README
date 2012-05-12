@@ -59,6 +59,7 @@
    dsizeof        - returns size in bytes of arg1
    dse            - script that sets dse variables, get's status, provides 
                      help, etc
+   dse_set-env    - sets dse vars for shell. use: ". /dse/bin/dse_set-env"
    dsm            - devity server monitor - watches load, processes, hd, etc.
    dtmp           - returns a valid, unique full /tmp/ filename
    fss            - find string
