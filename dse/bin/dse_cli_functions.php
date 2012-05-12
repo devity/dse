@@ -924,11 +924,17 @@ function dse_cli_get_paramaters_array($parameters_details){
 function dse_cli_get_usage($parameters_details){
 	global $vars;
 
+	if($vars['DSE']['SCRIPT_COMMAND_FORMAT']){
+		$CommandFormat=$vars['DSE']['SCRIPT_COMMAND_FORMAT'];
+	}else{
+		$CommandFormat="(options)";
+	}
+	
 	$Usage="\n   ". $vars['DSE']['SCRIPT_NAME']." - " . $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF'] . "\n";
 	$Usage.="       part of https://github.com/devity/dse  - by Louy of Devity.com\n\n";
 	$Usage.=getColoredString("command line usage:","yellow","black");
 	$Usage.=getColoredString(" ". $vars['DSE']['SCRIPT_FILENAME'],"cyan","black");
-	$Usage.=getColoredString(" (options)","dark_cyan","black");
+	$Usage.=getColoredString(" $CommandFormat","dark_cyan","black");
 	$Usage.="\n\noptions: \n";
 	foreach($parameters_details as $parameter){
 		$f=$parameter[0];

@@ -13,11 +13,13 @@ $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="line and string replacer";
 $vars['DSE']['BTOP_VERSION']="v0.01b";
 $vars['DSE']['BTOP_VERSION_DATE']="2012/05/11";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="(options) input_file needle replace";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $parameters_details = array(
   array('h','help',"this message"),
   array('q','quiet',"same as -v 0"),
+  array('p','pattern',"treat needle as a pattern"),
   array('s','save',"overwrite argv[1]"),
   array('','version',"version info"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
@@ -37,7 +39,6 @@ foreach ($options as $option => $value) {
 }
 while ($key = array_pop($pruneargv)){ deleteFromArray($argv,$key,FALSE,TRUE); }
 
-$DoSaveOverwrite=FALSE;
 foreach (array_keys($options) as $opt) switch ($opt) {
 	case 'h':
   	case 'help':
@@ -55,6 +56,9 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 	case 's':
 	case 'save':
 		$DoSaveOverwrite=TRUE;
+	case 'p':
+	case 'pattern':
+		$TreatNeedleAsPattern=TRUE;
 		break;
 	case 'v':
 	case 'verbosity':
@@ -104,8 +108,13 @@ $raw_a=split("\n",$raw);
 $Out="";
 foreach($raw_a as $n=>$line){
 	if($Out!="") $Out.="\n";
-	$line=str_replace($Old,$New,$line);
-	if($Verbosity>=3) print "str_replace($Old,$New,$line);\n";
+	if($TreatNeedleAsPattern){
+		$line=preg_replace("/$Old/",$New,$line);
+		if($Verbosity>=3) print "preg_replace(\"/$Old/\",$New,$line);\n";
+	}else{
+		$line=str_replace($Old,$New,$line);
+		if($Verbosity>=3) print "str_replace($Old,$New,$line);\n";
+	}	
 	$Out.=$line;
 }
 
