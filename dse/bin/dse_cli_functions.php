@@ -79,12 +79,13 @@ function dse_install_file($Template,$Destination,$Mode="",$Owner=""){
 		return -2;	
 	}
 	
-	if($Mode){
-		$command="chmod -R $Mode $Destination";
-		`$command`;
-	}
+	
 	if($Owner){
 		$command="chown -R $Owner $Destination";
+		`$command`;
+	}
+	if($Mode){
+		$command="chmod -R $Mode $Destination";
 		`$command`;
 	}
 	
