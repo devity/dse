@@ -102,7 +102,7 @@ if(file_exists($DSE_Git_pull_script)){
 		print " unknown key: $key ";
 	}
 	print "\n";
-	
+}
 
 
 if($DidSomething){
