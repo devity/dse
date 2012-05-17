@@ -6,15 +6,10 @@ include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
 
 
-$vars[shell_colors_reset_foreground]='light_grey';
-$vars[shell_colors_reset_background]='black';
-$Start=time();
 $Verbosity=3;
 
 $Script=$argv[0];
-
 $ScriptName="dse";
-
 $parameters = array(
   'h' => 'help',
   'v' => 'listvars',
@@ -25,9 +20,7 @@ $flag_help_lines = array(
   'v' => "\listvars - list configuration variables",
 
 );
-
 $ScriptName_str=getColoredString($ScriptName, 'yellow', 'black');
-	
 $Usage="   $ScriptName_str - Devity Server Environment Managment Script
        by Louy of Devity.com
 
@@ -43,7 +36,6 @@ foreach($parameters as $k=>$v){
 }
 $Usage.="\n\n";
 
-$StartLoad=get_load();
 
 $options = _getopt(implode('', array_keys($parameters)),$parameters);
 $pruneargv = array();
@@ -67,12 +59,6 @@ foreach (array_keys($options) as $opt) switch ($opt) {
   		$ShowUsage=TRUE;
 		$DidSomething=TRUE;
 		break;
-	case 'v':
-  	case 'listvars':
-  		$ListVars=TRUE;
-		$DidSomething=TRUE;
-		break;
-
 }
 
 
@@ -89,66 +75,43 @@ if($Verbosity>=2){
 	//print "\n";  
 }
 
-if($argv[1]=="help"){
-	print "  ________ ___ __ _  _    _
- / dse Commands:     ( /dse/bin  Scripts )
-|     These scripts exist as their native language extension e.g. 'bottle_top.php' and as a soft link with no extension, in this case both 'bottle_top' and 'btop'
-+------ ---- --- -- - - -  -   -     -
-|  atime          - return unix time int of arg1's access time
-|  backup_etc     - backs up /etc
-   bh             - bash history grepper for arg1
-   btop           - bottle top - system bottle-neck analyzer
-|  dsizeof        - returns size in bytes of arg1
-   dse            - script that sets dse variables, get's status, provieds help, etc
-|  fss            - find string
-   grep2exe       - returns script name for a string on ps output lines
-   grep2pid       - returns PID for a string on ps output lines
-|  http_stress    - multi-threaded web-site stress tester
-   memcache-top   - top for memcache
-   mysqltuner     - mysqld config analyzer based on http://github.com/rackerhacker/MySQLTuner-perl
-   pid2exe        - returns the script name for a PID
-   rpms_extract   - rebuilds as near as possible a .rpm file for an installed package
-|  server_backup  - backup all server config and data
-   server_log_status - saves a copy of the output of over a dozen commands like ps, lsof, vmtstat, nmap, iostat, printenv, etc
-   server_monitor - server health monitor that takes actions (run scripts, send emails, etc) at various configurable thresholds
-   vibk           - backup arg1 then edit with vi
- 
-";
-	$DidSomething=TRUE;
-}
-	
-if($ShowUsage){
+if($argv[1]=="help" || $ShowUsage){
 	print $Usage;
 }
 
 
 
-if($ListVars){
-	$Body="";
-	//$Body.= " PATH = ".getenv("PATH")."\n";
+$DSE_Git_pull_script="/scripts/dse_git_pull";
+if(file_exists($DSE_Git_pull_script)){
+	print "DSE git pull script installed at $DSE_Git_pull_script   \n ";
+}else{
 	
-	$vars['DSE']['PATH']=getenv("PATH");
-
-	foreach($vars['DSE'] as $k=>$v){
-		if($v){
-			$Body.=" $k = ".getColoredString($v,"yellow","black")."\n";
+	print "DSE git pull script missing. Install to $DSE_Git_pull_script ? ";
+	$key=strtoupper(dse_get_key());
+	if($key=="Y"){
+		print " Installing! ";
+		$Template=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/" . "dse_git_pull";
+		$error_no=dse_install_file($Template,$DSE_Git_pull_script,"4775","root:root");
+		if($error_no){
+			print "Fatal error. Exiting.";
+			exit -1;
 		}
+	}elseif($key=="N"){
+		print " Not Installing. ";
+	}else{
+		print " unknown key: $key ";
 	}
-  	
-  	print dse_output_box("Config Variables:",$Body,"yellow","grey","light_grey");
+	print "\n";
+	
 
-}
 
 if($DidSomething){
 	$vars[shell_colors_reset_foreground]='';	print getColoredString("","white","black","black","black");
 	exit(0);
 }
 
-//if($argv[1]=="help"){
-	print $argv[1];
-	
-	exit(0);
-//}
+exit(0);
+
 
 
 

@@ -6,25 +6,18 @@ include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
 
 
-$vars[shell_colors_reset_foreground]='light_grey';
-$Start=time();
-$Verbosity=3;
-
+$Verbosity=2;
 $Script=$argv[0];
-
 $ScriptName="dse";
 
 $parameters = array(
   'h' => 'help',
-  
 );
 $flag_help_lines = array(
   'h' => "\thelp - this message",
-
 );
 
 $ScriptName_str=getColoredString($ScriptName, 'yellow', 'black');
-	
 $Usage="   $ScriptName_str - Devity Server Environment Managment Script
        by Louy of Devity.com
 
@@ -40,7 +33,6 @@ foreach($parameters as $k=>$v){
 }
 $Usage.="\n\n";
 
-$StartLoad=get_load();
 
 $options = _getopt(implode('', array_keys($parameters)),$parameters);
 $pruneargv = array();
@@ -64,9 +56,6 @@ foreach (array_keys($options) as $opt) switch ($opt) {
   		$ShowUsage=TRUE;
 		$DidSomething=TRUE;
 		break;
-	
-
-
 }
 
 
@@ -83,37 +72,37 @@ if($Verbosity>=2){
 	//print "\n";  
 }
 
-if($argv[1]=="help"){
-	print "  ________ ___ __ _  _    _
- / dse Commands:     ( /dse/bin  Scripts )
-|     These scripts exist as their native language extension e.g. 'bottle_top.php' and as a soft link with no extension, in this case both 'bottle_top' and 'btop'
-+------ ---- --- -- - - -  -   -     -
-|  atime          - return unix time int of arg1's access time
-|  backup_etc     - backs up /etc
-   bh             - bash history grepper for arg1
-   btop           - bottle top - system bottle-neck analyzer
-|  dsizeof        - returns size in bytes of arg1
-   dse            - script that sets dse variables, get's status, provieds help, etc
-|  fss            - find string
-   grep2exe       - returns script name for a string on ps output lines
-   grep2pid       - returns PID for a string on ps output lines
-|  http_stress    - multi-threaded web-site stress tester
-   memcache-top   - top for memcache
-   mysqltuner     - mysqld config analyzer based on http://github.com/rackerhacker/MySQLTuner-perl
-   pid2exe        - returns the script name for a PID
-   rpms_extract   - rebuilds as near as possible a .rpm file for an installed package
-|  server_backup  - backup all server config and data
-   server_log_status - saves a copy of the output of over a dozen commands like ps, lsof, vmtstat, nmap, iostat, printenv, etc
-   server_monitor - server health monitor that takes actions (run scripts, send emails, etc) at various configurable thresholds
-   vibk           - backup arg1 then edit with vi
- 
-";
-	$DidSomething=TRUE;
-}
-	
-if($ShowUsage){
+if($argv[1]=="help" || $ShowUsage){
 	print $Usage;
 }
+
+$DefaultInstallDirectory="/dse";
+if(file_exists($DefaultInstallDirectory)){
+	print "DSE already installed at $DefaultInstallDirectory    Reinstall? ";
+	$key=strtoupper(dse_get_key());
+	if($key=="Y"){
+		print " Reinstalling! ";
+	}elseif($key=="N"){
+		print " Not Reinstalling. ";
+	}else{
+		print " unknown key: $key ";
+	}
+	print "\n";
+}else{
+	print "DSE not installed at $DefaultInstallDirectory    Install? ";
+	$key=strtoupper(dse_get_key());
+	if($key=="Y"){
+		print " Installing! ";
+	}elseif($key=="N"){
+		print " Not installing. ";
+	}else{
+		print " unknown key: $key ";
+	}
+	print "\n";
+	
+}
+
+
 
 
 if($DidSomething){
@@ -122,7 +111,7 @@ if($DidSomething){
 }
 
 //if($argv[1]=="help"){
-	print $argv[1];
+//	print $argv[1];
 	
 	exit(0);
 //}

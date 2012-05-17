@@ -56,7 +56,34 @@ function dse_file_backup($file){
 }
 
  
- 
+function dse_install_file($Template,$Destination,$Mode="",$Owner=""){
+	global $vars;
+	
+	if(!file_exists($Template)) {
+		print " dse_install_file.ERROR: $Template missing. \n";
+		return -1;	
+	}
+	$command="cp -rf $Template $Destination";
+	`$command`;
+	if(!file_exists($Destination)) {
+		print " dse_install_file.ERROR: failed to create $Destination . \n";
+		return -2;	
+	}
+	
+	if($Mode){
+		$command="chmod -R $Mode $Destination";
+		`$command`;
+	}
+	if($Owner){
+		$command="chown -R $Owner $Destination";
+		`$command`;
+	}
+	
+	return 0;
+}
+
+
+
 function is_already_running($exe="",$ExitOnTrue=TRUE,$MessageOnExit=TRUE){
 	global $vars;
 	if($exe==""){
@@ -892,8 +919,21 @@ function get_load(){
 	return -1;
 }
 
-
-
+function dse_get_key(){
+	global $vars;
+	$keys=$vars['dse_get_key__keys'];
+	while($keys==""){
+		$keys=readline_timeout(1, '');
+	}
+	if(strlen($keys)>1){
+		$vars['dse_get_key__keys']=substr($keys,1);
+		return substr($keys,0,1);
+	}else{
+		$vars['dse_get_key__keys']="";
+		return $keys;
+	}
+}	
+	
 function readline_timeout($sec, $def){ 
     return trim(shell_exec('bash -c ' . 
         escapeshellarg('phprlto=' . 

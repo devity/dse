@@ -1,4 +1,6 @@
 <?
+$vars['DSE']['DSE_VERSION']="v0.02b";
+$vars['DSE']['DSE_VERSION_DATE']="2012/05/17";
 /*
  *  PHP Config / Settings Variable Setup for DSE ( https://github.com/devity/dse ) 
  * 
@@ -24,6 +26,11 @@ if(getenv("DSE_ROOT")!=""){
 	$vars['DSE']['DSE_ROOT']="/dse"; 
 }
 $vars['DSE']['DSE_BIN_DIR']=$vars['DSE']['DSE_ROOT']."/bin";
+$vars['DSE']['DSE_TEMPLATES_DIR']=$vars['DSE']['DSE_ROOT']."/install/templates";
+
+$vars['DSE']['DSE_GIT_ROOT']="/root/dse_git";
+
+
 
 if(getenv("DSE_CONFIG_DIR")!=""){
 	$vars['DSE']['DSE_CONFIG_DIR']=getenv("DSE_CONFIG_DIR");
@@ -89,8 +96,12 @@ $vars['DSE']['DSE_CONFIG_FILE_GLOBAL']=$vars['DSE']['DSE_CONFIG_DIR']."/"."dse.c
 $vars['DSE']=dse_read_config_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],$vars['DSE'],TRUE);
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
-$vars['DSE']['DSE_VERSION']="v0.01b";
-$vars['DSE']['DSE_VERSION_DATE']="2012/04/30";
+
+
+putenv ("DSE_GIT_ROOT=".$vars['DSE']['DSE_GIT_ROOT']);
+putenv ("DSE_MYSQL_CONF_FILE=".$vars['DSE']['MYSQL_CONF_FILE']);
+putenv ("DSE_MYSQL_LOG_FILE=".$vars['DSE']['MYSQL_LOG_FILE']);
+
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 

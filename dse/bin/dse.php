@@ -94,10 +94,9 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 }
 
 if($DoSetEnv){
-	putenv ("DSE_MYSQL_CONF_FILE=".$vars['DSE']['MYSQL_CONF_FILE']);
-	putenv ("DSE_MYSQL_LOG_FILE=".$vars['DSE']['MYSQL_LOG_FILE']);
 
 	print "#!/bin/bash\n";
+	print "export DSE_GIT_ROOT=".$vars['DSE']['DSE_GIT_ROOT']."\n";
 	print "export DSE_MYSQL_CONF_FILE=".$vars['DSE']['MYSQL_CONF_FILE']."\n";
 	print "export DSE_MYSQL_LOG_FILE=".$vars['DSE']['MYSQL_LOG_FILE']."\n";
 	
@@ -193,9 +192,20 @@ if($DoUpdate){
 	}else{
 		if(!$Quiet) print "Skipping backing up of current dse install.\n";
 	}
-	$Command="/scripts/dse_git_pull 2>&1";
-	$o=`$Command`;
-	if(!$Quiet) print $o;
+	$DSE_GIT_ROOT=getenv("DSE_GIT_ROOT");
+	if($DSE_GIT_ROOT){
+		if(file_exists($DSE_GIT_ROOT)){
+			$Command="/scripts/dse_git_pull 2>&1";
+			$o=`$Command`;
+			if(!$Quiet) print $o;
+		}else{
+			print "ERROR: DSE_GIT_ROOT=$DSE_GIT_ROOT does not exist.\n";
+			exit -1;
+		}
+	}else{
+		print "ERROR: DSE_GIT_ROOT unset.\n";
+		exit -1;
+	}
 }
 
 if($DidSomething){

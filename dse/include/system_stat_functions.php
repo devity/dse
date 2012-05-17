@@ -189,7 +189,7 @@ function dse_sysstats_mysql_status(){
 	//$Qcache_total_blocks_str=dse_bt_colorize($Qcache_total_blocks,20000);
 	$mysql_status_array[Qcache_free_memory_str]=dse_bt_colorize(number_format($Qcache_free_memory/(1024*1024),1),150001000/(1024*1024),"MINIMUM");
 
-	$section_mysql_stats.="Queries :$mysql_status_array[Queries]  Qps:$mysql_status_array[Qps_str]  Slow:$mysql_status_array[Slow_queries] %$mysql_status_array[Slow_percent] ";// LastCost:$Last_query_cost \n";
+	$section_mysql_stats.="Qps:$mysql_status_array[Qps_str]  Slow:$mysql_status_array[Slow_queries] %$mysql_status_array[Slow_percent] ";// LastCost:$Last_query_cost \n";
 	$section_mysql_stats.="Updates: $Handler_update  Delete: $Handler_delete  Write: $Handler_write\n";
 //	$section_mysql_stats.="Innodb bppf:$Innodb_buffer_pool_pages_free \n";
 	$section_mysql_stats.="Qcache free_blocks:$mysql_status_array[Qcache_free_blocks]  total_blocks:$mysql_status_array[Qcache_total_blocks] free_memory:$mysql_status_array[Qcache_free_memory_str]MB\n";
