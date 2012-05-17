@@ -1,4 +1,13 @@
 <?
+function dse_require_root(){
+	global $vars,$argv;
+	$user=trim(`whoami`);
+	if($user!="root"){
+		print "$argv[0] must be run as root.\n";
+		exit(-101);	
+	}
+}
+
 function md5_of_file($f){
         global $vars;
         $sw_vers=trim(`which md5 2>&1`);
