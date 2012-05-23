@@ -31,6 +31,56 @@ function md5_of_file($f){
         return -1;
 }
 
+
+function dse_configure_install_file_from_template($DestinationFile,$TemplateFile,$Mode,$Owner){
+	global $vars;
+	if(file_exists($DestinationFile)){
+		$CurrentPermissions=dse_file_get_mode($DestinationFile);
+		if(intval($Mode)!=$CurrentPermissions){
+			print "$DestinationFile permissions wrong. Expected $Mode, found $CurrentPermissions. Fix? ";
+			$key=strtoupper(dse_get_key());
+			if($key=="Y"){
+				print " Fixing! ";
+				$error_no=dse_file_set_mode($DestinationFile,$Mode);
+				if($error_no){
+					print "Fatal error. Exiting.\n";
+					return -1;
+				}
+			}elseif($key=="N"){
+				print " Not Fixing. \n";
+				return 0;
+			}else{
+				print " unknown key: $key \n";
+				return -2;
+			}
+			print "\n";
+			
+		}
+		
+		print "File already installed at $DestinationFile   \n ";
+	}else{
+		
+		print "DSE file missing. Install to $DestinationFile ? ";
+		$key=strtoupper(dse_get_key());
+		if($key=="Y"){
+			print " Installing! ";
+			$error_no=dse_install_file($TemplateFile,$DestinationFile,$Mode,$Owner);
+			if($error_no){
+				print "Fatal error. Exiting.\n";
+				return -1;
+			}
+		}elseif($key=="N"){
+			print " Not Installing. \n";
+			return 0;
+		}else{
+			print " unknown key: $key \n";
+			return -2;
+		}
+		print "\n";
+	}
+	return -100;
+}
+
 function files_are_same($f1,$f2){
 	global $vars;
 	$m1=md5_of_file($f1);
@@ -39,6 +89,26 @@ function files_are_same($f1,$f2){
 	return ($m1==$m2);
 }
 
+function dse_file_get_mode($DestinationFile){
+	global $vars;
+	$ModeInt=intval(substr(sprintf('%o', fileperms($DestinationFile)), -4));
+	return $ModeInt;
+}
+
+function dse_file_set_mode($DestinationFile,$Mode){
+	global $vars;
+	if($DestinationFile && $Mode){
+		$command="chmod -R $Mode $DestinationFile";
+		`$command`;
+		$CurrentPermissions=dse_file_get_mode($DestinationFile);
+		if(intval($Mode)!=$CurrentPermissions){
+			return -2;
+		}
+		return 0;
+	}
+	return -1;
+	
+}
 
 function dse_file_backup($file){
 	global $vars;

@@ -23,7 +23,19 @@ if($file==basename($file)){
 $backupfilename=dse_file_backup($file);
 print "backing up to: $backupfilename\n";
 
-passthru("/usr/bin/vim $file 2>&1");
+$vim="/usr/bin/vim";
+if(!file_exists($vim)){
+	$vim="/usr/bin/vi";
+	if(!file_exists($vim)){
+		$vim=trim(`which vi`);
+		if(!file_exists($vim)){
+			print "ERROR no vi present.\n";
+			exit(-102);
+		}
+	}
+}
+
+passthru("$vim $file 2>&1");
 
 if(files_are_same($file,$backupfilename)){
 	print "No change to $file. backup at $backupfilename removed\n";

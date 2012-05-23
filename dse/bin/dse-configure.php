@@ -7,34 +7,20 @@ include_once ("/dse/bin/dse_config.php");
 dse_require_root();
 $Verbosity=3;
 
-$Script=$argv[0];
-$ScriptName="dse";
-$parameters = array(
-  'h' => 'help',
-  'v' => 'listvars',
-  
+// ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
+$vars['DSE']['SCRIPT_NAME']="DSE Configure Script";
+$vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="setup of config files and settings";
+$vars['DSE']['CONFIGURE_VERSION']="v0.02b";
+$vars['DSE']['CONFIGURE_VERSION_DATE']="2012/05/22";
+$vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+// ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
+
+$parameters_details = array(
+  array('h','help',"this message"),
+  array('v','listvars',"list configuration variables"),
 );
-$flag_help_lines = array(
-  'h' => "\thelp - this message",
-  'v' => "\listvars - list configuration variables",
-
-);
-$ScriptName_str=getColoredString($ScriptName, 'yellow', 'black');
-$Usage="   $ScriptName_str - Devity Server Environment Managment Script
-       by Louy of Devity.com
-
-
-".getColoredString("command line usage:","yellow","black").
-getColoredString(" dse","cyan","black").
-getColoredString(" <args> (options)","dark_cyan","black")."     
-";
-foreach($parameters as $k=>$v){
-	$k2=str_replace(":","",$k);
-	$v2=str_replace(":","",$v);
-	$Usage.=" -${k2}, --${v2}\t".$flag_help_lines[$k]."\n";
-}
-$Usage.="\n\n";
-
+$parameters=dse_cli_get_paramaters_array($parameters_details);
+$Usage=dse_cli_get_usage($parameters_details);
 
 $options = _getopt(implode('', array_keys($parameters)),$parameters);
 $pruneargv = array();
@@ -50,8 +36,6 @@ while ($key = array_pop($pruneargv)){
 	deleteFromArray($argv,$key,FALSE,TRUE);
 }
 
-
-$IsSubprocess=FALSE;
 foreach (array_keys($options) as $opt) switch ($opt) {
 	case 'h':
   	case 'help':
@@ -60,15 +44,14 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 		break;
 }
 
-
 if($Verbosity>=2){
 	//print getColoredString("","black","black");
 	print getColoredString("    ########======-----________   ", 'light_blue', 'black');
-	print getColoredString($ScriptName,"yellow","black");
+	print getColoredString($vars['DSE']['SCRIPT_NAME'],"yellow","black");
 	print getColoredString("   ______-----======########\n", 'light_blue', 'black');
 	print "  ___________ ______ ___ __ _ _   _                      \n";
 	print " /                           Configuration Settings\n";
-	print "|  * Script: $Script\n";
+	print "|  * Script: ".$vars['DSE']['SCRIPT_FILENAME']."\n";
 	print "|  * Verbosity: $Verbosity\n";
 	print " \________________________________________________________ __ _  _   _\n";
 	//print "\n";  
@@ -78,31 +61,20 @@ if($argv[1]=="help" || $ShowUsage){
 	print $Usage;
 }
 
-
+// ********* main script activity ************
 
 $DSE_Git_pull_script="/scripts/dse_git_pull";
-if(file_exists($DSE_Git_pull_script)){
-	print "DSE git pull script installed at $DSE_Git_pull_script   \n ";
-}else{
-	
-	print "DSE git pull script missing. Install to $DSE_Git_pull_script ? ";
-	$key=strtoupper(dse_get_key());
-	if($key=="Y"){
-		print " Installing! ";
-		$Template=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/" . "dse_git_pull";
-		$error_no=dse_install_file($Template,$DSE_Git_pull_script,"4775","root:root");
-		if($error_no){
-			print "Fatal error. Exiting.";
-			exit -1;
-		}
-	}elseif($key=="N"){
-		print " Not Installing. ";
-	}else{
-		print " unknown key: $key ";
-	}
-	print "\n";
-}
+$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/scripts/" . "dse_git_pull";
+dse_configure_install_file_from_template($DSE_Git_pull_script,$TemplateFile,"4775","root:root");
 
+
+$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "dse.conf";
+dse_configure_install_file_from_template($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],$TemplateFile,"664","root:root");
+
+
+
+
+print getColoredString("Done!\n","green","black","black","black");
 
 if($DidSomething){
 	$vars[shell_colors_reset_foreground]='';	print getColoredString("","white","black","black","black");
@@ -112,6 +84,8 @@ if($DidSomething){
 exit(0);
 
 
+
+	
 
 
 

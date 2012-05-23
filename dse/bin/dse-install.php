@@ -104,6 +104,12 @@ if(file_exists($DefaultInstallDirectory)){
 }
 
 
+//check installed packages:
+
+//perl
+//php5
+//vim
+
 
 
 if($DidSomething){

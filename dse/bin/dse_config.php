@@ -1,6 +1,7 @@
 <?
-$vars['DSE']['DSE_VERSION']="v0.02b";
-$vars['DSE']['DSE_VERSION_DATE']="2012/05/17";
+$vars['DSE']['DSE_VERSION']="v0.03";
+$vars['DSE']['DSE_VERSION_STATUS']="alpha";
+$vars['DSE']['DSE_VERSION_DATE']="2012/05/22";
 /*
  *  PHP Config / Settings Variable Setup for DSE ( https://github.com/devity/dse ) 
  * 
