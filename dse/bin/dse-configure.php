@@ -4,6 +4,7 @@ error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
+include_once ("/dse/bin/dse_config_functions.php");
 dse_require_root();
 $vars['Verbosity']=1;
 
@@ -44,7 +45,7 @@ if($argv[1]=="help" || $ShowUsage){
 
 
 dse_file_link("/usr/bin/php",trim(`which php`));
-//print "test214123\n";
+
 $wget=dse_which("wget");
 //print "wget=$wget\n";
 if($wget){
@@ -53,13 +54,26 @@ if($wget){
 	print getColoredString("ERROR: wget not installed.\n","red","black");
 }
 
+
+
 $DSE_Git_pull_script="/scripts/dse_git_pull";
 $TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/scripts/" . "dse_git_pull";
 dse_configure_file_install_from_template($DSE_Git_pull_script,$TemplateFile,"4775","root:root");
 
-
 $TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "dse.conf";
 dse_configure_file_install_from_template($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],$TemplateFile,"664","root:root");
+
+
+
+
+if(dse_is_osx()){
+	dse_file_set_owner($vars['DSE']['DSE_BIN_DIR']."/dnetstat.php","root:wheel");
+}else{
+	dse_file_set_owner($vars['DSE']['DSE_BIN_DIR']."/dnetstat.php","root:root");
+}
+dse_file_set_mode($vars['DSE']['DSE_BIN_DIR']."/dnetstat.php","4755");
+
+
 
 
 // ********* main script activity END ************

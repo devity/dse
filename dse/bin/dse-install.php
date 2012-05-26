@@ -4,6 +4,7 @@ error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
+include_once ("/dse/bin/dse_config_functions.php");
 
 dse_require_root();
 $vars['Verbosity']=1;
@@ -156,7 +157,7 @@ $dse_git_dir="$PWD/dse/dse";
 
 $PackageNamesArray=array("wget");
 $OSXPackageNamesArray=array("lynx");
-$NotOSXPackageNamesArray=array("php5","perl","vim","memstat","iftop","sysstat","chkconfig","lynx-cur");
+$NotOSXPackageNamesArray=array("perl","vim","memstat","iftop","sysstat","chkconfig","lynx-cur");
 	
 if(dse_is_osx()){
 	foreach($OSXPackageNamesArray as $p) $PackageNamesArray[]=$p;
