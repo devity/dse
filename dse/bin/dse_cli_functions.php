@@ -333,7 +333,7 @@ function dse_package_install($PackageName){
 		return -1;
 	}
 	if($Installer=='yum'){
-		$Command="sudo yum -yv install $PackageName 2>&1";
+		$Command="sudo yum -y install $PackageName 2>&1";
 		$r=`$Command`;
 		 print "cmd: $Command   r=".$r."\n";
 		if(!(strstr($r,"already installed")===FALSE)){
