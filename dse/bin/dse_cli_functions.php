@@ -334,7 +334,7 @@ function dse_package_install($PackageName){
 	}
 	
 	if($Installer){
-		print getColoredString("$Installer ","red","black");
+		print getColoredString("$Installer ","purple","black");
 	}else{
 		print getColoredString("FATAL ERROR: No Compatible Installer Found missing.\n","red","black");
 		return -1;

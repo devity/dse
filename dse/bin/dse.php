@@ -68,7 +68,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	
   	case 'i':
   	case 'install':
-		$r=passthru("dse-install");
+		$r=passthru($vars['DSE']['DSE_BIN_DIR']."/dse-install");
 		if($r<0){
 			if(!$Quiet && !$DoSetEnv){
 				print getColoredString($vars['DSE']['SCRIPT_NAME']." FATAL ERROR. Exiting (0)","black","green");
@@ -80,7 +80,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
   	case 'c':
   	case 'configure':
-		$r=passthru("dse-configure");
+		$r=passthru($vars['DSE']['DSE_BIN_DIR']."/dse-configure");
 		if($r<0){
 			if(!$Quiet && !$DoSetEnv){
 				print getColoredString($vars['DSE']['SCRIPT_NAME']." FATAL ERROR. Exiting (0)","black","green");
