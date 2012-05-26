@@ -1,3 +1,4 @@
-Version: v0.03
-Status: alpha
-Release Date: 2012/05/22
+Version: v0.031
+Build: 23
+Release: alpha
+Modified: 2012/05/26

@@ -1,51 +1,35 @@
    ________/                                     \
-  /           dse - Devity Server Environment     \______ ___ __ _  _    _
+  /           DSE - Devity Server Environment     \______ ___ __ _  _    _
   |  
-  |    dse is rather new and experimental at this stage. Provide feedback!
+  |    DSE is rather new and experimental at this stage. Provide feedback!
   |  
   |    A collection of command line utilities, testing & analitic scripts, 
  /   server managment tools & more.
 /
-|  For more info run:  
-     /dse/bin/dse help  
-     /dse/bin/dse --help # will show /dse/bin/dse specific usage help 
-|               	    
-|        or add the [--help|-h] flag to any dse script/program. e.g.:
-                   /dse/bin/btop --help
+|  For more info:  
+            /dse/bin/dse --help 
+|   or   add the [--help|-h] flag to any DSE script/program. e.g.:
+            /dse/bin/btop --help
  \________ ___ ___ ___ ___ __ __ __ _ _ _  _  _    _     _     _
  /  Requirements:
-| #      dse scripts/commands use a variety of languages: sh, perl, php
+| #      DSE scripts/commands use a variety of languages: sh, perl, php
 |
  \________ ___ ___ ___ ___ __ __ __ _ _ _  _  _    _     _     _
- /  Install dse with:
-    # 1:   get a copy of the dse repository contents:
-             1.a.1>  git clone git://github.com/devity/dse.git
-             		 sudo yum install git-core     #if necessary
-                   or
-             1.b.1> download https://github.com/devity/dse/tarball/master 
-             			and save or rename as a .tar.gz
-             1.b.2> then upzip and install to final destination
-           
-    # 2:   from whatever directory dse ends up in, start an interactive 
-            install/configuration with:
-                ./dse/bin/dse-install
-    # 3:   later, re-run the same dse configuration that occures during 
-            install with:
-                /dse/bin/dse-configure
- \_______ ___ ___ ___ ___ __ __ __ _ _ _  _  _    _     _     _
- /  Optional Install Steps:
-#  update your PATH to include /dse/bin or as appropriate
-      add the following line to /etc/profile or appropriate:
-      	PATH=$PATH:/dse/bin ;export PATH 
-#  link to or copy the downloaded dse directory to /dse or as appropriate
-      from the same directory you issued the git clone, 
-      	to copy:   sudo cp -rf dse/dse /.
-      	to move:   sudo mv -rf dse/dse /.
-      	to link:   sudo ln -s $PWD/dse/dse /dse
-
-
+ /  DOWNLOAD DSE with:
+  git:  git clone git://github.com/devity/dse.git
+        to install git, if needed:  sudo apt-get install git git-core     
+             		   
+  http[s]:  download https://github.com/devity/dse/tarball/master 
+        and save as a .tar.gz then upzip and install to destination
  \________ ___ ___ ___ ___ __ __ __ _ _ _  _  _    _     _     _
- /  dse Commands:     ( /dse/bin  Scripts )
+ /  INSTALL DSE with:
+           
+ From whatever directory DSE ends up in, start an interactive 
+  install & configuration with:
+        php ./dse/bin/dse-install
+        to install php, if needed:  sudo apt-get install php5    
+ \________ ___ ___ ___ ___ __ __ __ _ _ _  _  _    _     _     _
+ /  DSE Commands:     ( /dse/bin  Scripts )
 |     These scripts exist as their native language extension e.g.:
   bottle_top.php and as a soft link, in this case both bottle_top and btop
 +------ ---- --- -- - - -  -   -     -
@@ -59,6 +43,8 @@
    dsizeof        - returns size in bytes of arg1
    dse            - script that sets dse variables, get's status, provides 
                      help, etc
+   dse-install    - installs dse on server
+   dse-configure  - runs setup of config and variables and environment
    dse_set-env    - sets dse vars for shell. use: ". /dse/bin/dse_set-env"
    dsm            - devity server monitor - watches load, processes, hd, etc.
    dtmp           - returns a valid, unique full /tmp/ filename

@@ -1,4 +1,64 @@
 <?
+function dse_which($prog){
+	global $vars;
+	$Command="which $prog 2>&1";
+	$r=`$Command`;
+	//print "Command=$Command r=$r\n";
+	if(!(strstr($r,"no $prog in")===FALSE)){
+		return "";
+	}else{
+		return trim($r);
+	}
+}
+
+function dse_cli_script_start(){
+	global $vars,$argv;
+	
+	if($vars['Verbosity']>2 || $vars['DSE']['SCRIPT_SETTINGS']['Verbosity']>2){
+		print "options=".debug_tostring($vars['options'])."\n";
+		print "argv=".debug_tostring($argv)."\n";
+	}
+	
+	$vars['options'] = _getopt(implode('', array_keys($vars['parameters'])),$vars['parameters']);
+	$pruneargv = array();
+	foreach ($vars['options'] as $option => $value) {
+	  foreach ($argv as $key => $chunk) {
+	    $regex = '/^'. (isset($option[1]) ? '--' : '-') . $option . '/';
+	    if ($chunk == $value && $argv[$key-1][0] == '-' || preg_match($regex, $chunk)) {
+	      array_push($pruneargv, $key);
+	    }
+	  }
+	}
+	while ($key = array_pop($pruneargv)){
+		deleteFromArray($argv,$key,FALSE,TRUE);
+	}
+		
+}
+
+
+function dse_cli_script_header(){
+	global $vars;
+	if($vars['Verbosity']>1 || $vars['DSE']['SCRIPT_SETTINGS']['Verbosity']>1){
+		//print getColoredString("","black","black");
+		print getColoredString("    ########======-----________   ", 'light_blue', 'black');
+		print getColoredString($vars['DSE']['SCRIPT_NAME'],"yellow","black");
+		print getColoredString("   ______-----======########\n", 'light_blue', 'black');
+		print "  ___________ ______ ___ __ _ _   _                      \n";
+		print " /                           Configuration Settings\n";
+		if($vars['DSE']['SCRIPT_SETTINGS']){
+			foreach($vars['DSE']['SCRIPT_SETTINGS'] as $k=>$v){
+				print "|  * $k: $v\n";
+			}
+		}else{
+			print "|  * Script: ".$vars['DSE']['SCRIPT_FILENAME']."\n";
+			print "|  * Verbosity: ".$vars['Verbosity']."\n";
+		}
+		print " \________________________________________________________ __ _  _   _\n";
+		//print "\n";  
+	}
+}
+
+
 function dse_require_root(){
 	global $vars,$argv;
 	$user=trim(`whoami`);
@@ -32,54 +92,6 @@ function md5_of_file($f){
 }
 
 
-function dse_configure_install_file_from_template($DestinationFile,$TemplateFile,$Mode,$Owner){
-	global $vars;
-	if(file_exists($DestinationFile)){
-		$CurrentPermissions=dse_file_get_mode($DestinationFile);
-		if(intval($Mode)!=$CurrentPermissions){
-			print "$DestinationFile permissions wrong. Expected $Mode, found $CurrentPermissions. Fix? ";
-			$key=strtoupper(dse_get_key());
-			if($key=="Y"){
-				print " Fixing! ";
-				$error_no=dse_file_set_mode($DestinationFile,$Mode);
-				if($error_no){
-					print "Fatal error. Exiting.\n";
-					return -1;
-				}
-			}elseif($key=="N"){
-				print " Not Fixing. \n";
-				return 0;
-			}else{
-				print " unknown key: $key \n";
-				return -2;
-			}
-			print "\n";
-			
-		}
-		
-		print "File already installed at $DestinationFile   \n ";
-	}else{
-		
-		print "DSE file missing. Install to $DestinationFile ? ";
-		$key=strtoupper(dse_get_key());
-		if($key=="Y"){
-			print " Installing! ";
-			$error_no=dse_install_file($TemplateFile,$DestinationFile,$Mode,$Owner);
-			if($error_no){
-				print "Fatal error. Exiting.\n";
-				return -1;
-			}
-		}elseif($key=="N"){
-			print " Not Installing. \n";
-			return 0;
-		}else{
-			print " unknown key: $key \n";
-			return -2;
-		}
-		print "\n";
-	}
-	return -100;
-}
 
 function files_are_same($f1,$f2){
 	global $vars;
@@ -94,6 +106,20 @@ function dse_file_get_mode($DestinationFile){
 	$ModeInt=intval(substr(sprintf('%o', fileperms($DestinationFile)), -4));
 	return $ModeInt;
 }
+
+function dse_file_delete($File){
+	global $vars;
+	if(!$File){
+		return -1;
+	}
+	if(str_contains($File,array(" ",",","/","\\","&",">","<","|","!","`","^","?",";",":"))){
+		return -2;
+	}
+	$r=`rm -f $File`;
+	return 0;
+}
+
+
 
 function dse_file_set_mode($DestinationFile,$Mode){
 	global $vars;
@@ -134,21 +160,78 @@ function dse_file_backup($file){
 	}
 }
 
- 
-function dse_install_file($Template,$Destination,$Mode="",$Owner=""){
+
+function dse_file_link($LinkFile,$DestinationFile){
+	global $vars;
+	print "DSE file link: $LinkFile ";
+	if(!$LinkFile){
+		print getColoredString("Error: No LinkFile given.\n","red","black");
+		return -2;
+	}
+	if(!$DestinationFile){
+		print getColoredString("Error: No DestinationFile given.\n","red","black");
+		return -3;
+	}
+	if(file_exists($LinkFile)) {
+		$DestinationFileCurrent=dse_file_link_get_destination($LinkFile);
+		if($DestinationFileCurrent==-3){
+			print getColoredString(" file exists. not a link. \n","green","black");
+			return 0;	
+		}else{
+			if(file_exists($DestinationFileCurrent)){
+				print getColoredString(" link exists. -> $DestinationFileCurrent \n","green","black");
+				return 0;	
+			}
+		}
+	}else{
+		$DestinationFileCurrent=dse_file_link_get_destination($LinkFile);
+		if($DestinationFileCurrent>=0){
+			print getColoredString(" link broken. ","orange","black");
+			dse_file_delete($LinkFile);
+		}
+	}
+	print "linking to: $DestinationFile ";
+	$Command="ln -s $DestinationFile $LinkFile";
+	$r=`$Command`;	
+	if(!file_exists($LinkFile)) {
+		print getColoredString(" ERROR creating link. cmd: $Command   result=$r\n","red","black");
+		return -1;	
+	}
+	print getColoredString(" Added.\n","green","black");
+	return 0;
+}
+
+
+function dse_file_link_get_destination($LinkFile){
 	global $vars;
 	
+	if(!file_exists($LinkFile)) {
+		//return -1;	
+	}
+	$DestinationFile=(`ls -la $LinkFile`);
+	$DestinationFile=strcut($DestinationFile,"-> ","\n");	
+	if($DestinationFile!="") {
+		return $DestinationFile;	
+	}
+	if(file_exists($LinkFile)){
+		return -3;
+	}
+	return -2;
+}
+ 
+function dse_file_install($Template,$Destination,$Mode="",$Owner=""){
+	global $vars;
+	print "DSE file: $Template ";
 	if(!file_exists($Template)) {
-		print " dse_install_file.ERROR: $Template missing. \n";
+		print getColoredString(" ERROR: Template missing. \n","red","black");
 		return -1;	
 	}
 	$command="cp -rf $Template $Destination";
 	`$command`;
 	if(!file_exists($Destination)) {
-		print " dse_install_file.ERROR: failed to create $Destination . \n";
+		print getColoredString(" ERROR: failed to create $Destination . \n","red","black");
 		return -2;	
 	}
-	
 	
 	if($Owner){
 		$command="chown -R $Owner $Destination";
@@ -158,11 +241,177 @@ function dse_install_file($Template,$Destination,$Mode="",$Owner=""){
 		$command="chmod -R $Mode $Destination";
 		`$command`;
 	}
-	
+	print getColoredString(" Installed.\n","green","black");
 	return 0;
 }
 
 
+function dse_install_yum(){
+	global $vars;
+	if($vars['DSE']['YUM_INSTALL__FAILED']==TRUE) return -1;
+	print getColoredString(" Installing yum... ","blue","black");
+	
+	$yum=`which apt-get`;
+	if(!(strstr($yum,"no apt-get in")===FALSE)){
+		print getColoredString(" Using apt-get... ","green","black");
+		$Command="sudo apt-get -yV install yum 2>&1";
+		$r=`$command`;
+		print getColoredString(" Installed.\n","green","black");
+		return 0;
+	}
+	//fink selfupdate-rsync
+	
+	//fink update-all
+	
+	/*
+	$installer=`which port`;
+	//print "which port=$installer\n";
+	if( ($installer!="") && (!(strstr($installer,"/port")===FALSE))  ){
+		print getColoredString(" Using MacPort's: port... ","green","black");
+		$Command="sudo port -vp install yum 2>&1";
+		$r=passthru($Command);
+		$Command2="sudo port -vp upgrade outdated 2>&1";
+		$r2=passthru($Command2);
+		$Command3="sudo port -vp activate yum 2>&1";
+		$r3=passthru($Command3);
+		print getColoredString(" Installed. cmd: $Command \n r=$r\n","green","black");
+		return 0;
+	}
+	*/
+	
+	print getColoredString(" ERROR: no usable package installer in PATH. \n","red","black");
+	
+	if(dse_is_osx()){
+		//wget https://distfiles.macports.org/MacPorts/MacPorts-2.1.1-10.6-SnowLeopard.pkg
+		print " Install http://http://www.finkproject.org/ manually and rerun this install.\n";
+	}else{
+		print " Please install one of the following: yum, or apt-get \n";
+	}
+	$vars['DSE']['YUM_INSTALL__FAILED']=TRUE;
+	return -1;	
+}
+//sudo apt-get -yv update
+//sudp apt-get -yv upgrade
+//sudo port -v selfupdate
+
+function dse_package_install($PackageName){
+	global $vars;
+	
+	$Installer="";
+	
+	if(dse_is_osx()){
+		/*$port=`which port`;
+		if(($port) && ((strstr($port,"no port in")===FALSE)) ){
+			$Installer="port";
+		}
+		
+		$brew=`which brew`;
+		if(($brew) && ((strstr($brew,"no brew in")===FALSE)) ){
+			$Installer="brew";
+		}*/
+		$fink=dse_which("fink");
+		if($fink){
+			$Installer="fink";
+		}
+	}
+	if(!$Installer){
+		$yum=`which yum`;
+		if((!$yum) || (!(strstr($yum,"no yum in")===FALSE)) ){
+			//print "installing yum\n";
+			dse_install_yum();
+			$yum=`which yum`;
+		}else{
+			$Installer="yum";
+		}
+		//print "yum=$yum\n";
+	}
+	
+	
+  	print "DSE requirement: $PackageName ";
+	if(!$PackageName){
+    	print getColoredString(" ERROR: PackageName missing. \n","red","black");
+		return -1;
+	}
+	if($Installer=='yum'){
+		$Command="sudo yum -yv install $PackageName 2>&1";
+		$r=`$Command`;
+		 print "cmd: $Command   r=".$r."\n";
+		if(!(strstr($r,"already installed")===FALSE)){
+			print getColoredString(" Already Installed.\n","green","black");
+			return 0;
+	  	}elseif(!(strstr($r,"Installed:")===FALSE)){
+			print getColoredString(" Installed!\n","green","black");
+			return 0;
+	  	}else{
+		    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
+		   // print "r=".$r."\n";
+			return -1;
+		}
+	}elseif($Installer=='fink'){
+		
+		$Command="dpkg -L $PackageName 2>&1";
+		$r=`$Command`;
+		if(!str_contains($r,"s not installed") ){
+			print getColoredString(" Already Installed.\n","green","black");
+			return 0;
+		}
+		
+		$Command="sudo fink -yv install $PackageName 2>&1";
+		$r=passthru($Command);
+		// print "cmd: $Command   r=".$r."\n";
+		if(!(strstr($r,"Failed")===FALSE)){
+			print getColoredString(" Install Failed!\n","red","black");
+			return -1;
+	  	}elseif(!(strstr($r,"Installed:")===FALSE)){
+			print getColoredString(" Installed!\n","green","black");
+			return 0;
+	  	}elseif(!(strstr($r,"o package found fo")===FALSE)){
+			print getColoredString(" Unkown Package name: $PackageName!\n","red","black");
+			return -1;
+	  	}else{
+		    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
+		    print "r=".$r."\n";
+			return -1;
+		}
+	}else{
+		print getColoredString(" ERROR: no supported package installer found \n","red","black");
+		   
+	}
+	/* else if($Installer=='port'){
+		$Command="sudo port -pv install $PackageName 2>&1";
+		$r=`$Command`;
+		 print "cmd: $Command   r=".$r."\n";
+		if(!(strstr($r,"already installed")===FALSE)){
+			print getColoredString(" Already Installed.\n","green","black");
+			return 0;
+	  	}elseif(!(strstr($r,"Installed:")===FALSE)){
+			print getColoredString(" Installed!\n","green","black");
+			return 0;
+	  	}else{
+		    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
+		   // print "r=".$r."\n";
+			return -1;
+		}
+	}elseif($Installer=='brew'){
+		$Command="sudo -u louis /usr/local/bin/brew install $PackageName 2>&1";
+		$r=`$Command`;
+		// print "cmd: $Command   r=".$r."\n";
+		if(!(strstr($r,"already installed")===FALSE)){
+			print getColoredString(" Already Installed.\n","green","black");
+			return 0;
+	  	}elseif(!(strstr($r,"Installed:")===FALSE)){
+			print getColoredString(" Installed!\n","green","black");
+			return 0;
+	  	}elseif(!(strstr($r,"No available formula for")===FALSE)){
+			print getColoredString(" Unkown Package name: $PackageName!\n","red","black");
+			return 0;
+	  	}else{
+		    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
+		    print "r=".$r."\n";
+			return -1;
+		}
+	} */
+}
 
 function is_already_running($exe="",$ExitOnTrue=TRUE,$MessageOnExit=TRUE){
 	global $vars;
@@ -287,7 +536,17 @@ function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 }
 
 
-
+function str_contains($str,$needle){
+	global $vars;
+	if(is_array($needle)){
+		foreach($needle as $n){
+			if(!(strstr($str,$n)===FALSE)) return TRUE;
+		}
+	}else{
+		if(!(strstr($str,$needle)===FALSE)) return TRUE;
+	}
+	return FALSE;
+}
 
 function strcut($haystack,$pre,$post=""){
 	global $strcut_post_haystack;
@@ -693,7 +952,8 @@ function str_compare_count_matching_prefix_chars($a,$b){
 }
 
 
-
+global $debug_tostring_output_txt; 	$debug_tostring_output_txt=TRUE;
+	
 function debug_tostring(&$var){
 	global $vars;
 	global $debug_tostring_indent;
@@ -965,7 +1225,7 @@ function dse_is_osx(){
 		return $vars['DSE']['IS_OSX'];
 	}
 	$sw_vers=trim(`which sw_vers 2>&1`);
-	if(!(strstr($sw_vers,"no sw_vers in")===FALSE)){
+	if( (!(strstr($sw_vers,"no sw_vers in")===FALSE)) || $sw_vers==""){
 		$vars['DSE']['IS_OSX']=FALSE;
 	}else{
 		$OSXVersion =trim(`sw_vers `);
@@ -1550,6 +1810,7 @@ function getColoredString($string, $foreground_color = null, $background_color =
 	
 	$vars[shell_foreground_colors]['blink_yellow'] = '5;93';
 	$vars[shell_foreground_colors]['brown'] = '10;33';
+	$vars[shell_foreground_colors]['orange'] = '10;33';
 	$vars[shell_foreground_colors]['yellow'] = '0;93';
 	$vars[shell_foreground_colors]['bold_yellow'] = '1;93';
 	
@@ -1580,6 +1841,7 @@ function getColoredString($string, $foreground_color = null, $background_color =
 	$vars[shell_background_colors]['red'] = '101';
 	$vars[shell_background_colors]['green'] = '102';
 	$vars[shell_background_colors]['yellow'] = '103';
+	$vars[shell_background_colors]['orange'] = '43';
 	$vars[shell_background_colors]['blue'] = '104';
 	$vars[shell_background_colors]['magenta'] = '105';
 	$vars[shell_background_colors]['cyan'] = '106';
@@ -1654,7 +1916,11 @@ function cbp_cursor_left($N=1){
 function cbp_cursor_up($N=1){
         print "\033[${N}A";
 }
-
+function cbp_characters_clear($N=1){
+		print "\033[${N}D";
+		for($i=0;$i<$n;$i++) print " ";
+        print "\033[${N}D";
+}
 
 
 // ************ System Stats    ** System Stats    ** System Stats    ** System Stats    ** System Stats    
@@ -1799,8 +2065,99 @@ function http_lynx_get($URL){
 	$URL=str_replace("\"","%34",$URL);
 	$URL=str_replace("\n","",$URL);
 	//return `/usr/bin/lynx -connect_timeout=10 -source "$URL"`;	
-	return `/opt/local/bin/wget -qO- "$URL"`;	
+	$wget=dse_which("wget");
+	if($wget){
+		return `$wget -qO- "$URL"`;	
+	}else{
+		if(file_exists("/usr/bin/wget")){
+			return `/usr/bin/wget -qO- "$URL"`;	
+		}else{
+			print getColoredString("ERROR: no wget\n","red","black");
+			return "";
+		}
+	}
 }
  
+
+function dse_configure_file_link($LinkFile,$DestinationFile){
+	global $vars;
+	print "DSE file link: $LinkFile =>  ";
+	if(file_exists($LinkFile)){
+		print getColoredString(" Exists! \n","green","black");
+		return 0;
+	}else{
+		print getColoredString(" Missing: \n","red","black");
+		print "   link to: $DestinationFile ? ";
+		$key=strtoupper(dse_get_key());
+		cbp_characters_clear(1);
+		if($key=="Y"){
+			print getColoredString(" Linking! ","green","black");
+			$error_no=dse_file_link($LinkFile,$DestinationFile);
+			if($error_no){
+				print getColoredString("Fatal error. Exiting.\n","red","black");
+				return -1;
+			}
+		}elseif($key=="N"){
+			print getColoredString(" Skipping. \n","orange","black");
+			return 0;
+		}else{
+			print getColoredString(" unknown key: $key \n","red","black");
+			return -2;
+		}
+	}
+}
+
+
+function dse_configure_file_install_from_template($DestinationFile,$TemplateFile,$Mode,$Owner){
+	global $vars;
+	print "DSE template: $TemplateFile ";
+	if(file_exists($DestinationFile)){
+		$CurrentPermissions=dse_file_get_mode($DestinationFile);
+		if(intval($Mode)!=$CurrentPermissions){
+			print "$DestinationFile permissions wrong. Expected $Mode, found $CurrentPermissions. Fix? ";
+			$key=strtoupper(dse_get_key());
+			cbp_characters_clear(1);
+			if($key=="Y"){
+				print getColoredString(" Fixing! ","green","black");
+				$error_no=dse_file_set_mode($DestinationFile,$Mode);
+				if($error_no){
+					print getColoredString("Fatal error. Exiting.\n","red","black");
+					return -1;
+				}
+			}elseif($key=="N"){
+				print getColoredString(" Not Fixing.\n","orange","black");
+				return 0;
+			}else{
+				print getColoredString(" unknown key: $key\n","red","black");
+				return -2;
+			}
+			print "\n";
+			
+		}
+		print getColoredString(" Installed","green","black");
+		print " at $DestinationFile\n";
+	}else{
+		print getColoredString(" File missing.","red","black");
+		print " Install to $DestinationFile ? ";
+		$key=strtoupper(dse_get_key());
+		cbp_characters_clear(1);
+		if($key=="Y"){
+			print getColoredString(" Installing! ","green","black");
+			$error_no=dse_file_install($TemplateFile,$DestinationFile,$Mode,$Owner);
+			if($error_no){
+				print getColoredString("Fatal error. Exiting.\n","red","black");
+				return -1;
+			}
+		}elseif($key=="N"){
+			print getColoredString(" Not Fixing.\n","orange","black");
+			return 0;
+		}else{
+			print getColoredString(" unknown key: $key\n","red","black");
+			return -2;
+		}
+		print "\n";
+	}
+	return -100;
+}
 
 ?>

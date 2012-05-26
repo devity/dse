@@ -4,54 +4,28 @@ error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
+
 dse_require_root();
+$vars['Verbosity']=1;
 
+// ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
+$vars['DSE']['SCRIPT_NAME']="DSE Install Script";
+$vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="install of files and setting up settings";
+$vars['DSE']['CONFIGURE_VERSION']="v0.01a";
+$vars['DSE']['CONFIGURE_VERSION_DATE']="2012/05/25";
+$vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+// ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
-$Verbosity=2;
-$Script=$argv[0];
-$ScriptName="dse";
-
-$parameters = array(
-  'h' => 'help',
+$parameters_details = array(
+  array('h','help',"this message"),
 );
-$flag_help_lines = array(
-  'h' => "\thelp - this message",
-);
-
-$ScriptName_str=getColoredString($ScriptName, 'yellow', 'black');
-$Usage="   $ScriptName_str - Devity Server Environment Managment Script
-       by Louy of Devity.com
-
-
-".getColoredString("command line usage:","yellow","black").
-getColoredString(" dse","cyan","black").
-getColoredString(" <args> (options)","dark_cyan","black")."     
-";
-foreach($parameters as $k=>$v){
-	$k2=str_replace(":","",$k);
-	$v2=str_replace(":","",$v);
-	$Usage.=" -${k2}, --${v2}\t".$flag_help_lines[$k]."\n";
-}
-$Usage.="\n\n";
-
-
-$options = _getopt(implode('', array_keys($parameters)),$parameters);
-$pruneargv = array();
-foreach ($options as $option => $value) {
-  foreach ($argv as $key => $chunk) {
-    $regex = '/^'. (isset($option[1]) ? '--' : '-') . $option . '/';
-    if ($chunk == $value && $argv[$key-1][0] == '-' || preg_match($regex, $chunk)) {
-      array_push($pruneargv, $key);
-    }
-  }
-}
-while ($key = array_pop($pruneargv)){
-	deleteFromArray($argv,$key,FALSE,TRUE);
-}
-
-
-$IsSubprocess=FALSE;
-foreach (array_keys($options) as $opt) switch ($opt) {
+$vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
+$vars['Usage']=dse_cli_get_usage($parameters_details);
+$vars['argv_origional']=$argv;
+dse_cli_script_start();
+		
+$BackupBeforeUpdate=TRUE;
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'h':
   	case 'help':
   		$ShowUsage=TRUE;
@@ -59,58 +33,154 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 		break;
 }
 
-
-if($Verbosity>=2){
-	//print getColoredString("","black","black");
-	print getColoredString("    ########======-----________   ", 'light_blue', 'black');
-	print getColoredString($ScriptName,"yellow","black");
-	print getColoredString("   ______-----======########\n", 'light_blue', 'black');
-	print "  ___________ ______ ___ __ _ _   _                      \n";
-	print " /                           Configuration Settings\n";
-	print "|  * Script: $Script\n";
-	print "|  * Verbosity: $Verbosity\n";
-	print " \________________________________________________________ __ _  _   _\n";
-	//print "\n";  
-}
+dse_cli_script_header();
 
 if($argv[1]=="help" || $ShowUsage){
-	print $Usage;
+	print $vars['Usage'];
 }
 
-$DefaultInstallDirectory="/dse";
-if(file_exists($DefaultInstallDirectory)){
-	print "DSE already installed at $DefaultInstallDirectory    Reinstall? ";
-	$key=strtoupper(dse_get_key());
-	if($key=="Y"){
-		print " Reinstalling! ";
-	}elseif($key=="N"){
-		print " Not Reinstalling. ";
-	}else{
-		print " unknown key: $key ";
-	}
-	print "\n";
+
+
+// ********* main script activity START ************
+
+print "Checking: sudo Logging: ";
+$SUDOLOG="/var/log/sudolog";
+$v=trim(`grep logfile= /etc/sudoers &>/dev/null`);
+if($v==""){
+  //`sudo echo "Defaults logfile=$SUDOLOG" | sudo tee -a /etc/sudoers &>/dev/null`;
+  print getColoredString(" Set to: $SUDOLOG\n","green","black");
 }else{
-	print "DSE not installed at $DefaultInstallDirectory    Install? ";
-	$key=strtoupper(dse_get_key());
-	if($key=="Y"){
-		print " Installing! ";
-	}elseif($key=="N"){
-		print " Not installing. ";
-	}else{
-		print " unknown key: $key ";
-	}
-	print "\n";
+  print getColoredString(" Already set: $v\n","blue","black");
+}
+/*
+echo -n "Reenabeling /var/log/messages: "
+echo -e "$_TODO"
+#sudo vi /etc/rsyslog.d/50-default.conf
+#if [ $? -eq 0 ]; then
+#   echo -e "$_OK"
+#else
+#   echo -e "$_FATAL"
+#   exit -1;
+#fi
+
+
+echo -n "Restarting rsyslog: "
+sudo service rsyslog restart
+if [ $? -eq 0 ]; then
+   echo -e "$_OK"
+else
+   echo -e "$_FATAL"
+   exit -1;
+fi
+*/
+
+
+
+
+$PWD=trim(`pwd`);
+$DefaultInstallDirectory=$vars['DSE']['DSE_ROOT'];
+$dse_git_dir="$PWD/dse/dse";
+{
 	
+	if(file_exists($DefaultInstallDirectory)){
+		print "DSE already installed at $DefaultInstallDirectory    Reinstall? ";
+		$key=strtoupper(dse_get_key());
+		cbp_characters_clear(1);
+		if($key=="Y"){
+			if(!file_exists($dse_git_dir)){
+				print getColoredString("\nNo DSE git repo found at $dse_git_dir\n","red","black");
+				print "Would you like to [E]nter a path, auto-[S]earch for it, or [Q]uit? ";
+				$key=strtoupper(dse_get_key());
+				cbp_characters_clear(1);
+				if($key=="Q"){
+					script_exit_fatal();
+				}elseif($key=="E"){
+					print "not supported\n";
+					script_exit_fatal();
+				}elseif($key=="S"){
+					print "not supported\n";
+					script_exit_fatal();
+				}else{
+					print " unknown key: $key ";
+				}
+			}else{
+				print " Reinstalling! ";
+				dse_file_delete($DefaultInstallDirectory);
+				dse_file_link($DefaultInstallDirectory,$dse_git_dir);
+			}
+		}elseif($key=="N"){
+			print " Not Reinstalling. ";
+		}else{
+			print " unknown key: $key ";
+		}
+		print "\n";
+	}else{
+		print "DSE not installed at $DefaultInstallDirectory    Install? ";
+		$key=strtoupper(dse_get_key());
+		cbp_characters_clear(1);
+		if($key=="Y"){
+			if(!file_exists($dse_git_dir)){
+				print getColoredString("\nNo DSE git repo found at $dse_git_dir\n","red","black");
+				print "Would you like to [E]nter a path, auto-[S]earch for it, or [Q]uit? ";
+				$key=strtoupper(dse_get_key());
+				cbp_characters_clear(1);
+				if($key=="Q"){
+					script_exit_fatal();
+				}elseif($key=="E"){
+					print "not supported\n";
+					script_exit_fatal();
+				}elseif($key=="S"){
+					print "not supported\n";
+					script_exit_fatal();
+				}else{
+					print " unknown key: $key ";
+				}
+			}else{
+				print " Installing! ";
+				dse_file_link($DefaultInstallDirectory,$dse_git_dir);
+			}
+		}elseif($key=="N"){
+			print " Not installing. ";
+		}else{
+			print " unknown key: $key ";
+		}
+		print "\n";
+	}
 }
 
 
-//check installed packages:
 
-//perl
-//php5
-//vim
+//"lynx-cur","postfix","cron-apt","perl-tk","xosview","dselect","openvpn",""
+//"memstat","iftop","sysstat","chkconfig","mytop",""
+//"dnsutils","bind9","vsftpd","tasksel",""
+
+$PackageNamesArray=array("wget");
+$OSXPackageNamesArray=array("lynx");
+$NotOSXPackageNamesArray=array("php5","perl","vim","memstat","iftop","sysstat","chkconfig","lynx-cur");
+	
+if(dse_is_osx()){
+	foreach($OSXPackageNamesArray as $p) $PackageNamesArray[]=$p;
+}else{
+	foreach($NotOSXPackageNamesArray as $p) $PackageNamesArray[]=$p;
+}
+	
+	
+foreach($PackageNamesArray as $PackageName){
+	$r=dse_package_install($PackageName);
+	if($r<0){
+		print getColoredString("FATAL ERROR: installing package $PackageName\n","red","black");
+		print getColoredString($vars['DSE']['SCRIPT_FILENAME']."Exiting.\n","red","black");
+		exit(-1);
+	}
+}
 
 
+
+
+
+// ********* main script activity END ************
+
+print getColoredString($vars['DSE']['SCRIPT_FILENAME']." Done!\n","green","black","black","black");
 
 if($DidSomething){
 	$vars[shell_colors_reset_foreground]='';	print getColoredString("","white","black");
@@ -125,7 +195,12 @@ if($DidSomething){
 
 
 
-
+function script_exit_fatal(){
+	global $vars;
+	print getColoredString($vars['DSE']['SCRIPT_FILENAME']." Fatal Error. Exiting!\n","red","black");
+	$vars[shell_colors_reset_foreground]='';	print getColoredString("","white","black");
+	exit(0);
+}
 	 
 
 ?>

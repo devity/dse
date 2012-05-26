@@ -6,18 +6,6 @@ include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/include/system_stat_functions.php");
 include_once ("/dse/bin/dse_config.php");
 
-
-$vars[shell_colors_reset_foreground]='light_grey';
-$Start=time();
-$Verbosity=0;
-$ReloadSeconds=30;
-$MaxLoops=30;
-$ForceHighLoadRun=FALSE;
-$MaxLoadBeforeExit=5;
-$Threads=3;
-
-
-
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="Bottle Top";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="top-like system bottleneck analyzer";
@@ -26,7 +14,12 @@ $vars['DSE']['BTOP_VERSION_DATE']="2012/04/30";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
-
+$vars['DSE']['SCRIPT_SETTINGS']['Verbosity']=0;
+$vars['DSE']['SCRIPT_SETTINGS']['ForceHighLoadRun']=FALSE;
+$vars['DSE']['SCRIPT_SETTINGS']['MaxLoadBeforeExit']=5;
+$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']=FALSE;
+$vars['DSE']['SCRIPT_SETTINGS']['ReloadSeconds']=20;
+$vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']=25;
 
 $parameters_details = array(
   array('h','help',"this message"),
@@ -39,38 +32,21 @@ $parameters_details = array(
   array('m:','maxloops:',"# refreshes before auto exit"),
   array('z:','maxload:',"system load level to trigger auto exit"),
 );
-$parameters=dse_cli_get_paramaters_array($parameters_details);
-$Usage=dse_cli_get_usage($parameters_details);
+$vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
+$vars['Usage']=dse_cli_get_usage($parameters_details);
+$vars['argv_origional']=$argv;
+dse_cli_script_start();
 
-
-
-$options = _getopt(implode('', array_keys($parameters)),$parameters);
-$pruneargv = array();
-foreach ($options as $option => $value) {
-  foreach ($argv as $key => $chunk) {
-    $regex = '/^'. (isset($option[1]) ? '--' : '-') . $option . '/';
-    if ($chunk == $value && $argv[$key-1][0] == '-' || preg_match($regex, $chunk)) {
-      array_push($pruneargv, $key);
-    }
-  }
-}
-while ($key = array_pop($pruneargv)){
-	deleteFromArray($argv,$key,FALSE,TRUE);
-}
-
-
-$IsSubprocess=FALSE;
-$EasyOnly=FALSE;
-foreach (array_keys($options) as $opt) switch ($opt) {
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'q':
 	case 'quiet':
 		$Quiet=TRUE;
-		$Verbosity=0;
+		$vars['DSE']['SCRIPT_SETTINGS']['Verbosity']=0;
 		break;
 	case 'v':
 	case 'verbosity':
-		$Verbosity=$options[$opt];
-		if($Verbosity>=2) print "Verbosity set to $Verbosity\n";
+		$vars['DSE']['SCRIPT_SETTINGS']['Verbosity']=$vars['options'][$opt];
+		if($vars['DSE']['SCRIPT_SETTINGS']['Verbosity']>=2) print "Verbosity set to ".$vars['DSE']['SCRIPT_SETTINGS']['Verbosity']."\n";
 		break;
 	case 'h':
   	case 'help':
@@ -83,36 +59,28 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 		break;
 	case 'f':
 	case 'force':
-		$ForceHighLoadRun=TRUE;
+		$vars['DSE']['SCRIPT_SETTINGS']['ForceHighLoadRun']=TRUE;
 		break;
 	case 'e':
 	case 'easy-only':
-		$EasyOnly=TRUE;
-		if($Verbosity>=2) print "EasyOnly set to TRUE\n";
+		$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']=TRUE;
+		if($vars['DSE']['SCRIPT_SETTINGS']['Verbosity']>=2) print "EasyOnly set to TRUE\n";
 		break;
-		
-	case 't':
-		$Threads=$options['t'];
-		if($Verbosity>=2) print "# Threads set to $Threads\n";
-		break;
-	case 'threads':
-		$Threads=$options['threads'];
-		if($Verbosity>=2) print "# Threads set to $Threads\n";
-		break;
+
 	case 's':
 	case 'reload-seconds':
-		$ReloadSeconds=$options[$opt];
-		if($Verbosity>=2) print "reload-seconds set to $ReloadSeconds\n";
+		$vars['DSE']['SCRIPT_SETTINGS']['ReloadSeconds']=$vars['options'][$opt];
+		if($vars['DSE']['SCRIPT_SETTINGS']['Verbosity']>=2) print "reload-seconds set to ".$vars['DSE']['SCRIPT_SETTINGS']['ReloadSeconds']."\n";
 		break;
 	case 'm':
 	case 'maxloops':
-		$MaxLoops=$options[$opt];
-		if($Verbosity>=2) print "maxloops set to $MaxLoops\n";
+		$vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']=$vars['options'][$opt];
+		if($vars['DSE']['SCRIPT_SETTINGS']['Verbosity']>=2) print "maxloops set to ".$vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']."\n";
 		break;
 	case 'z':
 	case 'maxload':
-		$MaxLoadBeforeExit=$options[$opt];
-		if($Verbosity>=2) print "MaxLoadBeforeExit set to $MaxLoadBeforeExit\n";
+		$vars['DSE']['SCRIPT_SETTINGS']['MaxLoadBeforeExit']=$vars['options'][$opt];
+		if($vars['DSE']['SCRIPT_SETTINGS']['Verbosity']>=2) print "MaxLoadBeforeExit set to ".$vars['DSE']['SCRIPT_SETTINGS']['MaxLoadBeforeExit']."\n";
 		break;
 
 
@@ -120,24 +88,11 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 }
 
 
-if($Verbosity>=2){
-	//print getColoredString("","black","black");
-	print getColoredString("    ########======-----________   ", 'light_blue', 'black');
-	print getColoredString($vars['DSE']['SCRIPT_NAME'],"yellow","black");
-	print getColoredString("   ______-----======########\n", 'light_blue', 'black');
-	print "  ___________ ______ ___ __ _ _   _                      \n";
-	print " /                           Configuration Settings\n";
-	print "|  * Script: ".$vars['DSE']['SCRIPT_FILENAME']."\n";
-	print "|  * MaxLoadBeforeExit: $MaxLoadBeforeExit\n";
-	print "|  * Verbosity: $Verbosity\n";
-	print "|  * reload-seconds: $ReloadSeconds\n";
-	print "|  * Number of Threads: $Threads\n";
-	print " \________________________________________________________ __ _  _   _\n";
-	print "\n";  
-}
+dse_cli_script_header();
+
 
 if($ShowUsage){
-	print $Usage;
+	print $vars['Usage'];
 }
 if($ShowVersion){
 	print "DSE Version: " . $vars['DSE']['DSE_VERSION'] . "  Release Date: " . $vars['DSE']['DSE_VERSION_DATE'] ."\n";
@@ -167,12 +122,12 @@ global $diskstats_lasttime,$section_httpd;
 
 
 	
-if($ReloadSeconds<1) $ReloadSeconds=1;
+if($vars['DSE']['SCRIPT_SETTINGS']['ReloadSeconds']<1) $vars['DSE']['SCRIPT_SETTINGS']['ReloadSeconds']=1;
 $DoLoop=TRUE;
 $Loops=0;
-while($DoLoop && ($MaxLoops==0 || $Loops<$MaxLoops)){
+while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars['DSE']['SCRIPT_SETTINGS']['MaxLoops'])){
 	if($Loops>0) {
-		$SleepLeft=$ReloadSeconds;
+		$SleepLeft=$vars['DSE']['SCRIPT_SETTINGS']['ReloadSeconds'];
 		while($SleepLeft>0){
 		
 			sbp_cursor_postion(0,0);
@@ -182,29 +137,33 @@ while($DoLoop && ($MaxLoops==0 || $Loops<$MaxLoops)){
 			$Load_str=getColoredString("$Load", 'yellow', 'black');
 			$Loops_str=getColoredString($Loops+1, 'yellow', 'black');
 			
-			
-			$this_loadavg=`cat /proc/loadavg`;
-			if($this_loadavg!=""){
-				$this_loadavg=str_replace("  ", " ", $this_loadavg); 
-				$this_loadavg=str_replace("  ", " ", $this_loadavg); 
-				$this_loadavg=str_replace("  ", " ", $this_loadavg); 
-				$loadaggA=split(" ",$this_loadavg);
-				$load_1=number_format($loadaggA[0],2);
-				$load_2=number_format($loadaggA[1],2);
-				$load_3=number_format($loadaggA[2],2);
-				$threads=$loadaggA[3];
-				$threadsa=split("/",$threads);
-				$threads_running=$threadsa[0];
-				$threads_total=$threadsa[1];
-				$threads_running=dse_bt_colorize($threads_running,2.001);
-				$threads_str="$threads_running/$threads_total";
-				$last_pid=$loadaggA[4];
+			if(!dse_is_osx()){
+				$this_loadavg=`cat /proc/loadavg`;
+				if($this_loadavg!=""){
+					$this_loadavg=str_replace("  ", " ", $this_loadavg); 
+					$this_loadavg=str_replace("  ", " ", $this_loadavg); 
+					$this_loadavg=str_replace("  ", " ", $this_loadavg); 
+					$loadaggA=split(" ",$this_loadavg);
+					$load_1=number_format($loadaggA[0],2);
+					$load_2=number_format($loadaggA[1],2);
+					$load_3=number_format($loadaggA[2],2);
+					$threads=$loadaggA[3];
+					$threadsa=split("/",$threads);
+					$threads_running=$threadsa[0];
+					$threads_total=$threadsa[1];
+					$threads_running=dse_bt_colorize($threads_running,2.001);
+					$threads_str="$threads_running/$threads_total";
+					$last_pid=$loadaggA[4];
+					$load_1_str=dse_bt_colorize($load_1,2.001);
+		 			$Load_str="Load: $load_1_str:$load_2:$load_3    Threads:$threads_str";
+				}
+			}else{
+				$load_1=get_load();
 				$load_1_str=dse_bt_colorize($load_1,2.001);
-	 			$Load_str="Load: $load_1_str:$load_2:$load_3    Threads:$threads_str";
+		 		$Load_str="Load: $load_1_str";
 			}
 			
-			
-			$str= "   Loop: $Loops_str / $MaxLoops  Next: ${SleepLeft_str}s      $Load_str   \n";
+			$str= "   Loop: $Loops_str / ".$vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']."  Next: ${SleepLeft_str}s      $Load_str   \n";
 			print $str;
 		
 			//sleep(1);
@@ -232,15 +191,15 @@ while($DoLoop && ($MaxLoops==0 || $Loops<$MaxLoops)){
 							sleep(1);
 							break;
 						case '-':
-							$ReloadSeconds=intval($ReloadSeconds*5/4);
+							$vars['DSE']['SCRIPT_SETTINGS']['ReloadSeconds']=intval($vars['DSE']['SCRIPT_SETTINGS']['ReloadSeconds']*5/4);
 							sbp_cursor_postion(0,0);
-							print getColoredString("ReloadSeconds raised to $ReloadSeconds\n", 'green', 'black');
+							print getColoredString("ReloadSeconds raised to ".$vars['DSE']['SCRIPT_SETTINGS']['ReloadSeconds']."\n", 'green', 'black');
 							sleep(1);
 							break;
 						case '+':
-							$ReloadSeconds=intval($ReloadSeconds*3/4);
+							$vars['DSE']['SCRIPT_SETTINGS']['ReloadSeconds']=intval($vars['DSE']['SCRIPT_SETTINGS']['ReloadSeconds']*3/4);
 							sbp_cursor_postion(0,0);
-							print getColoredString("ReloadSeconds lowered to $ReloadSeconds\n", 'green', 'black');
+							print getColoredString("ReloadSeconds lowered to ".$vars['DSE']['SCRIPT_SETTINGS']['ReloadSeconds']."\n", 'green', 'black');
 							sleep(1);
 							break;	
 						case 'q':
@@ -282,7 +241,7 @@ while($DoLoop && ($MaxLoops==0 || $Loops<$MaxLoops)){
 	print "$str\n";
 
 	$Load=get_load();
-	if((!$ForceHighLoadRun) && $Load>$MaxLoadBeforeExit){
+	if((!$vars['DSE']['SCRIPT_SETTINGS']['ForceHighLoadRun']) && $Load>$vars['DSE']['SCRIPT_SETTINGS']['MaxLoadBeforeExit']){
 		print getColoredString("high load ($Load). Exiting ".$vars['DSE']['SCRIPT_FILENAME'].". \n\n", 'white', 'red');
 		$vars[shell_colors_reset_foreground]='';	print getColoredString("","white","black");
 		exit(-2);
@@ -305,7 +264,7 @@ exit(0);
 
 function update_display($keys=""){
 	//global $c,$t,$tt,$st,$Key,$FoundKeys,$file_scan_last,$file_keys_found,$i1,$i2,$i3,$i4,$ScanContinue,$NoDiplayYet;
-	global $vars,$Loops,$EasyOnly;
+	global $vars,$Loops;
 	global $diskstats_lasttime,$section_httpd;
 	
 	if($keys){
@@ -332,7 +291,7 @@ function update_display($keys=""){
 		
 	
 		global $section_files_open;
-		if( (!$EasyOnly) && ($Loops%5)==0 ){
+		if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) && ($Loops%5)==0 ){
 			print "dse_sysstats_files_open()\n";
 			$dse_sysstats_files_open_array=dse_sysstats_files_open();
 			$section_files_open=$dse_sysstats_files_open_array[2];
@@ -340,7 +299,7 @@ function update_display($keys=""){
 		
 		
 		global $section_procio;
-		if( (!$EasyOnly) && ($Loops%5)==0 ){
+		if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) && ($Loops%5)==0 ){
 			print "dse_sysstats_proc_io()\n";
 			$dse_sysstats_proc_io_array=dse_sysstats_proc_io();
 			$section_procio=$dse_sysstats_proc_io_array[1];
@@ -512,7 +471,7 @@ function update_display($keys=""){
 		print "grep \"$DateStr\" $LogFileName > $TmpFileName\n";
 		`grep $DateStr $LogFileName > $TmpFileName`;
 		*/
-	if( (!$EasyOnly) && ($Loops%5)==0 ){
+	if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) && ($Loops%5)==0 ){
 		print "section_httpd_log()\n";
 		
 		$LogFileName="/home/httpd/batteriesdirect.com/stats/batteriesdirect.com-custom_log";
@@ -565,7 +524,7 @@ function update_display($keys=""){
 	}
 
 	global $section_disk;
-	if( (!$EasyOnly) &&  ($Loops<=2 || ($Loops%5)==0 ) ){
+	if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) &&  ($Loops<=2 || ($Loops%5)==0 ) ){
 		print "section_disk()\n";
 		
 		

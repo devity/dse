@@ -4,11 +4,7 @@ error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
-
-
-
-$Verbosity=0;
-
+$vars['Verbosity']=1;
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE";
@@ -18,49 +14,34 @@ $vars['DSE']['DSE_DSE_VERSION_DATE']="2012/04/30";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
-
 $parameters_details = array(
   array('h','help',"this message"),
   array('q','quiet',"same as --verbosity 0"),
   array('u','update',"updates dse from github"),
+  array('u','upgrade',"same as --update"),
   array('v','update-no-backup',"does a --update w/o backing up current dse install"),
   array('e','edit',"backs up and launches a vim of ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']),
+  array('i','install',"launches dse-install"),
+  array('c','configure',"launches dse-configure"),
   array('s','set-env',"set shell environment variables"),
-  array('','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('y','verbosity:',"0=none 1=some 2=more 3=debug"),
 );
-$parameters=dse_cli_get_paramaters_array($parameters_details);
-$Usage=dse_cli_get_usage($parameters_details);
-
-
-
-
-
-$options = _getopt(implode('', array_keys($parameters)),$parameters);
-$pruneargv = array();
-foreach ($options as $option => $value) {
-  foreach ($argv as $key => $chunk) {
-    $regex = '/^'. (isset($option[1]) ? '--' : '-') . $option . '/';
-    if ($chunk == $value && $argv[$key-1][0] == '-' || preg_match($regex, $chunk)) {
-      array_push($pruneargv, $key);
-    }
-  }
-}
-while ($key = array_pop($pruneargv)){
-	deleteFromArray($argv,$key,FALSE,TRUE);
-}
-
-
-$IsSubprocess=FALSE;
+$vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
+$vars['Usage']=dse_cli_get_usage($parameters_details);
+$vars['argv_origional']=$argv;
+dse_cli_script_start();
+		
 $BackupBeforeUpdate=TRUE;
-foreach (array_keys($options) as $opt) switch ($opt) {
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'q':
 	case 'quiet':
 		$Quiet=TRUE;
-		$Verbosity=0;
+		$vars['Verbosity']=0;
 		break;
+  	case 'y':
 	case 'verbosity':
-		$Verbosity=$options[$opt];
-		if($Verbosity>=2) print "Verbosity set to $Verbosity\n";
+		$vars['Verbosity']=$vars['options'][$opt];
+		if($vars['Verbosity']>=2) print "Verbosity set to ".$vars['Verbosity']."\n";
 		break;
 	case 'h':
   	case 'help':
@@ -69,6 +50,7 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 		break;
 	case 'u':
   	case 'update':
+  	case 'upgrade':
   		$DoUpdate=TRUE;
 		$DidSomething=TRUE;
 		break;
@@ -81,6 +63,31 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 	case 's':
   	case 'set-env':
   		$DoSetEnv=TRUE;
+		$DidSomething=TRUE;
+		break;
+	
+  	case 'i':
+  	case 'install':
+		$r=passthru("dse-install");
+		if($r<0){
+			if(!$Quiet && !$DoSetEnv){
+				print getColoredString($vars['DSE']['SCRIPT_NAME']." FATAL ERROR. Exiting (0)","black","green");
+				$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
+			}
+			exit(-1);
+		}
+		$DidSomething=TRUE;
+		break;
+  	case 'c':
+  	case 'configure':
+		$r=passthru("dse-configure");
+		if($r<0){
+			if(!$Quiet && !$DoSetEnv){
+				print getColoredString($vars['DSE']['SCRIPT_NAME']." FATAL ERROR. Exiting (0)","black","green");
+				$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
+			}
+			exit(-1);
+		}
 		$DidSomething=TRUE;
 		break;
 	
@@ -120,22 +127,9 @@ if($EarlyExit){
 	exit(0);
 }
 
-if($Verbosity>1){
-	//print getColoredString("","black","black");
-	print getColoredString("    ########======-----________   ", 'light_blue', 'black');
-	print getColoredString($vars['DSE']['SCRIPT_NAME'],"yellow","black");
-	print getColoredString("   ______-----======########\n", 'light_blue', 'black');
-	print "  ___________ ______ ___ __ _ _   _                      \n";
-	print " /                           Configuration Settings\n";
-	print "|  * Script: ".$vars['DSE']['SCRIPT_FILENAME']."\n";
-	print "|  * Verbosity: $Verbosity\n";
-	print " \________________________________________________________ __ _  _   _\n";
-	//print "\n";  
-}
+dse_cli_script_header();
 
-//print "argv[1]=$argv[1]\n";
-if($argv[1]=="help"){
-	print "  ________ ___ __ _  _    _
+$vars['Usage'].= "\n  ________ ___ __ _  _    _
  / dse Commands:     ( /dse/bin  Scripts )
 |     These scripts exist as their native language extension e.g. 'bottle_top.php' and as a soft link with no extension, in this case both 'bottle_top' and 'btop'
 +------ ---- --- -- - - -  -   -     -
@@ -159,8 +153,7 @@ if($argv[1]=="help"){
    vibk           - backup arg1 then edit with vi
  
 ";
-	$DidSomething=TRUE;
-}
+	
  
 if($argv[1]=="configure"){
 	$PassArgString=""; for($PassArgString_i=1;$PassArgString_i<sizeof($argv);$PassArgString_i++) $PassArgString.=" ".$argv[$PassArgString_i];
@@ -175,7 +168,7 @@ if($argv[1]=="configure"){
 
 	
 if($ShowUsage){
-	print $Usage;
+	print $vars['Usage'];
 }
 if($DoUpdate){
 	$Date_str=date("YmdGis");
