@@ -315,25 +315,53 @@ function dse_package_install($PackageName){
 		}
 	}
 	if(!$Installer){
-		$yum=`which yum`;
-		if((!$yum) || (!(strstr($yum,"no yum in")===FALSE)) ){
-			//print "installing yum\n";
+		$aptget=dse_which("apt-get");
+		if($aptget){
+			$Installer="apt-get";
+		}
+	}
+	if(!$Installer){
+		$yum=dse_which("yum");
+		if(!$yum){
 			dse_install_yum();
-			$yum=`which yum`;
+			$yum=dse_which("yum");
+			if($yum){
+				$Installer="yum";
+			}
 		}else{
 			$Installer="yum";
 		}
-		//print "yum=$yum\n";
 	}
 	
+	if($Installer){
+		print getColoredString("$Installer ","red","black");
+	}else{
+		print getColoredString("FATAL ERROR: No Compatible Installer Found missing.\n","red","black");
+		return -1;
+	}
 	
-  	print "DSE requirement: $PackageName ";
+  	print "install package $PackageName ";
 	if(!$PackageName){
     	print getColoredString(" ERROR: PackageName missing. \n","red","black");
 		return -1;
 	}
 	if($Installer=='yum'){
 		$Command="sudo yum -y install $PackageName 2>&1";
+		$r=`$Command`;
+		 print "cmd: $Command   r=".$r."\n";
+		if(!(strstr($r,"already installed")===FALSE)){
+			print getColoredString(" Already Installed.\n","green","black");
+			return 0;
+	  	}elseif(!(strstr($r,"Installed:")===FALSE)){
+			print getColoredString(" Installed!\n","green","black");
+			return 0;
+	  	}else{
+		    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
+		   // print "r=".$r."\n";
+			return -1;
+		}
+	}elseif($Installer=='apt-get'){
+		$Command="sudo apt-get -y install $PackageName 2>&1";
 		$r=`$Command`;
 		 print "cmd: $Command   r=".$r."\n";
 		if(!(strstr($r,"already installed")===FALSE)){
