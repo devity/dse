@@ -8,7 +8,7 @@ function dse_sysstats_sdvcqwev(){
 	
 function dse_sysstats_net_listening(){
 	global $vars;
-	if(dse_which("lsof")){
+	if(FALSE && dse_which("lsof")){
 		$str="";
 		$Command="sudo lsof -iTCP -sTCP:LISTEN -P -n";
 		$raw=`$Command`;
