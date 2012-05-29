@@ -119,35 +119,38 @@ function dse_sysstats_connected($Port){
 					$lpa[3]=strcut($lpa[3],":");
 				}
 				$local_ipNport=$lpa[3];
+				$local_ip=strcut($local_ipNport,"",":");
 				$local_port=strcut($local_ipNport,":");
-				
+				$lpa[3]=array($local_ip,$local_port);
 				if(str_contains($lpa[4],"::")){
 					$lpa[4]=substr($lpa[4],2);
 					$lpa[4]=strcut($lpa[4],":");
 				}
 				$foreign_ipNport=$lpa[4];
 				$foreign_ip=strcut($foreign_ipNport,"",":");
+				$foreign_port=strcut($foreign_ipNport,":");
+				$lpa[4]=array($foreign_ip,$foreign_port);
 				
-				print "local_ipNport=$local_ipNport foreign_ipNport=$foreign_ipNport $local_port==$Port lpa5=$lpa[5] l=$line\n";
+				//print "local_ipNport=$local_ipNport foreign_ipNport=$foreign_ipNport $local_port==$Port lpa5=$lpa[5] l=$line\n";
 				if($local_port==$Port && $lpa[5]!="LISTEN"){
-					print " (adding? $foreign_ip) ";
+					//print " (adding? $foreign_ip) ";
 					$ip_already_added=FALSE;
 					foreach($tbr_array as $ea){
-						if($ea[4]==$foreign_ip) $ip_already_added=TRUE;
+						if($ea[4][0]==$foreign_ip) $ip_already_added=TRUE;
 					}
 					if(!$ip_already_added){
-						print " (unique $foreign_ip) ";
+						//print " (unique $foreign_ip) ";
 						$str.= "$foreign_ip ";
 						$tbr_array[]=$lpa;
 					}
-					print " (1str=$str) ";
+					//print " (1str=$str) ";
 						
 				}
-					print " (2str=$str) ";
+					//print " (2str=$str) ";
 			}
 		}
 		
-					print " (3str=$str) ";
+					//print " (3str=$str) ";
 		return array($tbr_array,$raw,$raw_array,$str);
 	}
 	return NULL;
