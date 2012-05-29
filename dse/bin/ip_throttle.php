@@ -20,6 +20,7 @@ $parameters_details = array(
   array('y','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('i','info',"info about <IP>"),
   array('l','log',"log request from <IP>"),
+  array('b','block',"add block for request from <IP>"),
   array('c','count',"return count of requests from <IP> recently"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
@@ -54,7 +55,29 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   		$ShowUsage=TRUE;
 		$DidSomething=TRUE;
 		break;
-  
+		
+	case 'b':
+	case 'block':
+		if(sizeof($argv)==1){
+			print "No IP given. Exiting.\n";
+			exit(-1);
+		}
+		$IP=$argv[1];
+		if(!file_exists($vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'])){
+			print "Droplist file (".$vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'].") missing. Exiting.\n";
+			exit(-3);
+		}
+		$c="grep $IP ".$vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'];
+		$r=`$c`;
+		if($c=="$IP\n"){
+			print "$IP Already Blocked.\n";
+			exit(0);
+		}
+		$c="echo \"$IP\" >> ".$vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'];
+		$r=`$c`;
+		print "$IP Blocked.\n";
+		exit(0);
+		break;
 	case 'l':
 	case 'log':
 		if(sizeof($argv)==1){
@@ -73,9 +96,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			exit(-1);
 		}
 		$IP=$argv[1];
-		$c="grep \"^$IP\$\" $LogFile1 | wc -l";
+		$c="grep \"^$IP\$\" $LogFile1 2>/dev/null | wc -l";
 		$r=trim(`$c`);
-		$c="grep \"^$IP\$\" $LogFile2 | wc -l";
+		$c="grep \"^$IP\$\" $LogFile2 2>/dev/null | wc -l";
 		$r2=trim(`$c`)+$r;
 		print "$r2\n";
 		exit(0);
