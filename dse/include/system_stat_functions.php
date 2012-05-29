@@ -126,13 +126,15 @@ function dse_sysstats_connected($Port){
 				$lpa[4]=strcut($ipNport,"",":");
 				$foreign_ip=$lpa[4];
 				$local_port=strcut($local_ipNport,":");
-				print "local_ipNport=$local_ipNport foreign_ipNport=$foreign_ipNport $local_port==$Port l=$line\n";
+				print "local_ipNport=$local_ipNport foreign_ipNport=$foreign_ipNport $local_port==$Port lpa5=$lpa[5] l=$line\n";
 				if($local_port==$Port && $lpa[5]!="LISTEN"){
+					print " (adding? $foreign_ip) ";
 					$ip_already_added=FALSE;
 					foreach($tbr_array as $ea){
 						if($ea[4]==$foreign_ip) $ip_already_added=TRUE;
 					}
 					if(!$ip_already_added){
+						print " (unique $foreign_ip) ";
 						$str.= "$foreign_ip ";
 						$tbr_array[]=$lpa;
 					}
