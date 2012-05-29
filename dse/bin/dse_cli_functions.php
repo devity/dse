@@ -364,7 +364,6 @@ function str_contains($str,$needle){
 
 function strcut($haystack,$pre,$post=""){
 	global $strcut_post_haystack;
-	//print "in strcut<br>";
 	$strcut_post_haystack="";
 	if($pre=="" || !(stristr($haystack,$pre)===FALSE)){
 		if($pre==""){
@@ -375,10 +374,7 @@ function strcut($haystack,$pre,$post=""){
 			//	$haystack=$haystack; //==""
 			//}
 		}	
-		//$t=strpos($haystack,$post); 	
-		//print "t=strpos(haystack,$post)=$t<br>";
-		if( $post!='' && !(strstr($haystack,$post)===FALSE)){			//$post="" ||
-		//print "post marker found.<br>";
+		if( $post!='' && !(strstr($haystack,$post)===FALSE)){	
 			if($post==""){
 				$r=$haystack;
 				$strcut_post_haystack="";

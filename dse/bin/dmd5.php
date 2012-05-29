@@ -40,4 +40,40 @@ function md5_of_file($f){
         return -1;
 }
 
+
+function strcut($haystack,$pre,$post=""){
+	global $strcut_post_haystack;
+	$strcut_post_haystack="";
+	if($pre=="" || !(stristr($haystack,$pre)===FALSE)){
+		if($pre==""){
+		}else{
+			//if($haystack && $pre){
+				$haystack=substr($haystack,stripos($haystack,$pre)+strlen($pre));
+			//}else{
+			//	$haystack=$haystack; //==""
+			//}
+		}	
+		if( $post!='' && !(strstr($haystack,$post)===FALSE)){	
+			if($post==""){
+				$r=$haystack;
+				$strcut_post_haystack="";
+			}else{
+			
+			
+				$r=substr($haystack,0,strpos($haystack,$post));
+				if($haystack && $post){
+					$strcut_post_haystack=substr($haystack,stripos($haystack,$post)+strlen($post));
+				}
+			}		
+		}else{
+			$r=$haystack;
+			$strcut_post_haystack="";
+		}		
+	}else{		
+		$r="";
+	}
+	return $r;
+}
+
+
 ?>
