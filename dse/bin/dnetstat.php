@@ -34,6 +34,7 @@ $parameters_details = array(
   array('','version',"version info"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('o','open',"List OPEN ports"),
+  array('c:','connected',"List connections to port argv1"),
   array('x','xip',"Return External IP Address"),
 );
 $parameters=dse_cli_get_paramaters_array($parameters_details);
@@ -74,6 +75,15 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 	case 'o':
 	case 'open':
 		$ShowOpen=TRUE;
+		break;
+	case 'c':
+	case 'connected':		
+		if($options[$opt]!=""){
+			$Port=$options[$opt];
+		}else{
+			$Port="";
+		}
+		$ShowConnected=TRUE;
 		break;
 	case 'x':
 	case 'xip':
@@ -127,6 +137,11 @@ if($ShowOpen){
 	$dse_sysstats_net_listening_array=dse_sysstats_net_listening();
 	$section_net_listening=$dse_sysstats_net_listening_array[3];
 	print $section_net_listening."\n";	
+} 
+if($ShowConnected){
+	$dse_sysstats_connected_array=dse_sysstats_connected($Port);
+	$section_net_connected=$dse_sysstats_connected_array[3];
+	print $section_net_connected."\n";	
 }
 
 if($ShowIP){

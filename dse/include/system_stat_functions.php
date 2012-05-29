@@ -48,7 +48,7 @@ function dse_sysstats_net_listening(){
 				
 				$lpa=split("[ ]+",$line);
 				if(str_contains($lpa[3],"::")){
-					$lpa[3]=str_cut($lpa[3],"::",":");
+					$lpa[3]=strcut($lpa[3],"::",":");
 				}
 				
 				$exe="";
@@ -71,7 +71,62 @@ function dse_sysstats_net_listening(){
 	}
 	return NULL;
 }	
-
+	
+function dse_sysstats_connected($Port){
+	global $vars;
+	if(FALSE && dse_which("lsof")){
+		$str="";
+		$Command="sudo lsof -iTCP -sTCP:LISTEN -P -n";
+		$raw=`$Command`;
+		$raw=strcut($raw,"\n");
+		$raw_array=split("\n",$raw);
+		$tbr_array=array();
+		foreach($raw_array as $line){
+			if($line){
+				//print "l=$line\n";
+				$lpa=split("[ ]+",$line);
+				$exe=$lpa[0];
+				$port=$lpa[8];$port=strcut(str_replace("::","",$port),":");
+				$lpa[9]=$port;
+				
+				$port_already_added=FALSE;
+				foreach($tbr_array as $ea){
+					//print "if($ea[9]==$port)<br>";
+					if($ea[9]==$port) $port_already_added=TRUE;
+				}
+				if(!$port_already_added){
+					$str.= "$exe:$port ";
+					$tbr_array[]=$lpa;
+				}
+			}
+		}
+		return array($tbr_array,$raw,$raw_array,$str);
+	}elseif(dse_which("netstat")){
+		$str="";
+		$Command="sudo netstat -n";
+		$raw=`$Command`;
+		$raw=strcut($raw,"\n","Active UNIX domain sockets");
+		$raw_array=split("\n",$raw);
+		$tbr_array=array();
+		foreach($raw_array as $line){
+			if($line){
+				print "l=$line\n";
+				
+				$lpa=split("[ ]+",$line);
+				if(str_contains($lpa[4],"::")){
+					$lpa[4]=strcut($lpa[4],"::",":");
+				}
+				$ip=strcut($lpa[4],"",":");
+				if($lpa[5]!="LISTEN"){
+					$exe="";
+					$str.= "$ip ";
+				}
+			}
+		}
+		return array($tbr_array,$raw,$raw_array,$str);
+	}
+	return NULL;
+}	
 function dse_sysstats_proc_interrupts(){
 	global $vars;
 	$section_procinterrupts="";
