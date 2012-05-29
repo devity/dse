@@ -113,19 +113,21 @@ function dse_sysstats_connected($Port){
 				//print "l=$line\n";
 				
 				$lpa=split("[ ]+",$line);
+				
 				if(str_contains($lpa[3],"::")){
 					$lpa[3]=substr($lpa[3],2);
 					$lpa[3]=strcut($lpa[3],":");
 				}
 				$local_ipNport=$lpa[3];
+				$local_port=strcut($local_ipNport,":");
+				
 				if(str_contains($lpa[4],"::")){
 					$lpa[4]=substr($lpa[4],2);
 					$lpa[4]=strcut($lpa[4],":");
 				}
 				$foreign_ipNport=$lpa[4];
-				$lpa[4]=strcut($ipNport,"",":");
-				$foreign_ip=$lpa[4];
-				$local_port=strcut($local_ipNport,":");
+				$foreign_ip=strcut($foreign_ipNport,"",":");
+				
 				print "local_ipNport=$local_ipNport foreign_ipNport=$foreign_ipNport $local_port==$Port lpa5=$lpa[5] l=$line\n";
 				if($local_port==$Port && $lpa[5]!="LISTEN"){
 					print " (adding? $foreign_ip) ";
@@ -145,7 +147,7 @@ function dse_sysstats_connected($Port){
 			}
 		}
 		
-					print " (2str=$str) ";
+					print " (3str=$str) ";
 		return array($tbr_array,$raw,$raw_array,$str);
 	}
 	return NULL;
