@@ -44,19 +44,26 @@ function dse_sysstats_net_listening(){
 		$tbr_array=array();
 		foreach($raw_array as $line){
 			if($line){
-				print "l=$line\n";
+				//print "l=$line\n";
+				
 				$lpa=split("[ ]+",$line);
+				if(str_contains($lpa[3],"::")){
+					$lpa[3]=str_cut($lpa[3],"::",":");
+				}
+				
 				$exe="";
 				$port=strcut($lpa[3],":");
-				$lpa[9]=$port;
-				
-				$port_already_added=FALSE;
-				foreach($tbr_array as $ea){
-					if($ea[9]==$port) $port_already_added=TRUE;
-				}
-				if(!$port_already_added){
-					$str.= "$exe:$port ";
-					$tbr_array[]=$lpa;
+				if($port){
+					$lpa[9]=$port;
+					
+					$port_already_added=FALSE;
+					foreach($tbr_array as $ea){
+						if($ea[9]==$port) $port_already_added=TRUE;
+					}
+					if(!$port_already_added){
+						$str.= "$exe:$port ";
+						$tbr_array[]=$lpa;
+					}
 				}
 			}
 		}
