@@ -5,8 +5,63 @@ if(sizeof($argv)<2){
 	print "no argument supplied. STDIN not supported. exiting.\n";
 	exit(-1);
 }
-print md5_of_file($argv[1]);
-exit(0);
+
+if(is_dir($argv[1])){
+	if($argv[1][0]!='/'){
+		if($argv[1][0]=='.'){
+			$argv[1]=trim(`pwd`).substr($argv[1],1);
+		}else{
+			$argv[1]=trim(`pwd`)."/".$argv[1];
+		}
+	}
+	md5_of_directory($argv[1],100);
+}else{
+	print md5_of_file($argv[1]);
+	exit(0);
+}
+
+
+
+function md5_of_directory( $path = '.', $level = 0 ){ 
+	print "$path\n";
+    $ignore = array( '.', '..' ); 
+    // Directories to ignore when listing output.
+
+    $dh = @opendir( $path ); 
+    // Open the directory to the handle $dh 
+     
+    while( false !== ( $file = readdir( $dh ) ) ){ 
+    // Loop through the directory 
+     
+        if( !in_array( $file, $ignore ) ){ 
+        // Check that this file is not to be ignored 
+             
+            $spaces = str_repeat( '&nbsp;', ( $level * 4 ) ); 
+            // Just to add spacing to the list, to better 
+            // show the directory tree. 
+             
+            if( is_dir( "$path/$file" ) ){ 
+            // Its a directory, so we need to keep reading down... 
+             
+                //echo "<strong>$spaces $file</strong><br />"; 
+                
+                getDirectory( "$path/$file", ($level+1) ); 
+                // Re-call this same function but on a new directory. 
+                // this is what makes function recursive. 
+             
+            } else { 
+             	$md5=trim(md5_of_file("$path/$file"));
+             	print "$path/$file $md5\n";
+               // echo "$spaces $file<br />"; 
+                // Just print out the filename 
+            } 
+        } 
+    } 
+     
+    closedir( $dh ); 
+    // Close the directory handle 
+
+} 
 
 
 function dse_which($prog){
