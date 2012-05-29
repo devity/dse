@@ -31,7 +31,7 @@ $NumberOfBytesSameLimit=13;
 
 $SudoReplace="s/sudo/SUDO/g";
 
-$TailLines=$Lines*100;
+$TailLines=$Lines*10;
 
 $LogsCombinedCommand="(";
 foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
