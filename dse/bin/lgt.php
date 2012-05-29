@@ -33,12 +33,16 @@ $SudoReplace="s/sudo/SUDO/g";
 
 $TailLines=$Lines*100;
 
-$LogsCombinedCommand="("
-	."tail -n $TailLines /var/log/system.log; "
-	."tail -n $TailLines /var/log/kernel.log; "
-	."tail -n $TailLines /var/log/windowserver.log "
-.") "
- ." | sort | sed 's/louiss-macbook-pro-2//g' | sed 's/Louiss-MacBook-Pro-2//g' | sed $SudoReplace | grep -v NSAutoreleaseNoPool | grep -v geektool | grep -v Geeklet | grep -v Chrome ";
+$LogsCombinedCommand="(";
+foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
+	print "Adding Log File: $LogFile\n";
+	if($LogsCombinedCommand!="("){
+		$LogsCombinedCommand.="; ";
+	}
+	$LogsCombinedCommand.="tail -n $TailLines $LogFile ";
+}
+$LogsCombinedCommand.=") | sort | sed $SudoReplace | grep -v NSAutoreleaseNoPool | grep -v geektool | grep -v Geeklet | grep -v Chrome ";
+//| sed 's/louiss-macbook-pro-2//g' | sed 's/Louiss-MacBook-Pro-2//g' 
 //| cut -c 8-1000 
 //		."tail -n $TailLines /var/log/ppp.log | cut -c 5-1000 |  sed 's/2012 ://g' ; "
 	//
