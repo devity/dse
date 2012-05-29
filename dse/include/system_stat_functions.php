@@ -115,12 +115,14 @@ function dse_sysstats_connected($Port){
 				$lpa=split("[ ]+",$line);
 				if(str_contains($lpa[4],"::")){
 					$lpa[4]=substr($lpa[4],2);
-					$lpa[4]=strcut($lpa[4],":",":");
+					$lpa[4]=strcut($lpa[4],":");
 				}
-				$lpa[4]=strcut($lpa[4],"",":");
+				$ipNport=$lpa[4];
+				$lpa[4]=strcut($ipNport,"",":");
 				$ip=$lpa[4];
+				$port=strcut($ipNport,":");
 				
-				if($lpa[5]!="LISTEN"){
+				if($port==$Port && $lpa[5]!="LISTEN"){
 					$ip_already_added=FALSE;
 					foreach($tbr_array as $ea){
 						if($ea[4]==$ip) $ip_already_added=TRUE;
