@@ -70,24 +70,19 @@ function dse_require_root(){
 
 function md5_of_file($f){
         global $vars;
-        $sw_vers=trim(`which md5 2>&1`);
-//print "sw=$sw_vers\n";
-        if((strstr($sw_vers,"no md5 in")===FALSE)){
-//print "using md5\n";
+        $sw_vers=dse_which("md5");
+        if($sw_vers){
                 $m=`md5 -q $f`;
                 return ($m);
         }else{
-
-                $sw_vers=trim(`which md5sum 2>&1`);
-                if((strstr($sw_vers,"no md5sum in")===FALSE)){
-//print "using md5sum\n";
-
+                $sw_vers=dse_which("md5sum");
+                if($sw_vers){
                         $m=`md5sum $f`;
                         $m=strcut($m,""," ");
                         return ($m);
                 }
         }
-        print "error in md5_of_file(), no md5 utility found";
+        print "error in md5_of_file(), no md5 utility found. Supported:(md5,md5sum)";
         return -1;
 }
 
