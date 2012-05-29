@@ -110,16 +110,25 @@ function dse_sysstats_connected($Port){
 		$tbr_array=array();
 		foreach($raw_array as $line){
 			if($line){
-				print "l=$line\n";
+				//print "l=$line\n";
 				
 				$lpa=split("[ ]+",$line);
 				if(str_contains($lpa[4],"::")){
-					$lpa[4]=strcut($lpa[4],"::",":");
+					$lpa[4]=substr($lpa[4],2);
+					$lpa[4]=strcut($lpa[4],":",":");
 				}
-				$ip=strcut($lpa[4],"",":");
+				$lpa[4]=strcut($lpa[4],"",":");
+				$ip=$lpa[4];
+				
 				if($lpa[5]!="LISTEN"){
-					$exe="";
-					$str.= "$ip ";
+					$ip_already_added=FALSE;
+					foreach($tbr_array as $ea){
+						if($ea[4]==$ip) $ip_already_added=TRUE;
+					}
+					if(!$ip_already_added){
+						$str.= "$ip ";
+						$tbr_array[]=$lpa;
+					}
 				}
 			}
 		}
