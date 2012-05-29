@@ -158,9 +158,12 @@ function dse_sysstats_mysql_status(){
 		"Key_blocks_unused", "Key_blocks_used", "Key_buffer_fraction_%", 
 		"Open_files", "Open_tables", 
 		"Table_locks_immediate", "Table_locks_waited", 
-		"Threads_cached","Threads_connected","Threads_created","thread_cache_size",
+		"Threads_cached","Threads_connected","Threads_created",
 		);
 		
+//cnf
+//"thread_cache_size",
+
 
 	//foreach($MysqlStatusVars as $var_name){
 	//	$$var_name="";
@@ -198,7 +201,7 @@ function dse_sysstats_mysql_status(){
 	$section_mysql_stats.="Qcache free_blocks:$mysql_status_array[Qcache_free_blocks]  total_blocks:$mysql_status_array[Qcache_total_blocks] free_memory:$mysql_status_array[Qcache_free_memory_str]MB\n";
 	$section_mysql_stats.="Open: Files: $mysql_status_array[Open_files]  Tables: $mysql_status_array[Open_tables]  \n";
 	$section_mysql_stats.="Threads: connected: $mysql_status_array[Threads_connected]  created: $mysql_status_array[Threads_created]    ";
-	$section_mysql_stats.="Cached: $mysql_status_array[Threads_cached]  c.size: $mysql_status_array[thread_cache_size]\n";
+	$section_mysql_stats.="Cached: $mysql_status_array[Threads_cached] \n";
 	//$section_mysql_stats.="Key_blocks_unused:$Key_blocks_unused   Key_blocks_used:$Key_blocks_used   \n";
 	//$section_mysql_stats.="Select_range:$Select_range   Select_scan:$Select_scan   Sort_scan:$Sort_scan  \n";
 
