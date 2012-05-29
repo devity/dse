@@ -138,9 +138,14 @@ function dse_sysstats_connected($Port){
 						$str.= "$foreign_ip ";
 						$tbr_array[]=$lpa;
 					}
+					print " (1str=$str) ";
+						
 				}
+					print " (2str=$str) ";
 			}
 		}
+		
+					print " (2str=$str) ";
 		return array($tbr_array,$raw,$raw_array,$str);
 	}
 	return NULL;
