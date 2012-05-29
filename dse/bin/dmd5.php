@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?
 
-if(sizeof($argv)<1){
+if(sizeof($argv)<2){
 	print "no argument supplied. STDIN not supported. exiting.\n";
 	exit(-1);
 }
@@ -31,6 +31,7 @@ function md5_of_file($f){
                 $sw_vers=dse_which("md5sum");
                 if($sw_vers){
                         $m=`md5sum $f`;
+						$m=str_replace("\t"," ",$m);
                         $m=strcut($m,""," ");
                         return ($m);
                 }
