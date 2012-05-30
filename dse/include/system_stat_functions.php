@@ -8,7 +8,7 @@ function dse_sysstats_sdvcqwev(){
 	
 function dse_sysstats_net_listening(){
 	global $vars;
-	if(FALSE && dse_which("lsof")){
+	if(dse_is_osx() && dse_which("lsof")){
 		$str="";
 		$Command="sudo lsof -iTCP -sTCP:LISTEN -P -n";
 		$raw=`$Command`;
@@ -74,7 +74,7 @@ function dse_sysstats_net_listening(){
 	
 function dse_sysstats_connected($Port){
 	global $vars;
-	if(FALSE && dse_which("lsof")){
+	/*if(FALSE && dse_which("lsof")){
 		$str="";
 		$Command="sudo lsof -iTCP -sTCP:LISTEN -P -n";
 		$raw=`$Command`;
@@ -101,7 +101,7 @@ function dse_sysstats_connected($Port){
 			}
 		}
 		return array($tbr_array,$raw,$raw_array,$str);
-	}elseif(dse_which("netstat")){
+	}else*/if(dse_which("netstat")){
 		$str="";
 		$Command="sudo netstat -n";
 		$raw=`$Command`;

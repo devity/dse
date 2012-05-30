@@ -14,19 +14,31 @@ if(is_dir($argv[1])){
 			$argv[1]=trim(`pwd`)."/".$argv[1];
 		}
 	}
-	md5_of_directory($argv[1],100);
-}else{
+	$argv[1]=$argv[1]."/";
+	$argv[1]=str_replace("//", "/", $argv[1]);
+	md5_of_directory($argv[1]);
+}elseif(file_exists($argv[1])){
 	print md5_of_file($argv[1]);
 	exit(0);
+}else{
+	print "$argv[1] does not exist or is inaccessable. exiting.\n";
+	exit(-1);
 }
 
 
 
 function md5_of_directory( $path = '.', $level = 0 ){ 
-	print "$path\n";
+	print "$path DIRECTORY\n";
+	
+	$path.="/";  $path=str_replace("//", "/", $path);
+	//$path_notrail=substr($path,0,strlen($path)-1);
+	
     $ignore = array( '.', '..' ); 
     // Directories to ignore when listing output.
-
+    
+	//print "opendir( $path )\n";
+	
+    
     $dh = @opendir( $path ); 
     // Open the directory to the handle $dh 
      
@@ -40,18 +52,18 @@ function md5_of_directory( $path = '.', $level = 0 ){
             // Just to add spacing to the list, to better 
             // show the directory tree. 
              
-            if( is_dir( "$path/$file" ) ){ 
+            if( is_dir( "$path$file" ) ){ 
             // Its a directory, so we need to keep reading down... 
              
                 //echo "<strong>$spaces $file</strong><br />"; 
                 
-                getDirectory( "$path/$file", ($level+1) ); 
+                md5_of_directory( "$path$file", ($level+1) ); 
                 // Re-call this same function but on a new directory. 
                 // this is what makes function recursive. 
              
             } else { 
-             	$md5=trim(md5_of_file("$path/$file"));
-             	print "$path/$file $md5\n";
+             	$md5=trim(md5_of_file("$path$file"));
+             	print "$path$file $md5\n";
                // echo "$spaces $file<br />"; 
                 // Just print out the filename 
             } 
@@ -80,12 +92,12 @@ function md5_of_file($f){
         global $vars;
         $sw_vers=dse_which("md5");
         if($sw_vers){
-                $m=`md5 -q $f`;
+                $m=`md5 -q "$f" 2>/dev/null`;
                 return ($m);
         }else{
                 $sw_vers=dse_which("md5sum");
                 if($sw_vers){
-                        $m=`md5sum $f`;
+                        $m=`md5sum "$f" 2>/dev/null`;
 						$m=str_replace("\t"," ",$m);
                         $m=strcut($m,""," ");
                         return ($m);
