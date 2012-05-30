@@ -75,7 +75,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		}
 		$c="echo \"$IP\" >> ".$vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'];
 		$r=`$c`;
-		print "$IP Blocked.\n";
+		$c="/scripts/iptables_block_ip $IP";
+		$r=`$c`;
+		print "$IP Blocked: $r\n";
 		exit(0);
 		break;
 	case 'l':
