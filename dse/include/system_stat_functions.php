@@ -48,9 +48,11 @@ function dse_sysstats_net_listening(){
 				//print "l=$line\n";
 				
 				$lpa=split("[ ]+",$line);
+				$port=$lpa[3];$port=strcut(str_replace("::","",$port),":");
+				
 				$portNexe=$lpa[6];
 				$portNexepa=split("/",$portNexe);
-				$port=$portNexepa[0];
+				$pid=$portNexepa[0];
 				$exe=$portNexepa[1];
 				if($port){
 					$lpa[9]=$port;
