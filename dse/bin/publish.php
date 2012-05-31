@@ -21,13 +21,14 @@ if(sizeof($argv)>1){
 			$c="grep Publishing: $Log | tail -n $num";
 			$r=`$c`;
 			foreach(split("\n",$r) as $line){
-				$time_str=strcut($line,"","Publishing:");
-				$line=strcut($line,"Publishing: cp -pf ");
-				$lpa=split(" ",$line);
-				$s=$lpa[0]; $d=$lpa[1];
-				$os=str_replace("/home/admin/batteriesdirect.com/", "/home/admin/dev_batteriesdirect-com/", $d);
-				
-				print "$time_str   $s ($os) => $d\n";
+				if($line){
+					$time_str=strcut($line,"","Publishing:");
+					$line=strcut($line,"Publishing: cp -pf ");
+					$lpa=split(" ",$line);
+					$s=$lpa[0]; $d=$lpa[1];
+					$os=str_replace("/home/admin/batteriesdirect.com/", "/home/admin/dev_batteriesdirect-com/", $d);
+					print "$time_str   $s ($os) => $d\n";
+				}
 			}
 			break;
 		case "--republish-last":
@@ -39,15 +40,30 @@ if(sizeof($argv)>1){
 			$c="grep Publishing: $Log | tail -n $num";
 			$r=`$c`;
 			foreach(split("\n",$r) as $line){
-				$time_str=strcut($line,"","Publishing:");
-				$line=strcut($line,"Publishing: cp -pf ");
-				$lpa=split(" ",$line);
-				$s=$lpa[0]; $d=$lpa[1];
-				$os=str_replace("/home/admin/batteriesdirect.com/", "/home/admin/dev_batteriesdirect-com/", $d);
-				
-				print "$time_str   $s ($os) => $d\n";
-				print "cp -pf $os $d\n";
+				if($line){
+					$time_str=strcut($line,"","Publishing:");
+					$line=strcut($line,"Publishing: cp -pf ");
+					$lpa=split(" ",$line);
+					$s=$lpa[0]; $d=$lpa[1];
+					$os=str_replace("/home/admin/batteriesdirect.com/", "/home/admin/dev_batteriesdirect-com/", $d);
+					$c= "cp -pf $os $d";
+					$r=`$c`;
+					print "$c => $o\n";
+				}
 			}
+			break;
+		
+		case "--publish":
+			if(sizeof($argv)>2){
+				$os=$argv[2];
+			}else{
+				print "no arg. exiting.\n";
+				exit(-1);
+			}
+			$d=str_replace("/home/admin/dev_batteriesdirect-com/", "/home/admin/batteriesdirect.com/", $d);
+			$c= "cp -pf $os $d";
+				//$r=`$c`;
+			print "$c => $o\n";
 			break;
 		
 	}
