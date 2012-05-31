@@ -37,9 +37,10 @@ function dse_sysstats_net_listening(){
 		return array($tbr_array,$raw,$raw_array,$str);
 	}elseif(dse_which("netstat")){
 		$str="";
-		$Command="sudo netstat -na";
+		$Command="sudo netstat -tulpn";
 		$raw=`$Command`;
-		$raw=strcut($raw,"\n","Active UNIX domain sockets");
+	//	$raw=strcut($raw,"\n","Active UNIX domain sockets");
+		$raw=strcut($raw,"\n","");
 		$raw_array=split("\n",$raw);
 		$tbr_array=array();
 		foreach($raw_array as $line){
@@ -47,12 +48,10 @@ function dse_sysstats_net_listening(){
 				//print "l=$line\n";
 				
 				$lpa=split("[ ]+",$line);
-				if(str_contains($lpa[3],"::")){
-					$lpa[3]=strcut($lpa[3],"::",":");
-				}
-				
-				$exe="";
-				$port=strcut($lpa[3],":");
+				$portNexe=$lpa[6];
+				$portNexepa=split("/",$portNexe);
+				$port=$portNexepa[0];
+				$exe=$portNexepa[1];
 				if($port){
 					$lpa[9]=$port;
 					
