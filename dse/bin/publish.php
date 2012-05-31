@@ -13,7 +13,11 @@ if(sizeof($argv)>1){
 	$cmd=$argv[1];
 	switch($cmd){
 		case "--last":
-			$num=$argv[2];
+			if(sizeof($argv)>2){
+				$num=$argv[2];
+			}else{
+				$num=1;
+			}
 			$c="grep Publishing: $Log | tail -n $num";
 			$r=`$c`;
 			foreach(split("\n",$r) as $line){
@@ -21,7 +25,28 @@ if(sizeof($argv)>1){
 				$line=strcut($line,"Publishing: cp -pf ");
 				$lpa=split(" ",$line);
 				$s=$lpa[0]; $d=$lpa[1];
-				print "$time_str   $s => $d\n";
+				$os=str_replace("/home/admin/batteriesdirect.com/", "/home/admin/dev_batteriesdirect-com/", $d);
+				
+				print "$time_str   $s ($os) => $d\n";
+			}
+			break;
+		case "--republish-last":
+			if(sizeof($argv)>2){
+				$num=$argv[2];
+			}else{
+				$num=1;
+			}
+			$c="grep Publishing: $Log | tail -n $num";
+			$r=`$c`;
+			foreach(split("\n",$r) as $line){
+				$time_str=strcut($line,"","Publishing:");
+				$line=strcut($line,"Publishing: cp -pf ");
+				$lpa=split(" ",$line);
+				$s=$lpa[0]; $d=$lpa[1];
+				$os=str_replace("/home/admin/batteriesdirect.com/", "/home/admin/dev_batteriesdirect-com/", $d);
+				
+				print "$time_str   $s ($os) => $d\n";
+				print "cp -pf $os $d\n";
 			}
 			break;
 		
