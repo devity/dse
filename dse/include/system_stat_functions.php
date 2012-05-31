@@ -37,7 +37,7 @@ function dse_sysstats_net_listening(){
 		return array($tbr_array,$raw,$raw_array,$str);
 	}elseif(dse_which("netstat")){
 		$str="";
-		$Command="sudo netstat -tulpn";
+		$Command="/scripts/netstat-tulpn";
 		$raw=`$Command`;
 	//	$raw=strcut($raw,"\n","Active UNIX domain sockets");
 		$raw=strcut($raw,"\n","");
