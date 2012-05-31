@@ -70,7 +70,7 @@ function dse_sysstats_net_listening(){
 		}
 		return array($tbr_array,$raw,$raw_array,$str);
 	}
-	return NULL;
+	return array(NULL,NULL,NULL,"no netstat found");
 }	
 	
 function dse_sysstats_connected($Port){
