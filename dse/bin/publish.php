@@ -8,8 +8,28 @@ include_once ("/dse/bin/dse_config.php");
 $Log="/var/log/publish.log";
 $Date_str=date("F j, Y, g:i a");
 
-print `echo $Date_str Run Started >> $Log`;
 
+if(sizeof($argv)>1){
+	$cmd=$argv[1];
+	switch($cmd){
+		case "--last":
+			$num=$argv[2];
+			$c="grep Publishing: $Log | tail -n $num";
+			$r=`$c`;
+			foreach(split("\n",$r) as $line){
+				$time_str=strcut($line,"","Publishing:");
+				$line=strcut($line,"Publishing: cp -pf ");
+				$lpa=split(" ",$line);
+				$s=$lpa[0]; $d=$lpa[1];
+				print "$time_str   $s => $d\n";
+			}
+			break;
+		
+	}
+	exit (0);	
+}
+
+//print `echo $Date_str Run Started >> $Log`;
 
 $rsync_out=`sudo rsync -rnv /home/admin/dse_publish_pending/home/admin/batteriesdirect.com /home/admin/. `;
 $published=0;
