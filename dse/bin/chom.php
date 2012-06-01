@@ -8,7 +8,7 @@ if(sizeof($argv)<3){
 $pa=split(":",$argv[1]);
 $u=$pa[0];
 $g=$pa[1];
-$f=$pa[2];
+$p=$pa[2];
 $f=$argv[2];
 $r=`chown $u:$g $f`;
 print $r;
