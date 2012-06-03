@@ -56,9 +56,9 @@ $vars['DSE']['DSE_BACKUP_DIR_DSE']=$vars['DSE']['DSE_BACKUP_DIR']."/dse";
 
 $vars['DSE']['MYSQL_CONF_FILE']="/etc/my.cnf";
 $vars['DSE']['MYSQL_LOG_FILE']="/tmp/mysql_query.log";
-$vars['DSE']['HTTP_CONF_FILE']."/etc/httpd/conf/httpd.conf";
-$vars['DSE']['HTTP_ERROR_LOG_FILE']."/var/log/httpd/error_log";
-$vars['DSE']['HTTP_REQUEST_LOG_FILE']."/home/httpd/batteriesdirect.com/stats/batteriesdirect.com-custom_log";
+$vars['DSE']['HTTP_CONF_FILE']="/etc/httpd/conf/httpd.conf";
+$vars['DSE']['HTTP_ERROR_LOG_FILE']="/var/log/httpd/error_log";
+$vars['DSE']['HTTP_REQUEST_LOG_FILE']="/var/log/httpd/access_log";
 
 // *********************************************************************************
 // ********* Set colors and such
