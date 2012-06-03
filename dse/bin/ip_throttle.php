@@ -98,6 +98,18 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			exit(-1);
 		}
 		$IP=$argv[1];
+		
+		
+		
+		$c="grep \"^$IP\$\" ".$vars['DSE']['DSE_IPTHROTTLE_BANNED_FILE']." ".$vars['DSE']['DSE_IPTHROTTLE_KONT_FILE']." 2>/dev/null | wc -l";
+		$r=trim(`$c`);
+		if($r){
+			print "BLOCKED";
+			exit(-1);
+		}
+		
+
+		
 		$c="grep \"^$IP\$\" $LogFile1 2>/dev/null | wc -l";
 		$r=trim(`$c`);
 		$c="grep \"^$IP\$\" $LogFile2 2>/dev/null | wc -l";
@@ -112,26 +124,33 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			exit(-1);
 		}
 		$IP=$argv[1];
+		
 		$Status="UNKNOWN";
-		if(!file_exists($vars['DSE']['DSE_IPTHROTTLE_WHITELIST_FILE'])){
-			print "Whitelist file (".$vars['DSE']['DSE_IPTHROTTLE_WHITELIST_FILE'].") missing. Exiting.\n";
-			exit(-2);
-		}
-		if(!file_exists($vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'])){
-			print "Droplist file (".$vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'].") missing. Exiting.\n";
-			exit(-3);
-		}
-		$c="grep $IP ".$vars['DSE']['DSE_IPTHROTTLE_WHITELIST_FILE'];
-		$r=`$c`;
-		if($c=="$IP\n"){
-			$Status="WHITELIST";
+		
+		$c="grep \"^$IP\$\" ".$vars['DSE']['DSE_IPTHROTTLE_BANNED_FILE']." ".$vars['DSE']['DSE_IPTHROTTLE_KONT_FILE']." 2>/dev/null | wc -l";
+		$r=trim(`$c`);
+		if($r){
+			$Status= "BLOCKED";
 		}else{
-			$c="grep $IP ".$vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'];
+			if(!file_exists($vars['DSE']['DSE_IPTHROTTLE_WHITELIST_FILE'])){
+				print "Whitelist file (".$vars['DSE']['DSE_IPTHROTTLE_WHITELIST_FILE'].") missing. Exiting.\n";
+				exit(-2);
+			}
+			if(!file_exists($vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'])){
+				print "Droplist file (".$vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'].") missing. Exiting.\n";
+				exit(-3);
+			}
+			$c="grep $IP ".$vars['DSE']['DSE_IPTHROTTLE_WHITELIST_FILE'];
 			$r=`$c`;
 			if($c=="$IP\n"){
-				$Status="DROPLIST";
-			}	
-			
+				$Status="WHITELIST";
+			}else{
+				$c="grep $IP ".$vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'];
+				$r=`$c`;
+				if($c=="$IP\n"){
+					$Status="DROPLIST";
+				}	
+			}
 		}
 		print "$IP $Status\n";
 		exit(0);
