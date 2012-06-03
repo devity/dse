@@ -67,12 +67,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			print "Droplist file (".$vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'].") missing. Exiting.\n";
 			exit(-3);
 		}
-		$c="grep $IP ".$vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'];
-		$r=`$c`;
-		if($c=="$IP\n"){
-			print "$IP Already Blocked.\n";
-			exit(0);
-		}
+		//$c="grep $IP ".$vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'];
+		//$r=`$c`;
+		
 		$c="echo \"$IP\" >> ".$vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'];
 		$r=`$c`;
 		$c="/scripts/iptables_block_ip $IP";
