@@ -318,12 +318,17 @@ function dse_file_size_to_readable($size){
 	}
 }
 
+function dse_file_get_contents($filename){
+	global $vars;
+	return `cat $filename`;
+}
+
 
 function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 	global $vars;
 	
 	
-	$CfgData=file_get_contents($filename);
+	$CfgData=dse_file_get_contents($filename);
 	if($CfgData==""){
 		print "ERROR opening config file: $filename\n";
 	}
