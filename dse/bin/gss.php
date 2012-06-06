@@ -10,7 +10,7 @@ if(sizeof($argv)>2){
 
 print "Searching for: $ss\n";
 
-$find_cmd="sudo grep -R \"$ss\" $d 2>/dev/null";
+$find_cmd="sudo grep -n -R \"$ss\" $d 2>/dev/null";
 print "Command: $find_cmd\n";
 $out=`$find_cmd`;
 print $out ."\n";
