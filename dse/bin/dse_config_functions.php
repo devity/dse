@@ -524,6 +524,7 @@ function dse_configure_create_named_conf(){
 	
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		$Domain=strtolower($Domain);
+		print "ld=$Domain *****\n";
 		$zone="\$TTL	300
 
 @		IN	SOA	$Domain.	louis.louismarquette.com. (
@@ -555,6 +556,7 @@ function dse_configure_create_named_conf(){
 			
 		}
 		$zone_file="/etc/bind/local/$Domain";
+		print "Saving file $zone_file\n";
 		file_put_contents($zone_file, $zone);
 		dse_file_set_owner($zone_file,"root:bind");
 		dse_file_set_mode($zone_file,"644");
