@@ -526,7 +526,7 @@ function dse_configure_create_named_conf(){
 		$Domain=strtolower($Domain);
 		$zone="\$TTL	300
 
-@		IN	SOA	$zone.	louis.louismarquette.com. (
+@		IN	SOA	$Domain.	louis.louismarquette.com. (
 			2003042204 ; serial
 			28800 ; refresh
 			14400 ; retry
@@ -536,10 +536,10 @@ function dse_configure_create_named_conf(){
 @               IN      NS      $NS1.
 @               IN      NS      $NS2.
 ";
-		if(array_key_exists("_blank",$vars['DSE']['SERVER_CONF']['Hosts'][$Domain])){
+		/*if(array_key_exists("_blank",$vars['DSE']['SERVER_CONF']['Hosts'][$Domain])){
 			$IP=$vars['DSE']['SERVER_CONF']['Hosts'][$Domain]['_blank'];
 			$zone.= "@		IN	A	$IP\n";
-		}
+		}*/
 		/*
 		 *     500     IN      MX      10 craftlister.com.s8a1.psmtp.com.
             500     IN      MX      20 craftlister.com.s8a2.psmtp.com.
@@ -548,7 +548,9 @@ function dse_configure_create_named_conf(){
 		 */
         foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
         	$Host=strtolower($Host);
-			$zone.= "$Host	IN	A	$IP\n";
+			if($Host=="_blank") $Host="@";
+			$zone.= "$Host	IN	A	$IP\n";ls -la
+			
 		}
 		$zone_file="/etc/bind/local/$Domain";
 		file_put_contents($zone_file, $zone);
