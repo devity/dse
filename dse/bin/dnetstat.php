@@ -16,7 +16,7 @@ $ForceHighLoadRun=FALSE;
 $MaxLoadBeforeExit=5;
 $Threads=3;
 
-
+$Deliminator=' ';
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE Net Stat";
@@ -33,9 +33,13 @@ $parameters_details = array(
   array('q','quiet',"same as -v 0"),
   array('','version',"version info"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('d:','deliminator:',"default is [space]"),
   array('o','open',"List OPEN ports"),
   array('c:','connected',"List connections to port argv1"),
   array('x','xip',"Return External IP Address"),
+  array('i','ip',"Return IP Address of interface[arg1] (defaults to eth0 or en0(mac))"),
+  array('n','show-interface-names'," for use with -a  includes interface names"),
+  array('a','ips',"Return all IP Addresss"),
 );
 $parameters=dse_cli_get_paramaters_array($parameters_details);
 $Usage=dse_cli_get_usage($parameters_details);
@@ -68,6 +72,15 @@ foreach (array_keys($options) as $opt) switch ($opt) {
   		$ShowVersion=TRUE;
 		$DidSomething=TRUE;
 		break;
+		
+  	case 'n':
+  	case 'show-interface-names':
+  		$ShowInterfaceNames=TRUE;
+		break;
+  	case 'd':
+  	case 'deliminator':
+  		$Deliminator=$options[$opt];
+		break;
 	case 'q':
 	case 'quiet':
 		$Verbosity=0;
@@ -87,7 +100,24 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 		break;
 	case 'x':
 	case 'xip':
+		$ShowExternalIP=TRUE;
+		break;
+	case 'i':
+	case 'ip':
+		if($argv[1]){
+			$Adapter=$argv[1];
+		}else{
+			if(dse_is_osx()){
+				$Adapter="en0";
+			}else{
+				$Adapter="eth0";
+			}
+		}
 		$ShowIP=TRUE;
+		break;
+	case 'a':
+	case 'ips':
+		$ShowIPs=TRUE;
 		break;
 	case 'v':
 	case 'verbosity':
@@ -144,11 +174,77 @@ if($ShowConnected){
 	print $section_net_connected."\n";	
 }
 
-if($ShowIP){
+if($ShowExternalIP){
 	$ext_info = `curl --silent http://checkip.dyndns.org | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}'`;
 	if($ext_info) { 
 	    print trim($ext_info);
 	}
+}
+
+if(dse_is_osx()){
+	$netstat_ip_prefix="inet ";
+}else{	
+	$netstat_ip_prefix="inet addr:";
+}
+
+if($ShowIP){
+	$ext_info = `/sbin/ifconfig`;
+	if($ext_info) {
+		$ext_info=strcut($ext_info,$Adapter);
+		$ip=trim(strcut($ext_info,$netstat_ip_prefix," "));
+	    print $ip;
+	}
+}
+if($ShowIPs){
+	/*$ext_info = `/sbin/ifconfig | grep "$netstat_ip_prefix"`;
+	if($ext_info) {
+		while(str_contains($ext_info,$netstat_ip_prefix)){
+			$ip=trim(strcut($ext_info,$netstat_ip_prefix," "));
+			if(!in_array($ip, $ips)){
+				$ips[]=$ip;
+			}
+			$ext_info=strcut($ext_info,"\n");
+		} 
+	}
+	$ext_ip = trim(`curl --silent http://checkip.dyndns.org | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}'`);
+	if(!in_array($ext_ip, $ips)){
+		$ips[]=$ext_ip;
+	}
+	foreach ($ips as $ip){
+		if($PrintedAnIP) print $Deliminator;
+		print $ip; $PrintedAnIP=TRUE;
+	}
+	*/
+	
+	$ext_info = `/sbin/ifconfig `;
+	$matches=array();
+	$pattern="/[a-z]+[0-9][:][ ]flags/";
+	$interface_array= preg_split (  $pattern , $ext_info,100 );
+	$count=preg_match_all (  $pattern , $ext_info ,  &$matches );
+	$i=-1;
+	foreach($interface_array as $interface_part){
+		//print "\n\npart=$interface_part\n";
+		$ip=trim(strcut($interface_part,$netstat_ip_prefix," "));
+		//print "ip=$ip\n";
+		if($ip){
+			if($PrintedAnIP) print $Deliminator;
+			if($ShowInterfaceNames) {
+				$interface=trim(strcut($matches[0][$i],"",":"));
+				print "$interface:";
+			}
+			print $ip; $PrintedAnIP=TRUE;
+			$ips[]=$ip;
+		}
+		$i++;
+	}
+	$ext_ip = trim(`curl --silent http://checkip.dyndns.org | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}'`);
+	if($PrintedAnIP) print $Deliminator;
+	if($ShowInterfaceNames) {
+		print "external:";
+	}
+	print $ext_ip; $PrintedAnIP=TRUE;
+	$ips[]=$ext_ip;
+	
 }
 $EndLoad=get_load();  
 $ActualRunTime=time()-$Start;
