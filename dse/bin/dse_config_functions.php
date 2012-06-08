@@ -36,20 +36,20 @@ function dse_server_configure_file_load(){
 	while( (!( strstr($ProcessedFileContents,$DefineCommand)=== FALSE)) && ($Loops<100)){
 	        $Loops++;
 	        $DefineCommandAction=strcut($ProcessedFileContents,$DefineCommand,"\n");
-	//print "DefineAction: $DefineCommandAction \n";
+	print "DefineAction: $DefineCommandAction \n";
 	        $Pre=strcut($ProcessedFileContents,"",$DefineCommand);
 	        $Post=substr($strcut_post_haystack,strlen($DefineCommandAction)+1);
 	        $ProcessedFileContents=$Pre."".$Post;
 	        $Holder=strcut($DefineCommandAction,""," ");
 	        $HolderValue=$strcut_post_haystack;
-	//print "h=$Holder v=$HolderValue()\n";
+	print "h=$Holder v=$HolderValue()\n";
 			$Defines[$Holder]=$HolderValue;
 	        $ProcessedFileContents=str_replace($Holder,$HolderValue,$ProcessedFileContents);
 	
 	
 	}
 	
-	
+	print_r($Defines);
 	print "\n\n\n\n\n\n\nProcessed: $ProcessedFileContents\n\n\n\n\n\n\n";
 	
 	
