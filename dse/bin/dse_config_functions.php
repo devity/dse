@@ -86,7 +86,12 @@ function dse_configure_file_install_from_template($DestinationFile,$TemplateFile
 function dse_file_install($Template,$Destination,$Mode="",$Owner=""){
 	global $vars;
 	print "DSE file: $Template ";
-	if(!file_exists($Template)) {
+	if(str_contains($Template,"/*")){
+		$Template_test=strcut($Template,"","/*");
+	}else{
+		$Template_test=$Template;
+	}
+	if(!file_exists($Template_test)) {
 		print getColoredString(" ERROR: Template missing. \n","red","black");
 		return -1;	
 	}
