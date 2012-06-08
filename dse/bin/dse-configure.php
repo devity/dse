@@ -126,9 +126,9 @@ if($FullConfig){
 	
 	
 	//install packages
-//"iftop",,"git"
+//"iftop",,"git","gnome"
 	$PackageNamesArray=array("vim","memstat","sysstat","yum","chkconfig","lynx-cur","perl-tk","cron-apt","dnsutils","update-inetd",
-		"build-essential","rpm-build","aide","chkrootkit","rkhunter","logwatch","xosview","ubuntu-desktop","gnome");
+		"build-essential","rpm-build","aide","chkrootkit","rkhunter","logwatch","xosview","ubuntu-desktop");
 	foreach($PackageNamesArray as $PackageName){
 		$r=dse_package_install($PackageName);
 		if($r<0){
@@ -211,13 +211,12 @@ if($FullConfig){
 		}	
 		
 		
-		$c="mkdir ".$vars['DSE']['HTTP_ROOT_DIR']; 		$r=`$c`;
 		if($vars['DSE']['HTTP_USER'] && $vars['DSE']['HTTP_GROUP']){
 			$ug=$vars['DSE']['HTTP_USER'].":".$vars['DSE']['HTTP_GROUP'];
-			dse_file_set_owner($vars['DSE']['HTTP_ROOT_DIR'],$ug);
+		}else{
+			$ug="";
 		}
-		dse_file_set_mode($vars['DSE']['HTTP_ROOT_DIR'],"755");
-		
+		dse_directory_create($vars['DSE']['HTTP_ROOT_DIR'],"755",$ug);
 		
 		print `sudo chkconfig httpd on`;
 		
@@ -226,13 +225,13 @@ if($FullConfig){
 	
 	
 	if(str_contains($vars['DSE']['SERVICES'],"mysql") ){
-
-		$c="mkdir ".$vars['DSE']['MYSQL_ROOT_DIR']; 		$r=`$c`;
+		
 		if($vars['DSE']['MYSQL_USER'] && $vars['DSE']['MYSQL_GROUP']){
 			$ug=$vars['DSE']['MYSQL_USER'].":".$vars['DSE']['MYSQL_GROUP'];
-			dse_file_set_owner($vars['DSE']['MYSQL_ROOT_DIR'],$ug);
+		}else{
+			$ug="";
 		}
-		dse_file_set_mode($vars['DSE']['MYSQL_ROOT_DIR'],"755");
+		dse_directory_create($vars['DSE']['MYSQL_ROOT_DIR'],"755",$ug);
 		
 		print `sudo chkconfig mysqld on`;
 	}

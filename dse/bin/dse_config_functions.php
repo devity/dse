@@ -110,6 +110,33 @@ function dse_file_install($Template,$Destination,$Mode="",$Owner=""){
 }
 
 
+function dse_directory_create($Destination,$Mode="",$Owner=""){
+	global $vars;
+	print "DSE dir: $Destination ";
+	if(!file_exists($Destination)) {
+		$command="mkdir $Destination";
+		`$command`;
+		print getColoredString(" creating. ","green","black");
+	}
+	
+	if(!file_exists($Destination)) {
+		print getColoredString(" ERROR: failed to create $Destination . \n","red","black");
+		return -2;	
+	}
+	
+	if($Owner){
+		$command="chown -R $Owner $Destination";
+		`$command`;
+	}
+	if($Mode){
+		$command="chmod -R $Mode $Destination";
+		`$command`;
+	}
+	print getColoredString(" OK.\n","green","black");
+	return 0;
+}
+
+
 function dse_install_yum(){
 	global $vars;
 	if($vars['DSE']['YUM_INSTALL__FAILED']==TRUE) return -1;
