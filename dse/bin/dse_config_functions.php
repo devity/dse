@@ -26,6 +26,11 @@ function dse_server_configure_file_load(){
 	
 	
 	$ProcessedFileContents=$ConfigFileContents;
+	
+	
+	print "\n\n\n\n\n\n\nProcessed: $ProcessedFileContents\n\n\n\n\n\n\n";
+	
+	
 	$DefineCommand="DEFINE ";
 	$Loops=0;
 	while( (!( strstr($ProcessedFileContents,$DefineCommand)=== FALSE)) && ($Loops<100)){
