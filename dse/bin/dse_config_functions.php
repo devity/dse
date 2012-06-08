@@ -41,7 +41,7 @@ function dse_server_configure_file_load(){
 	$ProcessedFileContents=$ConfigFileContents;
 	
 	
-	print "\n\n\n\n\n\n\nProcessed: $ProcessedFileContents\n\n\n\n\n\n\n";
+	//print "\n\n\n\n\n\n\nProcessed: $ProcessedFileContents\n\n\n\n\n\n\n";
 	
 	
 	$DefineCommand="DEFINE ";
@@ -49,23 +49,23 @@ function dse_server_configure_file_load(){
 	while( (!( strstr($ProcessedFileContents,$DefineCommand)=== FALSE)) && ($Loops<100)){
 	        $Loops++;
 	        $DefineCommandAction=strcut($ProcessedFileContents,$DefineCommand,"\n");
-	print "DefineAction: $DefineCommandAction \n";
+	//print "DefineAction: $DefineCommandAction \n";
 	        $Pre=strcut($ProcessedFileContents,"",$DefineCommand);
 	        $Post=substr($strcut_post_haystack,strlen($DefineCommandAction)+1);
 	        $ProcessedFileContents=$Pre."".$Post;
 	        $Holder=strcut($DefineCommandAction,""," ");
 	        $HolderValue=strcut($DefineCommandAction," ");
-	print "h=$Holder v=$HolderValue\n";
+	//print "h=$Holder v=$HolderValue\n";
 			$Defines[$Holder]=$HolderValue;
 	        $ProcessedFileContents=str_replace($Holder,$HolderValue,$ProcessedFileContents);
 	
 	
 	}
 	
-	print "Defines="; print_r($Defines); print "\n";
-	print "Sets="; print_r($Sets); print "\n";
+	//print "Defines="; print_r($Defines); print "\n";
+	//print "Sets="; print_r($Sets); print "\n";
 	
-	print "\n\n\n\n\n\n\nProcessed: $ProcessedFileContents\n\n\n\n\n\n\n";
+	//print "\n\n\n\n\n\n\nProcessed: $ProcessedFileContents\n\n\n\n\n\n\n";
 	
 	$Command="DOMAIN";
 
@@ -497,6 +497,13 @@ function dse_configure_create_named_conf(){
 		foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
 			print " Host: $Host.$Domain => $IP\n";
 		}	
+	}
+	
+	foreach($vars['DSE']['SERVER_CONF']['Hosts'] as $Domain=>$a){
+		print " d=$Domain \n";
+		foreach ($a as $Host=>$IP){
+			print " Host: $Host.$Domain => $IP\n";
+		}
 	}
 	/*
 	$vars['DSE']['SERVER_CONF']['Domains']
