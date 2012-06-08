@@ -2,7 +2,7 @@
 
 
 function dse_server_configure_file_load(){
-	global $vars;
+	global $vars,$strcut_post_haystack;
 	$ConfigDirectory=$vars['DSE']['DSE_CONFIG_DIR'];
 	$ConfigFileContents=file_get_contents($vars['DSE']['SERVER_CONFIG_FILE']);
 	
@@ -41,8 +41,8 @@ function dse_server_configure_file_load(){
 	        $Post=substr($strcut_post_haystack,strlen($DefineCommandAction)+1);
 	        $ProcessedFileContents=$Pre."".$Post;
 	        $Holder=strcut($DefineCommandAction,""," ");
-	        $HolderValue=$strcut_post_haystack;
-	print "h=$Holder v=$HolderValue()\n";
+	        $HolderValue=strcut($DefineCommandAction," ");
+	print "h=$Holder v=$HolderValue\n";
 			$Defines[$Holder]=$HolderValue;
 	        $ProcessedFileContents=str_replace($Holder,$HolderValue,$ProcessedFileContents);
 	
