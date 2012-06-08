@@ -90,8 +90,9 @@ function dse_file_install($Template,$Destination,$Mode="",$Owner=""){
 		print getColoredString(" ERROR: Template missing. \n","red","black");
 		return -1;	
 	}
-	$command="cp -rf $Template $Destination";
-	`$command`;
+	//$command="cp -rf $Template $Destination";
+	$command="rsync --partial $Template $Destination";
+	passthru($command);
 	if(!file_exists($Destination)) {
 		print getColoredString(" ERROR: failed to create $Destination . \n","red","black");
 		return -2;	
@@ -469,6 +470,57 @@ function dse_configure_directories_create(){
 		dse_directory_create($vars['DSE']['MYSQL_ROOT_DIR'],"755",$ug);
 	}
 }
+
+function dse_service_stop($service){
+	global $vars;
+	print "Stopping service $service: ";
+	switch($service){
+		case "http":
+			$service="apache2";
+			break;
+		case "mysql":
+			$service="mysqld";
+			break;
+	}
+	$c="/sbin/service $service stop";
+	$r=`$c`;
+	print "Stopped.\n";
+}
+function dse_service_start($service){
+	global $vars;
+	print "Starting service $service: ";
+	switch($service){
+		case "http":
+			$service="apache2";
+			break;
+		case "mysql":
+			$service="mysqld";
+			break;
+	}
+	$c="/sbin/service $service start";
+	$r=`$c`;
+	print "Stopped.\n";
+}
+	
+	
+function dse_configure_http_setup(){
+	global $vars;
+	if($vars['DSE']['INSTALL_SOURCE_DIR']){	
+		$http_source=$vars['DSE']['INSTALL_SOURCE_DIR'];//."/http";
+		$http_webroot=$http_source."/webroot";
+		if(file_exists($http_webroot)){
+			print "Installing webroot files.. ";
+			dse_file_install($http_webroot."/*",$vars['DSE']['HTTP_ROOT_DIR']."/.");
+			print "\n";
+		}
+	}
+}
+function dse_configure_mysql_setup(){
+	global $vars;
+	
+	
+}
+
 
 
 ?>
