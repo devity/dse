@@ -221,7 +221,7 @@ if($ShowIPs){
 	if(dse_is_osx()){
 		$pattern="/[a-z]+[0-9][:][ ]flags/";
 	}else{
-		$pattern="/[a-z]+[0-9][ \t]+link/";
+		$pattern="/[a-z0-9]+[ \t]+Link/";
 	}
 	$interface_array= preg_split (  $pattern , $ext_info,100 );
 	$count=preg_match_all (  $pattern , $ext_info ,  &$matches );
