@@ -96,7 +96,7 @@ function dse_file_install($Template,$Destination,$Mode="",$Owner=""){
 		return -1;	
 	}
 	//$command="cp -rf $Template $Destination";
-	$command="rsync --partial $Template $Destination";
+	$command="rsync -rR --partial $Template $Destination";
 	print "\n command: $command\n";
 	passthru($command);
 	if(!file_exists($Destination)) {
