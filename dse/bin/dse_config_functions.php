@@ -227,7 +227,10 @@ function dse_package_install($PackageName){
 		$Command="sudo apt-get -y install $PackageName 2>&1";
 		$r=`$Command`;
 		// print "cmd: $Command   r=".$r."\n";
-		if(str_contains($r," already the newest versi")){
+		if(str_contains($r,"will be installed")){
+			print getColoredString(" Installed.\n","green","black");
+			return 0;
+	  	}elseif(str_contains($r," already the newest versi")){
 			print getColoredString(" Already Installed.\n","green","black");
 			return 0;
 	  	}elseif(str_contains($r,"ldn't find pack")){
@@ -237,6 +240,7 @@ function dse_package_install($PackageName){
 		    print getColoredString(" ERROR w/ cmd: $Command\n$r\n","red","black");
 			return -1;
 		}
+		
 	}elseif($Installer=='fink'){
 		
 		$Command="dpkg -L $PackageName 2>&1";
