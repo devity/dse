@@ -546,6 +546,7 @@ function dse_configure_create_named_conf(){
             500     IN      MX      30 craftlister.com.s8b1.psmtp.com.
             500     IN      MX      40 craftlister.com.s8b2.psmtp.com.
 		 */
+		 print_r($vars['DSE']['SERVER_CONF']['Hosts'][$Domain]);
         foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
         	$Host=strtolower($Host);
 			if($Host=="_blank") $Host="@";
@@ -719,16 +720,16 @@ function dse_service_name_from_common_name($service){
 }
 function dse_service_stop($service){
 	global $vars;
-	print "Stopping service $service: ";
 	$service=dse_service_name_from_common_name($service);
+	print "Stopping service $service: ";
 	$c="/sbin/service $service stop";
 	$r=`$c`;
 	print "Stopped.\n";
 }
 function dse_service_start($service){
 	global $vars;
-	print "Starting service $service: ";
 	$service=dse_service_name_from_common_name($service);
+	print "Starting service $service: ";
 	$c="/sbin/service $service start";
 	$r=`$c`;
 	print "Stopped.\n";
