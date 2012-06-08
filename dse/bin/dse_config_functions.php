@@ -204,67 +204,78 @@ function dse_package_install($PackageName){
 		return -1;
 	}
 	
-  	print "install package $PackageName ";
+  	print "Package $PackageName ";
 	if(!$PackageName){
     	print getColoredString(" ERROR: PackageName missing. \n","red","black");
 		return -1;
 	}
 	if($Installer=='yum'){
 		$Command="sudo yum -y install $PackageName 2>&1";
-		$r=`$Command`;
-	//	 print "cmd: $Command   r=".$r."\n";
-		if(str_contains($r,"already installed")){
-			print getColoredString(" Already Installed.\n","green","black");
-			return 0;
-	  	}elseif(str_contains($r,"Installed:")){
-			print getColoredString(" Installed!\n","green","black");
-			return 0;
-	  	}else{
-		    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
-			return -1;
+		if($vars['DSE']['dse_package_install__use_passthru']){
+			passthru($Command);
+		}else{
+			$r=`$Command`;
+		//	 print "cmd: $Command   r=".$r."\n";
+			if(str_contains($r,"already installed")){
+				print getColoredString(" Already Installed.\n","green","black");
+				return 0;
+		  	}elseif(str_contains($r,"Installed:")){
+				print getColoredString(" Installed!\n","green","black");
+				return 0;
+		  	}else{
+			    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
+				return -1;
+			}
 		}
 	}elseif($Installer=='apt-get'){
 		$Command="sudo apt-get -y install $PackageName 2>&1";
-		$r=`$Command`;
-		// print "cmd: $Command   r=".$r."\n";
-		if(str_contains($r,"will be installed")){
-			print getColoredString(" Installed.\n","green","black");
-			return 0;
-	  	}elseif(str_contains($r," already the newest versi")){
-			print getColoredString(" Already Installed.\n","green","black");
-			return 0;
-	  	}elseif(str_contains($r,"ldn't find pack")){
-	  		print getColoredString(" Unknown Package Name: $PackageName!\n","red","black");
-			return 1;
-	  	}else{
-		    print getColoredString(" ERROR w/ cmd: $Command\n$r\n","red","black");
-			return -1;
+		if($vars['DSE']['dse_package_install__use_passthru']){
+			passthru($Command);
+		}else{
+			$r=`$Command`;
+			// print "cmd: $Command   r=".$r."\n";
+			if(str_contains($r,"will be installed")){
+				print getColoredString(" Installed.\n","green","black");
+				return 0;
+		  	}elseif(str_contains($r," already the newest versi")){
+				print getColoredString(" Already Installed.\n","green","black");
+				return 0;
+		  	}elseif(str_contains($r,"ldn't find pack")){
+		  		print getColoredString(" Unknown Package Name: $PackageName!\n","red","black");
+				return 1;
+		  	}else{
+			    print getColoredString(" ERROR w/ cmd: $Command\n$r\n","red","black");
+				return -1;
+			}
 		}
-		
 	}elseif($Installer=='fink'){
 		
 		$Command="dpkg -L $PackageName 2>&1";
-		$r=`$Command`;
-		if(!str_contains($r,"s not installed") ){
-			print getColoredString(" Already Installed.\n","green","black");
-			return 0;
-		}
-		
-		$Command="sudo fink -yv install $PackageName 2>&1";
-		$r=passthru($Command);
-		// print "cmd: $Command   r=".$r."\n";
-		if(str_contains($r,"Failed")){
-			print getColoredString(" Install Failed!\n","red","black");
-			return -1;
-	  	}elseif(str_contains($r,"Installed:")){
-			print getColoredString(" Installed!\n","green","black");
-			return 0;
-	  	}elseif(str_contains($r,"o package found fo")){
-			print getColoredString(" Unkown Package Name: $PackageName!\n","red","black");
-			return -1;
-	  	}else{
-		    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
-			return -1;
+		if($vars['DSE']['dse_package_install__use_passthru']){
+			passthru($Command);
+		}else{
+			$r=`$Command`;
+			if(!str_contains($r,"s not installed") ){
+				print getColoredString(" Already Installed.\n","green","black");
+				return 0;
+			}
+			
+			$Command="sudo fink -yv install $PackageName 2>&1";
+			$r=passthru($Command);
+			// print "cmd: $Command   r=".$r."\n";
+			if(str_contains($r,"Failed")){
+				print getColoredString(" Install Failed!\n","red","black");
+				return -1;
+		  	}elseif(str_contains($r,"Installed:")){
+				print getColoredString(" Installed!\n","green","black");
+				return 0;
+		  	}elseif(str_contains($r,"o package found fo")){
+				print getColoredString(" Unkown Package Name: $PackageName!\n","red","black");
+				return -1;
+		  	}else{
+			    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
+				return -1;
+			}
 		}
 	}else{
 		print getColoredString(" ERROR: no supported package installer found \n","red","black");

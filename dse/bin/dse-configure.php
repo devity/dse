@@ -127,8 +127,8 @@ if($FullConfig){
 	
 	//install packages
 //"iftop",,"git"
-	$PackageNamesArray=array("vim","memstat","sysstat","yum","chkconfig","lynx-cur","postfix","perl-tk","cron-apt","dnsutils","update-inetd",
-		"build-essential","aide","chkrootkit","rkhunter","logwatch","xosview","ubuntu-desktop","gnome");
+	$PackageNamesArray=array("vim","memstat","sysstat","yum","chkconfig","lynx-cur","perl-tk","cron-apt","dnsutils","update-inetd",
+		"build-essential","rpm-build","aide","chkrootkit","rkhunter","logwatch","xosview","ubuntu-desktop","gnome");
 	foreach($PackageNamesArray as $PackageName){
 		$r=dse_package_install($PackageName);
 		if($r<0){
@@ -137,6 +137,21 @@ if($FullConfig){
 			exit(-1);
 		}
 	}
+	
+	
+	$vars['DSE']['dse_package_install__use_passthru']=TRUE;
+	$PackageNamesArray=array("postfix");
+	foreach($PackageNamesArray as $PackageName){
+		$r=dse_package_install($PackageName);
+		if($r<0){
+			print getColoredString("FATAL ERROR: installing package $PackageName\n","red","black");
+			print getColoredString($vars['DSE']['SCRIPT_FILENAME']."Exiting.\n","red","black");
+			exit(-1);
+		}
+	}
+	$vars['DSE']['dse_package_install__use_passthru']=FALSE;
+	
+	
 	
 	if($vars['DSE']['LAMP_SERVER']){
 		print "Installing LAMP server:\n";
