@@ -502,14 +502,14 @@ function dse_configure_iptables_init(){
 function dse_configure_create_named_conf(){
 	global $vars;
 	
-	/*foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
+	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		print "Domain: $Domain\n";	
 		foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
 			print " Host: $Host.$Domain => $IP\n";
 		}	
 	}
 	 
-	 */
+	 
 	
 	dse_service_stop("named");
 
@@ -550,6 +550,7 @@ function dse_configure_create_named_conf(){
         	$Host=strtolower($Host);
 			if($Host=="_blank") $Host="@";
 			$zone.= "$Host	IN	A	$IP\n";
+			print  "$Host	IN	A	$IP\n";
 			
 		}
 		$zone_file="/etc/bind/local/$Domain";
