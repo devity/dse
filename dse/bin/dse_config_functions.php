@@ -92,6 +92,7 @@ function dse_file_install($Template,$Destination,$Mode="",$Owner=""){
 	}
 	//$command="cp -rf $Template $Destination";
 	$command="rsync --partial $Template $Destination";
+	print "\n command: $command\n";
 	passthru($command);
 	if(!file_exists($Destination)) {
 		print getColoredString(" ERROR: failed to create $Destination . \n","red","black");
@@ -423,11 +424,23 @@ function dse_configure_install_packages(){
 
 function dse_configure_services_init(){
 	global $vars;
+	
 	if(str_contains($vars['DSE']['SERVICES'],"http") ){
 		print `sudo chkconfig httpd on`;	
 	}
 	if(str_contains($vars['DSE']['SERVICES'],"mysql") ){
 		print `sudo chkconfig mysqld on`;
+	}
+	
+	if(str_contains($vars['DSE']['SERVICES'],"http") ){
+		dse_service_stop("http");
+		dse_configure_http_setup();
+		dse_service_start("http");
+	}
+	if(str_contains($vars['DSE']['SERVICES'],"mysql") ){	
+		dse_service_stop("mysql");
+		dse_configure_mysql_setup();
+		dse_service_start("mysql");
 	}
 }
 
@@ -505,6 +518,7 @@ function dse_service_start($service){
 	
 function dse_configure_http_setup(){
 	global $vars;
+	print "dse_configure_http_setup():\n";
 	if($vars['DSE']['INSTALL_SOURCE_DIR']){	
 		$http_source=$vars['DSE']['INSTALL_SOURCE_DIR'];//."/http";
 		$http_webroot=$http_source."/webroot";
@@ -517,6 +531,7 @@ function dse_configure_http_setup(){
 }
 function dse_configure_mysql_setup(){
 	global $vars;
+	print "dse_configure_mysql_setup():\n";
 	
 	
 }

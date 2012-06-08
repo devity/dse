@@ -132,13 +132,7 @@ if($FullConfig){
 	
 	dse_configure_services_init();
 	
-	dse_service_stop("http");
-	dse_configure_http_setup();
-	dse_service_start("http");
 	
-	dse_service_stop("mysql");
-	dse_configure_mysql_setup();
-	dse_service_start("mysql");
 	/*
 #dse_install_package ntop
 	#dse_install_package graphviz
