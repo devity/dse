@@ -523,11 +523,11 @@ function dse_configure_create_named_conf(){
 	$NS2=$vars['DSE']['SERVER_CONF']['Sets']['NameServer2'];
 	
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
-		$Domain=strtolower($Domain);
-		print "ld=$Domain *****\n";
+		$domain=strtolower($Domain);
+		print "$domain *****\n";
 		$zone="\$TTL	300
 
-@		IN	SOA	$Domain.	louis.louismarquette.com. (
+@		IN	SOA	$domain.	louis.louismarquette.com. (
 			2003042204 ; serial
 			28800 ; refresh
 			14400 ; retry
@@ -547,7 +547,7 @@ function dse_configure_create_named_conf(){
             500     IN      MX      30 craftlister.com.s8b1.psmtp.com.
             500     IN      MX      40 craftlister.com.s8b2.psmtp.com.
 		 */
-		 print_r($vars['DSE']['SERVER_CONF']['Hosts'][$Domain]);
+		// print_r($vars['DSE']['SERVER_CONF']['Hosts'][$Domain]);
         foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
         	$Host=strtolower($Host);
 			if($Host=="_blank") $Host="@";
