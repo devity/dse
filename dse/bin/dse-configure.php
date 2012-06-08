@@ -155,7 +155,7 @@ if($FullConfig){
 	
 	if($vars['DSE']['LAMP_SERVER']){
 		print "Installing LAMP server:\n";
-		print `sudo tasksel install lamp-server`;
+		passthru("sudo tasksel install lamp-server");
 	}	
 	
 	
