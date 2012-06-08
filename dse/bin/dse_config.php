@@ -39,6 +39,8 @@ if(getenv("DSE_CONFIG_DIR")!=""){
 }else{
 	$vars['DSE']['DSE_CONFIG_DIR']="/etc/dse";
 }
+$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']=$vars['DSE']['DSE_CONFIG_DIR']."/"."dse.conf";
+$vars['DSE']['SERVER_CONFIG_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/"."server.conf";
 
 if(getenv("DSE_LOG_DIR")!=""){
 	$vars['DSE']['DSE_LOG_DIR']=getenv("DSE_LOG_DIR");
@@ -102,7 +104,6 @@ $vars['DSE']['DSE_IPTHROTTLE_KONT_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/ips_ko
 // ********* Now, we WANT to overwrite these program defaults with the dse.conf file!
 // ********* Now, we WANT to overwrite these program defaults with the dse.conf file!
 // *********************************************************************************
-$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']=$vars['DSE']['DSE_CONFIG_DIR']."/"."dse.conf";
 $vars['DSE']=dse_read_config_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],$vars['DSE'],TRUE);
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******

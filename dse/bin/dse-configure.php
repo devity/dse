@@ -121,6 +121,8 @@ if($FullConfig){
 		$vars['DSE']['LAMP_SERVER']=TRUE;
 	}
 
+	dse_server_configure_file_load();
+	exit();
 
 	//harden
 	

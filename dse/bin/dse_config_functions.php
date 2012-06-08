@@ -1,6 +1,76 @@
 <?
 
 
+function dse_server_configure_file_load(){
+	global $vars;
+	$ConfigDirectory=$vars['DSE']['DSE_CONFIG_DIR'];
+	$ConfigFileContents=file_get_contents($vars['DSE']['SERVER_CONFIG_FILE']);
+	
+	if($ConfigFileContents==""){
+	    print "FATAL ERROR: cant open or empty file: $FullFileName\n";
+		return -1;
+	}
+	
+	$IncludeCommand="INCLUDE ";
+	$Loops=0;
+	while( (!( strstr($ConfigFileContents,$IncludeCommand)=== FALSE)) && ($Loops<100)){
+	        $Loops++;
+	        $ConfigFileIncludeName=strcut($ConfigFileContents,$IncludeCommand,"\n");
+	        $ConfigFileContentsPreInclude=strcut($ConfigFileContents,"",$IncludeCommand);
+	        $ConfigFileContentsPostInclude=substr($strcut_post_haystack,strlen($ConfigFileIncludeName)+1);
+	        $ConfigFileIncludeFullFileName=$ConfigDirectory . "/" . $ConfigFileIncludeName;
+	        $ConfigFileIncludeContents=file_get_contents($ConfigFileIncludeFullFileName);
+	        $ConfigFileContents=$ConfigFileContentsPreInclude."\n#START OF INC: $ConfigFileIncludeFullFileName\n".$ConfigFileIncludeContents."\n#END
+	 OF INC: $ConfigFileIncludeFullFileName\n".$ConfigFileContentsPostInclude;
+	}
+	
+	
+	$ProcessedFileContents=$ConfigFileContents;
+	$DefineCommand="DEFINE ";
+	$Loops=0;
+	while( (!( strstr($ProcessedFileContents,$DefineCommand)=== FALSE)) && ($Loops<100)){
+	        $Loops++;
+	        $DefineCommandAction=strcut($ProcessedFileContents,$DefineCommand,"\n");
+	//print "DefineAction: $DefineCommandAction \n";
+	        $Pre=strcut($ProcessedFileContents,"",$DefineCommand);
+	        $Post=substr($strcut_post_haystack,strlen($DefineCommandAction)+1);
+	        $ProcessedFileContents=$Pre."".$Post;
+	        $Holder=strcut($DefineCommandAction,""," ");
+	        $HolderValue=$strcut_post_haystack;
+	//print "h=$Holder v=$HolderValue()\n";
+			$Defines[$Holder]=$HolderValue;
+	        $ProcessedFileContents=str_replace($Holder,$HolderValue,$ProcessedFileContents);
+	
+	
+	}
+	
+	
+	print "\n\n\n\n\n\n\nProcessed: $ProcessedFileContents\n\n\n\n\n\n\n";
+	
+	
+	
+}
+
+
+
+function dse_spread_config_to_all_servers(){
+       /* $WebServerHostName=str_replace("\r\n","",`hostname`);
+        $WebServerHostName=strtoupper(substr($WebServerHostName,0,strpos($WebServerHostName,".")));
+        $WebServerNumber=str_replace("WS","",$WebServerHostName);
+
+        if($WebServerNumber!=1){
+                `cp -f /usr/local/webroot/ServerLevelConfig.txt /webroots/ws1root/ServerLevelConfig.txt`;
+        }
+        if($WebServerNumber!=3){
+                `cp -f /usr/local/webroot/ServerLevelConfig.txt /webroots/ws3root/ServerLevelConfig.txt`;
+        }
+        if($WebServerNumber!=4){
+                `cp -f /usr/local/webroot/ServerLevelConfig.txt /webroots/ws4root/ServerLevelConfig.txt`;
+        }*/
+}
+
+
+
 function dse_configure_file_link($LinkFile,$DestinationFile){
 	global $vars;
 	print "DSE file link: $LinkFile =>  ";
