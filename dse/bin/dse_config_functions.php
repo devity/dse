@@ -234,7 +234,7 @@ function dse_package_install($PackageName){
 	  		print getColoredString(" Unknown Package Name: $PackageName!\n","red","black");
 			return 1;
 	  	}else{
-		    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
+		    print getColoredString(" ERROR w/ cmd: $Command\n$r\n","red","black");
 			return -1;
 		}
 	}elseif($Installer=='fink'){
