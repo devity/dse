@@ -88,22 +88,25 @@ function dse_server_configure_file_load(){
 			$vars['DSE']['SERVER_CONF']['Webroots'][$Domain]=array();
 			$vars['DSE']['SERVER_CONF']['Hosts'][$Domain]=array();
 	       	foreach(split("\n",$DomainTag) as $Line){
-	       		$Lpa=split(" ",$Line);
-				$Protocol=$Lpa[0];
-				switch($Protocol){
-					case "HTTP":
-						$Hosts=$Lpa[1];
-						$IP=$Lpa[2];
-						$Webroot=$Lpa[3];
-						
-						$vars['DSE']['SERVER_CONF']['Webroots'][$Domain][$Hosts]=$Webroot;
+	       		$Line=trim($Line);
+	       		if($Line){
+	       			$Lpa=split(" ",$Line);
+					$Protocol=$Lpa[0];
+					switch($Protocol){
+						case "HTTP":
+							$Hosts=$Lpa[1];
+							$IP=$Lpa[2];
+							$Webroot=$Lpa[3];
 							
-						foreach(split(",",$Hosts) as $Host){
-							$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host]=$IP;
-						}
+							$vars['DSE']['SERVER_CONF']['Webroots'][$Domain][$Hosts]=$Webroot;
+								
+							foreach(split(",",$Hosts) as $Host){
+								$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host]=$IP;
+							}
+							
+							break;
 						
-						break;
-					
+					}
 				}
 				
 	       	}
