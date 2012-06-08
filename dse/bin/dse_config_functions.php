@@ -24,6 +24,19 @@ function dse_server_configure_file_load(){
 	 OF INC: $ConfigFileIncludeFullFileName\n".$ConfigFileContentsPostInclude;
 	}
 	
+	$IncludeCommand="SET ";
+	$Loops=0;
+	while( (!( strstr($ConfigFileContents,$IncludeCommand)=== FALSE)) && ($Loops<100)){
+	        $Loops++;
+	        $NeV=strcut($ConfigFileContents,$IncludeCommand,"\n"); 
+	        $Holder=strcut($NeV,""," ");
+	        $HolderValue=strcut($NeV," ");
+			$Sets[$Holder]=$HolderValue;
+	        $ConfigFileContentsPreInclude=strcut($ConfigFileContents,"",$IncludeCommand);
+	        $ConfigFileContentsPostInclude=substr($strcut_post_haystack,strlen($NeV)+1);
+	        $ConfigFileContents=$ConfigFileContentsPreInclude.$ConfigFileContentsPostInclude;
+	}
+	
 	
 	$ProcessedFileContents=$ConfigFileContents;
 	
@@ -49,10 +62,26 @@ function dse_server_configure_file_load(){
 	
 	}
 	
-	print_r($Defines);
+	print "Defines="; print_r($Defines); print "\n";
+	print "Sets="; print_r($Sets); print "\n";
+	
 	print "\n\n\n\n\n\n\nProcessed: $ProcessedFileContents\n\n\n\n\n\n\n";
 	
+	$Command="DOMAIN";
+	$Loops=0;
+	while( (!( strstr($ProcessedFileContents,$Command)=== FALSE)) && ($Loops<100)){
+	        $Loops++;
+	        $DomainTag=strcut($ProcessedFileContents,$Command." ","END ".$Command);
+	        $Pre=strcut($ProcessedFileContents,"",$Command." ");
+	        $Post=strcut($ProcessedFileContents,"END ".$Command);
+	        $ProcessedFileContents=$Pre."".$Post;
+			$Domain=strcut($DomainTag,"","\n");
+			$DomainTag=strcut($DomainTag,"\n");
+			$Domains[$Domain]=$DomainTag;
+	       
 	
+	}
+	print "Domains="; print_r($Domains); print "\n";
 	
 }
 
