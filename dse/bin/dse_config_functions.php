@@ -97,13 +97,18 @@ function dse_server_configure_file_load(){
 							$Hosts=$Lpa[1];
 							$IP=$Lpa[2];
 							$Webroot=$Lpa[3];
-							
 							$vars['DSE']['SERVER_CONF']['Webroots'][$Domain][$Hosts]=$Webroot;
-								
 							foreach(split(",",$Hosts) as $Host){
 								$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host]=$IP;
 							}
-							
+							break;
+						case "HOST":
+						case "HOSTS":
+							$Hosts=$Lpa[1];
+							$IP=$Lpa[2];
+							foreach(split(",",$Hosts) as $Host){
+								$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host]=$IP;
+							}
 							break;
 						
 					}
@@ -502,18 +507,21 @@ function dse_configure_create_named_conf(){
 		}	
 	}
 	
-	foreach($vars['DSE']['SERVER_CONF']['Hosts'] as $Domain=>$a){
-		print " d=$Domain \n";
-		foreach ($a as $Host=>$IP){
-			print " Host: $Host.$Domain => $IP\n";
-		}
+	$named_conf_local="";
+	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
+		$Domain=strtolower($Domain);
+		$named_conf_local.= "zone \"$Domain\"{ type master; file \"/etc/bind/local/$Domain\"; };\n";	
 	}
-	/*
-	$vars['DSE']['SERVER_CONF']['Domains']
-	$vars['DSE']['SERVER_CONF']['Webroots']
-	$vars['DSE']['SERVER_CONF']['Hosts']
-	*/
 	
+	print "named_conf_local=\n$named_conf_local\n";
+	
+	dse_service_stop();
+
+	file_put_contents($vars['DSE']['NAMED_CONF_FILE'], $named_conf_local);
+	dse_file_set_owner($vars['DSE']['NAMED_CONF_FILE'],"root:bind");
+	dse_file_set_mode($vars['DSE']['NAMED_CONF_FILE'],"644");
+		
+	dse_service_start();
 }
 
 
