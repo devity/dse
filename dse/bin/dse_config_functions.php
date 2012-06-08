@@ -68,6 +68,12 @@ function dse_server_configure_file_load(){
 	print "\n\n\n\n\n\n\nProcessed: $ProcessedFileContents\n\n\n\n\n\n\n";
 	
 	$Command="DOMAIN";
+
+	$vars['DSE']['SERVER_CONF']=array();
+	$vars['DSE']['SERVER_CONF']['Domains']=array();
+	$vars['DSE']['SERVER_CONF']['Webroots']=array();
+	$vars['DSE']['SERVER_CONF']['Hosts']=array();
+	
 	$Loops=0;
 	while( (!( strstr($ProcessedFileContents,$Command)=== FALSE)) && ($Loops<100)){
 	        $Loops++;
@@ -77,11 +83,33 @@ function dse_server_configure_file_load(){
 	        $ProcessedFileContents=$Pre."".$Post;
 			$Domain=strcut($DomainTag,"","\n");
 			$DomainTag=strcut($DomainTag,"\n");
-			$Domains[$Domain]=$DomainTag;
-	       
+			$DomainTags[$Domain]=$DomainTag;
+			$vars['DSE']['SERVER_CONF']['Domains'][]=$Domain;
+			$vars['DSE']['SERVER_CONF']['Webroots'][$Domain]=array();
+			$vars['DSE']['SERVER_CONF']['Hosts'][$Domain]=array();
+	       	foreach(split("\n",$DomainTag) as $Line){
+	       		$Lpa=split(" ",$Line);
+				$Protocol=$Lpa[0];
+				switch($Protocol){
+					case "HTTP":
+						$Hosts=$Lpa[1];
+						$IP=$Lpa[2];
+						$Webroot=$Lpa[3];
+						
+						$vars['DSE']['SERVER_CONF']['Webroots'][$Domain][$Hosts]=$Webroot;
+							
+						foreach(split(",",$Hosts) as $Host){
+							$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host]=$IP;
+						}
+						
+						break;
+					
+				}
+				
+	       	}
 	
 	}
-	print "Domains="; print_r($Domains); print "\n";
+	print "Domains="; print_r($DomainTags); print "\n";
 	
 }
 
@@ -460,6 +488,24 @@ function dse_configure_iptables_init(){
 	global $vars;
 	
 }
+
+function dse_configure_create_named_conf(){
+	global $vars;
+	
+	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
+		print "Domain: $Domain\n";	
+		foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
+			print " Host: $Host.$Domain => $IP\n";
+		}	
+	}
+	/*
+	$vars['DSE']['SERVER_CONF']['Domains']
+	$vars['DSE']['SERVER_CONF']['Webroots']
+	$vars['DSE']['SERVER_CONF']['Hosts']
+	*/
+	
+}
+
 
 
 function dse_configure_install_packages(){
