@@ -218,7 +218,11 @@ if($ShowIPs){
 	
 	$ext_info = `/sbin/ifconfig `;
 	$matches=array();
-	$pattern="/[a-z]+[0-9][:][ ]flags/";
+	if(dse_is_osx()){
+		$pattern="/[a-z]+[0-9][:][ ]flags/";
+	}else{
+		$pattern="/[a-z]+[0-9][ \t]+link/";
+	}
 	$interface_array= preg_split (  $pattern , $ext_info,100 );
 	$count=preg_match_all (  $pattern , $ext_info ,  &$matches );
 	$i=-1;
@@ -229,7 +233,11 @@ if($ShowIPs){
 		if($ip){
 			if($PrintedAnIP) print $Deliminator;
 			if($ShowInterfaceNames) {
-				$interface=trim(strcut($matches[0][$i],"",":"));
+				if(dse_is_osx()){
+					$interface=trim(strcut($matches[0][$i],"",":"));
+				}else{
+					$interface=trim(strcut($matches[0][$i],""," "));
+				}
 				print "$interface:";
 			}
 			print $ip; $PrintedAnIP=TRUE;
