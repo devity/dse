@@ -176,7 +176,8 @@ if($ShowConnected){
 
 if($ShowExternalIP){
 	$ext_info = `curl --silent http://checkip.dyndns.org | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}'`;
-	if($ext_info) { 
+	if($ext_info) {
+	    if($ShowInterfaceNames) print "external:"; 
 	    print trim($ext_info);
 	}
 }
@@ -192,6 +193,7 @@ if($ShowIP){
 	if($ext_info) {
 		$ext_info=strcut($ext_info,$Adapter);
 		$ip=trim(strcut($ext_info,$netstat_ip_prefix," "));
+	    if($ShowInterfaceNames) print "$Adapter:";
 	    print $ip;
 	}
 }
@@ -224,7 +226,7 @@ if($ShowIPs){
 		$pattern="/[a-z0-9]+[ \t]+Link/";
 	}
 	$interface_array= preg_split (  $pattern , $ext_info,100 );
-	$count=preg_match_all (  $pattern , $ext_info ,  &$matches );
+	$count=preg_match_all (  $pattern , $ext_info ,  $matches );
 	$i=-1;
 	foreach($interface_array as $interface_part){
 		//print "\n\npart=$interface_part\n";
@@ -247,9 +249,7 @@ if($ShowIPs){
 	}
 	$ext_ip = trim(`curl --silent http://checkip.dyndns.org | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}'`);
 	if($PrintedAnIP) print $Deliminator;
-	if($ShowInterfaceNames) {
-		print "external:";
-	}
+	if($ShowInterfaceNames) print "external:";
 	print $ext_ip; $PrintedAnIP=TRUE;
 	$ips[]=$ext_ip;
 	
