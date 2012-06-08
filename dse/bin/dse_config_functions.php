@@ -73,6 +73,8 @@ function dse_server_configure_file_load(){
 	$vars['DSE']['SERVER_CONF']['Domains']=array();
 	$vars['DSE']['SERVER_CONF']['Webroots']=array();
 	$vars['DSE']['SERVER_CONF']['Hosts']=array();
+	$vars['DSE']['SERVER_CONF']['Sets']=$Sets;
+	$vars['DSE']['SERVER_CONF']['Defines']=$Defines;
 	
 	$Loops=0;
 	while( (!( strstr($ProcessedFileContents,$Command)=== FALSE)) && ($Loops<100)){
@@ -500,28 +502,68 @@ function dse_configure_iptables_init(){
 function dse_configure_create_named_conf(){
 	global $vars;
 	
-	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
+	/*foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		print "Domain: $Domain\n";	
 		foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
 			print " Host: $Host.$Domain => $IP\n";
 		}	
 	}
+	 
+	 */
 	
+	dse_service_stop("named");
+
 	$named_conf_local="";
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		$Domain=strtolower($Domain);
 		$named_conf_local.= "zone \"$Domain\"{ type master; file \"/etc/bind/local/$Domain\"; };\n";	
 	}
 	
-	print "named_conf_local=\n$named_conf_local\n";
+	$NS1=$vars['DSE']['SERVER_CONF']['Sets']['NameServer1'];
+	$NS2=$vars['DSE']['SERVER_CONF']['Sets']['NameServer2'];
 	
-	dse_service_stop();
+	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
+		$Domain=strtolower($Domain);
+		$zone="\$TTL	300
 
+@		IN	SOA	$zone.	louis.louismarquette.com. (
+			2003042204 ; serial
+			28800 ; refresh
+			14400 ; retry
+			3600000 ; expire
+			86400 ; default_ttl
+			)
+@               IN      NS      $NS1.
+@               IN      NS      $NS2.
+";
+		if(array_key_exists("_blank",$vars['DSE']['SERVER_CONF']['Hosts'][$Domain])){
+			$IP=$vars['DSE']['SERVER_CONF']['Hosts'][$Domain]['_blank'];
+			$zone.= "@		IN	A	$IP\n";
+		}
+		/*
+		 *     500     IN      MX      10 craftlister.com.s8a1.psmtp.com.
+            500     IN      MX      20 craftlister.com.s8a2.psmtp.com.
+            500     IN      MX      30 craftlister.com.s8b1.psmtp.com.
+            500     IN      MX      40 craftlister.com.s8b2.psmtp.com.
+		 */
+        foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
+        	$Host=strtolower($Host);
+			$zone.= "$Host	IN	A	$IP\n";
+		}
+		$zone_file="/etc/bind/local/$Domain";
+		file_put_contents($zone_file, $zone);
+		dse_file_set_owner($zone_file,"root:bind");
+		dse_file_set_mode($zone_file,"644");
+	
+	}
+	//print "named_conf_local=\n$named_conf_local\n";
+	
+	
 	file_put_contents($vars['DSE']['NAMED_CONF_FILE'], $named_conf_local);
 	dse_file_set_owner($vars['DSE']['NAMED_CONF_FILE'],"root:bind");
 	dse_file_set_mode($vars['DSE']['NAMED_CONF_FILE'],"644");
 		
-	dse_service_start();
+	dse_service_start("named");
 }
 
 
@@ -657,9 +699,8 @@ function dse_configure_directories_create(){
 	}
 }
 
-function dse_service_stop($service){
+function dse_service_name_from_common_name($service){
 	global $vars;
-	print "Stopping service $service: ";
 	switch($service){
 		case "http":
 			$service="apache2";
@@ -667,7 +708,16 @@ function dse_service_stop($service){
 		case "mysql":
 			$service="mysqld";
 			break;
+		case "named":
+			$service="bind9";
+			break;
 	}
+	return $service;
+}
+function dse_service_stop($service){
+	global $vars;
+	print "Stopping service $service: ";
+	$service=dse_service_name_from_common_name($service);
 	$c="/sbin/service $service stop";
 	$r=`$c`;
 	print "Stopped.\n";
@@ -675,14 +725,7 @@ function dse_service_stop($service){
 function dse_service_start($service){
 	global $vars;
 	print "Starting service $service: ";
-	switch($service){
-		case "http":
-			$service="apache2";
-			break;
-		case "mysql":
-			$service="mysqld";
-			break;
-	}
+	$service=dse_service_name_from_common_name($service);
 	$c="/sbin/service $service start";
 	$r=`$c`;
 	print "Stopped.\n";
