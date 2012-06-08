@@ -126,8 +126,8 @@ if($FullConfig){
 	
 	
 	//install packages
-//"iftop",
-	$PackageNamesArray=array("vim","memstat","sysstat","yum","git","chkconfig","lynx-cur","postfix","perl-tk","cron-apt","dnsutils","update-inetd",
+//"iftop",,"git"
+	$PackageNamesArray=array("vim","memstat","sysstat","yum","chkconfig","lynx-cur","postfix","perl-tk","cron-apt","dnsutils","update-inetd",
 		"build-essential","aide","chkrootkit","rkhunter","logwatch","xosview","ubuntu-desktop","gnome");
 	foreach($PackageNamesArray as $PackageName){
 		$r=dse_package_install($PackageName);
