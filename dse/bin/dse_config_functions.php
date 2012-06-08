@@ -345,4 +345,130 @@ function dse_package_install($PackageName){
 }
 
 
+function dse_configure_iptables_init(){
+	global $vars;
+	
+}
+
+
+function dse_configure_install_packages(){
+	global $vars;
+
+//"iftop",,"git","gnome"
+	$PackageNamesArray=array("vim","memstat","sysstat","yum","chkconfig","lynx-cur","perl-tk","cron-apt","dnsutils","update-inetd",
+		"build-essential","rpm-build","aide","chkrootkit","rkhunter","logwatch","xosview","ubuntu-desktop");
+	foreach($PackageNamesArray as $PackageName){
+		$r=dse_package_install($PackageName);
+		if($r<0){
+			print getColoredString("FATAL ERROR: installing package $PackageName\n","red","black");
+			print getColoredString($vars['DSE']['SCRIPT_FILENAME']."Exiting.\n","red","black");
+			exit(-1);
+		}
+	}
+	
+	
+	$vars['DSE']['dse_package_install__use_passthru']=TRUE;
+	$PackageNamesArray=array("postfix");
+	foreach($PackageNamesArray as $PackageName){
+		$r=dse_package_install($PackageName);
+		if($r<0){
+			print getColoredString("FATAL ERROR: installing package $PackageName\n","red","black");
+			print getColoredString($vars['DSE']['SCRIPT_FILENAME']."Exiting.\n","red","black");
+			exit(-1);
+		}
+	}
+	$vars['DSE']['dse_package_install__use_passthru']=FALSE;
+	
+	
+	
+	if($vars['DSE']['LAMP_SERVER']){
+		print "Installing LAMP server:\n";
+		passthru("sudo tasksel install lamp-server");
+	}	
+	
+	
+	$PackageNamesArray=array("tasksel","dselect");
+	if(str_contains($vars['DSE']['SERVICES'],"ssh") ){
+		$PackageNamesArray[]="ssh";
+	}
+	if(str_contains($vars['DSE']['SERVICES'],"vpn") ){
+		$PackageNamesArray[]="openvpn";
+	}
+	if(str_contains($vars['DSE']['SERVICES'],"dns") ){
+		$PackageNamesArray[]="bind9";
+	}
+	if(str_contains($vars['DSE']['SERVICES'],"ftp") ){
+		$PackageNamesArray[]="vsftpd";
+	}
+	
+	foreach($PackageNamesArray as $PackageName){
+		$r=dse_package_install($PackageName);
+		if($r<0){
+			print getColoredString("FATAL ERROR: installing package $PackageName\n","red","black");
+			print getColoredString($vars['DSE']['SCRIPT_FILENAME']."Exiting.\n","red","black");
+			exit(-1);
+		}
+	}
+	
+	if(str_contains($vars['DSE']['SERVICES'],"vpn") ){
+		print `sudo chkconfig openvpn off`;
+	}
+	if(str_contains($vars['DSE']['SERVICES'],"ftp") ){
+		print `sudo chkconfig vsftpd off`;
+	}
+}
+
+
+
+function dse_configure_services_init(){
+	global $vars;
+	if(str_contains($vars['DSE']['SERVICES'],"http") ){
+		print `sudo chkconfig httpd on`;	
+	}
+	if(str_contains($vars['DSE']['SERVICES'],"mysql") ){
+		print `sudo chkconfig mysqld on`;
+	}
+}
+
+
+function dse_configure_directories_create(){
+	global $vars;
+	
+	if(str_contains($vars['DSE']['SERVICES'],"http") ){
+ 		if($vars['DSE']['HTTP_USER']){
+ 			$http_user=$vars['DSE']['HTTP_USER'];
+			$r=`egrep -q "^${http_user}:" /etc/passwd`;
+ 			if(!str_contains($r,"$http_user")){
+ 				print "No http user: $http_user - adding.\n";
+ 				passthru("sudo adduser $http_user");
+ 			}
+		}	
+		if($vars['DSE']['HTTP_GROUP']){
+ 			$http_group=$vars['DSE']['HTTP_GROUP'];
+			$r=`egrep -q "^${http_group}:" /etc/group`;
+ 			if(!str_contains($r,"$http_group")){
+ 				print "No http group: $http_group - adding.\n";
+ 				passthru("sudo addgroup $http_group");
+ 			}
+		}	
+		if($vars['DSE']['HTTP_USER'] && $vars['DSE']['HTTP_GROUP']){
+			$ug=$vars['DSE']['HTTP_USER'].":".$vars['DSE']['HTTP_GROUP'];
+		}else{
+			$ug="";
+		}
+		dse_directory_create($vars['DSE']['HTTP_ROOT_DIR'],"755",$ug);
+	}
+	
+	
+	if(str_contains($vars['DSE']['SERVICES'],"mysql") ){
+		if($vars['DSE']['MYSQL_USER'] && $vars['DSE']['MYSQL_GROUP']){
+			$ug=$vars['DSE']['MYSQL_USER'].":".$vars['DSE']['MYSQL_GROUP'];
+		}else{
+			$ug="";
+		}
+		dse_directory_create($vars['DSE']['MYSQL_ROOT_DIR'],"755",$ug);
+	}
+}
+
+
 ?>
