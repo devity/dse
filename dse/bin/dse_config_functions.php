@@ -549,7 +549,7 @@ function dse_configure_create_named_conf(){
         foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
         	$Host=strtolower($Host);
 			if($Host=="_blank") $Host="@";
-			$zone.= "$Host	IN	A	$IP\n";ls -la
+			$zone.= "$Host	IN	A	$IP\n";
 			
 		}
 		$zone_file="/etc/bind/local/$Domain";
