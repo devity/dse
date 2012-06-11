@@ -53,7 +53,7 @@ dse_cli_script_header();
 
 
 $PIDInfo=dse_pid_get_info($PID);
-if($ShowFamilyTree){
+if($ShowFamilyTree && $PIDInfo['PPID']>0 ){
 	$Command="/dse/bin/pidinfo -f ".$PIDInfo['PPID'];
 	$parent=`$Command`;
 	print $parent;
@@ -65,6 +65,7 @@ print "PID: ".$PIDInfo['PID']."\n";
 print "PPID: ".$PIDInfo['PPID']."\n";
 print "PCPU: ".$PIDInfo['PCPU']."\n";
 print "PMEM: ".$PIDInfo['PMEM']."\n";
+print "USER: ".$PIDInfo['USER']."\n";
 
 if($DidSomething){
 	if(!$Quiet && !$DoSetEnv){
