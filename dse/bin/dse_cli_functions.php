@@ -1,4 +1,47 @@
 <?
+
+
+function dse_pid_get_info($PID){
+	global $vars;
+	$PIDInfo=array();
+	$PIDInfo['PID']=$PID;
+	$PIDInfo['PPID']=dse_pid_get_ppid($PID);
+	$PIDInfo['PCPU']=dse_pid_get_pcpu($PID);
+	$PIDInfo['PMEM']=dse_pid_get_pmem($PID);
+	$PIDInfo['EXE']=trim(`/dse/bin/pid2exe $PID`);
+	return $PIDInfo;
+}
+
+function dse_pid_get_ppid($PID){
+	global $vars;
+	$PID=intval($PID);
+	if(!$PID){
+		return -1;
+	}
+	$PPID=trim(`ps -p $PID -o ppid=`);
+	return $PPID;		
+}
+
+function dse_pid_get_pcpu($PID){
+	global $vars;
+	$PID=intval($PID);
+	if(!$PID){
+		return -1;
+	}
+	$PCPU=trim(`ps -p $PID -o pcpu=`);
+	return $PCPU;		
+}
+function dse_pid_get_pmem($PID){
+	global $vars;
+	$PID=intval($PID);
+	if(!$PID){
+		return -1;
+	}
+	$PMEM=trim(`ps -p $PID -o pmem=`);
+	return $PMEM;		
+}
+
+
 function dse_which($prog){
 	global $vars;
 	$Command="which $prog 2>&1";

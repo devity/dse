@@ -8,7 +8,6 @@ $Verbosity=3;
 
 
 $Script=$argv[0];
-$search_str=$argv[1];
 
 /*
 function ReadStdin($prompt, $valid_inputs, $default = '') { 
@@ -26,7 +25,12 @@ stream_set_blocking(STDIN, 0);
 $stdin = fgetcsv(STDIN);
  * *
  */
-$stdin=fgets(STDIN);
+ 
+if(sizeof($argv)>1){
+	$stdin=$argv[1];
+}else{
+	$stdin=fgets(STDIN);
+}
 $stdin=trim($stdin);				
 										
 $dollar='$';

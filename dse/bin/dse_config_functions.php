@@ -555,7 +555,7 @@ function dse_configure_create_named_conf(){
 			print  "$Host	IN	A	$IP\n";
 			
 		}
-		$zone_file="/etc/bind/local/$Domain";
+		$zone_file="/etc/bind/local/$domain";
 		print "Saving file $zone_file\n";
 		file_put_contents($zone_file, $zone);
 		dse_file_set_owner($zone_file,"root:bind");
