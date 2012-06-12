@@ -76,12 +76,13 @@ if($ListBackups){
 		//$time_str=date("D M j G:i:s T Y", $time);
 		print "--------- $time_str $name\n";
 		if($last_file){
-			print `diff -wBEdy $last_file $name`;
+			print `diff -wBEdy $name $last_file`;
 		}
 		$last_file=$name;
 		
 	}
-	print "current $name_orig\n";
+	print "--------- current $name_orig\n";
+	print `diff -wBEdy $name_orig $last_file`;
 }else{
 	
 	$backupfilename=dse_file_backup($file);
