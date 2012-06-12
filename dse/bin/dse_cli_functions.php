@@ -1,5 +1,41 @@
 <?
 
+function dse_directory_ls( $path = '.', $level = 0 ){ 
+	global $vars;
+	$path.="/";  $path=str_replace("//", "/", $path);
+    $ignore = array( '.', '..' ); 
+    $dh = @opendir( $path ); 
+	$tbr=array();
+    while( false !== ( $file = readdir( $dh ) ) ){ 
+        if( !in_array( $file, $ignore ) ){ 
+            if( is_dir( "$path$file" ) ){ 
+                $tbr[]=array("DIR",dse_directory_ls( "$path$file", ($level+1) ) ); 
+            } else { 
+             	$tbr[]=array("FILE","$path$file");
+            } 
+        } 
+    } 
+    closedir( $dh );
+	return $tbr;
+} 
+function dse_ls( $search ){ 
+	global $vars;
+	$Command="ls -a -1 $search";
+	$r=`$Command`;
+	//print "Command: $Command\n$r\n";
+	$tbr=array();
+	foreach(split("\n",$r) as $Line){
+		if($Line){
+			if( is_dir( "$Line" ) ){ 
+	            $tbr[]=array("DIR","$Line");
+	        } else { 
+				$tbr[]=array("FILE","$Line");
+	        } 
+		}
+	}
+	return $tbr;
+} 
+
 
 function dse_pid_get_info($PID){
 	global $vars;

@@ -10,7 +10,12 @@ $Verbosity=0;
 $UniqueOutput=TRUE;
 
 $Script=$argv[0];
-$search_str=$argv[1];
+
+if(sizeof($argv)>1){
+	$search_str=$argv[1];
+}else{
+	$search_str=fgets(STDIN);
+}
 
 $dollar='$';
 
