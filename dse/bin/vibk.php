@@ -72,11 +72,16 @@ if($ListBackups){
 	foreach($dir as $f){
 		$name=$f[1];
 		$time_str=strcut($name,$file.".");
-		$name=strcut($name,"",".$time");
+		$name_orig=strcut($name,"",".$time");
 		//$time_str=date("D M j G:i:s T Y", $time);
-		print "$time_str $name\n";
+		print "--------- $time_str $name\n";
+		if($last_file){
+			print `diff -wBEdy $last_file $name`;
+		}
+		$last_file=$name;
+		
 	}
-	
+	print "current $name_orig\n";
 }else{
 	
 	$backupfilename=dse_file_backup($file);
