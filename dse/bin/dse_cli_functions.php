@@ -216,17 +216,49 @@ function dse_file_get_owner($DestinationFile,$ReturnGroupAlso=TRUE){
 	global $vars;
 	$Owner="";
 	$UserInt=fileowner($DestinationFile);
-	$UserArray=posix_getpwuid($UserInt);
+	$UserArray=dse_posix_getpwuid($UserInt);
 	$UserName=$UserArray['name'];
 	$Owner.=$UserName;
 	if($ReturnGroupAlso){
 		$GroupInt=filegroup($DestinationFile);
-		$GroupArray=posix_getgrgid($GroupInt);
+		$GroupArray=dse_posix_getgrgid($GroupInt);
 		$GroupName=$GroupArray['name'];
 		$Owner.=":".$GroupName;
 	}
 	return $Owner;
 }
+	
+function dse_posix_getgrgid($gid){ 
+	global $vars;
+  	if (function_exists('posix_getgrgid')) { 
+    	$a = posix_getgrgid($gid); 
+    	return $a['name']; 
+  	} 
+ 	if (is_readable($vars['DSE']['SYSTEM_GROUP_FILE'])){ 
+    	exec(sprintf('grep :%s: '.$vars['DSE']['SYSTEM_GROUP_FILE'].' | cut -d: -f1', (int) $gid), $o, $r); 
+    	if ($r == 0) 
+      		return trim($o['0']); 
+    	else 
+    		return $uid; 
+  	} 
+  	return $uid; 
+}
+
+function dse_posix_getpwuid($uid){ 
+	global $vars;
+  	if (function_exists('posix_getpwuid')) { 
+    	$a = posix_getpwuid($uid); 
+    	return $a['name']; 
+  	} 
+ 	if (is_readable($vars['DSE']['SYSTEM_USER_FILE'])){ 
+    	exec(sprintf('grep :%s: '.$vars['DSE']['SYSTEM_USER_FILE'].' | cut -d: -f1', (int) $uid), $o, $r); 
+    	if ($r == 0) 
+      		return trim($o['0']); 
+    	else 
+    		return $uid; 
+  	} 
+  	return $uid; 
+} 
 
 function dse_file_delete($File){
 	global $vars;

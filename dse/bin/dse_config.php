@@ -70,6 +70,9 @@ if(dse_is_osx()){
 	$vars['DSE']['USER_BASH_PROFILE']=$vars['DSE']['USER_HOME_DIR']."/.bashrc";
 }
 
+$vars['DSE']['SYSTEM_USER_FILE']='/etc/passwd';
+$vars['DSE']['SYSTEM_GROUP_FILE']='/etc/group';
+
 // *********************************************************************************
 $vars['DSE']['SUGGESTED']=array();
 $vars['DSE']['SUGGESTED']['HISTFILESIZE']=100000;
