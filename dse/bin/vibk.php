@@ -112,8 +112,8 @@ if($ListBackups){
 	print "--------- current $file | $mtime_str | $size_str\n";
 	if($ShowDiff) print `diff $DiffOptions $name_orig $last_file`;
 }else{
-	print "backing up to: $backupfilename\n";
 	$backupfilename=dse_file_backup($file);
+	print "backup saved at: $backupfilename\n";
 	
 	$PermissionsOrigional=dse_file_get_mode($file);
 	$OwnerOrigional=dse_file_get_owner($file);

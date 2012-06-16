@@ -355,6 +355,11 @@ function dse_package_install($PackageName){
 		if($fink){
 			$Installer="fink";
 		}
+	}elseif(dse_is_centos()){
+		$yum=dse_which("yum");
+		if($yum){
+			$Installer="yum";
+		}
 	}
 	if(!$Installer){
 		$aptget=dse_which("apt-get");

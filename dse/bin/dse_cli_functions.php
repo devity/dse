@@ -1201,8 +1201,7 @@ function dse_is_osx(){
 	if(!$sw_vers){
 		$vars['DSE']['IS_OSX']=FALSE;
 	}else{
-		$OSXVersion =trim(`sw_vers `);
-		$OSXVersion =trim(strcut($OSXVersion,"ProductName:","\n"));
+		$OSXVersion =trim(strcut(trim(`sw_vers `),"ProductName:","\n"));
 		if($OSXVersion=="Mac OS X"){
 			$vars['DSE']['IS_OSX']=TRUE;
 		}else{
@@ -1211,14 +1210,13 @@ function dse_is_osx(){
 	}
 	return $vars['DSE']['IS_OSX'];
 }
-
 function dse_is_ubuntu(){
 	global $vars;
 	if(isset($vars['DSE']['IS_UBUNTU'])) return $vars['DSE']['IS_UBUNTU'];
 	if(!file_exists("/etc/issue")){
 		$vars['DSE']['IS_UBUNTU']=FALSE;
 	}else{
-		$EtcIssue=trim(`cat /etc/issue`);
+		$EtcIssue=dse_file_get_contents("/etc/issue");
 		if(str_contains($EtcIssue,"Ubuntu")){
 			$vars['DSE']['IS_UBUNTU']=TRUE;
 		}else{
@@ -1226,6 +1224,21 @@ function dse_is_ubuntu(){
 		}
 	}
 	return $vars['DSE']['IS_UBUNTU'];
+}
+function dse_is_centos(){
+	global $vars;
+	if(isset($vars['DSE']['IS_CENTOS'])) return $vars['DSE']['IS_CENTOS'];
+	if(!file_exists("/etc/issue")){
+		$vars['DSE']['IS_CENTOS']=FALSE;
+	}else{
+		$EtcIssue=dse_file_get_contents("/etc/issue");
+		if(str_contains($EtcIssue,"CentOS")){
+			$vars['DSE']['IS_CENTOS']=TRUE;
+		}else{
+			$vars['DSE']['IS_CENTOS']=FALSE;
+		}
+	}
+	return $vars['DSE']['IS_CENTOS'];
 }
 
 

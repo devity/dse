@@ -34,7 +34,9 @@ function dse_backup_mysqld() {
 	print "Saving Copy of mysqld Data: ";
 	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
  	$file="/backup/mysql/mysqldump".$DATE_TIME_NOW.".sql";
-	`mysqldump --all-databases --user=localroot --add-drop-database --comments --debug-info --disable-keys --dump-date --force --quick --routines --verbose --result-file=$file`;
+	$Command="mysqldump --all-databases --user=localroot --add-drop-database --comments --debug-info --disable-keys --dump-date --force --quick --routines --verbose --result-file=$file";
+	print "Command: $Command\n";
+	`$Command`;
 	`gzip $file`;
 	`mysqlhotcopy-all-databases`;
 
@@ -46,9 +48,9 @@ function dse_backup_mysqld() {
 
 
 function dse_backup_httpd() {
-	global $vars,$dse_server_httpd_backup_directory,$web_conf_dir,$web_data_dirs;
+	global $vars; //,$dse_server_httpd_backup_directory,$web_conf_dir,$web_data_dirs;
 	dse_detect_os_info();
-	
+	$web_data_dir=$vars['DSE']['BACKUP_HTTP_ROOT'];
 	print "Saving Copy of httpd Data: ";
 	
    	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
@@ -60,10 +62,24 @@ function dse_backup_httpd() {
 
 	`mkdir $dir`;   
    
-	`cp -rf $web_conf_dir ${dir}/.`;
-	foreach($web_data_dirs as $web_data_dir){
-		`cp -rf $web_data_dir ${dir}/.`;
+   	$web_conf_dir="/etc/httpd";
+   	if(!is_dir($web_conf_dir)){
+   		$web_conf_dir="/etc/apache2";
+	   	if(!is_dir($web_conf_dir)){
+	   		$web_conf_dir="";
+	   	}
+   	}
+   
+   	if($web_conf_dir){
+		$Command="cp -rf $web_conf_dir ${dir}/.";
+		print "Command: $Command\n";
+		`$Command`;
 	}
+	//foreach($web_data_dirs as $web_data_dir){
+		$Command="cp -rf $web_data_dir ${dir}/.";
+		print "Command: $Command\n";
+		`$Command`;
+	//}
 
 	print "$_OK  saved in  ${dir}\n";
 }
