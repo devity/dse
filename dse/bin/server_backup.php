@@ -8,7 +8,7 @@ $vars['Verbosity']=1;
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="server-backup";
-$vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="back's up web data, mysql, conf's, etc";
+$vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="makes a backup of web data, mysql, conf's, etc";
 $vars['DSE']['DSE_DSE_VERSION']="v0.01b";
 $vars['DSE']['DSE_DSE_VERSION_DATE']="2012/06/16";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
@@ -18,25 +18,23 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 print "Starting Backup:\n";
 
 
-
+print "Backup Directory: ".$vars['DSE']['DSE_BACKUP_DIR']." ";
 if(!is_dir($vars['DSE']['DSE_BACKUP_DIR'])){
-	print "Backup Directory ".$vars['DSE']['DSE_BACKUP_DIR']." $Missing. Create? ";
+	print " $Missing. Create? ";
 	$A=dse_ask_yn();
 	if($A=='Y'){
 		dse_directory_create($vars['DSE']['DSE_BACKUP_DIR'],"777","root:root");
 	}else{
-		print "Can't backup w/o backup dir. Exiting.\n";	
+		print "\n  Can't backup w/o backup dir. Exiting.\n";
+		exit(-1);	
 	}
+}else{
+	print $OK;
 }
+print "\n";
 
-$dse_server_environment_backup_directory=$dse_server_backup_directory."/server_environment";
-$dse_server_httpd_backup_directory=$dse_server_backup_directory."/httpd";
 
-$web_conf_dir="/etc/httpd";
-$web_data_dirs=array();
-$web_data_dirs[]="/home/admin/batteriesdirect.com";
-$web_data_dirs[]="/var/www";
- 
+
 
 dse_backup_server_environment();
 dse_backup_httpd();
@@ -109,8 +107,10 @@ function dse_backup_httpd() {
 
 
 function dse_backup_server_environment() {
-	global $vars,$dse_server_environment_backup_directory;
+	global $vars;
 	dse_detect_os_info();
+	
+	$dse_server_environment_backup_directory=$vars['DSE']['DSE_BACKUP_DIR']."/server_environment";
 	
 	print "Saving Image of Environment Variables: ";
 	
