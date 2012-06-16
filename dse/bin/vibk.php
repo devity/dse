@@ -56,16 +56,19 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 	case 's':
 	case 'show-diff-side-by-side':
+		$ShowDiff=TRUE;
 		$DiffOptions=$DiffOptionsSBS;
   		$ListBackups=TRUE;
 		break;
 	case 'd':
 	case 'show-diff':
+		$ShowDiff=TRUE;
 		$DiffOptions=$DiffOptionsNormal;
   		$ListBackups=TRUE;
 		break;
 	case 'o':
 	case 'diff-options':
+		$ShowDiff=TRUE;
   		$ListBackups=TRUE;
   		$DiffOptions=$vars['options'][$opt];
 		break;
@@ -104,7 +107,7 @@ if($ListBackups){
 	}
 	$name_orig=str_replace($name_orig,$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY'],"");
 	print "--------- current $name_orig\n";
-	print `diff -wBEdy $name_orig $last_file`;
+	if($ShowDiff) print `diff $DiffOptions $name_orig $last_file`;
 }else{
 	print "backing up to: $backupfilename\n";
 	$backupfilename=dse_file_backup($file);
