@@ -1136,11 +1136,9 @@ function deleteFromArray(&$array, $deleteIt, $useOldKeys = FALSE, $useDeleteItAs
 
 function dse_is_osx(){
 	global $vars;
-	if(isset($vars['DSE']['IS_OSX'])){
-		return $vars['DSE']['IS_OSX'];
-	}
-	$sw_vers=trim(`which sw_vers 2>&1`);
-	if( (!(strstr($sw_vers,"no sw_vers in")===FALSE)) || $sw_vers==""){
+	if(isset($vars['DSE']['IS_OSX'])) return $vars['DSE']['IS_OSX'];
+	$sw_vers=dse_which("sw_vers");
+	if(!$sw_vers){
 		$vars['DSE']['IS_OSX']=FALSE;
 	}else{
 		$OSXVersion =trim(`sw_vers `);
@@ -1152,6 +1150,22 @@ function dse_is_osx(){
 		}
 	}
 	return $vars['DSE']['IS_OSX'];
+}
+
+function dse_is_ubuntu(){
+	global $vars;
+	if(isset($vars['DSE']['IS_UBUNTU'])) return $vars['DSE']['IS_UBUNTU'];
+	if(!file_exists("/etc/issue")){
+		$vars['DSE']['IS_UBUNTU']=FALSE;
+	}else{
+		$EtcIssue=trim(`cat /etc/issue`);
+		if(str_contains($EtcIssue,"Ubuntu")){
+			$vars['DSE']['IS_UBUNTU']=TRUE;
+		}else{
+			$vars['DSE']['IS_UBUNTU']=FALSE;
+		}
+	}
+	return $vars['DSE']['IS_UBUNTU'];
 }
 
 

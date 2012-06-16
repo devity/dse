@@ -97,6 +97,15 @@ $Command="grep HISTFILESIZE ".$vars['DSE']['USER_BASH_PROFILE'];
 $HISTFILESIZE=strcut(trim(`$Command`),"=");
 if($HISTFILESIZE==""){
 	print "Cant find HISTFILESIZE in ".$vars['DSE']['USER_BASH_PROFILE']."\n";
+	$A=dse_ask_yn(" Add HISTFILESIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']." ?");
+	if($A=='Y'){
+		$Command="echo \"\nHISTFILESIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']."\" >> ".$vars['DSE']['USER_BASH_PROFILE'];
+		$r=`$Command`;
+		print "$OK\n";
+	}else{
+		print "$NotChanged\n";
+	}
+		
 }else{
 	if($HISTFILESIZE<$vars['DSE']['SUGGESTED']['HISTFILESIZE']){
 		print "HISTFILESIZE $NotOK. Smaller ( = $HISTFILESIZE ) than recommended ( ".$vars['DSE']['SUGGESTED']['HISTFILESIZE']." ). \n";
