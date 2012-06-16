@@ -51,6 +51,7 @@ function dse_backup_httpd() {
 	global $vars; //,$dse_server_httpd_backup_directory,$web_conf_dir,$web_data_dirs;
 	dse_detect_os_info();
 	$web_data_dir=$vars['DSE']['BACKUP_HTTP_ROOT'];
+	$dse_server_httpd_backup_directory=$vars['DSE']['BACKUP_DIR_HTTP'];
 	print "Saving Copy of httpd Data: ";
 	
    	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
