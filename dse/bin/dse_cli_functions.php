@@ -184,17 +184,22 @@ function dse_file_get_size($DestinationFile){
 	return dse_file_get_stat_field($DestinationFile,"size");
 }
 
+function dse_file_get_mtime($DestinationFile){
+	global $vars;
+	return dse_file_get_stat_field($DestinationFile,"mtime");
+}
+
 function dse_file_get_stat_field($DestinationFile,$field=""){
 	global $vars;
-	$stat_field_names=array('dev','ino','mode','nlink','uid','gid','rdev','size','atime','mtime','ctime','blksize','blocks');
+	$stat_field_names=array('dev'=>0,'ino'=>1,'mode'=>2,'nlink'=>3,'uid'=>4,'gid'=>5,'rdev'=>6,'size'=>7,'atime'=>8,'mtime'=>9,'ctime'=>10,'blksize'=>11,'blocks'=>12);
 	if(!file_exists($DestinationFile)){
 		print "Error in dse_file_get_mode($DestinationFile,$field) - file does not exist.\n";
 		return -1;
 	}
-	$sa=stat($file);
+	$sa=stat($DestinationFile);
 	if(!$field) return $sa;
-	$index_i=array_search($stat_field_names,$field);
-	if($index_i===FALSE){
+	$index_i=$stat_field_names[$field];
+	if((!$index_i) || strlen($index_i)<=0){
 		print "Error in dse_file_get_mode($DestinationFile,$field) - field $field unknown. Options: "; print_r($stat_field_names); print "\n";
 		return -1;
 	}
