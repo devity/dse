@@ -5,7 +5,9 @@ $OK=getColoredString("OK","green","black");
 $Added=getColoredString("Added","green","black");
 $Failed=getColoredString("Failed","red","black");
 $NotOK=getColoredString("Not OK","red","black");
+$Missing=getColoredString("Missing","red","black");
 $NotChanged=getColoredString("Not OK","orange","black");
+
 
 function dse_ask_yn($Question){
 	global $vars;
@@ -300,6 +302,32 @@ function dse_file_set_owner($DestinationFile,$Owner){
 		return 0;
 	}
 	return -1;
+}
+
+function dse_directory_create($Destination,$Mode="",$Owner=""){
+	global $vars;
+	print "DSE dir: $Destination ";
+	if(!file_exists($Destination)) {
+		$command="mkdir $Destination";
+		`$command`;
+		print getColoredString(" creating. ","green","black");
+	}
+	
+	if(!file_exists($Destination)) {
+		print getColoredString(" ERROR: failed to create $Destination . \n","red","black");
+		return -2;	
+	}
+	
+	if($Owner){
+		$command="chown -R $Owner $Destination";
+		`$command`;
+	}
+	if($Mode){
+		$command="chmod -R $Mode $Destination";
+		`$command`;
+	}
+	print getColoredString(" OK.\n","green","black");
+	return 0;
 }
 
 function dse_file_backup($file){

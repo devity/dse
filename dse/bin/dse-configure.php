@@ -87,6 +87,24 @@ if(dse_is_osx()){
 dse_file_set_mode($vars['DSE']['DSE_BIN_DIR']."/dnetstat.php","4755");
 
 
+
+
+
+if(!is_dir($vars['DSE']['DSE_BACKUP_DIR'])){
+	print "Backup Directory ".$vars['DSE']['DSE_BACKUP_DIR']." $Missing. Create? ";
+	$A=dse_ask_yn();
+	if($A=='Y'){
+		dse_directory_create($vars['DSE']['DSE_BACKUP_DIR'],"777","root:root");
+		if(is_dir($vars['DSE']['DSE_BACKUP_DIR'])){
+			print $OK;	
+		}
+	}
+	print "\n";
+}
+
+
+
+
 //sudo logging
 //echo -n "sudo Logging: "
 //if ! grep logfile= /etc/sudoers &>/dev/null ; then
