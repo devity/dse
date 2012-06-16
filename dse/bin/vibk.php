@@ -31,7 +31,7 @@ $vars['Usage']=dse_cli_get_usage($parameters_details);
 $vars['argv_origional']=$argv;
 dse_cli_script_start();
 		
-
+$ShowDiff=FALSE;
 $BackupBeforeUpdate=TRUE;
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'q':
@@ -100,7 +100,7 @@ if($ListBackups){
 		//$time_str=date("D M j G:i:s T Y", $time);
 		print "--------- $time_str $name\n";
 		if($last_file){
-			print `diff $DiffOptions $name $last_file`;
+			if($ShowDiff) print `diff $DiffOptions $name $last_file`;
 		}
 		$last_file=$name;
 		
