@@ -48,11 +48,11 @@ if(getenv("DSE_LOG_DIR")!=""){
 	$vars['DSE']['DSE_LOG_DIR']="/var/log/dse";
 }
 
-if(getenv("DSE_BACKUP_DIR")!=""){
-	$vars['DSE']['DSE_BACKUP_DIR']=getenv("DSE_BACKUP_DIR");
-}else{
+//if(getenv("DSE_BACKUP_DIR")!=""){
+	//$vars['DSE']['DSE_BACKUP_DIR']=getenv("DSE_BACKUP_DIR");
+//}else{
 	$vars['DSE']['DSE_BACKUP_DIR']="/backup";
-}
+//}
 $vars['DSE']['DSE_BACKUP_DIR_DSE']=$vars['DSE']['DSE_BACKUP_DIR']."/dse";
 $vars['DSE']['BACKUP_DIR_HTTP']=$vars['DSE']['DSE_BACKUP_DIR']."/httpd";
 
