@@ -1,6 +1,7 @@
 <?
 
 
+
 function dse_server_configure_file_load(){
 	global $vars,$strcut_post_haystack;
 	$ConfigDirectory=$vars['DSE']['DSE_CONFIG_DIR'];
@@ -140,6 +141,7 @@ function dse_spread_config_to_all_servers(){
                 `cp -f /usr/local/webroot/ServerLevelConfig.txt /webroots/ws4root/ServerLevelConfig.txt`;
         }*/
 }
+
 
 
 

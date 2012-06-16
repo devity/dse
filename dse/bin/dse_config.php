@@ -63,6 +63,14 @@ $vars['DSE']['HTTP_CONF_FILE']="/etc/httpd/conf/httpd.conf";
 $vars['DSE']['HTTP_ERROR_LOG_FILE']="/var/log/httpd/error_log";
 $vars['DSE']['HTTP_REQUEST_LOG_FILE']="/var/log/httpd/access_log";
 
+$vars['DSE']['USER_HOME_DIR']="~/";
+$vars['DSE']['USER_BASH_PROFILE']=$vars['DSE']['USER_HOME_DIR']."/.bash_profile";
+
+
+// *********************************************************************************
+$vars['DSE']['SUGGESTED']=array();
+$vars['DSE']['SUGGESTED']['HISTFILESIZE']=100000;
+
 // *********************************************************************************
 // ********* Set colors and such
 $vars['DSE']['USE_ANSI_COLOR']="YES";

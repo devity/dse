@@ -1,5 +1,28 @@
 <?
 
+
+$OK=getColoredString("OK","green","black");
+$Failed=getColoredString("Failed","red","black");
+$NotOK=getColoredString("Not OK","red","black");
+$NotChanged=getColoredString("Not OK","orange","black");
+
+function dse_ask_yn($Question){
+	global $vars;
+	print "$Question (Y/N): ";
+	$key=strtoupper(dse_get_key());
+	//cbp_characters_clear(1);
+	if($key=="Y"){
+		//print "\n";
+		return 'Y';
+	}elseif($key=="N"){
+		//print "\n";
+		return 'N';
+	}else{
+		print getColoredString(" unknown key: $key. ","red","black");
+		return 0;
+	}
+}
+
 function dse_directory_ls( $path = '.', $level = 0 ){ 
 	global $vars;
 	$path.="/";  $path=str_replace("//", "/", $path);
@@ -161,6 +184,22 @@ function dse_file_get_mode($DestinationFile){
 	global $vars;
 	$ModeInt=intval(substr(sprintf('%o', fileperms($DestinationFile)), -4));
 	return $ModeInt;
+}
+
+function dse_file_get_owner($DestinationFile,$ReturnGroupAlso=TRUE){
+	global $vars;
+	$Owner="";
+	$UserInt=fileowner($DestinationFile);
+	$UserArray=posix_getpwuid($UserInt);
+	$UserName=$UserArray['name'];
+	$Owner.=$UserName;
+	if($ReturnGroupAlso){
+		$GroupInt=filegroup($DestinationFile);
+		$GroupArray=posix_getgrgid($GroupInt);
+		$GroupName=$GroupArray['name'];
+		$Owner.=":".$GroupName;
+	}
+	return $Owner;
 }
 
 function dse_file_delete($File){

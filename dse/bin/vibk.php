@@ -81,12 +81,15 @@ if($ListBackups){
 		$last_file=$name;
 		
 	}
+	$name_orig=str_replace($name_orig,$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY'],"");
 	print "--------- current $name_orig\n";
 	print `diff -wBEdy $name_orig $last_file`;
 }else{
-	
-	$backupfilename=dse_file_backup($file);
 	print "backing up to: $backupfilename\n";
+	$backupfilename=dse_file_backup($file);
+	
+	$PermissionsOrigional=dse_file_get_mode($file);
+	$OwnerOrigional=dse_file_get_owner($file);
 	
 	$vim="/usr/bin/vim";
 	if(!file_exists($vim)){
@@ -110,6 +113,28 @@ if($ListBackups){
 	}else{
 		print "$file saved. backup at $backupfilename\n";
 	}
+	
+		
+	$Permissions=dse_file_get_mode($file);
+	$Owner=dse_file_get_owner($file);
+	if($PermissionsOrigional!=$Permissions){
+		dse_file_set_mode($file,$PermissionsOrigional);
+		$Permissions=dse_file_get_mode($file);
+		if($PermissionsOrigional!=$Permissions){
+			print "ERROR: Mode/Permissions changed: Tried fixing, failed. $PermissionsOrigional => $Permissions\n";
+			exit(-2);
+		}
+	}
+	if($OwnerOrigional!=$Owner){
+		dse_file_set_owner($file,$OwnerOrigional);
+		$Owner=dse_file_get_owner($file);
+		if($OwnerOrigional!=$Owner){
+			print "ERROR: Owner and/or Group changed: Tried fixing, failed. $OwnerOrigional => $Owner\n";
+			exit(-2);
+		}
+		
+	}
+
 }
 exit();
 

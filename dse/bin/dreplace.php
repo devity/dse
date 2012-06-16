@@ -23,6 +23,8 @@ $parameters_details = array(
   array('s','save',"overwrite argv[1]"),
   array('','version',"version info"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('n','no-backup',"do not make backup of input file first"),
+  
 );
 $parameters=dse_cli_get_paramaters_array($parameters_details);
 $Usage=dse_cli_get_usage($parameters_details);
@@ -52,6 +54,10 @@ foreach (array_keys($options) as $opt) switch ($opt) {
 	case 'q':
 	case 'quiet':
 		$Verbosity=0;
+		break;
+	case 'n':
+  	case 'no-backup':
+  		$SkipBackup=TRUE;
 		break;
 	case 's':
 	case 'save':
@@ -100,6 +106,10 @@ $New=$argv[3];
 if($Verbosity>=2) print "Opening $Filename\n";
 if($Verbosity>=2) print "Replacing: $Old\nWith: $New\n";
 
+if(!$SkipBackup){
+	dse_file_backup($Filename);
+}
+
 // *** GET INPUT ***
 if(file_exists($Filename)){
 	$raw=file_get_contents($Filename);
@@ -108,6 +118,11 @@ if(file_exists($Filename)){
 	print "Error Opening $Filename\n";
 	exit(-1);
 }
+
+$PermissionsOrigional=dse_file_get_mode($Filename);
+$OwnerOrigional=dse_file_get_owner($Filename);
+
+
 // *** DO REPLACE ***
 $Out="";
 foreach($raw_a as $n=>$line){
@@ -131,6 +146,32 @@ if($DoSaveOverwrite){
 }else{
 	print $Out;
 }
+
+$Permissions=dse_file_get_mode($Filename);
+$Owner=dse_file_get_owner($Filename);
+if($PermissionsOrigional!=$Permissions){
+	dse_file_set_mode($Filename,$PermissionsOrigional);
+	$Permissions=dse_file_get_mode($Filename);
+	if($PermissionsOrigional!=$Permissions){
+		print "ERROR: Mode/Permissions changed: Tried fixing, failed. $PermissionsOrigional => $Permissions\n";
+		exit(-2);
+	}
+}
+if($OwnerOrigional!=$Owner){
+	dse_file_set_owner($Filename,$OwnerOrigional);
+	$Owner=dse_file_get_owner($Filename);
+	if($OwnerOrigional!=$Owner){
+		print "ERROR: Owner and/or Group changed: Tried fixing, failed. $OwnerOrigional => $Owner\n";
+		exit(-2);
+	}
+	
+}
+
+
+
+
+
+
 
 if($Verbosity>=2) print getColoredString("Done. Exiting ".$vars['DSE']['SCRIPT_FILENAME'].". \n\n", 'black', 'green');
 
