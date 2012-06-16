@@ -15,18 +15,23 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 
 print "Script: ".$vars['DSE']['SCRIPT_FILENAME']."\n";
 
-
+$DiffOptionsSBS="-wBEdy";
+$DiffOptionsNormal="-wBEd";
 $parameters_details = array(
   array('h','help',"this message"),
   array('q','quiet',"same as --verbosity 0"),
   array('l','list-backups',"lists when backups were made of file"),
   array('y','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('s','show-diff-side-by-side',"show side-by-side diff w/ options $DiffOptionsSBS"),
+  array('d','show-diff',"show diff w/ options $DiffOptionsNormal"),
+  array('o:','diff-options::',"show diff w/ options passed in. you must include a leading - and enclose in \"'s"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
 $vars['argv_origional']=$argv;
 dse_cli_script_start();
 		
+
 $BackupBeforeUpdate=TRUE;
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'q':
@@ -48,7 +53,23 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'list-backups':
   		$ListBackups=TRUE;
 		$DidSomething=TRUE;
-		break;}
+		break;
+	case 's':
+	case 'show-diff-side-by-side':
+		$DiffOptions=$DiffOptionsSBS;
+  		$ListBackups=TRUE;
+		break;
+	case 'd':
+	case 'show-diff':
+		$DiffOptions=$DiffOptionsNormal;
+  		$ListBackups=TRUE;
+		break;
+	case 'o':
+	case 'diff-options':
+  		$ListBackups=TRUE;
+  		$DiffOptions=$vars['options'][$opt];
+		break;
+}
 
 
 dse_cli_script_header();
@@ -76,7 +97,7 @@ if($ListBackups){
 		//$time_str=date("D M j G:i:s T Y", $time);
 		print "--------- $time_str $name\n";
 		if($last_file){
-			print `diff -wBEdy $name $last_file`;
+			print `diff $DiffOptions $name $last_file`;
 		}
 		$last_file=$name;
 		
