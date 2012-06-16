@@ -2,6 +2,7 @@
 
 
 $OK=getColoredString("OK","green","black");
+$Added=getColoredString("Added","green","black");
 $Failed=getColoredString("Failed","red","black");
 $NotOK=getColoredString("Not OK","red","black");
 $NotChanged=getColoredString("Not OK","orange","black");
@@ -10,7 +11,7 @@ function dse_ask_yn($Question){
 	global $vars;
 	print "$Question (Y/N): ";
 	$key=strtoupper(dse_get_key());
-	//cbp_characters_clear(1);
+	cbp_characters_clear(1);
 	if($key=="Y"){
 		//print "\n";
 		return 'Y';

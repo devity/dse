@@ -101,7 +101,7 @@ if($HISTFILESIZE==""){
 	if($A=='Y'){
 		$Command="echo \"\nHISTFILESIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']."\" >> ".$vars['DSE']['USER_BASH_PROFILE'];
 		$r=`$Command`;
-		print "$OK\n";
+		print "$Added\n";
 	}else{
 		print "$NotChanged\n";
 	}
