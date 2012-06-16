@@ -97,16 +97,18 @@ if($ListBackups){
 		$name=$f[1];
 		$time_str=strcut($name,$file.".");
 		$name_orig=strcut($name,"",".$time");
+		$size_str=dse_file_get_size_readable($name);
 		//$time_str=date("D M j G:i:s T Y", $time);
-		print "--------- $time_str $name\n";
+		print "--------- $time_str $name $size_str\n";
 		if($last_file){
 			if($ShowDiff) print `diff $DiffOptions $name $last_file`;
 		}
 		$last_file=$name;
 		
 	}
+	$size_str=dse_file_get_size_readable($name);
 	$name_orig=str_replace($name_orig,$vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY'],"");
-	print "--------- current $name_orig\n";
+	print "--------- current $name_orig $size_str\n";
 	if($ShowDiff) print `diff $DiffOptions $name_orig $last_file`;
 }else{
 	print "backing up to: $backupfilename\n";

@@ -171,14 +171,34 @@ function md5_of_file($f){
         return -1;
 }
 
-
-
 function files_are_same($f1,$f2){
 	global $vars;
 	$m1=md5_of_file($f1);
 	$m2=md5_of_file($f2);
 	//print "files_are_same:md5: $m1==$m2<br>";
 	return ($m1==$m2);
+}
+
+function dse_file_get_size($DestinationFile){
+	global $vars;
+	return dse_file_get_stat_field($DestinationFile,"size");
+}
+
+function dse_file_get_stat_field($DestinationFile,$field=""){
+	global $vars;
+	$stat_field_names=array('dev','ino','mode','nlink','uid','gid','rdev','size','atime','mtime','ctime','blksize','blocks');
+	if(!file_exists($DestinationFile)){
+		print "Error in dse_file_get_mode($DestinationFile,$field) - file does not exist.\n";
+		return -1;
+	}
+	$sa=stat($file);
+	if(!$field) return $sa;
+	$index_i=array_search($stat_field_names,$field);
+	if($index_i===FALSE){
+		print "Error in dse_file_get_mode($DestinationFile,$field) - field $field unknown. Options: "; print_r($stat_field_names); print "\n";
+		return -1;
+	}
+	return $sa[$index_i];
 }
 
 function dse_file_get_mode($DestinationFile){
@@ -404,8 +424,13 @@ function dse_output_box($Title,$Body,$TitleColor="",$BorderColor="",$BodyColor="
 	return $tbr;
 }
 
+function dse_file_get_size_readable($file){
+	global $vars;
+	return dse_file_size_to_readable(dse_file_get_size($file));
+}
 
 function dse_file_size_to_readable($size){
+	global $vars;
 	if($size<1024){
 		return number_format($size,0)."B";
 	}elseif($size<1024*1024){
@@ -424,11 +449,8 @@ function dse_file_get_contents($filename){
 	return `cat $filename`;
 }
 
-
 function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 	global $vars;
-	
-	
 	$CfgData=dse_file_get_contents($filename);
 	if($CfgData==""){
 		print "ERROR opening config file: $filename\n";
