@@ -49,17 +49,32 @@ function dse_backup_mysqld() {
 	global $vars;
 	dse_detect_os_info();
 	
-	print "Saving Copy of mysqld Data: ";
+	print "MySQL Backup Directory: ".$vars['DSE']['BACKUP_DIR_MYSQL']." ";
+	if(!is_dir($vars['DSE']['BACKUP_DIR_MYSQL'])){
+		print " $Missing. Create? ";
+		$A=dse_ask_yn();
+		if($A=='Y'){
+			dse_directory_create($vars['DSE']['BACKUP_DIR_MYSQL'],"777","root:root");
+		}else{
+			print "\n  Can't backup w/o backup dir. Exiting.\n";
+			exit(-1);	
+		}
+	}else{
+		print $OK;
+	}
+	print "\n";
+	
+	print " Saving Copy of mysqld Data: ";
 	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
- 	$file="/backup/mysql/mysqldump".$DATE_TIME_NOW.".sql";
+ 	$file=$vars['DSE']['BACKUP_DIR_MYSQL']."/mysqldump".$DATE_TIME_NOW.".sql";
 	$Command="mysqldump --all-databases --user=localroot --add-drop-database --comments --debug-info --disable-keys --dump-date --force --quick --routines --verbose --result-file=$file";
-	print "Command: $Command\n";
+	print " Command: $Command\n";
 	`$Command`;
 	`gzip $file`;
-	`mysqlhotcopy-all-databases`;
+	//`mysqlhotcopy-all-databases`;
 
 
-	print "$_OK  saved in  ${dir}\n";
+	print " $_OK MySQL backup saved in  ${dir}\n";
 }
    
    

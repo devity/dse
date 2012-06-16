@@ -55,6 +55,7 @@ if(getenv("DSE_LOG_DIR")!=""){
 //}
 $vars['DSE']['DSE_BACKUP_DIR_DSE']=$vars['DSE']['DSE_BACKUP_DIR']."/dse";
 $vars['DSE']['BACKUP_DIR_HTTP']=$vars['DSE']['DSE_BACKUP_DIR']."/httpd";
+$vars['DSE']['BACKUP_DIR_MYSQL']=$vars['DSE']['DSE_BACKUP_DIR']."/mysql";
 
 
 $vars['DSE']['NAMED_CONF_FILE']="/etc/bind/named.conf.local";
