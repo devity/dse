@@ -591,7 +591,7 @@ function dse_configure_create_httpd_conf(){
 				if($Host=="_blank") $ServerAlias="$Domain";
 				$IP=$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host];
 				$site="
-<VirtualHost $IP:80>
+<VirtualHost *:80>
  ServerName $Host.$domain
  ServerAlias $ServerAlias
  DocumentRoot $DocRoot/$Webroot
