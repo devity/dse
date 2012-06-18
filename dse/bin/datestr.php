@@ -93,7 +93,7 @@ if($DidSomething){
 			$tbr=time();
 			break;
 		case "filename":
-			$tbr=date("YmdGis");
+			$tbr=date("YmdHis");
 			break;
 		case "yyyymmdd":
 			$tbr=date("Ymd");

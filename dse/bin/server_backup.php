@@ -83,9 +83,26 @@ function dse_backup_mysqld() {
 function dse_backup_httpd() {
 	global $vars; 
 	dse_detect_os_info();
+
+	print "httpd Backup Directory: ".$vars['DSE']['BACKUP_DIR_HTTP']." ";
+	if(!is_dir($vars['DSE']['BACKUP_DIR_HTTP'])){
+		print " $Missing. Create? ";
+		$A=dse_ask_yn();
+		if($A=='Y'){
+			dse_directory_create($vars['DSE']['BACKUP_DIR_HTTP'],"777","root:root");
+		}else{
+			print "\n  Can't backup w/o backup dir. Exiting.\n";
+			exit(-1);	
+		}
+	}else{
+		print $OK;
+	}
+	print "\n";
+	
 	$web_data_dir=$vars['DSE']['BACKUP_HTTP_ROOT'];
 	$dse_server_httpd_backup_directory=$vars['DSE']['BACKUP_DIR_HTTP'];
-	print "Saving Copy of httpd Data: ";
+	
+	print " Saving Copy of httpd Data: ";
 	
    	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
    	if(!file_exists($dse_server_httpd_backup_directory)){
