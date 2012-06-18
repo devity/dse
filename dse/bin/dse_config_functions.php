@@ -600,6 +600,12 @@ function dse_configure_create_httpd_conf(){
 			file_put_contents($site_file, $site);
 			dse_file_set_owner($site_file,"root:root");
 			dse_file_set_mode($site_file,"644");
+			
+			$site_file_link="/etc/apache2/sites-enabled/$i.$Host.$domain";
+			dse_file_link($site_file_link,$site_file);
+			dse_file_set_owner($site_file_link,"root:root");
+			dse_file_set_mode($site_file_link,"777");
+			
 			$i++;
 			}
 		}
