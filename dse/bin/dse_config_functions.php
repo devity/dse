@@ -553,6 +553,60 @@ function dse_configure_create_named_conf(){
 	dse_service_start("named");
 }
 
+function dse_configure_create_httpd_conf(){
+	global $vars;
+	
+	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
+		print "Domain: $Domain\n";	
+		foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
+			print " Host: $Host.$Domain => $IP\n";
+		}	
+	}
+	 
+	 
+	
+	dse_service_stop("httpd");
+
+	$named_conf_local="";
+	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
+		$Domain=strtolower($Domain);
+		$named_conf_local.= "zone \"$Domain\"{ type master; file \"/etc/bind/local/$Domain\"; };\n";	
+	}
+	
+	$NS1=$vars['DSE']['SERVER_CONF']['Sets']['NameServer1'];
+	$NS2=$vars['DSE']['SERVER_CONF']['Sets']['NameServer2'];
+	
+	$i=1;
+	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
+		$domain=strtolower($Domain);
+		$DocRoot=$vars['DSE']['HTTP_ROOT_DIR'];
+		print "$domain *****\n";
+		
+		foreach ($vars['DSE']['SERVER_CONF']['Webroots'][$Domain] as $Hosts=>$Webroot){
+			foreach(split(",",$Hosts) as $Host){
+				$ServerAlias="$Host.$Domain";
+				if($Host=="_blank") $ServerAlias="$Domain";
+				$IP=$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host];
+				$site="
+<VirtualHost $IP:80>
+ ServerAlias $ServerAlias
+ DocumentRoot $DocRoot/$Webroot
+ ErrorLog /var/log/apache2/error.log
+ CustomLog /var/log/apache2/access.log combined
+</VirtualHost>
+";
+			$site_file="/etc/apache2/sites-available/$Host.$domain";
+			print "Saving file $site_file $site\n";
+			file_put_contents($site_file, $site);
+			dse_file_set_owner($site_file,"root:root");
+			dse_file_set_mode($site_file,"644");
+			$i++;
+			}
+		}
+	}
+	dse_service_start("httpd");
+}
+
 
 
 function dse_configure_install_packages(){
@@ -690,11 +744,14 @@ function dse_service_name_from_common_name($service){
 	global $vars;
 	switch($service){
 		case "http":
+		case "httpd":
+		case "apache":
 			$service="apache2";
 			break;
 		case "mysql":
 			$service="mysqld";
 			break;
+		case "dns":
 		case "named":
 			$service="bind9";
 			break;

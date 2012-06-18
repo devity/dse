@@ -169,6 +169,7 @@ if($FullConfig){
 
 	dse_server_configure_file_load();
 	dse_configure_create_named_conf();
+	dse_configure_create_httpd_conf();
 	
 	exit();
 
