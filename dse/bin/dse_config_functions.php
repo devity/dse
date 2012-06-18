@@ -589,32 +589,40 @@ function dse_configure_create_httpd_conf(){
 				//if($i>4) break;
 				$ServerAlias="$Host.$Domain";
 				if($Host=="_blank") $ServerAlias="$Domain";
+				$ServerName="$Host.$domain";
+				if($Host=="_blank") $ServerName="$domain";
 				$IP=$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host];
 				$site="
 <VirtualHost *:80>
- ServerName $Host.$domain
+ ServerName $ServerName
  ServerAlias $ServerAlias
  DocumentRoot $DocRoot/$Webroot
  ErrorLog /var/log/apache2/error.log
  CustomLog /var/log/apache2/access.log combined
 </VirtualHost>
 ";
-			$site_file="/etc/apache2/sites-available/$Host.$domain";
-			print "Saving file $site_file $site\n";
-			file_put_contents($site_file, $site);
-			dse_file_set_owner($site_file,"root:root");
-			dse_file_set_mode($site_file,"644");
+				$site_file="/etc/apache2/sites-available/$Host.$domain";
+				if($Host=="_blank") $site_file="/etc/apache2/sites-available/$domain";
+				print "Saving file $site_file $site\n";
+				file_put_contents($site_file, $site);
+				dse_file_set_owner($site_file,"root:root");
+				dse_file_set_mode($site_file,"644");
+				
+				//$site_file_link="/etc/apache2/sites-enabled/$i.$Host.$domain";
+				//dse_file_link($site_file_link,$site_file);
+			//	dse_file_set_owner($site_file_link,"root:root");
+				//dse_file_set_mode($site_file_link,"777");
+				
+				
+				if($Host=="_blank") {
+					$r=`a2ensite $domain`;
+				}else{
+					$r=`a2ensite $Host.$domain`;
+				}
+				print $r;
 			
-			//$site_file_link="/etc/apache2/sites-enabled/$i.$Host.$domain";
-			//dse_file_link($site_file_link,$site_file);
-		//	dse_file_set_owner($site_file_link,"root:root");
-			//dse_file_set_mode($site_file_link,"777");
-			
-			$r=`a2ensite $Host.$domain`;
-			print $r;
-		
-			//if($i>4) break;
-			$i++;
+				//if($i>4) break;
+				$i++;
 			}
 			//if($i>4) break;
 		}
