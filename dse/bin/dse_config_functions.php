@@ -578,15 +578,15 @@ function dse_configure_create_httpd_conf(){
 	
 	$i=1;
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
-		if($i>2) break;
+		//if($i>2) break;
 		$domain=strtolower($Domain);
 		$DocRoot=$vars['DSE']['HTTP_ROOT_DIR'];
 		print "$domain *****\n";
 		
 		foreach ($vars['DSE']['SERVER_CONF']['Webroots'][$Domain] as $Hosts=>$Webroot){
-			if($i>2) break;
+			//if($i>2) break;
 			foreach(split(",",$Hosts) as $Host){
-				if($i>2) break;
+				//if($i>2) break;
 				$ServerAlias="$Host.$Domain";
 				if($Host=="_blank") $ServerAlias="$Domain";
 				$IP=$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host];
@@ -612,12 +612,12 @@ function dse_configure_create_httpd_conf(){
 			$r=`a2ensite $Host.$domain`;
 			print $r;
 			
-			if($i>2) break;
+			//if($i>2) break;
 			$i++;
 			}
-			if($i>2) break;
+			//if($i>2) break;
 		}
-if($i>2) break;
+	//if($i>2) break;
 	}
 	dse_service_start("httpd");
 }
