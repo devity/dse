@@ -28,6 +28,9 @@ if(getenv("DSE_ROOT")!=""){
 	$vars['DSE']['DSE_ROOT']="/dse"; 
 }
 $vars['DSE']['DSE_BIN_DIR']=$vars['DSE']['DSE_ROOT']."/bin";
+$vars['DSE']['DSE_ALIASES_DIR']=$vars['DSE']['DSE_ROOT']."/aliases";
+$vars['DSE']['SYSTEM_SCRIPTS_DIR']='/scripts';
+
 $vars['DSE']['DSE_TEMPLATES_DIR']=$vars['DSE']['DSE_ROOT']."/install/templates";
 
 $vars['DSE']['DSE_GIT_ROOT']="/root/dse_git";
@@ -76,11 +79,10 @@ if(dse_is_osx()){
 	$vars['DSE']['USER_BASH_PROFILE']=$vars['DSE']['USER_HOME_DIR']."/.bash_profile";
 }
 
-$vars['DSE']['SYSTEM_SCRIPTS_DIR']='/scripts';
-
 $vars['DSE']['SYSTEM_USER_FILE']='/etc/passwd';
 $vars['DSE']['SYSTEM_GROUP_FILE']='/etc/group';
 $vars['DSE']['SYSTEM_BASHRC_FILE']='/etc/bashrc';
+$vars['DSE']['SYSTEM_PROFILE_FILE']='/etc/profile';
 
 $vars['DSE']['SYSTEM_ROOT_FILE_USER']='root';
 $vars['DSE']['SYSTEM_ROOT_FILE_GROUP']='root';

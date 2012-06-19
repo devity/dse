@@ -156,6 +156,66 @@ foreach($NeededDirs as $DirArray){
 //echo -n "sudo Logging: "
 //if ! grep logfile= /etc/sudoers &>/dev/null ; then
 //  sudo echo "Defaults logfile=$SUDOLOG" | sudo tee -a /etc/sudoers &>/dev/null
+//larger bash history
+print "Checking current \$PATH: \n";
+$PATH=getenv("PATH");
+if(!str_contains($PATH,$vars['DSE']['DSE_BIN_DIR'])){
+	print " Cant find ".$vars['DSE']['DSE_BIN_DIR']." in PATH: $PATH\n";
+
+	
+	
+	print "Checking system profile PATH: ";
+	if(!dse_file_exists($vars['DSE']['SYSTEM_PROFILE_FILE'])){
+		print "$Failed to verify. No ".$vars['DSE']['SYSTEM_PROFILE_FILE']."\n";
+	}else{
+		$Command="grep \"PATH=\" ".$vars['DSE']['SYSTEM_PROFILE_FILE'];
+		$PATH=strcut(trim(`$Command`),"=");
+		if(!str_contains($PATH,$vars['DSE']['DSE_BIN_DIR'])){
+			print "Cant find ".$vars['DSE']['DSE_BIN_DIR']." in PATH: $PATH\n";
+			$A=dse_ask_yn(" Update to PATH?");
+			if($A=='Y'){
+				$Command="echo \"\PATH=\$PATH:".$vars['DSE']['DSE_BIN_DIR'].":".$vars['DSE']['DSE_ALIASES_DIR'].":".$vars['DSE']['SYSTEM_SCRIPTS_DIR']."\nexport PATH\" >> ".$vars['DSE']['SYSTEM_PROFILE_FILE'];
+				$r=`$Command`;
+				print "$Updated\n";
+			}else{
+				print "$NotChanged\n";
+			}
+				
+		}else{
+			print "$OK Path= $PATH\n";
+			
+			
+			print "Checking user's .profile PATH: ";
+			if(!dse_file_exists($vars['DSE']['USER_BASH_PROFILE'])){
+				print "$Failed to verify. No ".$vars['DSE']['USER_BASH_PROFILE']."\n";
+			}else{
+				$Command="grep \"PATH=\" ".$vars['DSE']['USER_BASH_PROFILE'];
+				$PATH=strcut(trim(`$Command`),"=");
+				if(!str_contains($PATH,$vars['DSE']['DSE_BIN_DIR'])){
+					print "Cant find ".$vars['DSE']['DSE_BIN_DIR']." in PATH: $PATH\n";
+					$A=dse_ask_yn(" Update to PATH?");
+					if($A=='Y'){
+						$Command="echo \"\PATH=\$PATH:".$vars['DSE']['DSE_BIN_DIR'].":".$vars['DSE']['DSE_ALIASES_DIR'].":".$vars['DSE']['SYSTEM_SCRIPTS_DIR']."\nexport PATH\" >> ".$vars['DSE']['USER_BASH_PROFILE'];
+						$r=`$Command`;
+						print "$Updated\n";
+					}else{
+						print "$NotChanged\n";
+					}
+						
+				}else{
+					print "$OK Path= $PATH\n";
+				}
+			}
+	
+			
+			
+		}
+	}
+	
+	
+}else{
+	print "$OK = $PATH\n";
+}
 
 //larger bash history
 print "Checking HISTFILESIZE: \n";
@@ -191,7 +251,6 @@ if(!dse_file_exists($vars['DSE']['USER_BASH_PROFILE'])){
 		}
 	}
 }
-
 
 //multi-terminal real-time bash history
 $code="
