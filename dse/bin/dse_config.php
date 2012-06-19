@@ -72,8 +72,14 @@ if(dse_is_osx()){
 	$vars['DSE']['USER_BASH_PROFILE']=$vars['DSE']['USER_HOME_DIR']."/.bashrc";
 }
 
+$vars['DSE']['SYSTEM_SCRIPTS_DIR']='/scripts';
+
 $vars['DSE']['SYSTEM_USER_FILE']='/etc/passwd';
 $vars['DSE']['SYSTEM_GROUP_FILE']='/etc/group';
+$vars['DSE']['SYSTEM_BASHRC_FILE']='/etc/bashrc';
+
+$vars['DSE']['SYSTEM_ROOT_FILE_USER']='root';
+$vars['DSE']['SYSTEM_ROOT_FILE_GROUP']='root';
 
 // *********************************************************************************
 $vars['DSE']['SUGGESTED']=array();
@@ -125,10 +131,15 @@ $vars['DSE']=dse_read_config_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],$vars['
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 
+$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']=$vars['DSE']['SYSTEM_ROOT_FILE_USER'] . ":" .$vars['DSE']['SYSTEM_ROOT_FILE_GROUP'];
+
 
 putenv ("DSE_GIT_ROOT=".$vars['DSE']['DSE_GIT_ROOT']);
 putenv ("DSE_MYSQL_CONF_FILE=".$vars['DSE']['MYSQL_CONF_FILE']);
 putenv ("DSE_MYSQL_LOG_FILE=".$vars['DSE']['MYSQL_LOG_FILE']);
+
+
+
 
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 

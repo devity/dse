@@ -88,20 +88,67 @@ dse_file_set_mode($vars['DSE']['DSE_BIN_DIR']."/dnetstat.php","4755");
 
 
 
+$NeededDirs=array(
+ array($vars['DSE']['DSE_BACKUP_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
+ array($vars['DSE']['DSE_LOG_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
+ array($vars['DSE']['DSE_CONFIG_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
+ array($vars['DSE']['SYSTEM_SCRIPTS_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
+);
 
 
-if(!is_dir($vars['DSE']['DSE_BACKUP_DIR'])){
-	print "Backup Directory ".$vars['DSE']['DSE_BACKUP_DIR']." $Missing. Create? ";
-	$A=dse_ask_yn();
-	if($A=='Y'){
-		dse_directory_create($vars['DSE']['DSE_BACKUP_DIR'],"777","root:root");
-		if(is_dir($vars['DSE']['DSE_BACKUP_DIR'])){
-			print $OK;	
+foreach($NeededDirs as $DirArray){
+	$Dir=$DirArray[0];
+	$Mode=$DirArray[1];
+	$Owner=$DirArray[2];
+	print "DSE Directory $Dir: ";
+		
+	if(!is_dir($Dir)){
+		print "$Missing. Create? ";
+		$A=dse_ask_yn();
+		if($A=='Y'){
+			dse_directory_create($Dir,$Mode,$Owner);
+			if(is_dir($Dir)){
+				print $OK;	
+			}else{
+				print $Failed;	
+			}
+		}
+	}else{
+		print "Exists. ";
+		if($Mode!=dse_file_get_mode($Dir)){
+			print "Mode $NotOK =".dse_file_get_mode($Dir)." ";
+			$A=dse_ask_yn("Set to $Mode?");
+			if($A=='Y'){
+				dse_file_set_mode($Dir,$Mode);
+				if($Mode==dse_file_get_mode($Dir)){
+					print "$Fixed. ";
+				}else{
+					print "$NotFixed. ";
+				}
+			}else{
+				print "$NotFixed";
+			}
+		}
+		if($Owner!=dse_file_get_owner($Dir)){
+			print "Owner $NotOK =".dse_file_get_owner($Dir)."  ";
+			$A=dse_ask_yn("Set to $Owner?");
+			if($A=='Y'){
+				dse_file_set_owner($Dir,$Owner);
+				if($Owner==dse_file_get_owner($Dir)){
+					print "$Fixed. ";
+				}else{
+					print "$NotFixed. ";
+				}
+			}else{
+				print "$NotFixed";
+			}
+		}
+		if($Mode==dse_file_get_mode($Dir) && $Owner==dse_file_get_owner($Dir)){
+			print "$OK";
 		}
 	}
 	print "\n";
 }
-
 
 
 
@@ -138,6 +185,48 @@ if($HISTFILESIZE==""){
 	}else{
 		print "HISTFILESIZE size $OK = $HISTFILESIZE\n";
 	}
+}
+
+
+
+//multi-terminal real-time bash history
+$code="
+#start http://stackoverflow.com/questions/103944/real-time-history-export-amongst-bash-terminal-windows
+
+	export HISTSIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']."
+	history() {
+	  _bash_history_sync
+	  builtin history \"$@\"
+	}
+	
+	_bash_history_sync() {
+	  builtin history -a        
+	  HISTFILESIZE=$HISTSIZE     
+	  builtin history -c         
+	  builtin history -r         
+	}
+	
+	PROMPT_COMMAND=_bash_history_sync
+	
+#end http://stackoverflow.com/questions/103944/real-time-history-export-amongst-bash-terminal-windows
+	
+";
+print "Realtime cross-shell bash history: ";
+	
+$Command="grep stackoverflow.com/questions/103944/real-time-history-export-amongst-bash-terminal-windows ".$vars['DSE']['SYSTEM_BASHRC_FILE'];
+$r=trim(`$Command`);
+if(!str_contains($r,"stackoverflow")){
+	print "Not activated in ".$vars['DSE']['SYSTEM_BASHRC_FILE'];
+	$A=dse_ask_yn(" Add?");
+	if($A=='Y'){
+		$Command="echo \"\n$code\" >> ".$vars['DSE']['SYSTEM_BASHRC_FILE'];
+		$r=`$Command`;
+		print " $OK $Added\n";
+	}else{
+		print " $NotChanged\n";
+	}
+}else{
+	print "$OK\n";
 }
 
 //PATH

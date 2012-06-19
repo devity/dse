@@ -2,11 +2,13 @@
 
 
 $OK=getColoredString("OK","green","black");
+$Fixed=getColoredString("Fixed","green","black");
 $Added=getColoredString("Added","green","black");
 $Failed=getColoredString("Failed","red","black");
 $NotOK=getColoredString("Not OK","red","black");
 $Missing=getColoredString("Missing","red","black");
-$NotChanged=getColoredString("Not OK","orange","black");
+$NotChanged=getColoredString("Not Changed","orange","black");
+$NotFixed=getColoredString("Not Changed","orange","black");
 
 
 function dse_ask_yn($Question){
@@ -234,32 +236,32 @@ function dse_posix_getgrgid($gid){
 	global $vars;
   	if (function_exists('posix_getgrgid')) { 
     	$a = posix_getgrgid($gid); 
-    	return $a['name']; 
+    	return $a; 
   	} 
  	if (is_readable($vars['DSE']['SYSTEM_GROUP_FILE'])){ 
     	exec(sprintf('grep :%s: '.$vars['DSE']['SYSTEM_GROUP_FILE'].' | cut -d: -f1', (int) $gid), $o, $r); 
     	if ($r == 0) 
-      		return trim($o['0']); 
+      		return array('name'=>trim($o['0'])); 
     	else 
-    		return $uid; 
+    		return array('name'=>$uid); 
   	} 
-  	return $uid; 
+  	return array('name'=>$uid); 
 }
 
 function dse_posix_getpwuid($uid){ 
 	global $vars;
   	if (function_exists('posix_getpwuid')) { 
     	$a = posix_getpwuid($uid); 
-    	return $a['name']; 
+    	return $a; 
   	} 
  	if (is_readable($vars['DSE']['SYSTEM_USER_FILE'])){ 
     	exec(sprintf('grep :%s: '.$vars['DSE']['SYSTEM_USER_FILE'].' | cut -d: -f1', (int) $uid), $o, $r); 
     	if ($r == 0) 
-      		return trim($o['0']); 
+      		return array('name'=>trim($o['0'])); 
     	else 
-    		return $uid; 
+    		return array('name'=>$uid); 
   	} 
-  	return $uid; 
+  	return array('name'=>$uid); 
 } 
 
 function dse_file_delete($File){
