@@ -70,6 +70,10 @@ if(dse_is_osx()){
 	$vars['DSE']['USER_BASH_PROFILE']=$vars['DSE']['USER_HOME_DIR']."/.bash_profile";
 }elseif(dse_is_ubuntu()){
 	$vars['DSE']['USER_BASH_PROFILE']=$vars['DSE']['USER_HOME_DIR']."/.bashrc";
+}elseif(dse_is_centos()){
+	$vars['DSE']['USER_BASH_PROFILE']=$vars['DSE']['USER_HOME_DIR']."/.bash_profile";
+}else{
+	$vars['DSE']['USER_BASH_PROFILE']=$vars['DSE']['USER_HOME_DIR']."/.bash_profile";
 }
 
 $vars['DSE']['SYSTEM_SCRIPTS_DIR']='/scripts';
