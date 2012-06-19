@@ -159,7 +159,7 @@ foreach($NeededDirs as $DirArray){
 
 //larger bash history
 print "Checking HISTFILESIZE: \n";
-if(!file_exists($vars['DSE']['USER_BASH_PROFILE'])){
+if(!dse_file_exists($vars['DSE']['USER_BASH_PROFILE'])){
 	print "$Failed to verify. No ".$vars['DSE']['USER_BASH_PROFILE']."\n";
 }else{
 	$Command="grep HISTFILESIZE ".$vars['DSE']['USER_BASH_PROFILE'];
