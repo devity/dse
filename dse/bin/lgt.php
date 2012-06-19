@@ -58,13 +58,14 @@ $LogsCombined=`$LogsCombinedCommand`;
 
 
 
-$LogsCombined=combine_sameprefixed_lines($LogsCombined);
+//$LogsCombined=combine_sameprefixed_lines($LogsCombined);
 $LogsCombined=remove_duplicate_lines($LogsCombined);
 //$LogsCombined=combine_sameprefixed_lines($LogsCombined);
 
 //print $LogsCombined."\n\n";
 
-
+$Out=$LogsCombined;
+/*
 $Out="";
 $c=0;
 $LastText="";
@@ -94,7 +95,13 @@ foreach(split("\n",$LogsCombined) as $Line){
 		}
 	}
 }
-
+*/
+$Out="";
+$c=0;
+$LastText="";
+foreach(split("\n",$LogsCombined) as $Line){
+	$Out.= substr($Line,0,200)."\n";
+}
 
 $FinalLines=split("\n",$Out);
 

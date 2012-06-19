@@ -542,10 +542,17 @@ function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 			}
 		}
 		
-		$Lpa=split("=",$Line);
-		if($Lpa[0] && $Lpa[1]){
-			if( (!isset($tbra[$Lpa[0]])) || $OverwriteExisting){
-				$tbra[$Lpa[0]]=$Lpa[1];
+		if(str_contains($Line,"+=")){
+			$Lpa=split("=",$Line);
+			if($Lpa[0] && $Lpa[1]){
+				$tbra[$Lpa[0]].=$Lpa[1];
+			}
+		}else{
+			$Lpa=split("=",$Line);
+			if($Lpa[0] && $Lpa[1]){
+				if( (!isset($tbra[$Lpa[0]])) || $OverwriteExisting){
+					$tbra[$Lpa[0]]=$Lpa[1];
+				}
 			}
 		}
 	}

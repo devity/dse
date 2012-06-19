@@ -87,6 +87,18 @@ $vars['DSE']['SYSTEM_PROFILE_FILE']='/etc/profile';
 $vars['DSE']['SYSTEM_ROOT_FILE_USER']='root';
 $vars['DSE']['SYSTEM_ROOT_FILE_GROUP']='root';
 
+
+
+if(dse_is_osx()){
+	$vars['DSE']['LGT_LOG_FILES']="/var/log/system.log,/var/log/kernel.log,/var/log/windowserver.log";
+}elseif(dse_is_ubuntu()){
+	$vars['DSE']['LGT_LOG_FILES']="/var/log/syslog,/var/log/kern.log,/var/log/daemon.log,/var/log/messages";
+}elseif(dse_is_centos()){
+	$vars['DSE']['LGT_LOG_FILES']="/var/log/secure,/var/log/kernel,/var/log/dmesg,/var/log/messages";
+}else{
+	$vars['DSE']['LGT_LOG_FILES']="/var/log/messages";
+}
+
 // *********************************************************************************
 $vars['DSE']['SUGGESTED']=array();
 $vars['DSE']['SUGGESTED']['HISTFILESIZE']=100000;
