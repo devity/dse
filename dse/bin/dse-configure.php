@@ -124,7 +124,7 @@ foreach($NeededDirs as $DirArray){
 				if($Mode==dse_file_get_mode($Dir)){
 					print "$Fixed. ";
 				}else{
-					print "$NotFixed. ";
+					print "$Failed. ";
 				}
 			}else{
 				print "$NotFixed";
@@ -138,7 +138,7 @@ foreach($NeededDirs as $DirArray){
 				if($Owner==dse_file_get_owner($Dir)){
 					print "$Fixed. ";
 				}else{
-					print "$NotFixed. ";
+					print "$Failed. ";
 				}
 			}else{
 				print "$NotFixed";
@@ -159,35 +159,39 @@ foreach($NeededDirs as $DirArray){
 //  sudo echo "Defaults logfile=$SUDOLOG" | sudo tee -a /etc/sudoers &>/dev/null
 
 //larger bash history
-$Command="grep HISTFILESIZE ".$vars['DSE']['USER_BASH_PROFILE'];
-$HISTFILESIZE=strcut(trim(`$Command`),"=");
-if($HISTFILESIZE==""){
-	print "Cant find HISTFILESIZE in ".$vars['DSE']['USER_BASH_PROFILE']."\n";
-	$A=dse_ask_yn(" Add HISTFILESIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']." ?");
-	if($A=='Y'){
-		$Command="echo \"\nHISTFILESIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']."\" >> ".$vars['DSE']['USER_BASH_PROFILE'];
-		$r=`$Command`;
-		print "$Added\n";
-	}else{
-		print "$NotChanged\n";
-	}
-		
+print "Checking HISTFILESIZE: \n";
+if(!file_exists($vars['DSE']['USER_BASH_PROFILE'])){
+	print "$Failed to verify. No ".$vars['DSE']['USER_BASH_PROFILE']."\n";
 }else{
-	if($HISTFILESIZE<$vars['DSE']['SUGGESTED']['HISTFILESIZE']){
-		print "HISTFILESIZE $NotOK. Smaller ( = $HISTFILESIZE ) than recommended ( ".$vars['DSE']['SUGGESTED']['HISTFILESIZE']." ). \n";
-		$A=dse_ask_yn(" Increase HISTFILESIZE to ".$vars['DSE']['SUGGESTED']['HISTFILESIZE']." ?");
+	$Command="grep HISTFILESIZE ".$vars['DSE']['USER_BASH_PROFILE'];
+	$HISTFILESIZE=strcut(trim(`$Command`),"=");
+	if($HISTFILESIZE==""){
+		print "Cant find HISTFILESIZE in ".$vars['DSE']['USER_BASH_PROFILE']."\n";
+		$A=dse_ask_yn(" Add HISTFILESIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']." ?");
 		if($A=='Y'){
-			$Command="/dse/bin/dreplace -v 2 -s -p ".$vars['DSE']['USER_BASH_PROFILE']." \"^HISTFILESIZE=[0-9]+$\" \"HISTFILESIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']."\"";
+			$Command="echo \"\nHISTFILESIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']."\" >> ".$vars['DSE']['USER_BASH_PROFILE'];
 			$r=`$Command`;
-			print "$OK\n";
+			print "$Added\n";
 		}else{
 			print "$NotChanged\n";
 		}
+			
 	}else{
-		print "HISTFILESIZE size $OK = $HISTFILESIZE\n";
+		if($HISTFILESIZE<$vars['DSE']['SUGGESTED']['HISTFILESIZE']){
+			print "HISTFILESIZE $NotOK. Smaller ( = $HISTFILESIZE ) than recommended ( ".$vars['DSE']['SUGGESTED']['HISTFILESIZE']." ). \n";
+			$A=dse_ask_yn(" Increase HISTFILESIZE to ".$vars['DSE']['SUGGESTED']['HISTFILESIZE']." ?");
+			if($A=='Y'){
+				$Command="/dse/bin/dreplace -v 2 -s -p ".$vars['DSE']['USER_BASH_PROFILE']." \"^HISTFILESIZE=[0-9]+$\" \"HISTFILESIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']."\"";
+				$r=`$Command`;
+				print "$OK\n";
+			}else{
+				print "$NotChanged\n";
+			}
+		}else{
+			print "HISTFILESIZE size $OK = $HISTFILESIZE\n";
+		}
 	}
 }
-
 
 
 //multi-terminal real-time bash history
