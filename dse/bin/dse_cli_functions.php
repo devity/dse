@@ -541,9 +541,9 @@ function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 				$Line=substr($Line,0,strpos($Line,"#")-1);
 			}
 		}
-		
+		//print "Line=$Line\n";
 		if(str_contains($Line,"+=")){
-			$Lpa=split("=",$Line);
+			$Lpa=split("\\+=",$Line);
 			if($Lpa[0] && $Lpa[1]){
 				$tbra[$Lpa[0]].=$Lpa[1];
 			}
