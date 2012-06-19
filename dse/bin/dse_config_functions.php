@@ -587,11 +587,16 @@ function dse_configure_create_httpd_conf(){
 			//if($i>4) break;
 			foreach(split(",",$Hosts) as $Host){
 				//if($i>4) break;
+				$Extra="";
 				$ServerAlias="$Host.$Domain";
 				if($Host=="_blank") $ServerAlias="$Domain";
 				$ServerName="$Host.$domain";
 				if($Host=="_blank") $ServerName="$domain";
 				$IP=$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host];
+				$File404="$DocRoot/$Webroot/404.php";
+				if(dse_file_exists($File404)){
+					$Extra.=" ErrorDocument   404     /404.php\n";
+				}
 				$site="
 <VirtualHost *:80>
  ServerName $ServerName
@@ -599,6 +604,7 @@ function dse_configure_create_httpd_conf(){
  DocumentRoot $DocRoot/$Webroot
  ErrorLog /var/log/apache2/error.log
  CustomLog /var/log/apache2/access.log combined
+$Extra
 </VirtualHost>
 ";
 				$site_file="/etc/apache2/sites-available/$Host.$domain";
