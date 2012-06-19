@@ -51,6 +51,7 @@ if($argv[1]=="help" || $ShowUsage){
 
 dse_file_link("/sbin/service",trim(`which service`));
 dse_file_link("/usr/bin/php",trim(`which php`));
+dse_file_link("/bin/php",trim(`which php`));
 
 $wget=dse_which("wget");
 //print "wget=$wget\n";
