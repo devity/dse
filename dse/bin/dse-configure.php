@@ -174,7 +174,7 @@ if(!str_contains($PATH,$vars['DSE']['DSE_BIN_DIR'])){
 			print "Cant find ".$vars['DSE']['DSE_BIN_DIR']." in PATH: $PATH\n";
 			$A=dse_ask_yn(" Update to PATH?");
 			if($A=='Y'){
-				$Command="echo \"\PATH=\$PATH:".$vars['DSE']['DSE_BIN_DIR'].":".$vars['DSE']['DSE_ALIASES_DIR'].":".$vars['DSE']['SYSTEM_SCRIPTS_DIR']."\nexport PATH\" >> ".$vars['DSE']['SYSTEM_PROFILE_FILE'];
+				$Command="echo \"PATH=\$PATH:".$vars['DSE']['DSE_BIN_DIR'].":".$vars['DSE']['DSE_ALIASES_DIR'].":".$vars['DSE']['SYSTEM_SCRIPTS_DIR']."\nexport PATH\" >> ".$vars['DSE']['SYSTEM_PROFILE_FILE'];
 				$r=`$Command`;
 				print "$Updated\n";
 			}else{
@@ -184,7 +184,7 @@ if(!str_contains($PATH,$vars['DSE']['DSE_BIN_DIR'])){
 		}else{
 			print "$OK Path= $PATH\n";
 			
-			/*
+			
 			print "Checking user's .profile PATH: ";
 			if(!dse_file_exists($vars['DSE']['USER_BASH_PROFILE'])){
 				print "$Failed to verify. No ".$vars['DSE']['USER_BASH_PROFILE']."\n";
@@ -195,7 +195,7 @@ if(!str_contains($PATH,$vars['DSE']['DSE_BIN_DIR'])){
 					print "Cant find ".$vars['DSE']['DSE_BIN_DIR']." in PATH: $PATH\n";
 					$A=dse_ask_yn(" Update to PATH?");
 					if($A=='Y'){
-						$Command="echo \"\PATH=\$PATH:".$vars['DSE']['DSE_BIN_DIR'].":".$vars['DSE']['DSE_ALIASES_DIR'].":".$vars['DSE']['SYSTEM_SCRIPTS_DIR']."\nexport PATH\" >> ".$vars['DSE']['USER_BASH_PROFILE'];
+						$Command="echo \"PATH=\$PATH:".$vars['DSE']['DSE_BIN_DIR'].":".$vars['DSE']['DSE_ALIASES_DIR'].":".$vars['DSE']['SYSTEM_SCRIPTS_DIR']."\nexport PATH\" >> ".$vars['DSE']['USER_BASH_PROFILE'];
 						$r=`$Command`;
 						print "$Updated\n";
 					}else{
@@ -205,7 +205,7 @@ if(!str_contains($PATH,$vars['DSE']['DSE_BIN_DIR'])){
 				}else{
 					print "$OK Path= $PATH\n";
 				}
-			}*/
+			}
 	
 			
 			
