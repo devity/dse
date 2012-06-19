@@ -213,7 +213,6 @@ function dse_file_get_stat_field($DestinationFile,$field=""){
 function dse_file_exists($DestinationFile){
 	global $vars;
 	$r=`ls -la $DestinationFile`;
-	print "r=$r\n";
 	if(str_contains($r,'No such file or directory')){
 		return FALSE;
 	}

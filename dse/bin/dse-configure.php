@@ -217,7 +217,7 @@ $code="
 ";
 print "Realtime cross-shell bash history: ";
 	
-$Command="grep stackoverflow.com/questions/103944/real-time-history-export-amongst-bash-terminal-windows ".$vars['DSE']['SYSTEM_BASHRC_FILE'];
+$Command="grep \"stackoverflow.com/questions/103944/real-time-history-export-amongst-bash-terminal-windows\" ".$vars['DSE']['SYSTEM_BASHRC_FILE'];
 $r=trim(`$Command`);
 if(!str_contains($r,"stackoverflow")){
 	print "Not activated in ".$vars['DSE']['SYSTEM_BASHRC_FILE'];
