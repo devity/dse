@@ -24,24 +24,24 @@ if($options['n']){
 }
 
 if(!$Lines){
-	$Lines=50;
+	$Lines=10;
 }
 $NumberOfBytesSameLimit=13;
 
 
 $SudoReplace="s/sudo/SUDO/g";
 
-$TailLines=$Lines*10;
+$TailLines=$Lines;
 
 $LogsCombinedCommand="(";
 foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
-	print "Adding Log File: $LogFile\n";
+	//print "Adding Log File: $LogFile\n";
 	if($LogsCombinedCommand!="("){
 		$LogsCombinedCommand.="; ";
 	}
-	$LogsCombinedCommand.="tail -n $TailLines $LogFile ";
+	$LogsCombinedCommand.="echo \"$LogFile\"; tail -n $TailLines $LogFile ";
 }
-$LogsCombinedCommand.=") | sort | sed $SudoReplace | grep -v NSAutoreleaseNoPool | grep -v geektool | grep -v Geeklet | grep -v Chrome ";
+$LogsCombinedCommand.=") | sed $SudoReplace | grep -v NSAutoreleaseNoPool | grep -v geektool | grep -v Geeklet | grep -v Chrome ";
 //| sed 's/louiss-macbook-pro-2//g' | sed 's/Louiss-MacBook-Pro-2//g' 
 //| cut -c 8-1000 
 //		."tail -n $TailLines /var/log/ppp.log | cut -c 5-1000 |  sed 's/2012 ://g' ; "
@@ -106,9 +106,9 @@ foreach(split("\n",$LogsCombined) as $Line){
 $FinalLines=split("\n",$Out);
 
 $start=0;
-if(sizeof($FinalLines)>$Lines){
-	$start=sizeof($FinalLines)-$Lines;
-}
+//if(sizeof($FinalLines)>$Lines){
+	//$start=sizeof($FinalLines)-$Lines;
+//}
 //print "start=$start so=".sizeof($FinalLines)."\n";
 
 for($i=$start;$i<sizeof($FinalLines);$i++){
