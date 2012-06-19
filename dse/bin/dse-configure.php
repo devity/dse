@@ -120,8 +120,7 @@ foreach($NeededDirs as $DirArray){
 			print "Mode $NotOK =".dse_file_get_mode($Dir)." ";
 			$A=dse_ask_yn("Set to $Mode?");
 			if($A=='Y'){
-				dse_file_set_mode($Dir,$Mode);
-				if($Mode==dse_file_get_mode($Dir)){
+				if(dse_file_set_mode($Dir,$Mode)==0){
 					print "$Fixed. ";
 				}else{
 					print "$Failed. ";
@@ -134,8 +133,8 @@ foreach($NeededDirs as $DirArray){
 			print "Owner $NotOK =".dse_file_get_owner($Dir)."  ";
 			$A=dse_ask_yn("Set to $Owner?");
 			if($A=='Y'){
-				dse_file_set_owner($Dir,$Owner);
-				if($Owner==dse_file_get_owner($Dir)){
+				
+				if(dse_file_set_owner($Dir,$Owner)==0){
 					print "$Fixed. ";
 				}else{
 					print "$Failed. ";

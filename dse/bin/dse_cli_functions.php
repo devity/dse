@@ -281,8 +281,8 @@ function dse_file_delete($File){
 function dse_file_set_mode($DestinationFile,$Mode){
 	global $vars;
 	if($DestinationFile && $Mode){
-		$command="chmod -R $Mode $DestinationFile";
-		`$command`;
+		$command="chmod -R $Mode $DestinationFile 2>&1";
+		print `$command`;
 		$CurrentPermissions=dse_file_get_mode($DestinationFile);
 		if(intval($Mode)!=$CurrentPermissions){
 			return -2;
