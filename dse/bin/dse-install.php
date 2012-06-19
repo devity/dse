@@ -155,7 +155,7 @@ $dse_git_dir="$PWD/dse/dse";
 //"memstat","iftop","sysstat","chkconfig","mytop",""
 //"dnsutils","bind9","vsftpd","tasksel",""
 
-$PackageNamesArray=array("wget");
+$PackageNamesArray=array("wget","curl");
 $OSXPackageNamesArray=array("lynx");
 $NotOSXPackageNamesArray=array("perl","vim","memstat","iftop","sysstat","chkconfig","lynx-cur");
 	
