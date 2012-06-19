@@ -97,6 +97,9 @@ $NeededDirs=array(
  array($vars['DSE']['DSE_CONFIG_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
  array($vars['DSE']['SYSTEM_SCRIPTS_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
 );
+if(str_contains($vars['DSE']['SERVICES'],"dns")){
+	$NeededDirs[]= array("/etc/bind/local","777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']);
+}
 
 
 foreach($NeededDirs as $DirArray){
