@@ -406,6 +406,14 @@ function dse_file_link($LinkFile,$DestinationFile){
 	return 0;
 }
 
+function dse_file_is_link($File){
+	global $vars;
+	$DestinationFileCurrent=`ls -la $File`;
+	if(str_contains($DestinationFileCurrent,"->")){
+		return TRUE;
+	}
+	return FALSE;
+}
 
 function dse_file_link_get_destination($LinkFile){
 	global $vars;

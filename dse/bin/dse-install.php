@@ -157,7 +157,7 @@ $dse_git_dir="$PWD/dse/dse";
 
 $PackageNamesArray=array("wget","curl","bc");
 $OSXPackageNamesArray=array("lynx");
-$NotOSXPackageNamesArray=array("perl","vim","memstat","iftop","sysstat","chkconfig","lynx-cur");
+$NotOSXPackageNamesArray=array("whois","perl","vim","memstat","iftop","sysstat","chkconfig","lynx-cur");
 	
 if(dse_is_osx()){
 	foreach($OSXPackageNamesArray as $p) $PackageNamesArray[]=$p;
