@@ -164,7 +164,10 @@ if(dse_is_centos()){
 }elseif(dse_is_osx()){
 }else{
 	$PackageNamesArray[]="whois";
-	
+}
+
+if(dse_is_ubuntu()){
+	$PackageNamesArray[]="dnet-progs";
 }
 	
 if(dse_is_osx()){
