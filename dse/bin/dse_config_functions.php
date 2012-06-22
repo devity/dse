@@ -391,7 +391,8 @@ function dse_package_install($PackageName){
 			//passthru($Command);
 			dse_popen($Command);
 		}else{
-			$r=`$Command`;
+			//$r=`$Command`;
+			$r=dse_popen($Command);
 			// print "cmd: $Command   r=".$r."\n";
 			if(str_contains($r,"will be installed")){
 				print getColoredString(" Installed.\n","green","black");
