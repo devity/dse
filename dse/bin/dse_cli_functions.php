@@ -11,6 +11,17 @@ $NotChanged=getColoredString("Not Changed","orange","black");
 $NotFixed=getColoredString("Not Changed","orange","black");
 
 
+function dse_popen($Command){
+	global $vars;
+	$handle = popen($Command, 'r');
+	while (!feof($handle)) {
+        echo fgets($handle);
+        flush();
+        ob_flush();
+	}
+	pclose($handle);
+}
+
 function dse_ask_yn($Question){
 	global $vars;
 	print "$Question (Y/N): ";

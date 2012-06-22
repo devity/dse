@@ -329,6 +329,7 @@ if($FullConfig){
 	dse_configure_create_httpd_conf();
 	
 	if(str_contains($vars['DSE']['SERVICES'],"desktop")){
+		print "Installing 'desktop' packages:\n";
 		$vars['DSE']['DESKTOP']=TRUE;
 		
 		$PackageNamesArray=array("gnome");
