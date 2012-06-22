@@ -328,6 +328,23 @@ if($FullConfig){
 	dse_configure_create_named_conf();
 	dse_configure_create_httpd_conf();
 	
+	if(str_contains($vars['DSE']['SERVICES'],"desktop")){
+		$vars['DSE']['DESKTOP']=TRUE;
+		
+		$PackageNamesArray=array("gnome");
+		if(dse_is_ubuntu()){
+			$PackageNamesArray[]="ubuntu-desktop";
+		}
+		foreach($PackageNamesArray as $PackageName){
+			$r=dse_package_install($PackageName);
+			if($r<0){
+				print getColoredString("FATAL ERROR: installing package $PackageName\n","red","black");
+				print getColoredString($vars['DSE']['SCRIPT_FILENAME']."Exiting.\n","red","black");
+				exit(-1);
+			}
+		}
+	}
+	
 	exit();
 
 	//harden

@@ -642,9 +642,9 @@ $Extra
 function dse_configure_install_packages(){
 	global $vars;
 
-//"iftop",,"git","gnome"
+//"iftop",,"git","gnome","ubuntu-desktop"
 	$PackageNamesArray=array("vim","memstat","sysstat","yum","chkconfig","lynx-cur","perl-tk","cron-apt","dnsutils","update-inetd",
-		"build-essential","rpm-build","aide","chkrootkit","rkhunter","logwatch","xosview","ubuntu-desktop");
+		"build-essential","rpm-build","aide","chkrootkit","rkhunter","logwatch","xosview");
 	foreach($PackageNamesArray as $PackageName){
 		$r=dse_package_install($PackageName);
 		if($r<0){
