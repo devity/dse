@@ -481,7 +481,7 @@ function on_shutdown(){
 		print " httpd.conf &nbsp; ";	
 	}	
 	
-	$Contents=`/scripts/iptables-nvL`;
+	$Contents=`/scripts/iptables-nvL 2>&1`;
 	if($Contents){
 		print return_collapsible_min_area_start(FALSE);
 		print text2html($Contents);
