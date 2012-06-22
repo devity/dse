@@ -2,22 +2,39 @@
 
 function dse_code_parse($CodeBaseDir){
 	global $vars;
+	$skip=array("phpmyadmin");
 	$DirArray=dse_directory_to_array($CodeBaseDir);
 	$CodeInfoArray=dse_code_parse_dir_array_to_code_array($DirArray);
 	//print print_r($CodeInfoArray);
 	//print print_r($CodeInfoArray['Files']); return;
 	foreach($CodeInfoArray['Files'] as $FileFullName=>$Entry){
-		print "parsing $FileFullName\n";
-		if(!dse_file_is_link($FileFullName)){
-			$CodeInfoArray=dse_code_parse_file_to_array($CodeInfoArray,$FileFullName);
-		}else{
-			//print "$FileFullName is LINK\n";
+		$Do=TRUE;
+		foreach($skip as $s){
+			if(str_contains($FileFullName,$s)){
+				$Do=FALSE;
+			}
+		}
+		if($Do){
+			print "parsing $FileFullName\n";
+			if(!dse_file_is_link($FileFullName)){
+				$CodeInfoArray=dse_code_parse_file_to_array($CodeInfoArray,$FileFullName);
+			}else{
+				//print "$FileFullName is LINK\n";
+			}
 		}
 	}
 	foreach($CodeInfoArray['Files'] as $FileFullName=>$Entry){
-		print "parsing $FileFullName pass 2\n";
-		if(!dse_file_is_link($FileFullName)){
-			$CodeInfoArray=dse_code_parse_file_to_array_pass2($CodeInfoArray,$FileFullName);
+		$Do=TRUE;
+		foreach($skip as $s){
+			if(str_contains($FileFullName,$s)){
+				$Do=FALSE;
+			}
+		}
+		if($Do){
+			print "parsing $FileFullName pass 2\n";
+			if(!dse_file_is_link($FileFullName)){
+				$CodeInfoArray=dse_code_parse_file_to_array_pass2($CodeInfoArray,$FileFullName);
+			}
 		}
 	}
 	return $CodeInfoArray;
