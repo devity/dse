@@ -23,7 +23,10 @@ $parameters_details = array(
   array('f:','forground:',"set forground color = arg"),
   array('','foreground:',"set forground color = arg"),
   array('n','no-new-line',"does not end any prints with a \\n"),
+  //array('r','return-postion',"returns cursor to origional possition after -x -y"),
   array('p:','print:',"prints arg"),
+  array('x:','X:',"prints at x= arg"),
+  array('y:','Y:',"prints at y= arg"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -55,6 +58,18 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'no-new-line':
 		$NoNewLines=TRUE;
 		break;
+	case 'r':
+  	case 'return-postion':
+		$NoNewLines=TRUE;
+		break;
+	case 'x':
+  	case 'X':
+  		$X=$vars['options'][$opt];
+		break;
+	case 'y':
+  	case 'Y':
+  		$Y=$vars['options'][$opt];
+		break;
 	case 'b':
   	case 'background':
 		print setBackgroundColor($vars['options'][$opt]);
@@ -68,6 +83,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 	case 'p':
   	case 'print':
+		if($X!="" && $Y!=""){
+			sbp_cursor_postion($Y,$X);
+		}
 		if($vars['options'][$opt]) print $vars['options'][$opt];
 		if(!$NoNewLines) print "\n";
 		$DidSomething=TRUE;
