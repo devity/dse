@@ -57,7 +57,8 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		print dse_code_return_function_declarations($vars['options'][$opt]);
 		$DidSomething=TRUE;
 		break;
-		
+	
+	case 'u':
 	case 'file-info':
 		$DidSomething=TRUE;
 		{
@@ -107,39 +108,51 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			}
 	/*
 
-	print "<table width=100%><tr class='f8pt'>";
-	
-	print "<td valign=top><b>Files:</b><br>";
-		foreach($CodeInfoArray['Files'] as $FileFullName=>$FileEntry){
-			$LineCount=$FileEntry['FileCodeInfoArray']['LineCount'];
-			print "<a href=/code_explorer/?FileInfo&File=$FileFullName><b class='f9pt'>$FileFullName</b></a> ($LineCount)<br>";
-			// $f:$l
-		}
-		print "</td>";
-	print "</td>";
-	
-	
-	print "<td valign=top><b>Functions:</b><br>";
-	//print text2html(dse_code_return_function_declarations("/dse"))."<br>";
-	
-		ksort($CodeInfoArray['Functions']['Def']);
-		foreach($CodeInfoArray['Functions']['Def'] as $k=>$fde){
-			$f=$fde[0];
-			$l=$fde[1];
-			$n=$fde[2];
-			$p=$fde[3];
-			$d=$fde[4];
-			print "<b class='f9pt'>$n</b> ($p)<br>";
-			// $f:$l
-		}
-		print "</td>";
-	
-	print "</tr></table>";*/
+	*/
 
 
 			
 		}
 		break;
+	case 'o':
+	case 'overview':
+		$DidSomething=TRUE;
+		{
+			$CodeBaseDir=$vars['options'][$opt];
+			$CodeInfoArray=dse_code_parse($CodeBaseDir);
+			print "<table width=100%><tr class='f8pt'>";
+			
+			print "<td valign=top><b>Files:</b><br>";
+				foreach($CodeInfoArray['Files'] as $FileFullName=>$FileEntry){
+					$LineCount=$FileEntry['FileCodeInfoArray']['LineCount'];
+					print "<a href=/code_explorer/?FileInfo&File=$FileFullName><b class='f9pt'>$FileFullName</b></a> ($LineCount)<br>";
+					// $f:$l
+				}
+				print "</td>";
+			print "</td>";
+			
+			
+			print "<td valign=top><b>Functions:</b><br>";
+			//print text2html(dse_code_return_function_declarations("/dse"))."<br>";
+			
+				ksort($CodeInfoArray['Functions']['Def']);
+				foreach($CodeInfoArray['Functions']['Def'] as $k=>$fde){
+					$f=$fde[0];
+					$l=$fde[1];
+					$n=$fde[2];
+					$p=$fde[3];
+					$d=$fde[4];
+					print "<b class='f9pt'>$n</b> ($p)<br>";
+					// $f:$l
+				}
+				print "</td>";
+			
+			print "</tr></table>";
+		}
+		break;
+		
+		
+			
 }
 
 if($DoSetEnv){
