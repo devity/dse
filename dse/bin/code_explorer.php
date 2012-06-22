@@ -23,6 +23,7 @@ $parameters_details = array(
  // array('p:','parse:',"parses code-base at argv[1]"),
   array('f:','function-declarations:',"shows functions declared in code-base at argv[1]"),
   array('u:','file-info:',"code-base at argv[1] file-info on file = argv[2]"),
+  array('o:','overview:',"overview of code-base at argv[1]"),
   
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
