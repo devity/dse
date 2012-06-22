@@ -368,6 +368,7 @@ function dse_package_install($PackageName){
 	}
 	if($Installer=='yum'){
 		$Command="sudo yum -y install $PackageName 2>&1";
+		print " Running: $Command\n";
 		if($vars['DSE']['dse_package_install__use_passthru']){
 			passthru($Command);
 		}else{
@@ -386,8 +387,8 @@ function dse_package_install($PackageName){
 		}
 	}elseif($Installer=='apt-get'){
 		$Command="sudo $aptget -y install $PackageName 2>&1";
+		print " Running: $Command\n";
 		if($vars['DSE']['dse_package_install__use_passthru']){
-			 print " Running: $Command\n";
 			//passthru($Command);
 			dse_popen($Command);
 		}else{
@@ -411,6 +412,7 @@ function dse_package_install($PackageName){
 	}elseif($Installer=='fink'){
 		
 		$Command="dpkg -L $PackageName 2>&1";
+		print " Running: $Command\n";
 		if($vars['DSE']['dse_package_install__use_passthru']){
 			passthru($Command);
 		}else{

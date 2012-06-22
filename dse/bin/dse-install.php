@@ -157,7 +157,15 @@ $dse_git_dir="$PWD/dse/dse";
 
 $PackageNamesArray=array("wget","curl","bc");
 $OSXPackageNamesArray=array("lynx");
-$NotOSXPackageNamesArray=array("whois","perl","vim","memstat","iftop","sysstat","chkconfig","lynx-cur");
+$NotOSXPackageNamesArray=array("perl","vim","memstat","iftop","sysstat","chkconfig","lynx-cur");
+
+if(dse_is_centos()){
+	$PackageNamesArray[]="jwhois";
+}elseif(dse_is_osx()){
+}else{
+	$PackageNamesArray[]="whois";
+	
+}
 	
 if(dse_is_osx()){
 	foreach($OSXPackageNamesArray as $p) $PackageNamesArray[]=$p;
