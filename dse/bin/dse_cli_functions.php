@@ -1797,13 +1797,18 @@ function dse_log_parse_apache_La_set_Time($La){
 // ************* COLOR / TERMINAL  *** COLOR / TERMINAL  *** COLOR / TERMINAL  *** COLOR / TERMINAL  *** COLOR / TERMINAL  
 	 
 function test_all_shell_colors(){
-	
+	global $vars;
 	print "\n\nForground Codes: ";
 	for($p1=0;$p1<=11;$p1++){
 		for($p2=0;$p2<100;$p2++){
 			$foreground_color="$p1;$p2";
 			$background_color="black";
-			print "". getColoredString($foreground_color, $foreground_color, $background_color)."  ";
+			print "  ". getColoredString($foreground_color, $foreground_color, $background_color);
+			foreach($vars[shell_foreground_colors] as $ColorName=>$ColorCode){
+				if($ColorCode==$foreground_color){
+					print "(".getColoredString($ColorName, $foreground_color, $background_color).")";
+				}
+			}
 		}
 		print "\n--------------";
 	}
@@ -1813,7 +1818,12 @@ function test_all_shell_colors(){
 	for($p1=0;$p1<=510;$p1++){
 		$background_color="$p1";
 		$foreground_color="white";
-		print "". getColoredString($background_color, $foreground_color, $background_color)."  ";
+		print "  ". getColoredString($background_color, $foreground_color, $background_color);
+		foreach($vars[shell_background_colors] as $ColorName=>$ColorCode){
+			if($ColorCode==$background_color){
+				print "(".getColoredString($ColorName, $foreground_color, $background_color).")";
+			}
+		}
 	}
 	print "\n\n";
 }
@@ -1849,9 +1859,6 @@ function dse_bt_colorize($v,$t,$type="MAXIMUM",$v_str=""){
 
 
 
-function getColoredString($string, $foreground_color = null, $background_color = null) {
-	global $vars;
-	
 	$vars[shell_foreground_colors] = array();
 	$vars[shell_background_colors] = array();
 	 
@@ -1915,7 +1922,11 @@ function getColoredString($string, $foreground_color = null, $background_color =
 	$vars[shell_background_colors]['blue'] = '104';
 	$vars[shell_background_colors]['magenta'] = '105';
 	$vars[shell_background_colors]['cyan'] = '106';
-		
+	
+function getColoredString($string, $foreground_color = null, $background_color = null) {
+	global $vars;
+	
+
 	
 	$colored_string = "";
 	$colored_string .= "\033[0m";
@@ -1954,14 +1965,33 @@ function getColoredString($string, $foreground_color = null, $background_color =
 	}
 	return $colored_string;
 }
- 
-		// Returns all foreground color names
+
+function setBackgroundColor($background_color) {
+	global $vars;
+	$colored_string = "";
+	//$colored_string .= "\033[0m";
+	if( (intval($background_color)<=0 || $background_color=="0") && isset($vars[shell_background_colors][$background_color])) {
+		$colored_string .= "\033[" . $vars[shell_background_colors][$background_color] . "m";
+	}
+	return $colored_string;
+}
+function setForgroundColor($foreground_color) {
+	global $vars;
+	$colored_string = "";
+	//$colored_string .= "\033[0m";
+	if( (intval($foreground_color)<=0 || $foreground_color=="0") && isset($vars[shell_foreground_colors][$foreground_color])) {
+		$colored_string .= "\033[" . $vars[shell_foreground_colors][$foreground_color] . "m";
+	}
+	return $colored_string;
+}
+	
+	
+	
 function getForegroundColors() {
 	global $vars;
 	return array_keys($vars[shell_foreground_colors]);
 }
  
-		// Returns all background color names
 function getBackgroundColors() {
 	global $vars;
 	return array_keys($vars[shell_background_colors]);

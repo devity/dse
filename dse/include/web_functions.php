@@ -267,9 +267,8 @@ function on_shutdown(){
 		//if($vars[DBFailedCommands]>0){
 		//	print "<div style='z-index: 10; position: absolute; left: 40; top: 25; background: white;'><font color=red class='f15pt'><b>$vars[DBFailedCommands] Failed DB Queries</b></font></div>";
 		//}
-		print "<i>Page Stats:</i> &nbsp;			<b>RunTime:</b> ${runtime}s 
-			<b>DB:</b> ". $dbruntime ."s &nbsp; &nbsp;
-			 ";
+		print "<i>Page Info:</i> &nbsp;		 ";
+		//	<b>RunTime:</b> ${runtime}s 	<b>DB:</b> ". $dbruntime ."s &nbsp; &nbsp;
 		
 		print return_collapsible_min_area_start(FALSE);
 		print "<b>Memory Usage:</b>  $MemoryPercent%  @ ${MemorykB}kB in PID $PID<br>";
@@ -306,19 +305,16 @@ function on_shutdown(){
 			print return_collapsible_min_area_end();
 			print "Errors &nbsp; ";
 		}
-		print return_collapsible_min_area_start(FALSE);
 		
-		print "
-	
-			<b>QP Main DB User:</b> " . $vars[Database]->Hostname . "<br>
-			<b>QP Inserts DB Used:</b> " . $vars[Database]->HostnameInserts . "<br>			
-		";
-
-		print "DB History:<br>" . $vars[Database]->DatabaseHistory ."<br>";
-		
-		
-		print return_collapsible_min_area_end();
-		print "DB &nbsp; ";
+		if($vars[Database]->DatabaseHistory){
+			print return_collapsible_min_area_start(FALSE);
+			print "
+				<b>QP Main DB User:</b> " . $vars[Database]->Hostname . "<br>
+				<b>QP Inserts DB Used:</b> " . $vars[Database]->HostnameInserts . "<br>			
+				DB History:<br>" . $vars[Database]->DatabaseHistory ."<br>";
+			print return_collapsible_min_area_end();
+			print "DB &nbsp; ";
+		}
 		
 	
 	//	include_once "$vars[SITE_ROOT]/admin/scripts/webserver_file_manager_functions.php";
@@ -350,7 +346,7 @@ function on_shutdown(){
 					}
 					print " /<a href=/admin/scripts/webserver_file_manager.php?PageType=FileManager&Dir=/usr/local/webroot$tDir/>$p</a>";
 					if(str_contains($p,".php") || str_contains($p,".inc") || str_contains($p,".txt") || str_contains($p,".htaccess")){
-						$url=bd_ide_file_open_url($filename);
+						$url=dpd_ide_file_open_url($filename);
 						print "<a href=$url>&crarr;</a>";
 					}
 				}				
@@ -449,6 +445,41 @@ function on_shutdown(){
 		
 	}
 	
+	print "<br><i>Server Info: &nbsp; </i> ";
+	
+	
+	
+	$Contents=`cat /etc/dse/dse.conf`;
+	if($Contents){
+		print return_collapsible_min_area_start(FALSE);
+		print text2html($Contents);
+		print return_collapsible_min_area_end();
+		print " dse.conf &nbsp; ";	
+	}	
+	
+	$Contents=`cat /etc/dse/apache2.conf`;
+	if($Contents){
+		print return_collapsible_min_area_start(FALSE);
+		print text2html($Contents);
+		print return_collapsible_min_area_end();
+		print " dse httpd.conf &nbsp; ";	
+	}	
+	
+	$Contents=`cat /etc/dse/server.conf`;
+	if($Contents){
+		print return_collapsible_min_area_start(FALSE);
+		print text2html($Contents);
+		print return_collapsible_min_area_end();
+		print " server.conf &nbsp; ";	
+	}	
+	
+	$Contents=`cat /etc/httpd.conf`;
+	if($Contents){
+		print return_collapsible_min_area_start(FALSE);
+		print text2html($Contents);
+		print return_collapsible_min_area_end();
+		print " httpd.conf &nbsp; ";	
+	}	
 	
 	
 	
@@ -696,5 +727,47 @@ function dpd_whereami(){
 	print "<br>";
 }
 
+function dpd_ide_file_open_url($SiteFileName,$Line=""){
+	global $vars;
+	$sfn=$SiteFileName;
+	//$bd_ide_file_open_url_debug=TRUE;
+	$protocol="openineclipse://"; 
+	if(!(strstr($SiteFileName,"dse_publish_archive")==FALSE)){
+		if ($bd_ide_file_open_url_debug) print "bd_ide_file_open_url_debug: if.1<br>";
+		//$SiteFileName=str_replace("/home/admin","",$SiteFileName);
+		$LocalFileName="/Volumes/bd_admin/$SiteFileName";
+		$LocalFileName=str_replace("Volumes/bd_admin//home/admin","Volumes/bd_admin",$LocalFileName);
+		//javascript:document.location='openineclipse://open?url=file:///Volumes/bd_admin//home/admin/dse_publish_archive/home/admin/batteriesdirect.com/dse_admin/utils/code_functions.php.20120414122414&line=';
+		
+		if ($bd_ide_file_open_url_debug) print "bd_ide_file_open_url_debug: if.b<br>";
+	}elseif(!(strstr($SiteFileName,"/home/marqul")==FALSE)){
+		if ($bd_ide_file_open_url_debug) print "bd_ide_file_open_url_debug: if.a<br>";
+		$SiteFileName=str_replace("/home/marqul","",$SiteFileName);
+		$LocalFileName="/Volumes/bd_marqul/$SiteFileName";
+		
+		$LocalFileName="/Volumes/bd_admin/$SiteFileName";
+		if ($bd_ide_file_open_url_debug) print "bd_ide_file_open_url_debug: if.b<br>";
+	}elseif(!(strstr($SiteFileName,"/home/admin")==FALSE)){
+		$SiteFileName=str_replace("/home/admin","",$SiteFileName);
+		$SiteFileName=str_replace("//","/",$SiteFileName);
+		$LocalFileName="/Volumes/bd_admin/$SiteFileName";
+		$LocalFileName=str_replace("//","/",$LocalFileName);
+		if ($bd_ide_file_open_url_debug) print "bd_ide_file_open_url_debug: if.c<br>";
+		
+//	}elseif(!(strstr($SiteFileName,"/home/admin/dev-batteriesdirect_com/")==FALSE)){
+//		$SiteFileName=str_replace("/home/admin/","",$SiteFileName);
+	}else{
+		if ($bd_ide_file_open_url_debug) print "bd_ide_file_open_url_debug: if.d<br>";
+		//$SiteFileName="dev-batteriesdirect_com".$SiteFileName;
+		$LocalFileName="$SiteFileName";
+	}
+	
+
+	
+	
+	if ($bd_ide_file_open_url_debug) print "bd_ide_file_open_url_debug: lfn=$LocalFileName sfn=$sfn<br>";
+	return "javascript:document.location='${protocol}open?url=file://${LocalFileName}&line=$Line';";
+	//openineclipse://open?url=file:///etc/hosts&line=
+}	 
 
 ?>
