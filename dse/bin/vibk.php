@@ -82,6 +82,7 @@ dse_cli_script_header();
 	
 if($ShowUsage){
 	print $vars['Usage'];
+	exit();
 }
 
 $file=$argv[1];

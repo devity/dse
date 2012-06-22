@@ -4,27 +4,21 @@ error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
-include_once ("/dse/include/web_functions.php");
-include_once ("/dse/include/code_functions.php");
 $vars['Verbosity']=1;
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
-$vars['DSE']['SCRIPT_NAME']="DSE";
-$vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="main script of Devity Server Environment";
-$vars['DSE']['DSE_DSE_VERSION']="v0.04b";
-$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/04/30";
+$vars['DSE']['SCRIPT_NAME']="DSE Backup and Patch";
+$vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="makes backup of then applies patch/edit to a file";
+$vars['DSE']['DSE_DSE_VERSION']="v0.01b";
+$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/06/22";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $parameters_details = array(
   array('h','help',"this message"),
   array('q','quiet',"same as --verbosity 0"),
-  array('v','verbosity:',"0=none 1=some 2=more 3=debug"),
- // array('p:','parse:',"parses code-base at argv[1]"),
-  array('f:','function-declarations:',"shows functions declared in code-base at argv[1]"),
-  array('u:','file-info:',"code-base at argv[1] file-info on file = argv[2]"),
-  array('o:','overview:',"overview of code-base at argv[1]"),
-  
+  array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('','line-append:',"appends \\n then argv[2] to file arg[1]"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -48,114 +42,21 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   		$ShowUsage=TRUE;
 		$DidSomething=TRUE;
 		break;
-  	case 'p':
-  	case 'parse':
-		dse_code_parse($vars['options'][$opt]);
-		$DidSomething=TRUE;
-		break;
-  	case 'f':
-  	case 'function-declarations':
-		print dse_code_return_function_declarations($vars['options'][$opt]);
-		$DidSomething=TRUE;
-		break;
-	
-	case 'u':
-	case 'file-info':
-		$DidSomething=TRUE;
-		{
-			$CodeBaseDir=$vars['options'][$opt];
-			$CodeInfoArray=dse_code_parse($CodeBaseDir);
-
-		
-			$FileFullName=$argv[1];
-			print "<center><b class='f10pt'>Info on File: $FileFullName</b></center></br><br>";
-			//$FileArray=$CodeInfoArray['Files'][$File]['FileCodeInfoArray']['Functions']['Def'];//
-			//print debug_tostring($FileArray);
-			
-			print "<table width=100%><tr class='f8pt'>";
-			
-			
-			print "<td valign=top><b class='f10pt'>Functions Declared:</b><br>";
-				ksort($CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['Functions']['Def']);
-				foreach($CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['Functions']['Def'] as $n=>$e){
-					$p=$e[3];
-					print "<b class='f9pt'>$n</b> ($p)<br>";
-					// $f:$l
-				}
-			print "</td>";
-			
-			print "<td valign=top><b class='f10pt'>Functions Referenced:</b><br>";
-				ksort($CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['Functions']['Used']);
-				foreach($CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['Functions']['Used'] as $n=>$e){
-					$l=$e[1]; $p=$e[3]; 
-					$Def=$CodeInfoArray['Functions']['Def'][$n];
-					//print "<b class='f9pt'>$n</b>($p) Line:$l<br>";
-					//print "<a><b class='f9pt'>$n</b>($p) Line:$l</a><div>Stuff shown on hover</div><br>";
-					print "<div href=\"#\" class=\"showhim\"><b class='f9pt'>$n</b>($p) Line:$l</a>";
-					print "<div class=\"showme\">";
-					print debug_tostring($Def);
-					print "</div></div>";
-		
-					// $f:$l
-				}
-			print "</td>";
-			
-			print "</tr></table>";
-			
-			
-			print "<br><b class='f10pt'>File Contents:</b><br>";
-			foreach($CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['LinesParsed'] as $LineNumber=>$Line){
-				print "<font color=grey>$LineNumber </font> $Line<br>";
-			}
-	/*
-
-	*/
-
-
-			
+	case 'line-append':
+		$file=$vars['options'][$opt];
+		$line=$argv[1];
+		if(!$file || !$file){
+			print "arg missing for switch --$opt. exiting\n";
+			exit(-1);
 		}
-		break;
-	case 'o':
-	case 'overview':
+		$backupfilename=dse_file_backup($file);
+		print "backup saved at: $backupfilename\n";
+		$Command="echo \"\\n$line\" >> $file ";
+		$r=`$Command`;
+		print "line appended.\n";
 		$DidSomething=TRUE;
-		{
-			$CodeBaseDir=$vars['options'][$opt];
-			$CodeInfoArray=dse_code_parse($CodeBaseDir);
-			print "<table width=100%><tr class='f8pt'>";
-			
-			print "<td valign=top><b>Files:</b><br>";
-				foreach($CodeInfoArray['Files'] as $FileFullName=>$FileEntry){
-					if($FileEntry['FileCodeInfoArray']['LineCount']){
-						$LineCount=$FileEntry['FileCodeInfoArray']['LineCount'];
-						print "<a href=/code_explorer/?FileInfo&File=$FileFullName><b class='f9pt'>$FileFullName</b></a> ($LineCount)<br>";
-						// $f:$l
-					}
-				}
-				print "</td>";
-			print "</td>";
-			
-			
-			print "<td valign=top><b>Functions:</b><br>";
-			//print text2html(dse_code_return_function_declarations("/dse"))."<br>";
-			
-				ksort($CodeInfoArray['Functions']['Def']);
-				foreach($CodeInfoArray['Functions']['Def'] as $k=>$fde){
-					$f=$fde[0];
-					$l=$fde[1];
-					$n=$fde[2];
-					$p=$fde[3];
-					$d=$fde[4];
-					print "<b class='f9pt'>$n</b> ($p)<br>";
-					// $f:$l
-				}
-				print "</td>";
-			
-			print "</tr></table>";
-		}
 		break;
-		
-		
-			
+
 }
 
 if($DoSetEnv){
@@ -191,8 +92,6 @@ if($EarlyExit){
 dse_cli_script_header();
 
 
-	
- 
 if($argv[1]=="configure"){
 	$PassArgString=""; for($PassArgString_i=1;$PassArgString_i<sizeof($argv);$PassArgString_i++) $PassArgString.=" ".$argv[$PassArgString_i];
 	print `/dse/bin/dse-configure $PassArgString`;
