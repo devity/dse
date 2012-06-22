@@ -7,7 +7,7 @@ function dse_code_parse($CodeBaseDir){
 	//print print_r($CodeInfoArray);
 	//print print_r($CodeInfoArray['Files']); return;
 	foreach($CodeInfoArray['Files'] as $FileFullName=>$Entry){
-		//print "parsing $FileFullName => $Entry\n";
+		print "parsing $FileFullName\n";
 		if(!dse_file_is_link($FileFullName)){
 			$CodeInfoArray=dse_code_parse_file_to_array($CodeInfoArray,$FileFullName);
 		}else{
@@ -15,6 +15,7 @@ function dse_code_parse($CodeBaseDir){
 		}
 	}
 	foreach($CodeInfoArray['Files'] as $FileFullName=>$Entry){
+		print "parsing $FileFullName pass 2\n";
 		if(!dse_file_is_link($FileFullName)){
 			$CodeInfoArray=dse_code_parse_file_to_array_pass2($CodeInfoArray,$FileFullName);
 		}
