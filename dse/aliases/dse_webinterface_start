@@ -1,0 +1,4 @@
+#!/bin/php
+<?php
+passthru("apachectl -f /etc/dse/apache2.conf");
+?>

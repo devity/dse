@@ -1,0 +1,4 @@
+#!/bin/php
+<?php
+passthru("kill -9 `/dse/bin/grep2pid etc/dse/apache2.conf`");
+?>

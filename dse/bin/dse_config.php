@@ -134,6 +134,7 @@ $vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/ip
 $vars['DSE']['DSE_IPTHROTTLE_LOG_DIRECTORY']=$vars['DSE']['DSE_LOG_DIR']."/ip_throttle";
 $vars['DSE']['DSE_IPTHROTTLE_BANNED_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/ips_banned.txt";
 $vars['DSE']['DSE_IPTHROTTLE_KONT_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/ips_kont.txt";
+$vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/apache2.conf";
 
 
 
