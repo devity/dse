@@ -125,7 +125,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			
 			print "<td valign=top><b>Files:</b><br>";
 				foreach($CodeInfoArray['Files'] as $FileFullName=>$FileEntry){
-					if($FileEntry['FileCodeInfoArray']['Language']!="UNKNOWN"){
+					if($FileEntry['FileCodeInfoArray']['LineCount']){
 						$LineCount=$FileEntry['FileCodeInfoArray']['LineCount'];
 						print "<a href=/code_explorer/?FileInfo&File=$FileFullName><b class='f9pt'>$FileFullName</b></a> ($LineCount)<br>";
 						// $f:$l
