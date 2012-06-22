@@ -422,6 +422,7 @@ function dse_package_install($PackageName){
 			
 			$Command="sudo fink -yv install $PackageName 2>&1";
 			$r=passthru($Command);
+			return (0);
 			// print "cmd: $Command   r=".$r."\n";
 			if(str_contains($r,"Failed")){
 				print getColoredString(" Install Failed!\n","red","black");
