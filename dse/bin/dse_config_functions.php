@@ -385,8 +385,9 @@ function dse_package_install($PackageName){
 			}
 		}
 	}elseif($Installer=='apt-get'){
-		$Command="sudo apt-get -y install $PackageName 2>&1";
+		$Command="sudo $aptget -y install $PackageName 2>&1";
 		if($vars['DSE']['dse_package_install__use_passthru']){
+			 print " Running: $Command\n";
 			//passthru($Command);
 			dse_popen($Command);
 		}else{
