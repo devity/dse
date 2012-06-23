@@ -50,6 +50,7 @@ if(getenv("DSE_LOG_DIR")!=""){
 }else{
 	$vars['DSE']['DSE_LOG_DIR']="/var/log/dse";
 }
+$vars['DSE']['LOG_FILE']=$vars['DSE']['DSE_LOG_DIR']."/dse.log";
 
 //if(getenv("DSE_BACKUP_DIR")!=""){
 	//$vars['DSE']['DSE_BACKUP_DIR']=getenv("DSE_BACKUP_DIR");
@@ -117,6 +118,9 @@ $vars['DSE']['HTTP_STRESS_THREAD_LOG_FILE']="/tmp/dse_http_stress_thread.log";
 $vars['DSE']['HTTP_STRESS_DEFAULT_THREADS']=5;
 $vars['DSE']['HTTP_STRESS_DEFAULT_RUNLENGTH']=30;
 // Set $vars['DSE']['HTTPD_LOG_FILE'] in dse.conf w/ HTTPD_LOG_FILE=
+
+// ********* dlb Settings
+$vars['DSE']['DLB_CONFIG_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/"."dlb.conf";
 
 // ********* dsm Settings
 $vars['DSE']['DSM_CONFIG_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/"."dsm.conf";

@@ -48,6 +48,12 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   		$ShowUsage=TRUE;
 		$DidSomething=TRUE;
 		break;
+	case 'e':
+	case 'edit':
+		print "Backing up ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']." and launcing in vim:\n";
+		passthru("/dse/bin/vibk ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']." 2>&1");
+		$DidSomething=TRUE;
+		break;
 	case 'u':
   	case 'update':
   	case 'upgrade':
@@ -91,12 +97,6 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$DidSomething=TRUE;
 		break;
 	
-	case 'e':
-	case 'edit':
-		print "Backing up ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']." and launcing in vim:\n";
-		passthru("/dse/bin/vibk ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']." 2>&1");
-		$DidSomething=TRUE;
-		break;
 
 }
 

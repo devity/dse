@@ -11,6 +11,105 @@ $NotChanged=getColoredString("Not Changed","orange","black");
 $NotFixed=getColoredString("Not Changed","orange","black");
 
 
+
+function dse_log($Message,$File=""){
+	global $vars;
+	$Command="";
+	$Message=dse_date_format()."  ".str_replace("\"","\\\"",$Message);
+	if(!$File){
+		if($vars['DSE']['SCRIPT_LOG_FILE']) {
+			$File=$vars['DSE']['SCRIPT_LOG_FILE'];
+		}else{
+			$File=$vars['DSE']['LOG_FILE'];
+		}
+	}
+	if($vars['DSE']['LOG_TO_SCREEN']) print "dse_log: $Message\n";
+	if($File)	`echo "$Message" >> $File`;
+}
+
+function dse_ip_port_is_listening($IP,$Port){
+	global $vars;
+	$r=`nc -z $IP $Port`;
+	return(str_contains($r,"succeeded"));
+}
+
+function dse_date_format($Time="NOW",$FormatName="FULLREADABLE"){
+	global $vars;
+	if($Time=="NOW") $Time=time();
+	if(str_contains($FormatName," ")){
+		return date($FormatName,$Time);
+	}
+	switch($FormatName){
+		case 'SYSLOG':
+			$FormatString="D M j G:i:s T Y";
+			break;
+		case 'FULL':
+		case 'FULLREADABLE':
+			$FormatString="D F jS, Y, g:i a T";
+			break;
+		case 'COMPACTREADABLE':
+			$FormatString="Y/m/d g:ia";
+			break;
+		case 'READABLE':
+			$FormatString="F j, Y, g:i a";
+			break;
+		case 'YYYMMDD':
+			$FormatString="Ymd";
+			break;
+		case 'SQL':
+			$FormatString="Y-m-d";
+			break;
+			break;
+		default:
+			$FormatString="F j, Y, g:i a";
+	}
+	$r=date($FormatString,$Time);
+	return $r;
+}
+	
+function dse_time_span_sting_to_seconds($Str){
+	global $vars;
+	$Str=strtolower($Str);
+	$StrParts=split(" ",$Str);
+	$tbr=0;
+	$Value=$StrParts[0];
+	switch($StrParts[1]){
+		case 'second':
+		case 'seconds':
+			$tbr=$Value;
+			break;
+		case 'minute':
+		case 'minutes':
+			$tbr=$Value*60;
+			break;
+		case 'hour':
+		case 'hours':
+			$tbr=$Value*60*60;
+			break;
+		case 'day':
+		case 'days':
+			$tbr=$Value*60*60*24;
+			break;
+		case 'week':
+		case 'weeks':
+			$tbr=$Value*60*60*24*7;
+			break;
+		case 'month':
+		case 'months':
+			$tbr=$Value*60*60*24*30;
+			break;
+		case 'year':
+		case 'years':
+			$tbr=$Value*60*60*365;
+			break;
+	}
+	if($StrParts[3]){
+		$Str=strcut($Str," ");
+		$Str=strcut($Str," ");
+		$tbr+=dse_time_span_sting_to_seconds($Str);
+	}
+	return $tbr;
+}
 function dse_popen($Command){
 	global $vars;
 	ob_end_flush(); 
@@ -547,6 +646,7 @@ function dse_file_get_contents($filename){
 	return `cat $filename`;
 }
 
+// returns array of Names=>Values
 function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 	global $vars;
 	$CfgData=dse_file_get_contents($filename);
@@ -570,11 +670,21 @@ function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 				$tbra[$Lpa[0]].=$Lpa[1];
 			}
 		}else{
-			$Lpa=split("=",$Line);
-			if($Lpa[0] && $Lpa[1]){
-				if( (!isset($tbra[$Lpa[0]])) || $OverwriteExisting){
-					$tbra[$Lpa[0]]=$Lpa[1];
-				}
+			$Name=strcut($Line,"","=");
+			$Value=strcut($Line,"=");
+			//print "nv=: $Name && $Value\n";
+			if($Name && $Value){
+				if(str_contains($Name,"[]")){
+					$Name=str_replace("[]","",$Name);
+					if( (!isset($tbra[$Name])) ){
+						$tbra[$Name]=array();
+					}
+					$tbra[$Name][]=$Value;
+				}else{
+					if( (!isset($tbra[$Name])) || $OverwriteExisting){
+						$tbra[$Name]=$Value;
+					}
+				}	
 			}
 		}
 	}

@@ -84,6 +84,10 @@ dse_configure_file_install_from_template($vars['DSE']['DSE_WEB_INTERFACE_APACHE2
 dse_file_set_mode($vars['DSE']['DSE_IPTHROTTLE_LOG_DIRECTORY'],"777");
 
 
+dse_file_set_mode("/var/log","777");
+dse_file_set_mode("/var","777");
+
+
 if(dse_is_osx()){
 	dse_file_set_owner($vars['DSE']['DSE_BIN_DIR']."/dnetstat.php","root:wheel");
 }else{
