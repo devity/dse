@@ -14,11 +14,17 @@ $vars['DSE']['DSE_DSE_VERSION_DATE']="2012/06/23";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
-$CFG_array=dse_read_config_file($vars['DSE']['DLB_CONFIG_FILE']);	
+global $CFG_array;
+$CFG_array=array();
+$CFG_array['QueriesMade']=0;
+$CFG_array['QueriesSucceeded']=0;
+$CFG_array['QueriesFailed']=0;
+$CFG_array=dse_read_config_file($vars['DSE']['DLB_CONFIG_FILE'],$CFG_array);	
 $vars['DSE']['SCRIPT_LOG_FILE']=$CFG_array['LogFile'];	
 $vars['DSE']['SCRIPT_LOG_LEVEL']=$CFG_array['LogLevel'];	
 if($CFG_array['DefaultLogShowLines']) $vars['DSE']['LOG_SHOW_LINES']=$CFG_array['DefaultLogShowLines'];	else $vars['DSE']['LOG_SHOW_LINES']=25;
 $RunningPID=dse_dlb_is_running();
+			
 
 $parameters_details = array(
   array('l','log-to-screen',"log to screen too"),
@@ -77,9 +83,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'r':
 	case 'request-from-pool':
-		if(!$RunningPID){
+		$CFG_array['QueriesMade']++;
+		if($RunningPID<=0){
 			dse_log("query pool $NodesPool NO-DAEMON");	
 			print "NO-DAEMON";
+			$CFG_array['QueriesFailed']++;
 			exit(-1);
 		}
 		$NodesPool=$vars['options'][$opt];
@@ -91,36 +99,41 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		
 		switch($vars['options'][$opt]){
 			case 'restart':
-				if($RunningPID){
+				if($RunningPID>0){
 					$r=`kill $RunningPID 2>&1`;
 					print "Killing process PID $RunningPID\n";
 					dse_log("DLB stop. Killing process PID $RunningPID");
 				}
 				dse_dlb_daemon($CFG_array);
+				$DidSomething=TRUE;
 				break;	
 			case 'start':
-				if($RunningPID){
+				if($RunningPID>0){
 					print "DLB Already Running as PID $RunningPID!\n";
 				}else{
 					dse_dlb_daemon($CFG_array);
 				}
+				$DidSomething=TRUE;
 				break;	
 			case 'stop':
-				if($RunningPID){
+				if($RunningPID>0){
 					$r=`kill $RunningPID 2>&1`;
 					print "Killing process PID $RunningPID\n";
 					dse_log("DLB stop. Killing process PID $RunningPID");
 				}else{
 					print "DLB Not Running!\n";
 				}
+				$DidSomething=TRUE;
 				break;	
 			case 'status':
-				if($RunningPID){
-					print "DLB Not Running!\n";
-				}else{
+				if($RunningPID>0){
 					print "DLB Running as PID $RunningPID!\n";
+					print "Status File: ".$CFG_array['StatusFile']."  ---------------------___________\n";
+					print dse_file_get_contents($CFG_array['StatusFile'])."\n";
+				}else{
+					print "DLB Not Running!\n";
 				}
-				print dse_file_get_contents($CFG_array['PIDFile'])."\n";
+				$DidSomething=TRUE;
 				break;	
 		}
 		break;
@@ -199,7 +212,9 @@ function dse_dlb_config_parse(){
 				}
 			}
 			if(sizeof($DLB_array[$Service]['Nodes'])==0){
-				print "Warning service_pool $Service Listed in ConfigFile.Services but no has Nodes!\n";
+				$Warning="Warning service_pool $Service Listed in ConfigFile.Services but no has Nodes!";
+				print $Warning."\n";
+				dse_log($Warning);
 			}
 		}
 	}
@@ -289,19 +304,33 @@ function dse_dlb_status_file_generate($DLB_array){
 	global $vars;
 	$TimeStr=dse_date_format();
 	$PID=getmypid();
+	
+	$NowTime=time()+microtime();
+	$RunningSeconds=intval($NowTime-$vars['StartTime']);
+	$RunningTimeStr=seconds_to_text($RunningSeconds);
+	
+	if($RunningSeconds){
+		$QPS=number_format($CFG_array['QueriesMade']/$RunningSeconds,2);
+	}else{
+		$QPS=0;
+	}
 	print " Generating DLB Status File: ".$CFG_array['StatusFile']."...\n-----------------file start---------------\n"; 
 	$tbr="";
 	$tbr.="# dlb status file. for info: ".$vars['DSE']['SCRIPT_FILENAME']." --help\n";
-	$tbr.="# last updated: $TimeStr    PID=$PID\n";
+	$tbr.="# dlb status last updated: $TimeStr    PID=$PID   Running for $RunningTimeStr\n";
+	$tbr.="# dlb stats: Queries=$CFG_array[QueriesMade] OK=$CFG_array[QueriesSucceeded] FAIL=$CFG_array[QueriesFailed] QPS=$QPS\n";
+	
+	
+	$NodesTotal=0; $NodesUP=0; $NodesDown=0;
 	foreach(split(" ",$CFG_array['Services']) as $Service){
 		if($Service){
 			foreach($DLB_array[$Service]['Nodes'] as $k=>$Node){
-				list($NodeIP,$NodePort)=split(":",$Node[0]);
+				list($NodeIP,$NodePort)=split(":",$Node[0]); $NodesTotal++;
 				$NodeName=$Node[1];
 				if($DLB_array[$Service]['NodeStatus'][$k]=="UP"){
-					$tbr.= "$Service $NodeIP:$NodePort #$NodeName\n";
+					$tbr.= "$Service $NodeIP:$NodePort #$NodeName\n"; $NodesUP++;
 				}else{
-					$tbr.= "#DOWN!#:$Service $NodeIP:$NodePort #$NodeName\n";
+					$tbr.= "#DOWN!#:$Service $NodeIP:$NodePort #$NodeName\n"; $NodesDown++;
 				}
 			}
 		}
@@ -309,7 +338,9 @@ function dse_dlb_status_file_generate($DLB_array){
 	print "$tbr";
 	print "-----------------file end---------------\n"; 
 	file_put_contents($CFG_array['StatusFile'],$tbr);
-	dse_log("status file ".$CFG_array['StatusFile']." updated");	
+	dse_log("status file ".$CFG_array['StatusFile']." updated:");	
+	dse_log("running $RunningTimeStr  Queries=$CFG_array[QueriesMade] OK=$CFG_array[QueriesSucceeded] FAIL=".$CFG_array['QueriesFailed']." QPS=$QPS "
+	 ." Nodes=$NodesTotal UP=$NodesUP Down=$NodesDown");	
 	return $tbr;		
 }	
 	 
@@ -322,7 +353,7 @@ function dse_dlb_get_up_node($NodesPool){
 	foreach(split("\n",$raw) as $Line){
 		$Line=trim(strcut($Line,"","#"));
 		if($Line){
-			$Lpa=split(" ",$Line);;
+			$Lpa=split(" ",$Line);
 			list($ThisNodesPool,$NodeIP,$NodePort,$NodeName)=$Lpa;
 			if($NodesPool==$ThisNodesPool)	$AvailableNodes[]=$Lpa;
 		}
@@ -330,11 +361,13 @@ function dse_dlb_get_up_node($NodesPool){
 	$UpCount=sizeof($AvailableNodes);
 	if($UpCount<=0){
 		dse_log("query pool $NodesPool ALL-DOWN");	
+		$CFG_array['QueriesFailed']++;
 		return "ALL-DOWN";
 	}
 	$NodeToUseIndex=rand(0,$UpCount-1);
 	list($ThisNodesPool,$NodeIPPort)=$AvailableNodes[$NodeToUseIndex];
 	dse_log("query pool $NodesPool SUCCESS. $UpCount UP. Returning $NodeIPPort $NodeName");
+	$CFG_array['QueriesSucceeded']++;
 	return $NodeIPPort;		
 }	
 	 

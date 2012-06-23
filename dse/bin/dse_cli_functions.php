@@ -45,7 +45,7 @@ function dse_date_format($Time="NOW",$FormatName="FULLREADABLE"){
 			break;
 		case 'FULL':
 		case 'FULLREADABLE':
-			$FormatString="D F jS, Y, g:i a T";
+			$FormatString="D F jS, Y, g:i.s a T";
 			break;
 		case 'COMPACTREADABLE':
 			$FormatString="Y/m/d g:ia";
@@ -65,6 +65,28 @@ function dse_date_format($Time="NOW",$FormatName="FULLREADABLE"){
 	}
 	$r=date($FormatString,$Time);
 	return $r;
+}
+
+
+function seconds_to_text($Seconds){
+	if($Seconds<60*3){
+		return "$Seconds seconds";
+	}elseif($Seconds<60*60*2){
+		$Minutes=intval($Seconds/60);
+		return "$Minutes minutes";
+	}elseif($Seconds<60*60*24*2){
+		$Hours=intval($Seconds/(60*60));
+		return "$Hours hours";
+	}elseif($Seconds<60*60*24*30*2){
+		$Days=intval($Seconds/(60*60*24));
+		return "$Days days";
+	}elseif($Seconds<60*60*24*30*12*2){
+		$Months=intval($Seconds/(60*60*24*30));
+		return "$Months months";
+	}else{
+		$Years=intval($Seconds/(60*60*24*30*12));
+		return "$Years years";
+	}			
 }
 	
 function dse_time_span_sting_to_seconds($Str){
