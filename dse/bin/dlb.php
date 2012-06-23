@@ -240,7 +240,12 @@ function dse_dlb_daemon(){
 	$DoLoop=TRUE;
 	while($DoLoop){
 		$DLB_array=dse_dlb_services_check($DLB_array);
-		sleep($CheckSeconds);
+		if($CFG_array['RandomizeCheckFrequency']) {
+			$ThisSleep=rand($CheckSeconds/2,$CheckSeconds*2);
+		}else{
+			$ThisSleep=$CheckSeconds;
+		}
+		sleep($ThisSleep);
 	}
 }
 
