@@ -96,7 +96,6 @@ if(dse_is_osx()){
 dse_file_set_mode($vars['DSE']['DSE_BIN_DIR']."/dnetstat.php","4755");
 
 
-
 $NeededDirs=array(
  array($vars['DSE']['DSE_BACKUP_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
  array($vars['DSE']['DSE_LOG_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
@@ -110,56 +109,58 @@ if(str_contains($vars['DSE']['SERVICES'],"dns")){
 
 
 foreach($NeededDirs as $DirArray){
-	$Dir=$DirArray[0];
-	$Mode=$DirArray[1];
-	$Owner=$DirArray[2];
-	print "DSE Directory $Dir: ";
+	if($DirArray[0]){
+		$Dir=$DirArray[0];
+		$Mode=$DirArray[1];
+		$Owner=$DirArray[2];
+		print "DSE Directory $Dir: ";
 		
-	if(!is_dir($Dir)){
-		print "$Missing. Create? ";
-		$A=dse_ask_yn();
-		if($A=='Y'){
-			dse_directory_create($Dir,$Mode,$Owner);
-			if(is_dir($Dir)){
-				print $OK;	
-			}else{
-				print $Failed;	
-			}
-		}
-	}else{
-		print "Exists. ";
-		if($Mode!=dse_file_get_mode($Dir)){
-			print "Mode $NotOK =".dse_file_get_mode($Dir)." ";
-			$A=dse_ask_yn("Set to $Mode?");
+		if(!is_dir($Dir)){
+			print "$Missing. Create? ";
+			$A=dse_ask_yn();
 			if($A=='Y'){
-				if(dse_file_set_mode($Dir,$Mode)==0){
-					print "$Fixed. ";
+				dse_directory_create($Dir,$Mode,$Owner);
+				if(is_dir($Dir)){
+					print $OK;	
 				}else{
-					print "$Failed. ";
+					print $Failed;	
 				}
-			}else{
-				print "$NotFixed";
+			}
+		}else{
+			print "Exists. ";
+			if($Mode!=dse_file_get_mode($Dir)){
+				print "Mode $NotOK =".dse_file_get_mode($Dir)." ";
+				$A=dse_ask_yn("Set to $Mode?");
+				if($A=='Y'){
+					if(dse_file_set_mode($Dir,$Mode)==0){
+						print "$Fixed. ";
+					}else{
+						print "$Failed. ";
+					}
+				}else{
+					print "$NotFixed";
+				}
+			}
+			if($Owner!=dse_file_get_owner($Dir)){
+				print "Owner $NotOK =".dse_file_get_owner($Dir)."  ";
+				$A=dse_ask_yn("Set to $Owner?");
+				if($A=='Y'){
+					
+					if(dse_file_set_owner($Dir,$Owner)==0){
+						print "$Fixed. ";
+					}else{
+						print "$Failed. ";
+					}
+				}else{
+					print "$NotFixed";
+				}
+			}
+			if($Mode==dse_file_get_mode($Dir) && $Owner==dse_file_get_owner($Dir)){
+				print "$OK";
 			}
 		}
-		if($Owner!=dse_file_get_owner($Dir)){
-			print "Owner $NotOK =".dse_file_get_owner($Dir)."  ";
-			$A=dse_ask_yn("Set to $Owner?");
-			if($A=='Y'){
-				
-				if(dse_file_set_owner($Dir,$Owner)==0){
-					print "$Fixed. ";
-				}else{
-					print "$Failed. ";
-				}
-			}else{
-				print "$NotFixed";
-			}
-		}
-		if($Mode==dse_file_get_mode($Dir) && $Owner==dse_file_get_owner($Dir)){
-			print "$OK";
-		}
+		print "\n";
 	}
-	print "\n";
 }
 
 
@@ -235,6 +236,7 @@ if(!str_contains($PATH,$vars['DSE']['DSE_BIN_DIR'])){
 	print "$OK = $PATH\n";
 }
 
+ 
 //larger bash history
 print "Checking HISTFILESIZE: \n";
 if(!dse_file_exists($vars['DSE']['USER_BASH_PROFILE'])){
@@ -292,10 +294,12 @@ $code="
 #end http://stackoverflow.com/questions/103944/real-time-history-export-amongst-bash-terminal-windows
 	
 ";
-print "Realtime cross-shell bash history: ";
 	
 $Command="grep \"stackoverflow.com/questions/103944/real-time-history-export-amongst-bash-terminal-windows\" ".$vars['DSE']['SYSTEM_BASHRC_FILE'];
 $r=trim(`$Command`);
+//print "$r\n";
+print "Realtime cross-shell bash history: ";
+
 if(!str_contains($r,"stackoverflow")){
 	print "Not activated in ".$vars['DSE']['SYSTEM_BASHRC_FILE'];
 	$A=dse_ask_yn(" Add?");
@@ -332,14 +336,60 @@ else
    exit -1;
 fi*/
 
+
+
+if(dse_file_exists($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'])){
+	$display_errors=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"display_errors");
+	$display_startup_errors=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"display_startup_errors");
+	$log_errors=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"log_errors");
+	$error_reporting=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"error_reporting");
+	print "PHP error display/logging: ";
+	if( $display_errors!="On" || $display_startup_errors!="On" || $log_errors!="On" || $error_reporting!="(E_ALL & ~E_NOTICE) ^ E_DEPRECATED" ){
+		print "Not dse optimal for debugging. $NotOK.\n";
+		$A=dse_ask_yn(" Fix?");
+		if($A=='Y'){
+			$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']." \"^display_errors.*$\" \"display_errors = On\"";
+			$r=`$Command | grep display_errors`;
+			$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']." \"^display_startup_errors.*$\" \"display_startup_errors = On\"";
+			$r=`$Command | grep display_errors`;
+			$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']." \"^log_errors.*$\" \"log_errors = On\"";
+			$r=`$Command | grep display_errors`;
+			$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']." \"^error_reporting.*$\" \"error_reporting = (E_ALL & ~E_NOTICE) ^ E_DEPRECATED\"";
+			$r=`$Command | grep display_errors`;
+			//print $r;
+			print "$OK\n";
+		}else{
+			print "$NotChanged\n";
+		}
+		print "$OK\n";
+	}
+}
+
+print "Creating dwi init.d script.\n";
+$INITD_SCRIPT_ARRAY=array();
+$INITD_SCRIPT_ARRAY['ServiceName']="dwi";
+$INITD_SCRIPT_ARRAY['ActionStart']="sudo apachectl -f /etc/dse/apache2.conf";
+$INITD_SCRIPT_ARRAY['ActionStop']="sudo sudo kill `grep2pid httpd`";
+$INITD_SCRIPT_ARRAY['VarIsRunning']="grep2pid httpd";
+$INITD_SCRIPT_ARRAY['VarStatus']="ps aux | egrep httpd";
+if(dse_is_osx()){
+	$INITD_SCRIPT_ARRAY['VarNetstat']="netstat -ta | egrep 7907";
+}else{
+	$INITD_SCRIPT_ARRAY['VarNetstat']="netstat -tap | egrep 7907";
+}
+dse_write_daemon_script($INITD_SCRIPT_ARRAY);		
+
+
 if($FullConfig){
 	if(str_contains($vars['DSE']['SERVICES'],"http") && str_contains($vars['DSE']['SERVICES'],"mysql")){
 		$vars['DSE']['LAMP_SERVER']=TRUE;
 	}
 
 	dse_server_configure_file_load();
-	dse_configure_create_named_conf();
-	dse_configure_create_httpd_conf();
+	print "Services to be Setup/Configured: ".$vars['DSE']['SERVICES']."\n";
+	
+	if(str_contains($vars['DSE']['SERVICES'],"dns")) dse_configure_create_named_conf();
+	if(str_contains($vars['DSE']['SERVICES'],"http")) dse_configure_create_httpd_conf();
 	
 	if(str_contains($vars['DSE']['SERVICES'],"desktop")){
 		print "Installing 'desktop' packages:\n";
@@ -357,6 +407,25 @@ if($FullConfig){
 				exit(-1);
 			}
 		}
+	}
+		
+		
+		
+	
+	if(FALSE && str_contains($vars['DSE']['SERVICES'],"crowbar")){
+		print "Creating crowbar init.d script.\n";
+		$INITD_SCRIPT_ARRAY=array();
+		$INITD_SCRIPT_ARRAY['ServiceName']="crowbar";
+		$INITD_SCRIPT_ARRAY['ActionStart']="sleep 1; sudo -u wordjack -H -s \"/scripts/crowbar_start\"";
+		$INITD_SCRIPT_ARRAY['ActionStop']="sudo -u wordjack -H -s \"/scripts/crowbar_stop\"";
+		$INITD_SCRIPT_ARRAY['VarIsRunning']="sudo -u wordjack -H -s \"ps aux | egrep xulrunner\"";
+		$INITD_SCRIPT_ARRAY['VarStatus']="sudo -u wordjack -H -s \"ps aux | egrep xulrunner\"";
+		if(dse_is_osx()){
+			$INITD_SCRIPT_ARRAY['VarNetstat']="netstat -ta | egrep 10000";
+		}else{
+			$INITD_SCRIPT_ARRAY['VarNetstat']="netstat -tap | egrep 10000";
+		}
+		dse_write_daemon_script($INITD_SCRIPT_ARRAY);
 	}
 	
 	exit();

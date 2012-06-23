@@ -35,7 +35,7 @@ $parameters_details = array(
   array('s','status',"prints status file".$CFG_array['StatusFile']),
   array('e','edit',"backs up and launches a vim of ".$vars['DSE']['DLB_CONFIG_FILE']),
   array('c','config-show',"prints contents of ".$vars['DSE']['DLB_CONFIG_FILE']),
-  array('d:','daemon:',"manages the checking daemon. options: [start|stop|status]"),
+  array('d:','daemon:',"manages the checking daemon. options: [start|stop|restart|status]"),
   array('r:','request-from-pool:',"returns an UP node from service_pool=arg1"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);

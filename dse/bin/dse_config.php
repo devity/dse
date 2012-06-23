@@ -11,10 +11,8 @@ $vars['DSE']['DSE_MODIFIED_DATE']="2012/05/26";
  *     will over-ride the defaults set in this php variable initializer file.
  * 
  */
-$StartTime=time()+microtime();
-$vars[StartTime]=$StartTime;
-$StartLoad=get_load();
-$vars[StartLoad]=$StartLoad;
+$StartTime=time()+microtime(); $vars['StartTime']=$StartTime;
+$StartLoad=get_load(); $vars['StartLoad']=$StartLoad;
 
 // *********************************************************************************
 // ********* dse General/Global Settings
@@ -53,6 +51,7 @@ if(getenv("DSE_LOG_DIR")!=""){
 	$vars['DSE']['DSE_LOG_DIR']="/var/log/dse";
 }
 $vars['DSE']['LOG_FILE']=$vars['DSE']['DSE_LOG_DIR']."/dse.log";
+$vars['DSE']['LOG_SHOW_LINES']=50;
 
 //if(getenv("DSE_BACKUP_DIR")!=""){
 	//$vars['DSE']['DSE_BACKUP_DIR']=getenv("DSE_BACKUP_DIR");
@@ -86,6 +85,9 @@ $vars['DSE']['SYSTEM_USER_FILE']='/etc/passwd';
 $vars['DSE']['SYSTEM_GROUP_FILE']='/etc/group';
 $vars['DSE']['SYSTEM_BASHRC_FILE']='/etc/bashrc';
 $vars['DSE']['SYSTEM_PROFILE_FILE']='/etc/profile';
+
+
+$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']='/etc/php.ini.default';
 
 $vars['DSE']['SYSTEM_ROOT_FILE_USER']='root';
 $vars['DSE']['SYSTEM_ROOT_FILE_GROUP']='root';

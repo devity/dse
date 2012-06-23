@@ -8,7 +8,7 @@ function dse_server_configure_file_load(){
 	$ConfigFileContents=file_get_contents($vars['DSE']['SERVER_CONFIG_FILE']);
 	
 	if($ConfigFileContents==""){
-	    print "FATAL ERROR: cant open or empty file: $FullFileName\n";
+	    print "ERROR: cant open or empty file: ".$vars['DSE']['SERVER_CONFIG_FILE']."\n";
 		return -1;
 	}
 	
@@ -176,11 +176,16 @@ function dse_configure_file_link($LinkFile,$DestinationFile){
 
 function dse_configure_file_install_from_template($DestinationFile,$TemplateFile,$Mode,$Owner){
 	global $vars;
+	//if(strlen($Mode)==4){
+	//	$ExpectedMode=substr($Mode,1,3);
+	//}else{
+		$ExpectedMode=$Mode;
+	//}
 	print "DSE template: $TemplateFile ";
 	if(file_exists($DestinationFile)){
 		$CurrentPermissions=dse_file_get_mode($DestinationFile);
-		if(intval($Mode)!=$CurrentPermissions){
-			print "$DestinationFile permissions wrong. Expected $Mode, found $CurrentPermissions. Fix? ";
+		if(intval($ExpectedMode)!=$CurrentPermissions){
+			print "$DestinationFile permissions wrong. Expected $ExpectedMode, found $CurrentPermissions. Fix? ";
 			$key=strtoupper(dse_get_key());
 			cbp_characters_clear(1);
 			if($key=="Y"){
@@ -825,13 +830,101 @@ function dse_configure_http_setup(){
 		}
 	}
 }
+
 function dse_configure_mysql_setup(){
 	global $vars;
 	print "dse_configure_mysql_setup():\n";
-	
-	
 }
 
 
+function dse_get_cfg_file_value($File,$VarName){
+	global $vars;
+	$CacheName="dse_get_cfg_file_value($File,$VarName)";
+	if($vars[$CacheName]) return $vars[$CacheName][$VarName];
+	if(is_array($vars[$CacheName])) return NULL;
+	$CommentCharacter="#";
+	if(str_contains($File,"php.ini")){
+		$CommentCharacter=";";
+	}
+	$Raw=dse_file_get_contents($File);
+	foreach(split("\n",$Raw) as $L){
+		if($L=trim(strcut($L,"",$CommentCharacter))){
+			list($Name,$Value)=split("=",$L);
+			$Name=trim($Name); $Value=trim($Value);
+			$vars[$CacheName][$Name]=$Value;
+		}
+	}
+	if($vars[$CacheName]) return $vars[$CacheName][$VarName];
+	return NULL;
+}
 
+
+function dse_write_daemon_script($INITD_SCRIPT_ARRAY){
+	global $vars;
+	$InitdFile=$vars['DSE']['SYSTEM_SCRIPTS_DIR']."/".$INITD_SCRIPT_ARRAY['ServiceName']."d";
+	
+	$tbr="#!/bin/bash
+
+RUNNING=`".$INITD_SCRIPT_ARRAY['VarIsRunning']."`
+STAT=`".$INITD_SCRIPT_ARRAY['VarStatus']."`
+NETSTAT=`".$INITD_SCRIPT_ARRAY['VarNetstat']."`
+
+IS_RUNNING=AlreadyRunning
+NO_RUNNING=NotRunning
+
+LINES=`printf -v f \"%22s\" ; printf \"%s\n\" \"\${f// /-}\"`
+case \"$1\" in
+  start)
+        if [ -n \"\$RUNNING\" ] ; then
+            echo -e \"\$LINES\n\$IS_RUNNING\"
+            echo -e \"\$NETSTAT\n\$LINES\"
+        else
+        	echo -e \"\$LINES\nStarting ".$INITD_SCRIPT_ARRAY['ServiceName']."d\n\$LINES\"
+			".$INITD_SCRIPT_ARRAY['ActionStart']."
+        fi
+        ;;
+
+  status)
+        if [ -n \"\$RUNNING\" ] ; then
+            echo -e \"\$LINES\n\$IS_RUNNING\"
+            echo -e \"\$NETSTAT\n\$LINES\"
+        else
+            echo -e \"\$LINES\n\$NO_RUNNING\n\$LINES\"
+        fi
+        ;;
+
+   stop)
+        if [ -n \"\$RUNNING\" ] ; then
+            echo -e \"\$LINES\nStopping ".$INITD_SCRIPT_ARRAY['ServiceName']."d\n\$LINES\"
+			".$INITD_SCRIPT_ARRAY['ActionStop']."
+        else
+            echo -e \"\$LINES\n\$NO_RUNNING\n\$LINES\"
+        fi
+        ;;
+
+   restart)
+        echo -e \"\$LINES\nRestarting ".$INITD_SCRIPT_ARRAY['ServiceName']."d\n\$LINES\"
+        $0 stop
+        $0 start
+        ;;
+        
+        *)
+        echo -e \"\$LINES\nPost Fix Needed: {start | stop | status | restart}\n\$LINES\"
+        exit 1
+esac
+exit 0
+";
+	if(dse_file_exists($InitdFile)){
+		$OldContents=dse_file_get_contents($InitdFile);
+		if($OldContents!=$tbr){
+			$A=dse_ask_yn("$InitdFile Exists and different. Overwrite?");
+			if($A!='Y'){
+				return;
+			}
+		}
+	}
+	print "Writing $InitdFile\n";
+	dse_file_put_contents($InitdFile,$tbr);
+	dse_file_set_mode($InitdFile,"775");
+}
 ?>

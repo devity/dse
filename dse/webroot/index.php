@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors','On');
+ini_set('display_startup_errors','On');
+ini_set('log_errors','On');
+error_reporting( (E_ALL & ~E_NOTICE) ^ E_DEPRECATED);
 $DSE_ROOT="/dse";
 include_once ("$DSE_ROOT/include/web_config.php");
 dse_print_page_header();

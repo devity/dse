@@ -489,6 +489,14 @@ function on_shutdown(){
 		print " iptables -nvL &nbsp; ";	
 	}	
 	
+	$Contents=`/dse/bin/dlb --status 2>&1`;
+	if($Contents){
+		print return_collapsible_min_area_start(FALSE);
+		print text2html($Contents);
+		print return_collapsible_min_area_end();
+		print " dlb status &nbsp; ";	
+	}	
+	
 	
 	
 	

@@ -15,12 +15,14 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $parameters_details = array(
+  array('l','log-show:',"shows tail of log ".$vars['DSE']['LOG_FILE']),
   array('h','help',"this message"),
   array('q','quiet',"same as --verbosity 0"),
   array('u','update',"updates dse from github"),
   array('u','upgrade',"same as --update"),
   array('v','update-no-backup',"does a --update w/o backing up current dse install"),
   array('e','edit',"backs up and launches a vim of ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']),
+  array('','config-show',"prints contents of ".$vars['DSE']['DLB_CONFIG_FILE']),
   array('i','install',"launches dse-install"),
   array('c','configure',"launches dse-configure"),
   array('s','set-env',"set shell environment variables"),
@@ -48,12 +50,24 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   		$ShowUsage=TRUE;
 		$DidSomething=TRUE;
 		break;
+	case 'l':
+	case 'log-show':
+		if($vars['options'][$opt]) $Lines=$vars['options'][$opt]; else $Lines=$vars['DSE']['LOG_SHOW_LINES'];
+		$Command="tail -n $Lines ".$vars['DSE']['LOG_FILE'];
+		//print "$Command\n";
+		print `$Command`;
+		$DidSomething=TRUE;
+		break;
 	case 'e':
 	case 'edit':
 		print "Backing up ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']." and launcing in vim:\n";
 		passthru("/dse/bin/vibk ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']." 2>&1");
 		$DidSomething=TRUE;
 		break;
+	case 'c':
+  	case 'config-show':
+		print dse_file_get_contents($vars['DSE']['DLB_CONFIG_FILE']);
+		$DidSomething=TRUE;
 	case 'u':
   	case 'update':
   	case 'upgrade':
