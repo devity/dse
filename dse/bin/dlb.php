@@ -34,6 +34,7 @@ $parameters_details = array(
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('s','status',"prints status file".$CFG_array['StatusFile']),
   array('e','edit',"backs up and launches a vim of ".$vars['DSE']['DLB_CONFIG_FILE']),
+  array('c','config-show',"prints contents of ".$vars['DSE']['DLB_CONFIG_FILE']),
   array('d:','daemon:',"manages the checking daemon. options: [start|stop|status]"),
   array('r:','request-from-pool:',"returns an UP node from service_pool=arg1"),
 );
@@ -77,6 +78,10 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'edit':
 		print "Backing up ".$vars['DSE']['DLB_CONFIG_FILE']." and launcing in vim:\n";
 		passthru("/dse/bin/vibk ".$vars['DSE']['DLB_CONFIG_FILE']." 2>&1");
+		exit(0);
+	case 'c':
+  	case 'config-show':
+		print dse_file_get_contents($vars['DSE']['DLB_CONFIG_FILE']);
 		exit(0);
 }
 
@@ -296,7 +301,7 @@ function dse_dlb_services_check($DLB_array){
 		}
 	}
 	$CheckTimeSeconds=time()-$CheckTimeSeconds;
-	$ResultsSummaryLine="Done Checking. $CheckTimeSeconds seconds, $NodesChecked nodes checked, $NodesCheckedOK OK, $NodesCheckedBad not.";
+	$ResultsSummaryLine="Done Checking. $CheckTimeSeconds seconds, $NodesChecked nodes checked, $NodesCheckedOK OK, $NodesCheckedBad NOT.";
 	print " $ResultsSummaryLine\n";	
 	dse_log("DLB $ResultsSummaryLine");	
 	dse_dlb_status_file_generate($DLB_array);
@@ -323,7 +328,7 @@ function dse_dlb_status_file_generate($DLB_array){
 	$tbr="";
 	$tbr.="# dlb status file. for info: ".$vars['DSE']['SCRIPT_FILENAME']." --help\n";
 	$tbr.="# dlb status last updated: $TimeStr    PID=$PID   Running for $RunningTimeStr\n";
-	$tbr.="# dlb stats: Queries=$CFG_array[QueriesMade] OK=$CFG_array[QueriesSucceeded] FAIL=$CFG_array[QueriesFailed] QPS=$QPS\n";
+//	$tbr.="# dlb stats: Queries=$CFG_array[QueriesMade] OK=$CFG_array[QueriesSucceeded] FAIL=$CFG_array[QueriesFailed] QPS=$QPS\n";
 	
 	
 	$NodesTotal=0; $NodesUP=0; $NodesDown=0;
@@ -344,7 +349,8 @@ function dse_dlb_status_file_generate($DLB_array){
 	print "-----------------file end---------------\n"; 
 	file_put_contents($CFG_array['StatusFile'],$tbr);
 	dse_log("status file ".$CFG_array['StatusFile']." updated:");	
-	dse_log("running $RunningTimeStr  Queries=$CFG_array[QueriesMade] OK=$CFG_array[QueriesSucceeded] FAIL=".$CFG_array['QueriesFailed']." QPS=$QPS "
+	// Queries=$CFG_array[QueriesMade] OK=$CFG_array[QueriesSucceeded] FAIL=".$CFG_array['QueriesFailed']." QPS=$QPS 
+	dse_log("running $RunningTimeStr "
 	 ." Nodes=$NodesTotal UP=$NodesUP Down=$NodesDown");	
 	return $tbr;		
 }	

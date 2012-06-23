@@ -31,7 +31,7 @@ function dse_ip_port_is_listening($IP,$Port){
 	global $vars;
 	$Command="nc -vz $IP $Port 2>&1";
 	$r=`$Command`;
-	dse_log("c=$Command r=$r");
+	//dse_log("c=$Command r=$r");
 	return(str_contains($r,"succeeded"));
 }
 
