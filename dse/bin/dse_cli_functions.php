@@ -18,6 +18,9 @@ function dse_log($Message,$File=""){
 	$Message=dse_date_format()."  ".str_replace("\"","\\\"",$Message);
 	if(!$File){
 		if($vars['DSE']['SCRIPT_LOG_FILE']) {
+			if($vars['DSE']['SCRIPT_LOG_FILE']=="NO") {
+				return ;	
+			}
 			$File=$vars['DSE']['SCRIPT_LOG_FILE'];
 		}else{
 			$File=$vars['DSE']['LOG_FILE'];

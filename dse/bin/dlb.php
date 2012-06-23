@@ -259,7 +259,7 @@ function dse_dlb_daemon(){
 function dse_dlb_services_check($DLB_array){
 	global $vars,$CFG_array;
 	print " Starting Services Checking...\n"; $CheckTimeSeconds=time();
-	dse_log("DLB Starting Services Checking...");
+	dse_log("Starting Services Checking...");
 	$NodesChecked=0; $NodesCheckedOK=0; $NodesCheckedBad=0;
 	foreach(split(" ",$CFG_array['Services']) as $Service){
 		if($Service){
@@ -287,6 +287,7 @@ function dse_dlb_services_check($DLB_array){
 						$DLB_array[$Service]['NodeStatus'][$k]="UP";
 					}else{
 						print "ERROR - NOT Listening!";
+						dse_log("ERROR - node DOWN: $Service $NodeIP:$NodePort $NodeName");	
 						$NodesCheckedBad++; $ServiceNodesCheckedBad++;
 						$DLB_array[$Service]['NodeCountDown']++;
 						$DLB_array[$Service]['NodeStatus'][$k]="DOWN";
@@ -295,7 +296,7 @@ function dse_dlb_services_check($DLB_array){
 					$NodesChecked++; $ServiceNodesChecked++;
 				}
 				if(!$ServiceHasNodeUP){
-					print "ALERT! $Service has no nodes UP !\n";
+					print "FATAL ALERT! $Service has no nodes UP !\n";
 				}
 			}
 		}
@@ -303,7 +304,7 @@ function dse_dlb_services_check($DLB_array){
 	$CheckTimeSeconds=time()-$CheckTimeSeconds;
 	$ResultsSummaryLine="Done Checking. $CheckTimeSeconds seconds, $NodesChecked nodes checked, $NodesCheckedOK OK, $NodesCheckedBad NOT.";
 	print " $ResultsSummaryLine\n";	
-	dse_log("DLB $ResultsSummaryLine");	
+	dse_log("$ResultsSummaryLine");	
 	dse_dlb_status_file_generate($DLB_array);
 	return $DLB_array;		
 }	
