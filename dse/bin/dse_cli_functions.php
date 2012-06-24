@@ -169,6 +169,7 @@ function dse_time_span_sting_to_seconds($Str){
 	}
 	return $tbr;
 }
+
 function dse_popen($Command){
 	global $vars;
 	ob_end_flush(); 
@@ -182,6 +183,7 @@ function dse_popen($Command){
 	}
 	pclose($handle);
 	return $tbr;
+}
 		
 		
 function dse_ask_yn($Question){

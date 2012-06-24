@@ -233,7 +233,7 @@ function dse_panic_hd($Interactive=FALSE){
 			"du -a / 2>/dev/null | sort -n -r | head -n 100",
 			//"for i in G M K; do du -a / 2>/dev/null | grep [0-9]$i | sort -nr -k 1; done | head -n 11",
 			"find / -type f -print0| xargs -0 ls -s | sort -rn | awk ‘{size=$1/1024; printf(\“%dMb %s\n\”, size,$2);}’ | head",
-			"sudo find . -type f -print0 2>/dev/null | xargs -0 ls -s | sort -rn | awk '{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}' | head";
+			"sudo find . -type f -print0 2>/dev/null | xargs -0 ls -s | sort -rn | awk '{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}' | head",
 			
 		);
 		foreach($LargeFileCommands as $Command){
