@@ -137,6 +137,12 @@ $vars['DSE']['DAB_CONFIG_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/"."dab.conf";
 $vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY']=$vars['DSE']['DSE_BACKUP_DIR']."/vibk_changed_files";
 $vars['DSE']['DSE_VIBK_LOG_FILE']=$vars['DSE']['DSE_LOG_DIR']."/vibk.log";
 
+// ********* panic Settings
+$vars['DSE']['PANIC_CONFIG_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/"."panic.conf";
+
+
+
+
 // ********* IP throttle Settings
 $vars['DSE']['DSE_IPTHROTTLE_WHITELIST_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/ips_whitelist.txt";
 $vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/ips_droplist.txt";

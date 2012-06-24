@@ -199,7 +199,36 @@ function dse_ask_yn($Question){
 		return 0;
 	}
 }
-
+function dse_ask_choice($Options,$Question="Select an option:"){
+	global $vars;
+	print getColoredString("$Question\n","red");
+	$Keys="";
+	$Os=sizeof($Options);$Oi=0;
+	foreach($Options as $K=>$O){  $Oi++;
+		if($Keys){
+			if($Oi==$Os){
+				$Keys.=", or ".$K;
+			}else{
+				$Keys.=", ".$K;
+			}
+		}else{
+			$Keys.=$K;
+		}
+		print getColoredString("  $K","yellow").getColoredString(" ) ","purple").getColoredString("   $O\n","green");
+	}
+	print "                    Press ".getColoredString("$Keys","yellow").getColoredString("  Choice? ","blink_red");
+	$key=strtoupper(dse_get_key());
+	$Oi=0;
+	foreach($Options as $K=>$O){  $Oi++;
+		if($key==$K){
+			print "\n";
+			return $K;
+		}
+	}
+	print getColoredString(" Invalid Option. You pressed '$key'. \n","red","black");
+	return dse_ask_choice($Question,$Options);
+}
+	
 function dse_directory_ls( $path = '.', $level = 0 ){ 
 	global $vars;
 	$path.="/";  $path=str_replace("//", "/", $path);
@@ -2018,14 +2047,17 @@ function dse_log_parse_apache_La_set_Time($La){
 function test_all_shell_colors(){
 	global $vars;
 	print "\n\nForground Codes: ";
+	$background_color="black";
+	foreach($vars[shell_foreground_colors] as $ColorName=>$foreground_color){
+		print "(fg[".getColoredString($ColorName, $foreground_color, $background_color)."])";
+	}
 	for($p1=0;$p1<=11;$p1++){
 		for($p2=0;$p2<100;$p2++){
 			$foreground_color="$p1;$p2";
-			$background_color="black";
 			print "  ". getColoredString($foreground_color, $foreground_color, $background_color);
 			foreach($vars[shell_foreground_colors] as $ColorName=>$ColorCode){
 				if($ColorCode==$foreground_color){
-					print "(".getColoredString($ColorName, $foreground_color, $background_color).")";
+					print "(fg[".getColoredString($ColorName, $foreground_color, $background_color)."])";
 				}
 			}
 		}
@@ -2034,16 +2066,37 @@ function test_all_shell_colors(){
 	print "\n\n";
 	
 	print "\n\nBackground Codes: ";
+	$foreground_color="white";
+	foreach($vars[shell_background_colors] as $ColorName=>$background_color){
+		print "(bg[".getColoredString($ColorName, $foreground_color, $background_color)."])";
+	}
 	for($p1=0;$p1<=510;$p1++){
 		$background_color="$p1";
-		$foreground_color="white";
 		print "  ". getColoredString($background_color, $foreground_color, $background_color);
 		foreach($vars[shell_background_colors] as $ColorName=>$ColorCode){
 			if($ColorCode==$background_color){
-				print "(".getColoredString($ColorName, $foreground_color, $background_color).")";
+				print "(bg[".getColoredString($ColorName, $foreground_color, $background_color)."])";
 			}
 		}
 	}
+	print "\n\n";
+}
+
+function shell_colors_print_keys(){
+	global $vars;
+
+	print "\n\nForground Names: ";
+	$background_color="black";
+	foreach($vars[shell_foreground_colors] as $ColorName=>$foreground_color){
+		print " ".getColoredString($ColorName, $foreground_color, $background_color)." ";
+	}
+	
+	print "\n\nBackground Names: ";
+	$foreground_color="white";
+	foreach($vars[shell_background_colors] as $ColorName=>$background_color){
+		print " ".getColoredString($ColorName, $foreground_color, $background_color)." ";
+	}
+	
 	print "\n\n";
 }
 
@@ -2142,7 +2195,7 @@ function dse_bt_colorize($v,$t,$type="MAXIMUM",$v_str=""){
 	$vars[shell_background_colors]['magenta'] = '105';
 	$vars[shell_background_colors]['cyan'] = '106';
 	
-function getColoredString($string, $foreground_color = null, $background_color = null) {
+function getColoredString($string, $foreground_color = null, $background_color = null, $ResetColorsAfter=TRUE) {
 	global $vars;
 	
 
@@ -2153,110 +2206,123 @@ function getColoredString($string, $foreground_color = null, $background_color =
 			
 	
 	$vars[shell_foreground_colors]['blink'] = '0;5';
-	
-	
 	$vars[shell_foreground_colors]['white'] = '1;37';
 	$vars[shell_foreground_colors]['grey'] = '0;2';
 	$vars[shell_foreground_colors]['lightest_grey'] = '1;37';
 	$vars[shell_foreground_colors]['light_grey'] = '6;37';
 	$vars[shell_foreground_colors]['dark_grey'] = '1;30';
 	$vars[shell_foreground_colors]['black'] = '0;30';
-	
 	$vars[shell_foreground_colors]['blink_red'] = '5;91';
 	$vars[shell_foreground_colors]['red'] = '0;31';
 	$vars[shell_foreground_colors]['pink'] = '1;31';
 	$vars[shell_foreground_colors]['light_red'] = '1;31';
 	$vars[shell_foreground_colors]['dark_red'] = '2;91';
-	
 	$vars[shell_foreground_colors]['blink_green'] = '5;92';
 	$vars[shell_foreground_colors]['green'] = '0;92';
 	$vars[shell_foreground_colors]['bold_green'] = '1;92';
 	$vars[shell_foreground_colors]['dark_green'] = '2;32';
-	
 	$vars[shell_foreground_colors]['blink_yellow'] = '5;93';
 	$vars[shell_foreground_colors]['brown'] = '10;33';
 	$vars[shell_foreground_colors]['orange'] = '10;33';
 	$vars[shell_foreground_colors]['yellow'] = '0;93';
 	$vars[shell_foreground_colors]['bold_yellow'] = '1;93';
-	
 	$vars[shell_foreground_colors]['dark_blue'] = '0;34';
 	$vars[shell_foreground_colors]['blue'] = '1;34';
 	$vars[shell_foreground_colors]['light_blue'] = '1;94';
-	
 	$vars[shell_foreground_colors]['purple'] = '0;35';
 	$vars[shell_foreground_colors]['light_purple'] = '1;35';
 	$vars[shell_foreground_colors]['dark_purple'] = '2;35';
-	
 	$vars[shell_foreground_colors]['dark_cyan'] = '0;36';
 	$vars[shell_foreground_colors]['cyan'] = '1;36';
+	if(dse_is_osx()){
+		$vars[shell_background_colors]['white'] = '1;7';
+		$vars[shell_background_colors]['grey'] = '0;47';
+		$vars[shell_background_colors]['black'] = '1;1';
+		$vars[shell_background_colors]['dark_red'] = '11;41';
+		$vars[shell_background_colors]['dark_green'] = '11;42';
+		$vars[shell_background_colors]['dark_yellow'] = '11;43';
+		$vars[shell_background_colors]['dark_blue'] = '11;44';
+		$vars[shell_background_colors]['dark_magenta'] = '11;45';
+		$vars[shell_background_colors]['dark_cyan'] = '11;46';
+		$vars[shell_background_colors]['red'] = '3;41';
+		$vars[shell_background_colors]['green'] = '3;42';
+		$vars[shell_background_colors]['yellow'] = '3;43';
+		$vars[shell_background_colors]['orange'] = '3;43';
+		$vars[shell_background_colors]['blue'] = '3;44';
+		$vars[shell_background_colors]['magenta'] = '3;45';
+		$vars[shell_background_colors]['cyan'] = '3;46';
+	}else{
+		$vars[shell_background_colors]['white'] = '107';
+		$vars[shell_background_colors]['grey'] = '47';
+		$vars[shell_background_colors]['black'] = '40';
+		$vars[shell_background_colors]['dark_red'] = '41';
+		$vars[shell_background_colors]['dark_green'] = '42';
+		$vars[shell_background_colors]['dark_yellow'] = '43';
+		$vars[shell_background_colors]['dark_blue'] = '44';
+		$vars[shell_background_colors]['dark_magenta'] = '45';
+		$vars[shell_background_colors]['dark_cyan'] = '46';
+		$vars[shell_background_colors]['red'] = '101';
+		$vars[shell_background_colors]['green'] = '102';
+		$vars[shell_background_colors]['yellow'] = '103';
+		$vars[shell_background_colors]['orange'] = '43';
+		$vars[shell_background_colors]['blue'] = '104';
+		$vars[shell_background_colors]['magenta'] = '105';
+		$vars[shell_background_colors]['cyan'] = '106';
+	}
 	
-	 
-	 
-	 
-	$vars[shell_background_colors]['white'] = '107';
-	$vars[shell_background_colors]['grey'] = '47';
-	$vars[shell_background_colors]['black'] = '40';
-	$vars[shell_background_colors]['dark_red'] = '41';
-	$vars[shell_background_colors]['dark_green'] = '42';
-	$vars[shell_background_colors]['dark_yellow'] = '43';
-	$vars[shell_background_colors]['dark_blue'] = '44';
-	$vars[shell_background_colors]['dark_magenta'] = '45';
-	$vars[shell_background_colors]['dark_cyan'] = '46';
-	
-	$vars[shell_background_colors]['red'] = '101';
-	$vars[shell_background_colors]['green'] = '102';
-	$vars[shell_background_colors]['yellow'] = '103';
-	$vars[shell_background_colors]['orange'] = '43';
-	$vars[shell_background_colors]['blue'] = '104';
-	$vars[shell_background_colors]['magenta'] = '105';
-	$vars[shell_background_colors]['cyan'] = '106';
 	
 	$colored_string = "";
-	$colored_string .= "\033[0m";
-	if(TRUE || $background_color=="black"){
-	}else{
-		if( (intval($background_color)<=0 || $background_color=="0") && isset($vars[shell_background_colors][$background_color])) {
-			$colored_string .= "\033[" . $vars[shell_background_colors][$background_color] . "m";
-		}elseif( intval($background_color)<=0 ) {
-			$colored_string .= "\033[" . $vars[shell_foreground_colors]['red'] . "m";
-			$colored_string .= " Unknown Shell Bckground Color: ($background_color) ";
-		}else{
+	//$colored_string .= "\033[0m";
+	//if($background_color!="black"){
+	if($background_color!=""){
+		//print "background_color=$background_color\n";
+		if(str_contains($background_color,";")){
+		//print "11background_color=$background_color\n";
 			$colored_string .= "\033[" . $background_color . "m";
+		}elseif( (intval($background_color)<=0 || $background_color=="0") && isset($vars[shell_background_colors][$background_color])) {
+		//print "22background_color=$background_color\n";
+			$colored_string .= "\033[" . $vars[shell_background_colors][$background_color] . "m";
+			//."\n {background_color=$background_color}".$vars[shell_background_colors][$background_color];
+		}elseif( intval($background_color)<=0 ) {
+		//print "33background_color=$background_color\n";
+			if($vars['Verbosity']>=0){
+				$colored_string .= "\033[" . $vars[shell_foreground_colors]['red'] . "m";
+				$colored_string .= " Unknown Shell Bckground Color: ($background_color) ";
+			}
 		}
 	}
-	if( (intval($foreground_color)<=0 || $foreground_color=="0") && isset($vars[shell_foreground_colors][$foreground_color])) {
-		$colored_string .= "\033[" . $vars[shell_foreground_colors][$foreground_color] . "m";
-	}elseif( intval($foreground_color)<=0 ) {
-		$colored_string .= "\033[" . $vars[shell_foreground_colors]['red'] . "m";
-		$colored_string .= " Unknown Shell Foreground Color: ($foreground_color) ";
-	}else{
-		$colored_string .= "\033[" . $foreground_color . "m";
+	if($foreground_color!=""){
+		if(str_contains($foreground_color,";")){
+			$colored_string .= "\033[" . $foreground_color . "m";
+		}elseif( (intval($foreground_color)<=0 || $foreground_color=="0") && isset($vars[shell_foreground_colors][$foreground_color])) {
+			$colored_string .= "\033[" . $vars[shell_foreground_colors][$foreground_color] . "m";
+		}elseif( intval($foreground_color)<=0 ) {
+			if($vars['Verbosity']>=0){
+				$colored_string .= "\033[" . $vars[shell_foreground_colors]['red'] . "m";
+				$colored_string .= " Unknown Shell Foreground Color: ($foreground_color) ";
+			}
+		}
 	}
-	
-	
 	$colored_string .=  $string;
-	if($vars[shell_colors_reset_foreground]!=""){
-		$colored_string .= "\033[0m";
-		$colored_string .= "\033[".$vars[shell_foreground_colors][$vars[shell_colors_reset_foreground]]."m";
-		if($vars[shell_colors_reset_background]!=""){
-			$colored_string .= "\033[".$vars[shell_background_colors][$vars[shell_colors_reset_background]]."m";
+	if($ResetColorsAfter){
+		if($vars[shell_colors_reset_foreground]!=""){
+			$colored_string .= "\033[0m";
+			$colored_string .= "\033[".$vars[shell_foreground_colors][$vars[shell_colors_reset_foreground]]."m";
+			if($vars[shell_colors_reset_background]!=""){
+				$colored_string .= "\033[".$vars[shell_background_colors][$vars[shell_colors_reset_background]]."m";
+			}else{
+				$colored_string .= "\033[".$vars[shell_background_colors]['black']."m";
+			}
 		}else{
-			$colored_string .= "\033[".$vars[shell_background_colors]['black']."m";
+			$colored_string .= "\033[0m";
 		}
-	}else{
-		$colored_string .= "\033[0m";
 	}
 	return $colored_string;
 }
 
 function setBackgroundColor($background_color) {
 	global $vars;
-	$colored_string = "";
-	//$colored_string .= "\033[0m";
-	if( (intval($background_color)<=0 || $background_color=="0") && isset($vars[shell_background_colors][$background_color])) {
-		$colored_string .= "\033[" . $vars[shell_background_colors][$background_color] . "m";
-	}
-	return $colored_string;
+	return getColoredString("", null, $background_color, FALSE);
 }
 function setForgroundColor($foreground_color) {
 	global $vars;

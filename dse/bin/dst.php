@@ -18,7 +18,9 @@ $parameters_details = array(
   array('h','help',"this message"),
   array('q','quiet',"same as --verbosity 0"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
-  array('t','test-colors',"telst all color possibilites and show"),
+  array('k','print-colors-keys',"show named color options"),
+  array('t','test-colors',"test all color possibilites and show"),
+  array('c','clear',"clear screen"),
   array('b:','background:',"set background color = arg"),
   array('f:','forground:',"set forground color = arg"),
   array('','foreground:',"set forground color = arg"),
@@ -53,6 +55,14 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 't':
   	case 'test-colors':
 		test_all_shell_colors();
+		break;
+	case 'k':
+  	case 'print-colors-keys':
+		shell_colors_print_keys();
+		break;
+	case 'c':
+  	case 'clear':
+		passthru("clear");
 		break;
 	case 'n':
   	case 'no-new-line':
