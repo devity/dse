@@ -27,6 +27,7 @@ $parameters_details = array(
   array('c','configure',"launches dse-configure"),
   array('s','set-env',"set shell environment variables"),
   array('y','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('z:','status:',"shows status on all or arg1. options: [initd]"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -111,6 +112,19 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$DidSomething=TRUE;
 		break;
 	
+	case 'z':
+  	case 'status':
+		include_once ("/dse/bin/dse_config_functions.php");
+  		if($vars['options'][$opt]){
+  			switch($vars['options'][$opt]){
+				case 'initd':
+					$r=dse_initd_entry_get_info();
+					print $r;
+					break;
+  			}
+  		}
+		$DidSomething=TRUE;
+		break;
 
 }
 
@@ -188,7 +202,8 @@ if($ShowUsage){
 	print $vars['Usage'];
 }
 if($DoUpdate){
-	$Date_str=date("YmdGis");
+	
+	$Date_str=@date("YmdGis");
 	if($BackupBeforeUpdate){
 		$BackupDir=$vars['DSE']['DSE_BACKUP_DIR_DSE']."/".$Date_str."/dse";
 		$Command="mkdir -p ".$BackupDir;
@@ -216,6 +231,10 @@ if($DoUpdate){
 		print "ERROR: DSE_GIT_ROOT unset.\n";
 		exit -1;
 	}
+	/*fink selfupdate
+fink selfupdate-rsync
+fink index -f
+fink selfupdate*/
 }
 
 if($DidSomething){

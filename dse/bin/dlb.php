@@ -48,7 +48,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'l':
 	case 'log-to-screen':
 		$vars['DSE']['LOG_TO_SCREEN']=TRUE;
-		print "Logging to screen ON\n".$vars['DSE']['LOG_TO_SCREEN'];
+		dpv(2,"Logging to screen ON\n".$vars['DSE']['LOG_TO_SCREEN']);
 		$vars['LOG_TO_SCREEN']=TRUE;
 		break;
 	case 'log-show':
@@ -64,11 +64,16 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'v':
 	case 'verbosity':
 		$vars['Verbosity']=$vars['options'][$opt];
-		if($vars['Verbosity']>=2) print "Verbosity set to ".$vars['Verbosity']."\n";
+		dpv(2,"Verbosity set to ".$vars['Verbosity']."\n");
 		break;
 	case 's':
   	case 'status':
-		print dse_file_get_contents($CFG_array['StatusFile']);
+		if($RunningPID>0){
+			print "DLB Daemon is RUNNING PID=$RunningPID\n";
+		}else{
+			print "DLB Daemon is NOT RUNNING!\n";
+		}
+		dpv(1,dse_file_get_contents($CFG_array['StatusFile']));
 		exit(0);
 	case 'h':
   	case 'help':
@@ -76,7 +81,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		exit(0);
 	case 'e':
 	case 'edit':
-		print "Backing up ".$vars['DSE']['DLB_CONFIG_FILE']." and launcing in vim:\n";
+		$Message="Backing up ".$vars['DSE']['DLB_CONFIG_FILE']." and launcing in vim:\n";
+		dpv(1,$Message);
+		dse_log($Message);
 		passthru("/dse/bin/vibk ".$vars['DSE']['DLB_CONFIG_FILE']." 2>&1");
 		exit(0);
 	case 'c':
@@ -106,7 +113,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			case 'restart':
 				if($RunningPID>0){
 					$r=`kill $RunningPID 2>&1`;
-					print "Killing process PID $RunningPID\n";
+					dpv(1,"Killing process PID $RunningPID\n");
 					dse_log("DLB stop. Killing process PID $RunningPID");
 				}
 				dse_dlb_daemon($CFG_array);
@@ -114,7 +121,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				break;	
 			case 'start':
 				if($RunningPID>0){
-					print "DLB Already Running as PID $RunningPID!\n";
+					dpv(1,"DLB Already Running as PID $RunningPID!\n");
 				}else{
 					dse_dlb_daemon($CFG_array);
 				}
@@ -123,17 +130,17 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			case 'stop':
 				if($RunningPID>0){
 					$r=`kill $RunningPID 2>&1`;
-					print "Killing process PID $RunningPID\n";
+					dpv(1, "Killing process PID $RunningPID\n");
 					dse_log("DLB stop. Killing process PID $RunningPID");
 				}else{
-					print "DLB Not Running!\n";
+					dpv(1, "DLB Not Running!\n");
 				}
 				$DidSomething=TRUE;
 				break;	
 			case 'status':
 				if($RunningPID>0){
-					print "DLB Running as PID $RunningPID!\n";
-					print "Status File: ".$CFG_array['StatusFile']."  ---------------------___________\n";
+					dpv(0, "DLB Running as PID $RunningPID!\n");
+					dpv(1,print "Status File: ".$CFG_array['StatusFile']."  ---------------------___________\n");
 					print dse_file_get_contents($CFG_array['StatusFile'])."\n";
 				}else{
 					print "DLB Not Running!\n";
@@ -151,13 +158,13 @@ dse_cli_script_header();
 
 if($DidSomething){
 	if(!$Quiet && !$DoSetEnv){
-		print getColoredString($vars['DSE']['SCRIPT_NAME']." Done. Exiting (0)","black","green");
+		dpv(1, getColoredString($vars['DSE']['SCRIPT_NAME']." Done. Exiting (0)","black","green"));
 		$vars['shell_colors_reset_foreground']='';	print getColoredString("\n","white","black");
 	}
 	if(!$NoExit) exit(0);
 }else{
 	if(!$Quiet && !$DoSetEnv){
-		print getColoredString("Nothing to do! try --help for usage. ".$vars['DSE']['SCRIPT_NAME']." Done. Exiting (-1)","pink","black");
+		dpv(1, getColoredString("Nothing to do! try --help for usage. ".$vars['DSE']['SCRIPT_NAME']." Done. Exiting (-1)","pink","black"));
 		$vars['shell_colors_reset_foreground']='';	print getColoredString("\n","white","black");
 	}
 	if(!$NoExit) exit(-1);
@@ -190,7 +197,6 @@ function dse_dlb_config_parse(){
 	$DLB_array['Services']=$CFG_array['Services'];
 	foreach(split(" ",$CFG_array['Services']) as $Service){
 		if($Service){
-			
 			$DLB_array[$Service]=array();
 			$DLB_array[$Service]['Name']=$Service;
 			$DLB_array[$Service]['NodesRaw']=array();
@@ -200,25 +206,26 @@ function dse_dlb_config_parse(){
 			$DLB_array[$Service]['NodeCountUP']=0;
 			$DLB_array[$Service]['NodeCountDown']=0;
 			$VarName="Service.$Service.Node";
-			foreach($CFG_array[$VarName] as $Node){
-				if($Node){
-					$NodeA=split(" ",$Node);
-					print " adding $Service node: $Node\n";
-					$DLB_array[$Service]['NodesRaw'][]=$Node;
-					if($NodeA[1]){
-						$DLB_array[$Service]['Nodes'][$NodeA[1]]=$NodeA;
-						$DLB_array[$Service]['NodeStatus'][$NodeA[1]]="UNKNOWN";
-					}else{
-						$DLB_array[$Service]['Nodes'][]=$NodeA;
-						$DLB_array[$Service]['NodeStatus'][]="UNKNOWN";
-					}
-					$DLB_array[$Service]['NodeCountTotal']++;
-					
+			if(is_array($CFG_array[$VarName])){
+				foreach($CFG_array[$VarName] as $Node){
+					if($Node){
+						$NodeA=split(" ",$Node);
+						dpv(2, " adding $Service node: $Node\n");
+						$DLB_array[$Service]['NodesRaw'][]=$Node;
+						if($NodeA[1]){
+							$DLB_array[$Service]['Nodes'][$NodeA[1]]=$NodeA;
+							$DLB_array[$Service]['NodeStatus'][$NodeA[1]]="UNKNOWN";
+						}else{
+							$DLB_array[$Service]['Nodes'][]=$NodeA;
+							$DLB_array[$Service]['NodeStatus'][]="UNKNOWN";
+						}
+						$DLB_array[$Service]['NodeCountTotal']++;
+						}
 				}
 			}
 			if(sizeof($DLB_array[$Service]['Nodes'])==0){
 				$Warning="Warning service_pool $Service Listed in ConfigFile.Services but no has Nodes!";
-				print $Warning."\n";
+				dpv(1, $Warning."\n");
 				dse_log($Warning);
 			}
 		}
@@ -232,15 +239,15 @@ function dse_dlb_daemon(){
 	
 	$PID=getmypid();
 	file_put_contents($CFG_array['PIDFile'],$PID);
-	print "file_put_contents($CFG_array[PidFile],$PID);\n";
+	dpv(4, "file_put_contents($CFG_array[PidFile],$PID);\n");
 	
-	print "Running as DLB Daemon...\n";
+	dpv(2, "Running as DLB Daemon...\n");
 	dse_log("DLB Daemon Starting. PID=$PID Log=".$CFG_array['LogFile']." Status=".$CFG_array['StatusFile']);
 	$DLB_array=dse_dlb_config_parse($CFG_array);
 	//print_r($DLB_array);
 	
 	$CheckSeconds=dse_time_span_sting_to_seconds($CFG_array['DefaultUpCheckFrequency']);
-	print " Checking every $CheckSeconds seconds\n";
+	dpv(3, " Checking every $CheckSeconds seconds\n");
 	
 	$DoLoop=TRUE;
 	while($DoLoop){
@@ -258,14 +265,14 @@ function dse_dlb_daemon(){
 
 function dse_dlb_services_check($DLB_array){
 	global $vars,$CFG_array;
-	print " Starting Services Checking...\n"; $CheckTimeSeconds=time();
+	dpv(3, " Starting Services Checking...\n"); $CheckTimeSeconds=time();
 	dse_log("Starting Services Checking...");
 	$NodesChecked=0; $NodesCheckedOK=0; $NodesCheckedBad=0;
 	foreach(split(" ",$CFG_array['Services']) as $Service){
 		if($Service){
 			if(sizeof($DLB_array[$Service]['Nodes'])>0){
 				
-				print "  Checking $Service Nodes:\n";
+				dpv(4, "  Checking $Service Nodes:\n");
 				
 				//$DLB_array[$Service][Name]
 				//$DLB_array[$Service][NodesRaw]
@@ -277,33 +284,33 @@ function dse_dlb_services_check($DLB_array){
 					
 					list($NodeIP,$NodePort)=split(":",$Node[0]);
 					$NodeName=$Node[1];
-					print "   Checking Node: $NodeIP Port $NodePort -  $NodeName... ";
+					dpv(4, "   Checking Node: $NodeIP Port $NodePort -  $NodeName... ");
 					$Listening=dse_ip_port_is_listening($NodeIP,$NodePort);
 					if($Listening){
-						print "Listening";
+						dpv(4, "Listening");
 						$NodesCheckedOK++; $ServiceNodesCheckedOK++;
 						$ServiceHasNodeUP=TRUE;
 						$DLB_array[$Service]['NodeCountUP']++;
 						$DLB_array[$Service]['NodeStatus'][$k]="UP";
 					}else{
-						print "ERROR - NOT Listening!";
+						dpv(4, "ERROR - NOT Listening!");
 						dse_log("ERROR - node DOWN: $Service $NodeIP:$NodePort $NodeName");	
 						$NodesCheckedBad++; $ServiceNodesCheckedBad++;
 						$DLB_array[$Service]['NodeCountDown']++;
 						$DLB_array[$Service]['NodeStatus'][$k]="DOWN";
 					}
-					print "\n";
+					dpv(4, "\n");
 					$NodesChecked++; $ServiceNodesChecked++;
 				}
 				if(!$ServiceHasNodeUP){
-					print "FATAL ALERT! $Service has no nodes UP !\n";
+					dpv(2, "FATAL ALERT! $Service has no nodes UP !\n");
 				}
 			}
 		}
 	}
 	$CheckTimeSeconds=time()-$CheckTimeSeconds;
 	$ResultsSummaryLine="Done Checking. $CheckTimeSeconds seconds, $NodesChecked nodes checked, $NodesCheckedOK OK, $NodesCheckedBad NOT.";
-	print " $ResultsSummaryLine\n";	
+	dpv(1, " $ResultsSummaryLine\n");	
 	dse_log("$ResultsSummaryLine");	
 	dse_dlb_status_file_generate($DLB_array);
 	return $DLB_array;		
@@ -325,7 +332,9 @@ function dse_dlb_status_file_generate($DLB_array){
 	}else{
 		$QPS=0;
 	}
-	print " Generating DLB Status File: ".$CFG_array['StatusFile']."...\n-----------------file start---------------\n"; 
+	
+	//if($vars['Verbosity']>=$MinVerbosity){
+	dpv(2, " Generating DLB Status File: ".$CFG_array['StatusFile']."...\n-----------------file start---------------\n");
 	$tbr="";
 	$tbr.="# dlb status file. for info: ".$vars['DSE']['SCRIPT_FILENAME']." --help\n";
 	$tbr.="# dlb status last updated: $TimeStr    PID=$PID   Running for $RunningTimeStr\n";
@@ -346,8 +355,8 @@ function dse_dlb_status_file_generate($DLB_array){
 			}
 		}
 	}
-	print "$tbr";
-	print "-----------------file end---------------\n"; 
+	dpv(2, "$tbr");
+	dpv(2, "-----------------file end---------------\n"); 
 	file_put_contents($CFG_array['StatusFile'],$tbr);
 	dse_log("status file ".$CFG_array['StatusFile']." updated:");	
 	// Queries=$CFG_array[QueriesMade] OK=$CFG_array[QueriesSucceeded] FAIL=".$CFG_array['QueriesFailed']." QPS=$QPS 

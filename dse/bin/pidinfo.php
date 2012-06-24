@@ -16,7 +16,9 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 
 $parameters_details = array(
   array('h','help',"this message"),
-  array('f','family-tree',"shows infor for parent and all grandparent processes"),
+  array('v','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('f','family-tree',"shows info for parent and all grandparent processes"),
+  array('e','exe-family-tree',"returns string like: init>grandparent>parent>PIDsEXE"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -24,7 +26,9 @@ $vars['argv_origional']=$argv;
 dse_cli_script_start();
 		
 $BackupBeforeUpdate=TRUE;
-foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+foreach (array_keys($vars['options']) as $opt) {
+	//print "opt=$opt\n";
+	switch ($opt) {
 	case 'h':
   	case 'help':
   		$ShowUsage=TRUE;
@@ -35,8 +39,18 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   		$ShowFamilyTree=TRUE;
 		$DidSomething=TRUE;
 		break;
+	case 'e':
+  	case 'exe-family-tree':
+  		$ShowEXEFamilyTree=TRUE;
+		$DidSomething=TRUE;
+		break;
+  	case 'v':
+	case 'verbosity':
+		$vars['Verbosity']=$vars['options'][$opt];
+		if($vars['Verbosity']>=2) print "Verbosity set to ".$vars['Verbosity']."\n";
+		break;
 }
-
+}
 	
 if($ShowUsage){
 	print $vars['Usage'];
@@ -53,13 +67,28 @@ dse_cli_script_header();
 
 
 $PIDInfo=dse_pid_get_info($PID);
-if($ShowFamilyTree && $PIDInfo['PPID']>0 ){
+if($ShowFamilyTree && $PIDInfo['PID']>0 ){
 	$Command="/dse/bin/pidinfo -f ".$PIDInfo['PPID'];
 	$parent=`$Command`;
 	print $parent;
 }
 
-
+if($ShowEXEFamilyTree && $PIDInfo['PID']>0 ){
+	if($PIDInfo['PPID']=="0"){
+		$parent="0";
+	}else{
+		$Command="/dse/bin/pidinfo -e ".$PIDInfo['PPID'];
+		$parent=trim(`$Command`);
+	}
+	
+	if($parent!="") print $parent." -> ";
+	print $PIDInfo['PID'].":";
+	print $PIDInfo['EXE_FILE'];	//print " ".$Command."\n";
+	
+}
+if($ShowEXEFamilyTree ){
+	exit(0);
+}
 print "EXE: ".$PIDInfo['EXE']."\n";
 print "PID: ".$PIDInfo['PID']."\n";
 print "PPID: ".$PIDInfo['PPID']."\n";

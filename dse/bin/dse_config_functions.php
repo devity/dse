@@ -1,6 +1,78 @@
 <?
 
 
+function dse_initd_entry_add($Script,$ServiceName,$Rank=99){
+	global $vars;
+	if(dse_is_osx()){
+		$Command="sudo launchctl remove $ServiceName";
+		$r=`$Command`;
+		print "$Command = $r\n";
+		
+		$Command="sudo launchctl submit -l $ServiceName -- $Script start";
+		$r=`$Command`;
+		print "$Command = $r\n";
+		
+		$Command="sudo launchctl list $ServiceName";
+		$r=`$Command`;
+		print "$Command = $r\n";
+		
+	}else{
+		$FileName=basename($Script);
+		$Command="ln -s $Script ".$vars['DSE']['SERVER_INITD_DIR']."/$FileName";
+		$r=`$Command`;
+		print "$r\n";
+		
+		$StopRank=100-$Rank;
+		$Command="update-rc.d $FileName defaults $Rank $StopRank";
+		$r=`$Command`;
+		print "$r\n";
+	}
+}
+function dse_initd_entry_get_info($ServiceName=""){
+	global $vars;
+	if(dse_is_osx()){
+		$tbr="";
+		//foreach(array("RUNNING","NOT_RUNNING") as $Running){
+		foreach(array("RUNNING") as $Running){
+			if($Running=="RUNNING"){
+				$Command="sudo launchctl list $ServiceName | grep -v '^-' | sort";
+			}else{
+				$Command="sudo launchctl list $ServiceName | grep '^-' | sort";
+			}
+			$r=`$Command`;
+			if($vars['DSE']['OUTPUT_FORMAT']=="HTML"){
+				$tbr.= "<b><i>$Command</i></b><table><tr><td><b>Status</b></td><td><b>Exe Tree</b></td><td><b>PID</b></td><td><b>User</b></td><td><b>Label</b></td></tr>";//<td><b>Full Path</b></td>
+			}
+			foreach(split("\n",$r) as $L){
+				list($PID,$RunStatus,$Label)=split("[ \t]+",$L);
+				if(intval($PID)>0){
+					$PIDInfo=dse_pid_get_info($PID);
+					$ExeTree=dse_pid_get_exe_tree($PID,TRUE);
+				}else{
+					$PIDInfo=""; $ExeTree="";
+				}
+				if($vars['DSE']['OUTPUT_FORMAT']=="HTML"){
+					$tbr.= "<tr class='f7pt'><td>$Running</td><td>$ExeTree</td><td>$PID</td><td>".$PIDInfo['USER']."</td><td>$Label</td></td>";//<td>".$PIDInfo['EXE']."</td>
+				}else{
+					$tbr.= "$ExeTree $PID ".$PIDInfo['USER']." $Label ".$PIDInfo['EXE']."\n";
+				}
+				
+			}
+			if($vars['DSE']['OUTPUT_FORMAT']=="HTML"){
+				$tbr.= "</tr></table>";
+			}
+		}
+		return $tbr;
+	}else{
+		$FileName=$ServiceName."d";
+		$StopRank=100-$Rank;
+		$Command="chkconfig --list $FileName | grep \"3:on \" | cut -f1 -d\" \"  ";
+		$r=`$Command`;
+		
+		return $r;
+	}
+}
+
 
 function dse_server_configure_file_load(){
 	global $vars,$strcut_post_haystack;
@@ -921,6 +993,7 @@ exit 0
 			if($A!='Y'){
 				return;
 			}
+			unlink($InitdFile);
 		}
 	}
 	print "Writing $InitdFile\n";

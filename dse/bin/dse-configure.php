@@ -412,7 +412,7 @@ if($FullConfig){
 		
 		
 	
-	if(FALSE && str_contains($vars['DSE']['SERVICES'],"crowbar")){
+	if(str_contains($vars['DSE']['SERVICES'],"crowbar")){
 		print "Creating crowbar init.d script.\n";
 		$INITD_SCRIPT_ARRAY=array();
 		$INITD_SCRIPT_ARRAY['ServiceName']="crowbar";
@@ -426,6 +426,43 @@ if($FullConfig){
 			$INITD_SCRIPT_ARRAY['VarNetstat']="netstat -tap | egrep 10000";
 		}
 		dse_write_daemon_script($INITD_SCRIPT_ARRAY);
+		
+		$InitdFile=$vars['DSE']['SYSTEM_SCRIPTS_DIR']."/".$INITD_SCRIPT_ARRAY['ServiceName']."d";
+		dse_initd_entry_add($InitdFile,$INITD_SCRIPT_ARRAY['ServiceName']."d",85);
+	}
+	if(str_contains($vars['DSE']['SERVICES'],"dlb")){
+		print "Creating dlb init.d script.\n";
+		$INITD_SCRIPT_ARRAY=array();
+		$INITD_SCRIPT_ARRAY['ServiceName']="dlb";
+		$INITD_SCRIPT_ARRAY['ActionStart']="sudo /dse/bin/dlb -d start";
+		$INITD_SCRIPT_ARRAY['ActionStop']="sudo /dse/bin/dlb -d stop";
+		$INITD_SCRIPT_ARRAY['VarIsRunning']="sudo /dse/bin/dlb -d status | grep 'Running as'";
+		$INITD_SCRIPT_ARRAY['VarStatus']="sudo /dse/bin/dlb -d status";
+		$INITD_SCRIPT_ARRAY['VarNetstat']="echo 'does not listen, no open ports.'";
+		dse_write_daemon_script($INITD_SCRIPT_ARRAY);
+		$InitdFile=$vars['DSE']['SYSTEM_SCRIPTS_DIR']."/".$INITD_SCRIPT_ARRAY['ServiceName']."d";
+		dse_initd_entry_add($InitdFile,$INITD_SCRIPT_ARRAY['ServiceName']."d",91);
+	}
+	if(str_contains($vars['DSE']['SERVICES'],"dwi")){
+		print "Creating dwi init.d script.\n";
+		$INITD_SCRIPT_ARRAY=array();
+		$INITD_SCRIPT_ARRAY['ServiceName']="dwi";
+		$INITD_SCRIPT_ARRAY['ActionStart']="sudo apachectl -f /etc/dse/apache2.conf";
+		$INITD_SCRIPT_ARRAY['ActionStop']="sudo kill `/dse/bin/grep2pid \"/etc/dse/apache2.conf\"`";
+		if(dse_is_osx()){
+			$INITD_SCRIPT_ARRAY['VarIsRunning']="netstat -ta | egrep 7907";
+		}else{
+			$INITD_SCRIPT_ARRAY['VarIsRunning']="netstat -tap | egrep 7907";
+		}
+		$INITD_SCRIPT_ARRAY['VarStatus']="sudo /dse/bin/dwi -d status";
+		if(dse_is_osx()){
+			$INITD_SCRIPT_ARRAY['VarNetstat']="netstat -ta | egrep 7907";
+		}else{
+			$INITD_SCRIPT_ARRAY['VarNetstat']="netstat -tap | egrep 7907";
+		}
+		dse_write_daemon_script($INITD_SCRIPT_ARRAY);
+		$InitdFile=$vars['DSE']['SYSTEM_SCRIPTS_DIR']."/".$INITD_SCRIPT_ARRAY['ServiceName']."d";
+		dse_initd_entry_add($InitdFile,$INITD_SCRIPT_ARRAY['ServiceName']."d",91);
 	}
 	
 	exit();

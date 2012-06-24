@@ -15,6 +15,34 @@ $NotChanged=getColoredString("Not Changed","orange","black");
 $NotFixed=getColoredString("Not Changed","orange","black");
 
 
+function dse_pid_get_exe_tree($PID,$Reverse=FALSE){
+	global $vars;
+	$tbr="";
+	if($PID<0){
+		return "";
+	}elseif($PID==0){
+		return "0";
+	}elseif($PID==1){
+		$PIDInfo=dse_pid_get_info($PID);
+		return $PIDInfo['EXE_FILE'];
+	}else{
+		$PIDInfo=dse_pid_get_info($PID);
+		$Parent=dse_pid_get_exe_tree($PIDInfo['PPID']);
+		if($Reverse){
+			$tbr=$Parent ."->". $PIDInfo['EXE_FILE'];
+		}else{
+			$tbr=$PIDInfo['EXE_FILE'] ."->". $Parent;
+		}
+	}
+	return $tbr;
+}
+	
+function dpv($MinVerbosity,$Message){
+	global $vars;
+	if($vars['Verbosity']>=$MinVerbosity){
+		print "$Message";
+	}
+}
 
 function dse_log($Message,$File=""){
 	global $vars;
@@ -46,7 +74,7 @@ function dse_date_format($Time="NOW",$FormatName="FULLREADABLE"){
 	global $vars;
 	if($Time=="NOW") $Time=time();
 	if(str_contains($FormatName," ")){
-		return date($FormatName,$Time);
+		return @date($FormatName,$Time);
 	}
 	switch($FormatName){
 		case 'SYSLOG':
@@ -72,7 +100,7 @@ function dse_date_format($Time="NOW",$FormatName="FULLREADABLE"){
 		default:
 			$FormatString="F j, Y, g:i a";
 	}
-	$r=date($FormatString,$Time);
+	$r=@date($FormatString,$Time);
 	return $r;
 }
 
@@ -218,7 +246,36 @@ function dse_pid_get_info($PID){
 	$PIDInfo['PMEM']=dse_pid_get_ps_columns($PID,"pmem");
 	$PIDInfo['USER']=dse_pid_get_ps_columns($PID,"user");
 	$PIDInfo['EXE']=trim(`/dse/bin/pid2exe $PID`);
+	
+	$PIDInfo['EXE_FILE']=$PIDInfo['EXE'];
+	while(str_contains($PIDInfo['EXE_FILE'],"/")){
+		$PIDInfo['EXE_FILE']=strcut($PIDInfo['EXE_FILE'],"/");
+	}
 	return $PIDInfo;
+}
+function dse_pid_get_info_str($PID,$Recursive=FALSE,$Reverse=FALSE){
+	global $vars;
+	$PIDInfo=dse_pid_get_info($PID);
+	$tbr="";
+	if($vars['DSE']['OUTPUT_FORMAT']=="HTML"){
+		print "<b>PID:</b> ".$PIDInfo['PID']."<br>";
+		print "<b>EXE:</b> ".$PIDInfo['EXE']."<br>";
+		print "<b>USER:</b> ".$PIDInfo['USER']."<br>";
+		
+		print "<b>CPU:</b> ".$PIDInfo['PCPU']."<br>";
+		print "<b>MEM:</b> ".$PIDInfo['PMEM']."<br>";
+		
+		print "<b>Parent PID:</b> ".$PIDInfo['PPID']."<br>";
+	}
+	if($Recursive){
+		$Parent=dse_pid_get_info_str($PIDInfo['PPID'],$Recursive);
+		if($Reverse){
+			$tbr=$tbr."<br>".$Parent;
+		}else{
+			$tbr=$Parent."<br>".$tbr;
+		}
+	}
+	return $tbr;
 }
 
 function dse_pid_get_ps_columns($PID,$o){
@@ -227,8 +284,12 @@ function dse_pid_get_ps_columns($PID,$o){
 	if(!$PID){
 		return -1;
 	}
-	$PMEM=trim(`ps -p $PID -o $o=`);
-	return $PMEM;		
+	$Command="ps -p $PID -o $o=";
+	$Value=trim(`$Command`);
+	$Message="dse_pid_get_ps_columns($PID,$o) [$Command] returning $Value";
+	//print "$Message\n";
+	dpv(5,$Message);
+	return $Value;		
 }
 
 
