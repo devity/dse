@@ -156,9 +156,23 @@ $dse_git_dir="$PWD/dse/dse";
 //"memstat","iftop","sysstat","chkconfig","mytop",""
 //"dnsutils","bind9","vsftpd","tasksel",""
 
-$PackageNamesArray=array("wget","curl","bc");
-$OSXPackageNamesArray=array("lynx","imagemagick");
-$NotOSXPackageNamesArray=array("perl","vim","memstat","iftop","sysstat","chkconfig","lynx-cur");
+$PackageNamesArray=array();
+$OSXPackageNamesArray=array();
+$NotOSXPackageNamesArray=array();
+$NotOSXPackageNamesArray[]="vim";
+$NotOSXPackageNamesArray[]="perl";
+$PackageNamesArray[]="wget";
+$PackageNamesArray[]="curl";
+$OSXPackageNamesArray[]="lynx";
+$NotOSXPackageNamesArray[]="lynx-cur";
+$PackageNamesArray[]="bc";
+$OSXPackageNamesArray[]="imagemagick";
+$NotOSXPackageNamesArray[]="imagemagick";
+$NotOSXPackageNamesArray[]="libmagickcore-dev";
+$NotOSXPackageNamesArray[]="memstat";
+$NotOSXPackageNamesArray[]="iftop";
+$NotOSXPackageNamesArray[]="sysstat";
+$NotOSXPackageNamesArray[]="chkconfig";
 
 if(dse_is_centos()){
 	$PackageNamesArray[]="jwhois";
