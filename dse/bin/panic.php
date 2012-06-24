@@ -156,6 +156,7 @@ if($DidSomething) {
 	));
 	if($A=='A'){
 		dse_panic();
+		dse_panic_offer_interactive();
 		$DidSomething=TRUE;
 	}elseif($A=='I'){
 		dse_panic(TRUE);
@@ -165,6 +166,7 @@ if($DidSomething) {
 	}
 }else{
 	dse_panic();
+	dse_panic_offer_interactive();
 	$DidSomething=TRUE;
 }
 
@@ -189,12 +191,23 @@ exit(0);
 // --------------------------------------------------------------------------------
 // **********************************************************************************
 
+function dse_panic_offer_interactive(){
+	global $vars,$CFG_array;
+	print getColoredString("Automatic Run Done! ",'bold_green');
+	print "However, this skips things you need to be asked about. ";
+	$A=dse_ask_yn("Do a more thourough, interactive run now?",'N',68*10);	
+	if($A=='Y'){
+		dse_panic(TRUE);
+	}
+}
+
 function dse_panic($Interactive=FALSE){
 	global $vars,$CFG_array;
 	
 	print "CFG_array="; print_r($CFG_array); print "\n";
 	dse_panic_hd($Interactive);
-	
+	dse_panic_services($Interactive);
+	dse_panic_processes($Interactive);
 	return;
 }
 
@@ -223,21 +236,33 @@ function dse_panic_hd($Interactive=FALSE){
 	//clearn apt/yum
 	//delete unneeded packages
 	//gzip as much as possible in /backup and /var/log
+	
+	
+	
+	
+	//look for large uncompressed info
+	//find redundant files
+	print getColoredString("Final Disk Stats:\n","cyan");
+	print `df -h`;
+	
+	
+	
+	
 	//look for large files recently
 	
 	
 	if($Interactive){
 		//look for largest fiels
 		$LargeFileCommands=array(
-			"find / -type f -size +100000k -exec ls -l {} \; 2>/dev/null '",
-			"du -a / 2>/dev/null | sort -n -r | head -n 100",
+			"find / -type f -size +100000k -exec ls -l {} \; 2>/dev/null ",
+			"du -a / 2>/dev/null | sort -n -r | head -n 200",
 			//"for i in G M K; do du -a / 2>/dev/null | grep [0-9]$i | sort -nr -k 1; done | head -n 11",
-			"find / -type f -print0| xargs -0 ls -s | sort -rn | awk ‘{size=$1/1024; printf(\“%dMb %s\n\”, size,$2);}’ | head",
-			"sudo find . -type f -print0 2>/dev/null | xargs -0 ls -s | sort -rn | awk '{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}' | head",
+			"find / -type f -print0| xargs -0 ls -s | sort -rn | awk ‘{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}’ | head -200",
+			//"sudo find / -type f -print0 2>/dev/null | xargs -0 ls -s | sort -rn | awk '{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}' | head",
 			
 		);
 		foreach($LargeFileCommands as $Command){
-			$A=dse_ask_yn("Run $Command ? ");
+			$A=dse_ask_yn("Run $Command ? ",20,'Y');
 			if($A=='Y'){
 				$StartTime=time()+microtime();
 				$r=`$Command`;  $EndTime=time()+microtime(); $RunTime=number_format($EndTime-$StartTime,2);
@@ -248,17 +273,24 @@ function dse_panic_hd($Interactive=FALSE){
 	}
 	
 	
-	
-	
-	//look for large uncompressed info
-	//find redundant files
-	print getColoredString("Final Disk Stats:\n","cyan");
-	print `df -h`;
-	return;
 }
 
 
 function dse_panic_services($Interactive=FALSE){
+	global $vars,$CFG_array;
+	print getColoredString("Section:  Services / Daemons\n","green");
+	
+	print getColoredString("Verifying Expected Ports are Listening..\n","cyan");
+	//print `df -h`;
+
+	if($Interactive){
+		
+	}
+	
+}
+
+
+function dse_panic_processes($Interactive=FALSE){
 	global $vars,$CFG_array;
 	
 	
