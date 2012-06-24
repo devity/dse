@@ -224,7 +224,32 @@ function dse_panic_hd($Interactive=FALSE){
 	//delete unneeded packages
 	//gzip as much as possible in /backup and /var/log
 	//look for large files recently
-	//loge for largest fiels
+	
+	
+	if($Interactive){
+		//look for largest fiels
+		$LargeFileCommands=array(
+			"find / -type f -size +100000k -exec ls -l {} \; 2>/dev/null '",
+			"du -a / 2>/dev/null | sort -n -r | head -n 100",
+			//"for i in G M K; do du -a / 2>/dev/null | grep [0-9]$i | sort -nr -k 1; done | head -n 11",
+			"find / -type f -print0| xargs -0 ls -s | sort -rn | awk ‘{size=$1/1024; printf(\“%dMb %s\n\”, size,$2);}’ | head",
+			"sudo find . -type f -print0 2>/dev/null | xargs -0 ls -s | sort -rn | awk '{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}' | head";
+			
+		);
+		foreach($LargeFileCommands as $Command){
+			$A=dse_ask_yn("Run $Command ? ");
+			if($A=='Y'){
+				$StartTime=time()+microtime();
+				$r=`$Command`;  $EndTime=time()+microtime(); $RunTime=number_format($EndTime-$StartTime,2);
+				print getColoredString("Files > 100MB  $Command ($RunTime s)\n","cyan");
+				print getColoredString($r,"yellow");
+			}
+		}
+	}
+	
+	
+	
+	
 	//look for large uncompressed info
 	//find redundant files
 	print getColoredString("Final Disk Stats:\n","cyan");

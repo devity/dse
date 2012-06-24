@@ -471,11 +471,11 @@ function dse_package_install($PackageName){
 		}else{
 			//$r=`$Command`;
 			$r=dse_popen($Command);
-			// print "cmd: $Command   r=".$r."\n";
+			 print "cmd: $Command   r=".$r."\n";
 			if(str_contains($r,"will be installed")){
 				print getColoredString(" Installed.\n","green","black");
 				return 0;
-		  	}elseif(str_contains($r," already the newest versi")){
+		  	}elseif(str_contains($r,"is already ")){
 				print getColoredString(" Already Installed.\n","green","black");
 				return 0;
 		  	}elseif(str_contains($r,"ldn't find pack")){

@@ -173,15 +173,16 @@ function dse_popen($Command){
 	global $vars;
 	ob_end_flush(); 
 	$handle = popen($Command, 'r');
+	$tbr="";
 	while (!feof($handle)) {
-        echo fgets($handle);
+        $tbr.= fgets($handle);
         flush();
         ob_flush();
         flush();
 	}
 	pclose($handle);
-}
-
+	return $tbr;
+		
 		
 function dse_ask_yn($Question){
 	global $vars;
