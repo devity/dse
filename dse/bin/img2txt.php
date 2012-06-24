@@ -15,13 +15,17 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $vars['ScriptHeaderShow']=TRUE;
+$CharsWide=100;
 
+$FVal=.95;
 $parameters_details = array(
   //array('l','log-to-screen',"log to screen too"),
  // array('','log-show:',"shows tail of log ".$CFG_array['LogFile']."  argv1 lines"),
   array('h','help',"this message"),
   array('q','quiet',"same as --verbosity 0"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('w:','width:',"width in characters"),
+  array('f:','f-val:',"an color picking adjuctment. argv options = number 0.1 to 10"),
   //array('s','status',"prints status file".$CFG_array['StatusFile']),
   //array('e','edit',"backs up and launches a vim of ".$vars['DSE']['PANIC_CONFIG_FILE']),
   //array('c','config-show',"prints contents of ".$vars['DSE']['PANIC_CONFIG_FILE']),
@@ -32,10 +36,16 @@ $vars['Usage']=dse_cli_get_usage($parameters_details);
 $vars['argv_origional']=$argv;
 
 dse_cli_script_start();
-print "\n\n\n";
-dse_cli_script_header();
 	
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+	case 'w':
+	case 'width':
+		$CharsWide=$vars['options'][$opt];
+		break;
+	case 'f':
+	case 'f-val':
+		$FVal=$vars['options'][$opt];
+		break;
 	case 'l':
 	case 'log-to-screen':
 		$vars['DSE']['LOG_TO_SCREEN']=TRUE;
@@ -137,94 +147,88 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 }
 
-$CharsWide=200;
-$InFile=$argv[1];
-if($argv[2]){
-	$OutFile=$argv[2];
-}else{
-	$OutFile="out.ansi";
-}
-$Command="identify -format \"%w x %h\" $InFile";
-$r=`$Command`;
-print "Command: $Command\n $r\n";
-list($W,$H)=split(" x ",$r);
-$W=trim($W);
-$H=trim($H);
-print "$InFile $W x $H\n";
-$Scale=$CharsWide/$W;
-print "Scale: $Scale\n";
-$Wn=intval($Scale*$W);
-$Hn=intval(($Scale*$H)*(5/9));
-print "out characters $Wn x $Hn\n";
-
-
-$Command="convert -sample ${Wn}x${Hn}! $InFile out.txt";
-$r=`$Command`;
-print "Command: $Command\n $r\n";
-
-$raw=dse_file_get_contents("out.txt");
-//print $raw;
-$raw=str_replace("rgba","rgb",$raw);
-$last_x=0;
-$high_x=0;
-$high_y=0;
-foreach(split("\n",$raw) as $L){
-	$x=strcut($L,"",",");
-	$y=strcut($L,",",":");
-	$rgb=strcut($L,"rgb(",")");
-	//if($x!=$last_x){
-		$rbg_array[$y][$x]=split(",",$rgb);
-	//}
-	//print "$rgb ";
-	if($x>$high_x) $high_x=$x;
-	if($y>$high_y) $high_y=$y;
+if($vars[Verbosity]>1){
+	print "\n\n\n";
+	dse_cli_script_header();
 }
 
-print "high_x=$high_x high_y=$high_y \n";
-//print_r($rbg_array);
 
-foreach($rbg_array as $row){
-	foreach($row as $p){
-		print img2txt_pixel2printable($p);
+for($fi=1;$fi<sizeof($argv);$fi++){
+	$InFile=$argv[$fi];
+	$Extension=strcut(basename($InFile),".");
+	$FileBaseName=str_replace(".$Extension","", basename($InFile));
+	$OutFile="$FileBaseName.ansi";
+	if($vars[Verbosity]>=1){
+		print "File: $InFile\n";
 	}
-	print "\n";
+	img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal);
 }
-
-
-
-//$Command="convert -sample ${Wn}x${Hn} $InFile out.txt";
-//$r=`$Command`;
-//print "Command: $Command\n $r\n";
-
-if($DidSomething){
-	if(!$Quiet && !$DoSetEnv){
-		dpv(1, getColoredString($vars['DSE']['SCRIPT_NAME']." Done. Exiting (0)","black","green"));
-		$vars['shell_colors_reset_foreground']='';	print getColoredString("\n","white","black");
-	}
-	if(!$NoExit) exit(0);
-}else{
-	if(!$Quiet && !$DoSetEnv){
-		dpv(1, getColoredString("Nothing to do! try --help for usage. ".$vars['DSE']['SCRIPT_NAME']." Done. Exiting (-1)","pink","black"));
-		$vars['shell_colors_reset_foreground']='';	print getColoredString("\n","white","black");
-	}
-	if(!$NoExit) exit(-1);
-}
-
-
 exit(0);
 
 
-function img2txt_pixel2printable($p){
+function img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal){
+	global $vars;
+		
+	$Command="identify -format \"%w x %h\" $InFile";
+	$r=`$Command`;
+	//print "Command: $Command\n $r\n";
+	list($W,$H)=split(" x ",$r);
+	$W=trim($W);
+	$H=trim($H);
+	//print "$InFile $W x $H\n";
+	$Scale=$CharsWide/$W;
+	//print "Scale: $Scale\n";
+	$Wn=intval($Scale*$W);
+	$Hn=intval(($Scale*$H)*(5/12));
+	//print "out characters $Wn x $Hn\n";
+	
+	
+	$Command="convert -sample ${Wn}x${Hn}! $InFile out.txt";
+	$r=`$Command`;
+	//print "Command: $Command\n $r\n";
+	
+	$raw=dse_file_get_contents("out.txt");
+	//print $raw;
+	$raw=str_replace("rgba","rgb",$raw);
+	$last_x=0;
+	$high_x=0;
+	$high_y=0;
+	foreach(split("\n",$raw) as $L){
+		$x=strcut($L,"",",");
+		$y=strcut($L,",",":");
+		$rgb=strcut($L,"rgb(",")");
+		//if($x!=$last_x){
+			$rbg_array[$y][$x]=split(",",$rgb);
+		//}
+		//print "$rgb ";
+		if($x>$high_x) $high_x=$x;
+		if($y>$high_y) $high_y=$y;
+	}
+	
+	//print "high_x=$high_x high_y=$high_y \n";
+	//print_r($rbg_array);
+	
+	foreach($rbg_array as $x=>$row){
+		foreach($row as $y=>$p){
+			//print "\n x=$x y=$y\n";
+			print img2txt_pixel2printable($p,$x,$y,$FVal);
+		}
+		print "\n";
+	}
+	
+}
+
+function img2txt_pixel2printable($p,$x,$y,$FVal){
 	global $vars;
 	if(!is_array($p)){
 		return "";
 	}
-	$Coverage=" '+~:=o*%O@#$000";
-	$CoverageSize=strlen($Coverage)-2;
-	
+	$Coverage=" '`.,-+~:=co*s%@$#O08GM";
+	$CoverageSize=strlen($Coverage);
+	$Coverage.="00"; //pad for buffer overrun
 	list($r,$g,$b)=$p;
 	$Brightness=(($r+$g+$b)/(256*3));
-	
+	$Brightness=number_format($Brightness,2);
 	/* not working
 	$BrighnessRandFactor=.011;
 	if(TRUE){
@@ -241,21 +245,58 @@ function img2txt_pixel2printable($p){
 	
 	$Char=$Coverage[$BrightnessCoverage];
 	
+	$debug_x=10;
+	$debug_y=2;
+	
 	$color="";
-	$f=.3; $f_inc=.01;
+//	$f=.3; $f_inc=.01;
+	//$f=.95; $f_inc=.001;
+	$f=$FVal	; $f_inc=$f/100;
+	$L=0;
 	while( (!$color) && $f>0){
-		//if(rand(0,300)==1) print "\n if($r>$g/$f && $r>$b/$f)";
-		if($r>$g/$f && $r>$b/$f){
+		$L++;
+			
+		if($g>$r/$f && $b>$r/$f){
+			if(abs($g-$b)<$b/10){
+				//$color="cyan";
+			}elseif($g>$b*.8){
+				if($g>$r*.8){
+					$color="green";
+				}else{
+					$color="yellow";
+				}
+			}else{
+				$color="blue";
+			}
+		}elseif($g>$r/$f && $b>$r/$f){
+			$color="cyan";
+		}elseif($r>$b/$f && $g>($b)/$f){
+			if($g>$r*.8){
+				$color="green";
+			}else{
+				$color="yellow";
+			}
+		}elseif($r>$g/$f && $r>$b/$f){
 			$color="red";
 		}elseif($g>$r/$f && $g>$b/$f){
 			$color="green";
 		}elseif($b>$r/$f && $b>$g/$f){
 			$color="blue";
-		}elseif($r>$b/$f && $g>$b/$f){
-			$color="yellow";
+		}elseif($r>$g/$f && $b>$g/$f){
+			$color="purple";
 		}
 		$f-=$f_inc;
+		if($x==$debug_x && $y==$debug_y){
+			$color="red"; $Char="[O]";
+			//print "\nif($x==$debug_x && $y==$debug_y){";
+		}
+		if($x-1==$debug_x && $y-1==$debug_y){
+			// $Char.="\nL=$L f=$f \{$r,$g,$b:$Brightness ($r>$b/$f && $g>$b/$f) ($r>".$b/$f." && $g>".$b/$f.") C=$color}";
+			 //$color="yellow";
+		}
+		//print "\nif($x==$debug_x && $y==$debug_y){";
 	}
+//$Char=" $L";
 	if($color){
 		$Char=getColoredString("$Char",$color,"black");
 	}else{
