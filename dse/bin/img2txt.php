@@ -17,7 +17,7 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 $vars['ScriptHeaderShow']=TRUE;
 $CharsWide=100;
 
-$FVal=.95;
+$FVal=.98;
 $parameters_details = array(
   //array('l','log-to-screen',"log to screen too"),
  // array('','log-show:',"shows tail of log ".$CFG_array['LogFile']."  argv1 lines"),
@@ -151,7 +151,7 @@ if($vars[Verbosity]>1){
 	print "\n\n\n";
 	dse_cli_script_header();
 }
-
+$PP=img2txt_build_possibles_map();
 
 for($fi=1;$fi<sizeof($argv);$fi++){
 	$InFile=$argv[$fi];
@@ -165,10 +165,22 @@ for($fi=1;$fi<sizeof($argv);$fi++){
 }
 exit(0);
 
+function img2txt_rbg_pair_distance($rbg1,$rbg2){
+	global $vars;
+	list($r1,$g1,$b1)=$rbg1;
+	list($r2,$g2,$b2)=$rbg2;
+	$Distance=sqrt( ($r1-$r2)*($r1-$r2)+($g1-$g2)*($g1-$g2)+($b1-$b2)*($b1-$b2) );
+	return $Distance;
+}
 
 function img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal){
-	global $vars;
-		
+	global $vars,$PP;
+	$PP=img2txt_build_possibles_map();
+	foreach($PP as $P){
+		list($r,$g,$b,$Char,$ForgroundName,$BackgroundName,$ForgroundColorParts,$BackgroundColorParts)=$P;
+		//print "$r,$g,$b \n";
+	}
+	
 	$Command="identify -format \"%w x %h\" $InFile";
 	$r=`$Command`;
 	//print "Command: $Command\n $r\n";
@@ -215,35 +227,87 @@ function img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal){
 		}
 		print "\n";
 	}
-	
+	print getColoredString("","white","black","0",TRUE);
 }
 
-function img2txt_pixel2printable($p,$x,$y,$FVal){
+function img2txt_find_best_match_in_map($rbg){
+	global $vars,$PP;
+	$LowestDistance=1000000;
+	$BestMatch="";
+	foreach($PP as $P){
+		list($r,$g,$b,$Char,$ForgroundName,$BackgroundName,$ForgroundColorParts,$BackgroundColorParts)=$P;
+		$Distance=img2txt_rbg_pair_distance($rbg,array($r,$g,$b));
+		if($Distance<$LowestDistance){
+			$LowestDistance=$Distance;
+		//	print "\n $rbg,array($r,$g,$b) D=$Distance < Dl= $LowestDistance \n";
+			$BestMatch=array($Char,$ForgroundName,$BackgroundName);
+		}
+	}
+	return $BestMatch;
+}
+
+function img2txt_build_possibles_map(){
 	global $vars;
+	$Coverage=" '`.,-+~:=co*s%@$#O08GM";
+	$Coverage=" '.,:;-+=*os@$08M";
+	$CoverageSize=strlen($Coverage);
+	$Colors=array("black"=>array(0,0,0),"white"=>array(255,255,255),
+	"red"=>array(255,0,0),"green"=>array(0,255,0),"blue"=>array(0,0,255)
+		,"yellow"=>array(255,255,0),"cyan"=>array(0,255,255),"magenta"=>array(255,0,255));
+	//print_r($Colors);
+	$CoveragePercentMax=75;
+	$PP=array();
+	foreach($Colors as $BackgroundName=>$BackgroundColorParts){
+		//print "safsdaf";
+		foreach($Colors as $ForgroundName=>$ForgroundColorParts){
+			for($Ci=0;$Ci<$CoverageSize;$Ci++){
+				//print $Ci;
+				$LetterCoveragePercent=$CoveragePercentMax*($Ci/$CoverageSize);
+				$BackgroundVisablePercent=(100-$LetterCoveragePercent)/100;
+				$LetterCoveragePercent=$LetterCoveragePercent/100;
+				$r=intval(($Colors[$BackgroundName][0]*$BackgroundVisablePercent+$Colors[$ForgroundName][0]*$LetterCoveragePercent)/1);
+				$g=intval(($Colors[$BackgroundName][1]*$BackgroundVisablePercent+$Colors[$ForgroundName][1]*$LetterCoveragePercent)/1);
+				$b=intval(($Colors[$BackgroundName][2]*$BackgroundVisablePercent+$Colors[$ForgroundName][2]*$LetterCoveragePercent)/1);
+				$Char=$Coverage[$Ci];
+				//print $Char;
+				$PP[]=array($r,$g,$b,$Char,$ForgroundName,$BackgroundName,$ForgroundColorParts,$BackgroundColorParts);
+				if(rand(0,300)==3){
+					//print getColoredString($Char,$ForgroundName,$BackgroundName);
+				//	print "sllllll=".$Colors[$BackgroundName][0];
+					// print "\n ==>$LetterCoveragePercent/$BackgroundVisablePercent rgb=$r,$g,$b char=$Char,$ForgroundName,$BackgroundName,$ForgroundColorParts,$BackgroundColorParts\n";
+			
+				}
+			}
+		}
+	}
+
+	//print_r($PP);
+	return($PP);
+	  
+}
+function img2txt_pixel2printable($p,$x,$y,$FVal){
+	global $vars,$PP;
 	if(!is_array($p)){
 		return "";
 	}
+	
+	list($Char,$ForgroundColor,$BackgroundColor)=img2txt_find_best_match_in_map($p);
+	return getColoredString("$Char",$ForgroundColor,$BackgroundColor);
+	/*
 	$Coverage=" '`.,-+~:=co*s%@$#O08GM";
 	$CoverageSize=strlen($Coverage);
 	$Coverage.="00"; //pad for buffer overrun
 	list($r,$g,$b)=$p;
 	$Brightness=(($r+$g+$b)/(256*3));
 	$Brightness=number_format($Brightness,2);
-	/* not working
-	$BrighnessRandFactor=.011;
-	if(TRUE){
-		if(rand(0,1)==1) $PN=-1; else $PN=1;
-		$Adjust=$PN*rand(0,$BrighnessRandFactor*$Brightness*100);	
-		//if(rand(0,200)==2) print "\n	$Adjust=$PN*rand(0,$BrighnessRandFactor*$Brightness*100*100); adjust=$Adjust	\n";
-		//print "Brightness=$Brightness adjust=$Adjust ";
-		$Brightness+=$Adjust;
-	}*/
+	
 
 	$BrightnessCoverage=intval($Brightness*$CoverageSize);
 	if($BrightnessCoverage<0) $BrightnessCoverage=0;
 	if($BrightnessCoverage>$CoverageSize-1) $BrightnessCoverage=$CoverageSize-1;
 	
 	$Char=$Coverage[$BrightnessCoverage];
+	$NChar=$Coverage[$CoverageSize-$BrightnessCoverage];
 	
 	$debug_x=10;
 	$debug_y=2;
@@ -253,10 +317,11 @@ function img2txt_pixel2printable($p,$x,$y,$FVal){
 	//$f=.95; $f_inc=.001;
 	$f=$FVal	; $f_inc=$f/100;
 	$L=0;
+	$cpp=70;
 	while( (!$color) && $f>0){
 		$L++;
 			
-		if($g>$r/$f && $b>$r/$f){
+		if($g>$r/$f && $b>$r/$f && rand(0,99)<$cpp+10){
 			if(abs($g-$b)<$b/10){
 				//$color="cyan";
 			}elseif($g>$b*.8){
@@ -268,21 +333,21 @@ function img2txt_pixel2printable($p,$x,$y,$FVal){
 			}else{
 				$color="blue";
 			}
-		}elseif($g>$r/$f && $b>$r/$f){
+		}elseif($g>$r/$f && $b>$r/$f && rand(0,99)<$cpp+6){
 			$color="cyan";
-		}elseif($r>$b/$f && $g>($b)/$f){
+		}elseif($r>$b/$f && $g>($b)/$f && rand(0,99)<$cpp+3){
 			if($g>$r*.8){
 				$color="green";
 			}else{
 				$color="yellow";
 			}
-		}elseif($r>$g/$f && $r>$b/$f){
+		}elseif($r>$g/$f && $r>$b/$f && rand(0,99)<$cpp){
 			$color="red";
-		}elseif($g>$r/$f && $g>$b/$f){
+		}elseif($g>$r/$f && $g>$b/$f && rand(0,99)<$cpp-3){
 			$color="green";
-		}elseif($b>$r/$f && $b>$g/$f){
+		}elseif($b>$r/$f && $b>$g/$f && rand(0,99)<$cpp-6){
 			$color="blue";
-		}elseif($r>$g/$f && $b>$g/$f){
+		}elseif($r>$g/$f && $b>$g/$f && rand(0,99)<$cpp-10){
 			$color="purple";
 		}
 		$f-=$f_inc;
@@ -296,13 +361,25 @@ function img2txt_pixel2printable($p,$x,$y,$FVal){
 		}
 		//print "\nif($x==$debug_x && $y==$debug_y){";
 	}
-//$Char=" $L";
+//$Char=" $Brightness";
+	if($Brightness<.4){
+		$Type=2;
+	}elseif($Brightness>.8){
+		$Type=1;
+	}else{
+		$Type=0;
+	}
+//	$Char=$Type;
 	if($color){
-		$Char=getColoredString("$Char",$color,"black");
+		if($Type==1){
+			$Char=getColoredString("$Char","black",$color,$Type);
+		}else{
+			$Char=getColoredString("$Char",$color,"black",$Type);
+		}
 	}else{
 		$Char=getColoredString("$Char","white","black");
 	}
-	return $Char;
+	return $Char;*/
 }
 
 

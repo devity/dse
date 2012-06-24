@@ -2408,8 +2408,8 @@ function getColoredString($string, $forground_color = null, $background_color = 
 	if($background_color_code==null || $background_color_code==""){
 		$background_color_code="40";
 	}
-	$colored_string  = "\033[0m";
-	//$colored_string="";
+//	$colored_string  = "\033[0m";
+	$colored_string="";
 	$colored_string .= "\033[$type;$forground_color_code;$background_color_code"."m";
 	$colored_string .=  $string;//"      ".$string."==".$type.";".$forground_color_code.";".$background_color_code."m";
 	
