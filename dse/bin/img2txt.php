@@ -16,8 +16,35 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 
 $vars['ScriptHeaderShow']=TRUE;
 $CharsWide=100;
+$Coverage=" '`.,-+~:=co*s%@$#O08GM";//$Coverage=" '`.,-+~:=co*s%@$#O08GM";
+	//$Coverage=" '.,:;-+=*os@$08M";
+	
+	//$Coverage=" '.,:;-o$08M";
+	
+$Coverage="  '`.,,::;;~-+()[]{}=co*szxmwe%TO@Y#A8G0M";
+$Coverage="  `..,,::;;~~--++==v*szxme(())[[]]{}}%@TOYG#A80M";
+$Coverage=" .,~-+=m@OG0M";
+//$Coverage="M0GO@m=+-~,. ";
+$Coverage=" .+mO0";
+$Coverage=" .=8";
+$Coverage=" .o0";
+$Coverage=" .~/o0";
+$Coverage=" O";
+$Coverage="  ;%##NMMM";
+$Coverage="   ...,,;";
+$Coverage="     ....,,,:;";
+$Coverage="o%nm\$xNM#";
+$Coverage=" .-/OM";
 
-$FVal=.98;
+
+
+$Coverage="  `..,,::;;~~--++==v*szxme(())[[]]{}}%@TOYGXZ#A80NMMM";
+$Coverage=" .=8";
+$Coverage=" .%#M";
+
+$Coverage="@";
+
+$FVal=.96;
 $parameters_details = array(
   //array('l','log-to-screen',"log to screen too"),
  // array('','log-show:',"shows tail of log ".$CFG_array['LogFile']."  argv1 lines"),
@@ -166,7 +193,7 @@ for($fi=1;$fi<sizeof($argv);$fi++){
 exit(0);
 
 function img2txt_rbg_pair_distance($rbg1,$rbg2){
-	global $vars;
+	global $vars,$Coverage;
 	list($r1,$g1,$b1)=$rbg1;
 	list($r2,$g2,$b2)=$rbg2;
 	$Distance=sqrt( ($r1-$r2)*($r1-$r2)+($g1-$g2)*($g1-$g2)+($b1-$b2)*($b1-$b2) );
@@ -174,7 +201,7 @@ function img2txt_rbg_pair_distance($rbg1,$rbg2){
 }
 
 function img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal){
-	global $vars,$PP;
+	global $vars,$PP,$Coverage;
 	$PP=img2txt_build_possibles_map();
 	foreach($PP as $P){
 		list($r,$g,$b,$Char,$ForgroundName,$BackgroundName,$ForgroundColorParts,$BackgroundColorParts)=$P;
@@ -191,7 +218,7 @@ function img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal){
 	$Scale=$CharsWide/$W;
 	//print "Scale: $Scale\n";
 	$Wn=intval($Scale*$W);
-	$Hn=intval(($Scale*$H)*(5/12));
+	$Hn=intval(($Scale*$H)*(40/100));
 	//print "out characters $Wn x $Hn\n";
 	
 	
@@ -231,7 +258,7 @@ function img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal){
 }
 
 function img2txt_find_best_match_in_map($rbg){
-	global $vars,$PP;
+	global $vars,$PP,$Coverage;
 	$LowestDistance=1000000;
 	$BestMatch="";
 	foreach($PP as $P){
@@ -247,15 +274,13 @@ function img2txt_find_best_match_in_map($rbg){
 }
 
 function img2txt_build_possibles_map(){
-	global $vars;
-	$Coverage=" '`.,-+~:=co*s%@$#O08GM";
-	$Coverage=" '.,:;-+=*os@$08M";
+	global $vars,$Coverage;
 	$CoverageSize=strlen($Coverage);
 	$Colors=array("black"=>array(0,0,0),"white"=>array(255,255,255),
 	"red"=>array(255,0,0),"green"=>array(0,255,0),"blue"=>array(0,0,255)
 		,"yellow"=>array(255,255,0),"cyan"=>array(0,255,255),"magenta"=>array(255,0,255));
 	//print_r($Colors);
-	$CoveragePercentMax=75;
+	$CoveragePercentMax=70;
 	$PP=array();
 	foreach($Colors as $BackgroundName=>$BackgroundColorParts){
 		//print "safsdaf";
@@ -286,7 +311,7 @@ function img2txt_build_possibles_map(){
 	  
 }
 function img2txt_pixel2printable($p,$x,$y,$FVal){
-	global $vars,$PP;
+	global $vars,$PP,$Coverage;
 	if(!is_array($p)){
 		return "";
 	}
