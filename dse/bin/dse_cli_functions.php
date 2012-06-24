@@ -1509,7 +1509,21 @@ function deleteFromArray(&$array, $deleteIt, $useOldKeys = FALSE, $useDeleteItAs
 }
 
 
-
+function dse_is_redhat(){
+	global $vars;
+	if(isset($vars['DSE']['IS_REDHAT'])) return $vars['DSE']['IS_REDHAT'];
+	if(!file_exists("/etc/issue")){
+		$vars['DSE']['IS_REDHAT']=FALSE;
+	}else{
+		$EtcIssue=dse_file_get_contents("/etc/issue");
+		if(str_contains($EtcIssue,"Red Hat")){
+			$vars['DSE']['IS_REDHAT']=TRUE;
+		}else{
+			$vars['DSE']['IS_REDHAT']=FALSE;
+		}
+	}
+	return $vars['DSE']['IS_REDHAT'];
+}
 function dse_is_osx(){
 	global $vars;
 	if(isset($vars['DSE']['IS_OSX'])) return $vars['DSE']['IS_OSX'];
@@ -2128,82 +2142,79 @@ function dse_bt_colorize($v,$t,$type="MAXIMUM",$v_str=""){
 	}
 	
 }
+$vars[shell_foreground_colors] = array();
+$vars[shell_background_colors] = array();
 
 
-
-	$vars[shell_foreground_colors] = array();
-	$vars[shell_background_colors] = array();
-	 
-			
 	
 	$vars[shell_foreground_colors]['blink'] = '0;5';
-	
-	
 	$vars[shell_foreground_colors]['white'] = '1;37';
 	$vars[shell_foreground_colors]['grey'] = '0;2';
 	$vars[shell_foreground_colors]['lightest_grey'] = '1;37';
 	$vars[shell_foreground_colors]['light_grey'] = '6;37';
 	$vars[shell_foreground_colors]['dark_grey'] = '1;30';
 	$vars[shell_foreground_colors]['black'] = '0;30';
-	
 	$vars[shell_foreground_colors]['blink_red'] = '5;91';
 	$vars[shell_foreground_colors]['red'] = '0;31';
 	$vars[shell_foreground_colors]['pink'] = '1;31';
 	$vars[shell_foreground_colors]['light_red'] = '1;31';
 	$vars[shell_foreground_colors]['dark_red'] = '2;91';
-	
 	$vars[shell_foreground_colors]['blink_green'] = '5;92';
 	$vars[shell_foreground_colors]['green'] = '0;92';
 	$vars[shell_foreground_colors]['bold_green'] = '1;92';
 	$vars[shell_foreground_colors]['dark_green'] = '2;32';
-	
 	$vars[shell_foreground_colors]['blink_yellow'] = '5;93';
 	$vars[shell_foreground_colors]['brown'] = '10;33';
 	$vars[shell_foreground_colors]['orange'] = '10;33';
 	$vars[shell_foreground_colors]['yellow'] = '0;93';
 	$vars[shell_foreground_colors]['bold_yellow'] = '1;93';
-	
 	$vars[shell_foreground_colors]['dark_blue'] = '0;34';
 	$vars[shell_foreground_colors]['blue'] = '1;34';
 	$vars[shell_foreground_colors]['light_blue'] = '1;94';
-	
 	$vars[shell_foreground_colors]['purple'] = '0;35';
 	$vars[shell_foreground_colors]['light_purple'] = '1;35';
 	$vars[shell_foreground_colors]['dark_purple'] = '2;35';
-	
 	$vars[shell_foreground_colors]['dark_cyan'] = '0;36';
 	$vars[shell_foreground_colors]['cyan'] = '1;36';
-	
-	 
-	 
-	 
-	$vars[shell_background_colors]['white'] = '107';
-	$vars[shell_background_colors]['grey'] = '47';
-	$vars[shell_background_colors]['black'] = '40';
-	$vars[shell_background_colors]['dark_red'] = '41';
-	$vars[shell_background_colors]['dark_green'] = '42';
-	$vars[shell_background_colors]['dark_yellow'] = '43';
-	$vars[shell_background_colors]['dark_blue'] = '44';
-	$vars[shell_background_colors]['dark_magenta'] = '45';
-	$vars[shell_background_colors]['dark_cyan'] = '46';
-	
-	$vars[shell_background_colors]['red'] = '101';
-	$vars[shell_background_colors]['green'] = '102';
-	$vars[shell_background_colors]['yellow'] = '103';
-	$vars[shell_background_colors]['orange'] = '43';
-	$vars[shell_background_colors]['blue'] = '104';
-	$vars[shell_background_colors]['magenta'] = '105';
-	$vars[shell_background_colors]['cyan'] = '106';
-	
+	if(dse_is_osx()||dse_is_redhat()){
+		$vars[shell_background_colors]['white'] = '1;7';
+		$vars[shell_background_colors]['grey'] = '0;47';
+		$vars[shell_background_colors]['black'] = '1;1';
+		$vars[shell_background_colors]['dark_red'] = '7;31'; //'11;41';
+		$vars[shell_background_colors]['dark_green'] = '11;42';
+		$vars[shell_background_colors]['dark_yellow'] = '11;43';
+		$vars[shell_background_colors]['dark_blue'] = '11;44';
+		$vars[shell_background_colors]['dark_magenta'] = '11;45';
+		$vars[shell_background_colors]['dark_cyan'] = '11;46';
+		$vars[shell_background_colors]['red'] = '3;41';
+		$vars[shell_background_colors]['green'] = '3;42';
+		$vars[shell_background_colors]['yellow'] = '3;43';
+		$vars[shell_background_colors]['orange'] = '3;43';
+		$vars[shell_background_colors]['blue'] = '3;44';
+		$vars[shell_background_colors]['magenta'] = '3;45';
+		$vars[shell_background_colors]['cyan'] = '3;46';
+	}else{
+		$vars[shell_background_colors]['white'] = '107';
+		$vars[shell_background_colors]['grey'] = '47';
+		$vars[shell_background_colors]['black'] = '40';
+		$vars[shell_background_colors]['dark_red'] = '41';
+		$vars[shell_background_colors]['dark_green'] = '42';
+		$vars[shell_background_colors]['dark_yellow'] = '43';
+		$vars[shell_background_colors]['dark_blue'] = '44';
+		$vars[shell_background_colors]['dark_magenta'] = '45';
+		$vars[shell_background_colors]['dark_cyan'] = '46';
+		$vars[shell_background_colors]['red'] = '101';
+		$vars[shell_background_colors]['green'] = '102';
+		$vars[shell_background_colors]['yellow'] = '103';
+		$vars[shell_background_colors]['orange'] = '43';
+		$vars[shell_background_colors]['blue'] = '104';
+		$vars[shell_background_colors]['magenta'] = '105';
+		$vars[shell_background_colors]['cyan'] = '106';
+	}
 function getColoredString($string, $foreground_color = null, $background_color = null, $ResetColorsAfter=TRUE) {
 	global $vars;
 	
 
-
-	$vars[shell_foreground_colors] = array();
-	$vars[shell_background_colors] = array();
-	 
-			
 	
 	$vars[shell_foreground_colors]['blink'] = '0;5';
 	$vars[shell_foreground_colors]['white'] = '1;37';
@@ -2234,11 +2245,11 @@ function getColoredString($string, $foreground_color = null, $background_color =
 	$vars[shell_foreground_colors]['dark_purple'] = '2;35';
 	$vars[shell_foreground_colors]['dark_cyan'] = '0;36';
 	$vars[shell_foreground_colors]['cyan'] = '1;36';
-	if(dse_is_osx()){
+	if(dse_is_osx()||dse_is_redhat()){
 		$vars[shell_background_colors]['white'] = '1;7';
 		$vars[shell_background_colors]['grey'] = '0;47';
 		$vars[shell_background_colors]['black'] = '1;1';
-		$vars[shell_background_colors]['dark_red'] = '11;41';
+		$vars[shell_background_colors]['dark_red'] = '7;31'; //'11;41';
 		$vars[shell_background_colors]['dark_green'] = '11;42';
 		$vars[shell_background_colors]['dark_yellow'] = '11;43';
 		$vars[shell_background_colors]['dark_blue'] = '11;44';
@@ -2326,12 +2337,8 @@ function setBackgroundColor($background_color) {
 }
 function setForgroundColor($foreground_color) {
 	global $vars;
+	return getColoredString("", $foreground_color, null, FALSE);
 	$colored_string = "";
-	//$colored_string .= "\033[0m";
-	if( (intval($foreground_color)<=0 || $foreground_color=="0") && isset($vars[shell_foreground_colors][$foreground_color])) {
-		$colored_string .= "\033[" . $vars[shell_foreground_colors][$foreground_color] . "m";
-	}
-	return $colored_string;
 }
 	
 	
