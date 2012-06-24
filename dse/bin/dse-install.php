@@ -84,7 +84,8 @@ $dse_git_dir="$PWD/dse/dse";
 {
 	
 	if(file_exists($DefaultInstallDirectory)){
-		print "DSE already installed at $DefaultInstallDirectory    Reinstall? ";
+	/*	//only ask if QuestionLevel=ALL|FULL|HIGH|10
+	 	print "DSE already installed at $DefaultInstallDirectory    Reinstall? ";
 		$key=strtoupper(dse_get_key());
 		cbp_characters_clear(1);
 		if($key=="Y"){
@@ -114,7 +115,7 @@ $dse_git_dir="$PWD/dse/dse";
 		}else{
 			print " unknown key: $key ";
 		}
-		print "\n";
+		print "\n";*/
 	}else{
 		print "DSE not installed at $DefaultInstallDirectory    Install? ";
 		$key=strtoupper(dse_get_key());
@@ -156,7 +157,7 @@ $dse_git_dir="$PWD/dse/dse";
 //"dnsutils","bind9","vsftpd","tasksel",""
 
 $PackageNamesArray=array("wget","curl","bc");
-$OSXPackageNamesArray=array("lynx");
+$OSXPackageNamesArray=array("lynx","imagemagick");
 $NotOSXPackageNamesArray=array("perl","vim","memstat","iftop","sysstat","chkconfig","lynx-cur");
 
 if(dse_is_centos()){

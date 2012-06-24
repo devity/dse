@@ -111,8 +111,8 @@ $vars['DSE']['SUGGESTED']['HISTFILESIZE']=100000;
 // *********************************************************************************
 // ********* Set colors and such
 $vars['DSE']['USE_ANSI_COLOR']="YES";
-$vars['DSE']['shell_colors_reset_foreground']="white";
-$vars['DSE']['shell_colors_reset_background']="black";
+$vars['DSE']['SHELL_FORGROUND']="white";
+$vars['DSE']['SHELL_BACKGROUND']="black";
 $vars['DSE']['OUTPUT_FORMAT']="TXT";
 
 // ********* http_stress Settings

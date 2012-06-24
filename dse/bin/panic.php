@@ -14,6 +14,14 @@ $vars['DSE']['DSE_DSE_VERSION_DATE']="2012/06/24";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
+$vars['ScriptHeaderShow']=TRUE;
+
+global $CFG_array;
+$CFG_array=array();
+$CFG_array['QueriesMade']=0;
+$CFG_array['QueriesSucceeded']=0;
+$CFG_array['QueriesFailed']=0;
+$CFG_array=dse_read_config_file($vars['DSE']['PANIC_CONFIG_FILE'],$CFG_array);	
 
 $parameters_details = array(
   array('l','log-to-screen',"log to screen too"),
@@ -29,9 +37,11 @@ $parameters_details = array(
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
 $vars['argv_origional']=$argv;
+
 dse_cli_script_start();
-		
-$BackupBeforeUpdate=TRUE;
+print "\n\n\n";
+dse_cli_script_header();
+	
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'l':
 	case 'log-to-screen':
@@ -48,6 +58,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'q':
 	case 'quiet':
 		$Quiet=TRUE;
+		$vars['ScriptHeaderShow']=FALSE;
 		$vars['Verbosity']=0;
 		break;
   	case 'v':
@@ -135,9 +146,8 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 
 
 
-dse_cli_script_header();
 
-if(!$DidSomething){
+if($DidSomething) {
 	print getColoredString("\-__-","green").getColoredString("panic Done with acting on arguments.","blue").getColoredString("______--------/\n","green");
 	$A=dse_ask_choice(array(
 		"A"=>"run panic now in fully-automatic/best-guess mode? ( same as 'panic' )",
@@ -182,6 +192,8 @@ exit(0);
 function dse_panic($Interactive=FALSE){
 	global $vars,$CFG_array;
 	
+	print "CFG_array="; print_r($CFG_array); print "\n";
+	dse_panic_hd($Interactive);
 	
 	return;
 }
@@ -189,6 +201,21 @@ function dse_panic($Interactive=FALSE){
 
 function dse_panic_hd($Interactive=FALSE){
 	global $vars,$CFG_array;
+	print getColoredString("Section:  Hard Drive / Disk Space\n","green");
+	print getColoredString("Starting Disk Stats:\n","cyan");
+	print `df -h`;
+	
+	//delete $CFG_array[RemoveFiles[]]
+	if(is_array($CFG_array['RemovableFiles'])){
+		foreach($CFG_array['RemovableFiles'] as $k=>$File){
+			print "Deleting $File... ";
+			$Command="rm -rfv $File 2>&1";
+			print getColoredString($Command,"orange");
+			$r=trim(`$Command`);
+			if($r) print getColoredString("$r","grey");
+			print "\n";
+		}
+	}
 	//delete logs
 	//delete cookes/sessions
 	//delete tmp
@@ -200,6 +227,8 @@ function dse_panic_hd($Interactive=FALSE){
 	//loge for largest fiels
 	//look for large uncompressed info
 	//find redundant files
+	print getColoredString("Final Disk Stats:\n","cyan");
+	print `df -h`;
 	return;
 }
 
