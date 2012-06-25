@@ -6,6 +6,74 @@ function dse_sysstats_sdvcqwev(){
 }	
 	
 	
+function dse_sysstats_power(){
+	global $vars;
+	$VarsToReturn="BatteryPercent,BatteryPercentStr,BatteryMaxCapacity,BatteryCurrentCapacity,BatteryVoltage,BatteryVoltageStr,BatteryCellVoltages,BatteryCycleCount"
+		.",BatteryTemperature,BatteryIsCharging,BatteryFullyCharged,BatteryVoltageStr,BatteryAmperageStr,BatteryTemperatureStr"
+		.",KeyboardBatteryPercentStr,KeyboardBatteryPercent,MouseBatteryPercentStr,MouseBatteryPercent,TrackpadBatteryPercentStr,TrackpadBatteryPercent"; 
+	foreach(split(",",$VarsToReturn) as $v) global $$v;
+	
+	if(dse_is_osx()){
+		$ioregl=`ioreg -l`; 
+		$SystemBatteryRaw=strcut($ioregl,"<class AppleSmartBattery,","<class ");
+//	print $SystemBatteryRaw;
+		$BatteryCapacity=trim(strcut($SystemBatteryRaw,"MaxCapacity\" = ","\n"));
+		$BatteryCurrentCapacity=trim(strcut($SystemBatteryRaw,"CurrentCapacity\" = ","\n"));
+		$BatteryVoltage=trim(strcut($SystemBatteryRaw,"oltage\"=",","));
+		$BatteryCellVoltages=trim(strcut($SystemBatteryRaw,"Voltage\" = ","\n"));
+		$BatteryCycleCount=trim(strcut($SystemBatteryRaw,"CycleCount\" = ","\n"));
+		$BatteryTemperature=trim(strcut($SystemBatteryRaw,"Temperature\" = ","\n"));
+		$BatteryIsCharging=trim(strcut($SystemBatteryRaw,"IsCharging\" = ","\n"));
+		$BatteryFullyCharged=trim(strcut($SystemBatteryRaw,"FullyCharged\" = ","\n"));
+		$BatteryPercent=intval(100*($BatteryCurrentCapacity/$BatteryCapacity));	
+		if($BatteryPercent<30) $BatteryPercentColor="red";
+			elseif($BatteryPercent<70) $BatteryPercentColor="yellow";
+			else $BatteryPercentColor="green";
+		$BatteryPercentStr=colorize($BatteryPercent,$BatteryPercentColor)."% left";
+		$BatteryVoltageStr=number_format($BatteryVoltage/1000,2)."v";
+		$BatteryAmperageStr=number_format($BatteryCurrentCapacity/1000,2)."Ah";
+		$BatteryTemperatureStr=number_format($BatteryTemperature/64,2)." deg C";
+		$BatteryTemperature=number_format($BatteryTemperature/64 ,2);
+		
+$MouseBatteryRaw=strcut($ioregl,"<class BNBMouseDevice,","<class ");
+		$MouseBatteryPercent=trim(strcut($MouseBatteryRaw,"BatteryPercent\" = ","\n"));
+		if($MouseBatteryPercent<14) $MouseBatteryPercentColor="red";
+			elseif($MouseBatteryPercent<50) $MouseBatteryPercentColor="yellow";
+			else $MouseBatteryPercentColor="green";
+		$MouseBatteryPercentStr=colorize($MouseBatteryPercent,$MouseBatteryPercentColor)."% left";
+		
+		$KeyboardBatteryRaw=strcut($ioregl,"<class AppleBluetoothHIDKeyboard,","<class ");
+		$KeyboardBatteryPercent=trim(strcut($KeyboardBatteryRaw,"BatteryPercent\" = ","\n"));
+		if($KeyboardBatteryPercent<14) $KeyboardBatteryPercentColor="red";
+			elseif($KeyboardBatteryPercent<50) $KeyboardBatteryPercentColor="yellow";
+			else $KeyboardBatteryPercentColor="green";
+		$KeyboardBatteryPercentStr=colorize($KeyboardBatteryPercent,$KeyboardBatteryPercentColor)."% left";
+		
+		$TrackpadBatteryRaw=strcut($ioregl,"<class BNBTrackpadDevice,","<class ");
+		$TrackpadBatteryPercent=trim(strcut($TrackpadBatteryRaw,"BatteryPercent\" = ","\n"));
+		if($TrackpadBatteryPercent<14) $TrackpadBatteryPercentColor="red";
+			elseif($TrackpadBatteryPercent<50) $TrackpadBatteryPercentColor="yellow";
+			else $TrackpadBatteryPercentColor="green";
+		$TrackpadBatteryPercentStr=colorize($TrackpadBatteryPercent,$TrackpadBatteryPercentColor)."% left";
+		
+	}
+	return dse_make_array_of_vars($VarsToReturn);
+}	
+	
+	
+function dse_make_array_of_vars($var_stringCsvList_or_array){
+	global $vars;
+	if(!is_array($var_stringCsvList_or_array)){
+		$var_stringCsvList_or_array=split(",",$var_stringCsvList_or_array);
+	}
+	foreach ($var_stringCsvList_or_array as $V){
+		global $$V;
+		$tbr[$V]=$$V;
+	}
+	return $tbr;
+}	
+	
+	
 function dse_sysstats_net_listening(){
 	global $vars;
 	if(dse_is_osx() && dse_which("lsof")){

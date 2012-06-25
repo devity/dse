@@ -14,6 +14,17 @@ $Missing=getColoredString("Missing","red","black");
 $NotChanged=getColoredString("Not Changed","orange","black");
 $NotFixed=getColoredString("Not Changed","orange","black");
 
+if (!function_exists("readline")) { function readline( $prompt = '' ){
+    echo $prompt;
+    return rtrim( fgets( STDIN ), "\n" );
+}}
+
+function dse_hostname(){
+	global $vars;
+	$tbr=trim(`hostname`);
+	if(dse_is_osx()) $tbr=str_remove($tbr,".local");
+	return $tbr;
+}
 
 function dse_pid_get_exe_tree($PID,$Reverse=FALSE){
 	global $vars;
@@ -186,7 +197,7 @@ function dse_popen($Command){
 }
 		
 		
-function dse_ask_yn($Question,$Timeout="",$Default=""){
+function dse_ask_yn($Question,$Default="",$Timeout=""){
 	global $vars;
 	print getColoredString("$Question ","red");
 	print getColoredString(" (","purple");
@@ -208,7 +219,19 @@ function dse_ask_yn($Question,$Timeout="",$Default=""){
 		return 0;
 	}
 }
-function dse_ask_choice($Options,$Question="Select an option:",$Timeout="",$Default=""){
+function dse_ask_entry($Question="Enter Response:",$Default="",$Timeout=""){
+	global $vars;
+	print getColoredString("$Question\n","red");
+	return readline();
+/*	$tbr="";
+	while(TRUE){
+		$K=dse_get_key($Timeout,"\n");
+		if($K=="\n") return $tbr;
+		$tbr.=$K;
+	}*/
+}
+	
+function dse_ask_choice($Options,$Question="Select an option:",$Default="",$Timeout=""){
 	global $vars;
 	print getColoredString("$Question\n","red");
 	$Keys="";
@@ -235,7 +258,7 @@ function dse_ask_choice($Options,$Question="Select an option:",$Timeout="",$Defa
 		}
 	}
 	print getColoredString(" Invalid Option. You pressed '$key'. \n","red","black");
-	return dse_ask_choice($Question,$Options,$Timeout,$Default);
+	return dse_ask_choice($Question,$Options,$Default,$Timeout);
 }
 	
 function dse_directory_ls( $path = '.', $level = 0 ){ 
@@ -788,6 +811,10 @@ function dse_file_get_contents($filename){
 	global $vars;
 	return `cat $filename`;
 }
+function dse_file_append_contents($filename,$Str){
+	global $vars;
+	return dse_file_put_contents($filename,dse_file_get_contents($filename).$Str);
+}
 function dse_file_put_contents($filename,$Str){
 	global $vars;
 	return file_put_contents($filename,$Str);
@@ -850,6 +877,11 @@ function str_contains($str,$needle){
 		if(!(strstr($str,$needle)===FALSE)) return TRUE;
 	}
 	return FALSE;
+}
+
+function str_remove($String,$toRemove){
+	global $vars; print "\n str_remove(tr=$toRemove\n";
+	return str_replace($toRemove,"",$String);
 }
 
 function strcut($haystack,$pre,$post=""){
@@ -2359,6 +2391,12 @@ $vars[shell_foreground_colors]['white'] = '37';
 	//}
 	
 	
+
+function colorize($string, $forground_color = null, $background_color = null, $ResetColorsAfter=TRUE, $type=null) {
+	global $vars;
+	return getColoredString($string, $forground_color, $background_color, $ResetColorsAfter, $type);
+}
+
 function getColoredString($string, $forground_color = null, $background_color = null, $ResetColorsAfter=TRUE, $type=null) {
 	global $vars;
 	
@@ -2415,10 +2453,12 @@ function getColoredString($string, $forground_color = null, $background_color = 
 	
 	
 //	print "=+== $type;$forground_color_code;$background_color_code   ++++++\n\n\n";
-/*
-	if($ResetColorsAfter && $vars['DSE']['SHELL_FORGROUND'] && $vars['DSE']['SHELL_BACKGROUND']){
-		$colored_string .= "\033[0m1;";
-		if(intval($vars['DSE']['SHELL_FORGROUND'])==$vars['DSE']['SHELL_FORGROUND']){
+
+	if($ResetColorsAfter){
+		if(!$vars['DSE']['SHELL_FORGROUND']) $vars['DSE']['SHELL_FORGROUND']="white";
+		if(!$vars['DSE']['SHELL_BACKGROUND']) $vars['DSE']['SHELL_BACKGROUND']="black";
+		$colored_string .= "\033[0";
+		if(FALSE && intval($vars['DSE']['SHELL_FORGROUND'])==$vars['DSE']['SHELL_FORGROUND']){
 			$colored_string .= ";".$vars['DSE']['SHELL_FORGROUND'];
 		}else{
 			if(isset($vars[shell_foreground_colors][$vars['DSE']['SHELL_FORGROUND']])){
@@ -2428,7 +2468,7 @@ function getColoredString($string, $forground_color = null, $background_color = 
 			}
 		}
 		
-		if(intval($vars['DSE']['SHELL_BACKGROUND'])==$vars['DSE']['SHELL_BACKGROUND']){
+		if(FALSE && intval($vars['DSE']['SHELL_BACKGROUND'])==$vars['DSE']['SHELL_BACKGROUND']){
 			$colored_string .= ";".$vars['DSE']['SHELL_BACKGROUND'];
 		}else{
 			if(isset($vars[shell_background_colors][$vars['DSE']['SHELL_BACKGROUND']])){
@@ -2439,7 +2479,7 @@ function getColoredString($string, $forground_color = null, $background_color = 
 		}
 		$colored_string .= "m";
 	}
- * */
+ 
 	return $colored_string;
 }
 

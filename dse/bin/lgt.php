@@ -33,15 +33,25 @@ $SudoReplace="s/sudo/SUDO/g";
 
 $TailLines=$Lines;
 
-$LogsCombinedCommand="(";
+$LogsCombined="";
 foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
-	//print "Adding Log File: $LogFile\n";
-	if($LogsCombinedCommand!="("){
-		$LogsCombinedCommand.="; ";
-	}
-	$LogsCombinedCommand.="echo \"$LogFile\"; tail -n $TailLines $LogFile ";
+	$LogFile=trim($LogFile);
+	
+	$LogContents=`tail -n $TailLines $LogFile`;
+	$LogContents=str_remove($LogContents,dse_hostname());
+	$RedWords=array(" no ","not","false","error","failure","failed","aborted","denied","problem","exhausted","invalid"); 
+	$GreenWords=array(" ok ","granted","accepted","true","success","freeing","cleaned up"); 
+	$BlueWords=array("root"); 
+	foreach($RedWords as $RedWord) $LogContents=str_ireplace($RedWord,colorize($RedWord,"red"),$LogContents);
+	foreach($GreenWords as $GreenWord) $LogContents=str_ireplace($GreenWord,colorize($GreenWord,"green"),$LogContents);
+	foreach($BlueWords as $BlueWord) $LogContents=str_ireplace($BlueWord,colorize($BlueWord,"blue"),$LogContents);
+	
+	$LogsCombined.=colorize($LogFile.": ------\n","cyan");
+	$LogsCombined.=$LogContents;
 }
-$LogsCombinedCommand.=") | sed $SudoReplace | grep -v NSAutoreleaseNoPool | grep -v geektool | grep -v Geeklet | grep -v Chrome ";
+
+
+//$LogsCombinedCommand.=") | sed $SudoReplace | grep -v NSAutoreleaseNoPool | grep -v geektool | grep -v Geeklet | grep -v Chrome ";
 //| sed 's/louiss-macbook-pro-2//g' | sed 's/Louiss-MacBook-Pro-2//g' 
 //| cut -c 8-1000 
 //		."tail -n $TailLines /var/log/ppp.log | cut -c 5-1000 |  sed 's/2012 ://g' ; "
@@ -53,7 +63,7 @@ $LogsCombinedCommand.=") | sed $SudoReplace | grep -v NSAutoreleaseNoPool | grep
 
 
 //print "command=$LogsCombinedCommand<br>";
-$LogsCombined=`$LogsCombinedCommand`;
+//$LogsCombined=`$LogsCombinedCommand`;
  
 
 

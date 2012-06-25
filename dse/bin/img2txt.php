@@ -51,7 +51,7 @@ $parameters_details = array(
   array('q','quiet',"same as --verbosity 0"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('w:','width:',"width in characters"),
-  array('f:','f-val:',"an color picking adjuctment. argv options = number 0.1 to 10"),
+ // array('f:','f-val:',"an color picking adjuctment. argv options = number 0.1 to 10"),
   //array('s','status',"prints status file".$CFG_array['StatusFile']),
   //array('e','edit',"backs up and launches a vim of ".$vars['DSE']['PANIC_CONFIG_FILE']),
   //array('c','config-show',"prints contents of ".$vars['DSE']['PANIC_CONFIG_FILE']),
@@ -264,9 +264,9 @@ function img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal){
 	}
 	print getColoredString("","white","black","0",TRUE);
 	$tbr.=getColoredString("","white","black","0",TRUE);
-	dse_file_put_contents($OutFile,$tbr);
+	//dse_file_put_contents($OutFile,$tbr);
 	if($vars[Verbosity]>=1){
-		print "Wrote Output File: $OutFile\n";
+		//print "Wrote Output File: $OutFile\n";
 	}
 }
 

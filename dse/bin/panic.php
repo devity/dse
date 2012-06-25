@@ -18,10 +18,12 @@ $vars['ScriptHeaderShow']=TRUE;
 
 global $CFG_array;
 $CFG_array=array();
-$CFG_array['QueriesMade']=0;
-$CFG_array['QueriesSucceeded']=0;
-$CFG_array['QueriesFailed']=0;
+$CFG_array['OutFile']="panic_results.txt";
 $CFG_array=dse_read_config_file($vars['DSE']['PANIC_CONFIG_FILE'],$CFG_array);	
+
+print getColoredString("Saving copy of results to: ".$CFG_array['OutFile']."\n");
+dse_file_put_contents($CFG_array['OutFile'],"DSE Panic Run Started at ".dse_date_format()."\n");
+
 
 $parameters_details = array(
   array('l','log-to-screen',"log to screen too"),
@@ -251,23 +253,52 @@ function dse_panic_hd($Interactive=FALSE){
 	//look for large files recently
 	
 	
+	
 	if($Interactive){
+		
+		$LargeFileRootDir="/";
 		//look for largest fiels
 		$LargeFileCommands=array(
-			"find / -type f -size +100000k -exec ls -l {} \; 2>/dev/null ",
-			"du -a / 2>/dev/null | sort -n -r | head -n 200",
+			"find ROOT_DIR -type f -size +100000k -exec ls -l {} \; 2>/dev/null ",
+			"du -a ROOT_DIR 2>/dev/null | sort -n -r | head -n 200",
 			//"for i in G M K; do du -a / 2>/dev/null | grep [0-9]$i | sort -nr -k 1; done | head -n 11",
-			"find / -type f -print0| xargs -0 ls -s | sort -rn | awk ‘{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}’ | head -200",
+			"find ROOT_DIR -type f -print0| xargs -0 ls -s | sort -rn | awk ‘{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}’ | head -200",
 			//"sudo find / -type f -print0 2>/dev/null | xargs -0 ls -s | sort -rn | awk '{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}' | head",
 			
 		);
 		foreach($LargeFileCommands as $Command){
-			$A=dse_ask_yn("Run $Command ? ",20,'Y');
+			$CommandReal=str_replace("ROOT_DIR",$LargeFileRootDir,$Command);
+			$A=dse_ask_choice(array(
+				"Y"=>"Yes",
+				"N"=>"No",
+				"C"=>"Change Root Directory for start of large fole search",
+				"Q"=>"Quit / Exit",
+			),"Run $CommandReal ?");
 			if($A=='Y'){
 				$StartTime=time()+microtime();
-				$r=`$Command`;  $EndTime=time()+microtime(); $RunTime=number_format($EndTime-$StartTime,2);
-				print getColoredString("Files > 100MB  $Command ($RunTime s)\n","cyan");
+				print getColoredString("Running File Large Files Command:  $CommandReal \n","cyan");
+				$r=`$CommandReal`;  $EndTime=time()+microtime(); $RunTime=number_format($EndTime-$StartTime,2);
+				print getColoredString("File Large Files:  $CommandReal (runtime $RunTime s)\n","cyan");
 				print getColoredString($r,"yellow");
+				dse_file_append_contents($CFG_array['OutFile'],"File Large Files:  $CommandReal (runtime $RunTime s)\n");
+				dse_file_append_contents($CFG_array['OutFile'],$r);
+			}elseif($A=='Q'){
+				exit(0);
+			}elseif($A=='C'){
+				$LargeFileRootDir=dse_ask_entry("Enter New Root Directory:");
+				if($LargeFileRootDir){
+					
+					$CommandReal=str_replace("ROOT_DIR",$LargeFileRootDir,$Command);
+					print getColoredString("Running File Large Files Command:  $CommandReal \n","cyan");
+					$StartTime=time()+microtime();
+					$r=`$CommandReal`;  $EndTime=time()+microtime(); $RunTime=number_format($EndTime-$StartTime,2);
+					print getColoredString("Command Done:  $CommandReal (runtime: $RunTime s)\n","cyan");
+					print getColoredString($r,"yellow");
+					dse_file_append_contents($CFG_array['OutFile'],"File Large Files:  $CommandReal (runtime $RunTime s)\n");
+					dse_file_append_contents($CFG_array['OutFile'],$r);
+				}else{
+					$LargeFileRootDir="/";
+				}
 			}
 		}
 	}
