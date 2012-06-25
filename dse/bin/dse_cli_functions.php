@@ -881,7 +881,7 @@ function str_contains($str,$needle){
 }
 
 function str_remove($String,$toRemove){
-	global $vars; print "\n str_remove(tr=$toRemove\n";
+	global $vars;// print "\n str_remove(tr=$toRemove\n";
 	return str_replace($toRemove,"",$String);
 }
 
@@ -919,7 +919,31 @@ function strcut($haystack,$pre,$post=""){
 	return $r;
 }
 
-
+function unk_time($TimeAndDateString){
+	global $vars;
+	$format=""; $prefix=""; $vars['unk_time__CutTimeAndDateString']="";
+	$months=array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
+	//foreach($months as $n=>$month) str_replace($month,$n+1,$TimeAndDateString);
+	if( preg_match ("/[a-zA-Z]{3} [0-9]{1} [0-9]{2}:[0-9]{2}:[0-9]{2}/" , $TimeAndDateString, $matches) >0 ){$len=14; $format = '%b %d %H:%M:%S';}
+	if( preg_match ("/[a-zA-Z]{3} [0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/" , $TimeAndDateString, $matches) >0 ){$len=15; $format = '%b %d %H:%M:%S';}
+	if( preg_match ("/[0-9]{2}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/" , $TimeAndDateString, $matches) >0 ){$len=17; $format = '%d/%m/%Y %H:%M:%S';}
+	if( preg_match ("/[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}/" , $TimeAndDateString, $matches) >0 ){$len=18; $format = '%d/%m/%Y %H:%M:%S';}
+	
+	//print_r($matches);
+	//print "res=".$matches[0].", $format\n";
+	//if($format && $matches[0] ) return strptime($matches[0], $format);
+	if($format &&  $TimeAndDateString){
+		$TimeAndDateString=substr($TimeAndDateString,0,$len);
+		$vars['unk_time__CutTimeAndDateString']=$TimeAndDateString;
+		$dateTime=strptime($TimeAndDateString, $format);
+		//print_r($dateTime);
+		if(!$dateTime['tm_year']) $dateTime['tm_year']=112;
+		$t=@mktime($dateTime['tm_hour'], $dateTime['tm_min'], $dateTime['tm_sec'], $dateTime['tm_mon']+1, $dateTime['tm_mday'], $dateTime['tm_year']+1900);
+	//	print "\nunk_time=$TimeAndDateString  fmt=$format   t=$t\n";
+		return $t;
+	}
+	return -1;
+}
 
 function date_str_to_sql_date($str,$fmt=""){
 	global $vars;

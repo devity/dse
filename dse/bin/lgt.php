@@ -5,13 +5,18 @@ ini_set('display_errors','On');
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
 
+$Lines=10;
+$MinutesBack=45;
+$NumberOfBytesSameLimit=13;
 
 $shortopts  = "";
 $shortopts .= "n:";  // Required value
+$shortopts .= "m:";  // Required value
 $shortopts .= "t::"; // Optional value
 $shortopts .= "abc"; // These options do not accept values
 
 $longopts  = array(
+    "required:",     // Required value
     "required:",     // Required value
     "optional::",    // Optional value
     "option",        // No value
@@ -22,11 +27,12 @@ $options = getopt($shortopts, $longopts);
 if($options['n']){
 	$Lines=$options['n'];
 }
-
-if(!$Lines){
-	$Lines=10;
+if($options['m']){
+	$MinutesBack=$options['m'];
 }
-$NumberOfBytesSameLimit=13;
+
+
+
 
 
 $SudoReplace="s/sudo/SUDO/g";
@@ -36,20 +42,34 @@ $TailLines=$Lines;
 $LogsCombined="";
 foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 	$LogFile=trim($LogFile);
-	
-	$LogContents=`tail -n $TailLines $LogFile`;
-	$LogContents=str_remove($LogContents,dse_hostname());
-	$RedWords=array(" no ","not","false","error","failure","failed","aborted","denied","problem","exhausted","invalid"); 
-	$GreenWords=array(" ok ","granted","accepted","true","success","freeing","cleaned up"); 
-	$BlueWords=array("root"); 
-	foreach($RedWords as $RedWord) $LogContents=str_ireplace($RedWord,colorize($RedWord,"red"),$LogContents);
-	foreach($GreenWords as $GreenWord) $LogContents=str_ireplace($GreenWord,colorize($GreenWord,"green"),$LogContents);
-	foreach($BlueWords as $BlueWord) $LogContents=str_ireplace($BlueWord,colorize($BlueWord,"blue"),$LogContents);
-	
-	$LogsCombined.=colorize($LogFile.": ------\n","cyan");
-	$LogsCombined.=$LogContents;
+	if($LogFile && dse_file_exists($LogFile)){
+		$LogContents=`tail -n $TailLines $LogFile`;
+		if($LogContents){
+			$LogContents=str_remove($LogContents,dse_hostname());
+			$RedWords=array(" no ","not","false","error","failure","failed","aborted","denied","problem","exhausted","invalid"); 
+			$GreenWords=array(" ok ","started","stopped","granted","accepted","true","success","freeing","cleaned up"); 
+			$BlueWords=array(); 
+			$PurpleWords=array("root","permission"); 
+			foreach($RedWords as $RedWord) $LogContents=str_ireplace($RedWord,colorize($RedWord,"red"),$LogContents);
+			foreach($GreenWords as $GreenWord) $LogContents=str_ireplace($GreenWord,colorize($GreenWord,"green"),$LogContents);
+			foreach($BlueWords as $BlueWord) $LogContents=str_ireplace($BlueWord,colorize($BlueWord,"blue"),$LogContents);
+			foreach($PurpleWords as $PurpleWord) $LogContents=str_ireplace($PurpleWord,colorize($PurpleWord,"purple"),$LogContents);
+			
+			$PrintedThisLogFileName=FALSE;
+			foreach(split("\n",$LogContents) as $L){
+				$Time=unk_time($L);
+				$StartTime=time()-(60*$MinutesBack);
+				$Ago=seconds_to_text(time()-$Time);
+				if($Time>0 && $Time>$StartTime){
+					if(!$PrintedThisLogFileName) { $LogsCombined.=colorize($LogFile.": ------\n","cyan"); $PrintedThisLogFileName=TRUE; }
+					$L=str_remove($L,$vars['unk_time__CutTimeAndDateString']." ");
+					$LogsCombined.= "$Ago  $L\n";
+				}
+			}
+		}
+	}
 }
-
+print $LogsCombined;
 
 //$LogsCombinedCommand.=") | sed $SudoReplace | grep -v NSAutoreleaseNoPool | grep -v geektool | grep -v Geeklet | grep -v Chrome ";
 //| sed 's/louiss-macbook-pro-2//g' | sed 's/Louiss-MacBook-Pro-2//g' 
@@ -105,7 +125,7 @@ foreach(split("\n",$LogsCombined) as $Line){
 		}
 	}
 }
-*/
+
 $Out="";
 $c=0;
 $LastText="";
@@ -128,7 +148,7 @@ for($i=$start;$i<sizeof($FinalLines);$i++){
 print "\n";
 
 
-
+*/
 
 
 
