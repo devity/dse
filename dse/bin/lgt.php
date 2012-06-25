@@ -6,7 +6,7 @@ include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
 
 $Lines=10;
-$MinutesBack=45;
+$MinutesBack=60;
 $NumberOfBytesSameLimit=13;
 
 $shortopts  = "";
@@ -39,7 +39,7 @@ $SudoReplace="s/sudo/SUDO/g";
 
 $TailLines=$Lines;
 
-$LogsCombined="";
+$LogsCombined=$vars['DSE']['LGT_LOG_FILES'];
 foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 	$LogFile=trim($LogFile);
 	if($LogFile && dse_file_exists($LogFile)){
@@ -57,13 +57,19 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 			
 			$PrintedThisLogFileName=FALSE;
 			foreach(split("\n",$LogContents) as $L){
-				$Time=unk_time($L);
-				$StartTime=time()-(60*$MinutesBack);
-				$Ago=seconds_to_text(time()-$Time);
-				if($Time>0 && $Time>$StartTime){
-					if(!$PrintedThisLogFileName) { $LogsCombined.=colorize($LogFile.": ------\n","cyan"); $PrintedThisLogFileName=TRUE; }
-					$L=str_remove($L,$vars['unk_time__CutTimeAndDateString']." ");
-					$LogsCombined.= "$Ago  $L\n";
+				if($L){
+					$Time=unk_time($L);
+					$StartTime=time()-(60*$MinutesBack);
+					if($Time>0){
+						$L=str_remove($L,$vars['unk_time__CutTimeAndDateString']." ");
+						$Ago=seconds_to_text(time()-$Time);
+					}else{
+						$Ago="";
+					}
+					if($Time<=0 || $Time>$StartTime){
+						if(!$PrintedThisLogFileName) { $LogsCombined.=colorize($LogFile.": ------\n","cyan"); $PrintedThisLogFileName=TRUE; }
+						$LogsCombined.= "$Ago  $L\n";
+					}
 				}
 			}
 		}

@@ -95,8 +95,9 @@ $vars['DSE']['SYSTEM_ROOT_FILE_GROUP']='root';
 
 
 if(dse_is_osx()){
-	$vars['DSE']['LGT_LOG_FILES']="/var/log/system.log,/var/log/kernel.log,/var/log/windowserver.log"
-		.",/var/log/install.log,/var/log/mail.log,/var/log/ppp.log,/var/log/mount.log,/var/log/secure.log,/var/log/daily.out,/var/log/appfirewall.log";
+	$vars['DSE']['LGT_LOG_FILES']="/var/log/system.log,/var/log/kernel.log,/var/log/windowserver.log" 
+		.",/var/log/install.log,/var/log/mail.log,/var/log/ppp.log,/var/log/secure.log,/var/log/appfirewall.log";
+		//,/var/log/mount.log
 }elseif(dse_is_ubuntu()){
 	$vars['DSE']['LGT_LOG_FILES']="/var/log/syslog,/var/log/kern.log,/var/log/daemon.log,/var/log/messages";
 }elseif(dse_is_centos()){
