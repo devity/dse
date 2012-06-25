@@ -21,6 +21,7 @@ if (!function_exists("readline")) { function readline( $prompt = '' ){
 
 function dse_hostname(){
 	global $vars;
+	if($vars['DSE']['HOSTNAME']) return $vars['DSE']['HOSTNAME'];
 	$tbr=trim(`hostname`);
 	if(dse_is_osx()) $tbr=str_remove($tbr,".local");
 	return $tbr;
