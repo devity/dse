@@ -118,22 +118,29 @@ function dse_date_format($Time="NOW",$FormatName="FULLREADABLE"){
 
 
 function seconds_to_text($Seconds){
+	global $vars;
 	if($Seconds<60*3){
+		if($vars['s2t_abvr'])return "$Seconds secs";
 		return "$Seconds seconds";
 	}elseif($Seconds<60*60*2){
 		$Minutes=intval($Seconds/60);
+		if($vars['s2t_abvr'])return "$Minutes mins";
 		return "$Minutes minutes";
 	}elseif($Seconds<60*60*24*2){
 		$Hours=intval($Seconds/(60*60));
+		if($vars['s2t_abvr'])return "$Hours hrs";
 		return "$Hours hours";
 	}elseif($Seconds<60*60*24*30*2){
 		$Days=intval($Seconds/(60*60*24));
+		if($vars['s2t_abvr'])return "$Days dys";
 		return "$Days days";
 	}elseif($Seconds<60*60*24*30*12*2){
 		$Months=intval($Seconds/(60*60*24*30));
+		if($vars['s2t_abvr'])return "$Months mon";
 		return "$Months months";
 	}else{
 		$Years=intval($Seconds/(60*60*24*30*12));
+		if($vars['s2t_abvr'])return "$Years yr";
 		return "$Years years";
 	}			
 }
@@ -919,6 +926,16 @@ function strcut($haystack,$pre,$post=""){
 	return $r;
 }
 
+function pad($String,$Length){
+	global $vars;
+	$CurrentLength=strlen($String);
+	if($CurrentLength>=$Length) return substr($String,0,$Length);
+	for($i=$CurrentLength;$i<$Length;$i++){
+		$String.=" ";
+	}
+	return $String;
+}
+	
 function unk_time($TimeAndDateString){
 	global $vars;
 	$format=""; $prefix=""; $vars['unk_time__CutTimeAndDateString']="";

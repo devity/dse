@@ -32,28 +32,31 @@ if($options['m']){
 }
 
 
-
-
+$vars['s2t_abvr']=TRUE;
+$Intermingle=TRUE;
 
 $SudoReplace="s/sudo/SUDO/g";
 
 $TailLines=$Lines;
 
-$LogsCombined=$vars['DSE']['LGT_LOG_FILES'];
+$LogsCombined="";
 foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 	$LogFile=trim($LogFile);
+	$LogFileNameColorized=colorize(pad(basename($LogFile),10),"cyan");
 	if($LogFile && dse_file_exists($LogFile)){
 		$LogContents=`tail -n $TailLines $LogFile`;
 		if($LogContents){
 			$LogContents=str_remove($LogContents,dse_hostname());
-			$RedWords=array(" no ","not","false","error","failure","failed","aborted","denied","problem","exhausted","invalid"); 
-			$GreenWords=array(" ok ","started","stopped","granted","accepted","true","success","freeing","cleaned up"); 
+			$RedWords=array(" no ","not","false","error","empty","failure","failed","aborted","denied","problem","exhausted","invalid","segfault","crash","denied"); 
+			$GreenWords=array(" ok ","started","stopped","granted","done","accepted","true","succeeded","success","freeing","cleaned up","established"); 
 			$BlueWords=array(); 
-			$PurpleWords=array("root","permission"); 
+			$PurpleWords=array("root","permission","sudo");
+			$YellowWords=array("status","result","permission"); 
 			foreach($RedWords as $RedWord) $LogContents=str_ireplace($RedWord,colorize($RedWord,"red"),$LogContents);
 			foreach($GreenWords as $GreenWord) $LogContents=str_ireplace($GreenWord,colorize($GreenWord,"green"),$LogContents);
 			foreach($BlueWords as $BlueWord) $LogContents=str_ireplace($BlueWord,colorize($BlueWord,"blue"),$LogContents);
 			foreach($PurpleWords as $PurpleWord) $LogContents=str_ireplace($PurpleWord,colorize($PurpleWord,"purple"),$LogContents);
+			foreach($YellowWords as $YellowWord) $LogContents=str_ireplace($YellowWord,colorize($YellowWord,"yellow"),$LogContents);
 			
 			$PrintedThisLogFileName=FALSE;
 			foreach(split("\n",$LogContents) as $L){
@@ -62,13 +65,17 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 					$StartTime=time()-(60*$MinutesBack);
 					if($Time>0){
 						$L=str_remove($L,$vars['unk_time__CutTimeAndDateString']." ");
-						$Ago=seconds_to_text(time()-$Time);
+						$Ago=pad(seconds_to_text(time()-$Time),8);
 					}else{
 						$Ago="";
 					}
 					if($Time<=0 || $Time>$StartTime){
-						if(!$PrintedThisLogFileName) { $LogsCombined.=colorize($LogFile.": ------\n","cyan"); $PrintedThisLogFileName=TRUE; }
-						$LogsCombined.= "$Ago  $L\n";
+						if($Intermingle){
+							$LogsCombined.= "$LogFileNameColorized $Ago  $L\n";
+						}else{
+							if((!$PrintedThisLogFileName)) { $LogsCombined.=colorize($LogFile.": ------\n","cyan"); $PrintedThisLogFileName=TRUE; }
+							$LogsCombined.= "$Ago  $L\n";
+						}
 					}
 				}
 			}
