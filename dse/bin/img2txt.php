@@ -4,7 +4,7 @@ error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
-$vars['Verbosity']=1;
+$vars['Verbosity']=0;
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="img2txt";
@@ -39,10 +39,9 @@ $Coverage=" .-/OM";
 
 
 $Coverage="  `..,,::;;~~--++==v*szxme(())[[]]{}}%@TOYGXZ#A80NMMM";
-$Coverage=" .=8";
-$Coverage=" .%#M";
-
-$Coverage="@";
+//$Coverage=" .=8";
+//$Coverage=" .%#M";
+//$Coverage="@";
 
 $FVal=.96;
 $parameters_details = array(
@@ -185,9 +184,7 @@ for($fi=1;$fi<sizeof($argv);$fi++){
 	$Extension=strcut(basename($InFile),".");
 	$FileBaseName=str_replace(".$Extension","", basename($InFile));
 	$OutFile="$FileBaseName.ansi";
-	if($vars[Verbosity]>=1){
-		print "File: $InFile\n";
-	}
+	
 	img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal);
 }
 exit(0);
@@ -196,12 +193,20 @@ function img2txt_rbg_pair_distance($rbg1,$rbg2){
 	global $vars,$Coverage;
 	list($r1,$g1,$b1)=$rbg1;
 	list($r2,$g2,$b2)=$rbg2;
+	$str="($r1)($g1)($b1)($r2)($g2)($b2)";
+//	if(isset($vars[rgb_dist_cache][$str])){
+//		return $vars[rgb_dist_cache][$str];
+//	}
 	$Distance=sqrt( ($r1-$r2)*($r1-$r2)+($g1-$g2)*($g1-$g2)+($b1-$b2)*($b1-$b2) );
+	///$vars[rgb_dist_cache][$str]=$Distance;
 	return $Distance;
 }
 
 function img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal){
 	global $vars,$PP,$Coverage;
+	if($vars[Verbosity]>=1){
+		print "Read Input File: $InFile\n";
+	}
 	$PP=img2txt_build_possibles_map();
 	foreach($PP as $P){
 		list($r,$g,$b,$Char,$ForgroundName,$BackgroundName,$ForgroundColorParts,$BackgroundColorParts)=$P;
@@ -246,30 +251,46 @@ function img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal){
 	
 	//print "high_x=$high_x high_y=$high_y \n";
 	//print_r($rbg_array);
-	
+	$tbr="";
 	foreach($rbg_array as $x=>$row){
 		foreach($row as $y=>$p){
 			//print "\n x=$x y=$y\n";
-			print img2txt_pixel2printable($p,$x,$y,$FVal);
+			$out= img2txt_pixel2printable($p,$x,$y,$FVal);
+			$tbr.=$out;
+			print $out;
 		}
 		print "\n";
+		$tbr.="\n";
 	}
 	print getColoredString("","white","black","0",TRUE);
+	$tbr.=getColoredString("","white","black","0",TRUE);
+	dse_file_put_contents($OutFile,$tbr);
+	if($vars[Verbosity]>=1){
+		print "Wrote Output File: $OutFile\n";
+	}
 }
 
-function img2txt_find_best_match_in_map($rbg){
+function img2txt_find_best_match_in_map($rgb){
 	global $vars,$PP,$Coverage;
+	list($r,$g,$b)=$rgb;
+	$str="($r)($g)($b)";
+	if(is_array($vars[rgb_best_cache][$str])){
+	//	print_r($vars[rgb_best_cache]);
+		return ( $vars[rgb_best_cache][$str]);
+	}
 	$LowestDistance=1000000;
 	$BestMatch="";
 	foreach($PP as $P){
 		list($r,$g,$b,$Char,$ForgroundName,$BackgroundName,$ForgroundColorParts,$BackgroundColorParts)=$P;
-		$Distance=img2txt_rbg_pair_distance($rbg,array($r,$g,$b));
+		$Distance=img2txt_rbg_pair_distance($rgb,array($r,$g,$b));
 		if($Distance<$LowestDistance){
 			$LowestDistance=$Distance;
 		//	print "\n $rbg,array($r,$g,$b) D=$Distance < Dl= $LowestDistance \n";
 			$BestMatch=array($Char,$ForgroundName,$BackgroundName);
 		}
 	}
+	//print "bm="; print_r($BestMatch); print "\n";
+	$vars[rgb_best_cache][$str]=$BestMatch;
 	return $BestMatch;
 }
 
@@ -316,7 +337,10 @@ function img2txt_pixel2printable($p,$x,$y,$FVal){
 		return "";
 	}
 	
-	list($Char,$ForgroundColor,$BackgroundColor)=img2txt_find_best_match_in_map($p);
+	$r=img2txt_find_best_match_in_map($p);;
+	list($Char,$ForgroundColor,$BackgroundColor)=$r;
+	//print getColoredString("r=$r\n","white", "black");
+//	print "   list($Char,$ForgroundColor,$BackgroundColor)= \n"; 
 	return getColoredString("$Char",$ForgroundColor,$BackgroundColor);
 	/*
 	$Coverage=" '`.,-+~:=co*s%@$#O08GM";
