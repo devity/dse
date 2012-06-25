@@ -47,9 +47,12 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 		$LogContents=`tail -n $TailLines $LogFile`;
 		if($LogContents){
 			$LogContents=str_remove($LogContents,dse_hostname());
-			$RedWords=array(" no ","not","false","error","empty","failure","failed","aborted","denied","problem","exhausted","invalid","segfault","crash","denied"); 
-			$GreenWords=array(" ok ","started","stopped","granted","done","accepted","true","succeeded","success","freeing","cleaned up","established"); 
-			$BlueWords=array(); 
+			$RedWords=array(" no ","!","not","false","error","illegal","unexpected","empty","failure","failed","aborted","denied","problem","exhausted"
+				,"invalid","segfault","crash","denied","disconnected","POSSIBLE BREAK-IN ATTEMPT!","BREAK-IN","ATTEMPT"); 
+			$GreenWords=array(" ok ","started","stopped","granted","uo to date","done","accepted","true","succeeded","success","freeing","cleaned up"
+				,"established","disconnected by user"); 
+			$BlueWords=array("https","sftp","imaps","httpd","http","xinetd","inetd","ftpd","ftp","imap","sshd","ssh","samba","mail","smtp","mysqld","mysql"
+				,"apache","crowbar","vncserver","vnc"); 
 			$PurpleWords=array("root","permission","sudo");
 			$YellowWords=array("status","result","permission"); 
 			foreach($RedWords as $RedWord) $LogContents=str_ireplace($RedWord,colorize($RedWord,"red"),$LogContents);
