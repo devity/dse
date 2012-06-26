@@ -148,6 +148,9 @@ $vars['DSE']['DSE_VIBK_LOG_FILE']=$vars['DSE']['DSE_LOG_DIR']."/vibk.log";
 // ********* panic Settings
 $vars['DSE']['PANIC_CONFIG_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/"."panic.conf";
 
+// ********* crowbar Settings
+$vars['DSE']['CROWBAR_USER']="root";
+
 
 
 

@@ -430,12 +430,13 @@ if($FullConfig){
 	
 	if(str_contains($vars['DSE']['SERVICES'],"crowbar")){
 		print "Creating crowbar init.d script.\n";
+		$crowbarUser=$vars['DSE']['CROWBAR_USER'];
 		$INITD_SCRIPT_ARRAY=array();
 		$INITD_SCRIPT_ARRAY['ServiceName']="crowbar";
-		$INITD_SCRIPT_ARRAY['ActionStart']="sleep 1; sudo -u wordjack -H -s \"/scripts/crowbar_start\"";
-		$INITD_SCRIPT_ARRAY['ActionStop']="sudo -u wordjack -H -s \"/scripts/crowbar_stop\"";
-		$INITD_SCRIPT_ARRAY['VarIsRunning']="sudo -u wordjack -H -s \"ps aux | egrep xulrunner\"";
-		$INITD_SCRIPT_ARRAY['VarStatus']="sudo -u wordjack -H -s \"ps aux | egrep xulrunner\"";
+		$INITD_SCRIPT_ARRAY['ActionStart']="sleep 1; sudo -u $crowbarUser -H -s \"/scripts/crowbar_start\"";
+		$INITD_SCRIPT_ARRAY['ActionStop']="sudo -u $crowbarUser -H -s \"/scripts/crowbar_stop\"";
+		$INITD_SCRIPT_ARRAY['VarIsRunning']="sudo -u $crowbarUser -H -s \"ps aux | egrep xulrunner\"";
+		$INITD_SCRIPT_ARRAY['VarStatus']="sudo -u $crowbarUser -H -s \"ps aux | egrep xulrunner\"";
 		if(dse_is_osx()){
 			$INITD_SCRIPT_ARRAY['VarNetstat']="netstat -ta | egrep 10000";
 		}else{
