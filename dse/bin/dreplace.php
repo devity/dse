@@ -139,8 +139,9 @@ foreach($raw_a as $n=>$line){
 
 // *** OUTPUT ***
 if($DoSaveOverwrite){
-	file_put_contents($Filename,$Out);
+	//file_put_contents($Filename,$Out);
 	if($Verbosity>=2) print "Saving to/Overwriting $Filename\n";
+	print $Out;
 }else{
 	print $Out;
 }

@@ -85,6 +85,7 @@ $vars['DSE']['SYSTEM_USER_FILE']='/etc/passwd';
 $vars['DSE']['SYSTEM_GROUP_FILE']='/etc/group';
 $vars['DSE']['SYSTEM_BASHRC_FILE']='/etc/bashrc';
 $vars['DSE']['SYSTEM_PROFILE_FILE']='/etc/profile';
+$vars['DSE']['SYSTEM_APT_SOURCES_LIST']='/etc/apt/sources.list';
 
 
 $vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']='/etc/php.ini.default';
@@ -173,8 +174,9 @@ $vars['DSE']['YellowWords']=array("status","result","permission","login","logout
 	,"removed","configuration","config","version","disabled","message"); 
 
 
-$vars['DSE']['ComponentsAvailable']=array("image-processing","desktop");
+$vars['DSE']['ComponentsAvailable']=array("image-processing","desktop","tor");
 $vars['DSE']['AddComponents']=array();
+$vars['DSE']['DisabledComponents']=array();
 
 // *********************************************************************************
 // *********************************************************************************
@@ -230,6 +232,9 @@ $vars['DSE']['SERVICE_PORTS'][6000]="vnc_2";
 $vars['DSE']['SERVICE_PORTS'][7907]="dwi";
 $vars['DSE']['SERVICE_PORTS'][9980]="aptana";
 $vars['DSE']['SERVICE_PORTS'][10000]="crowbar";
+//polipo
+//tor
+
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 

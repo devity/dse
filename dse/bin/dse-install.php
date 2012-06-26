@@ -160,37 +160,101 @@ $PackageNamesArray=array();
 $OSXPackageNamesArray=array();
 $NotOSXPackageNamesArray=array();
 
+foreach($vars['DSE']['DisabledComponents'] as $ComponentName){
+	$Component=colorize($ComponentName,"cyan");
+	print "Component $Component ".colorize("Disabled - no install","red")."\n";
+}
+foreach($vars['DSE']['AddComponents'] as $ComponentName){
+	$Component=colorize($ComponentName,"cyan");
+	print "Component $Component ".colorize("Enabled - marked for install","green")."\n";
+}
+//foreach($vars['DSE']['ComponentsAvailable'] as $ComponentName){
+//	$Component=colorize($ComponentName,"cyan");
+	//print "$Component ".colorize("Available - no choice yet","yellow")."\n";
+//}
 
 
 $ComponentName="image-processing";
-if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
-	$Component=colorize($ComponentName,"cyan");
-	$A=dse_ask_yn("Install Component $Component?");
-	print "\n";
-	if($A=='Y'){
-		$vars['DSE']['AddComponents'][]=$ComponentName;
+if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
+	if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		$Component=colorize($ComponentName,"cyan");
+		$A=dse_ask_yn("Install Component $Component?");
+		print "\n";
+		if($A=='Y'){
+			$vars['DSE']['AddComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+		}else{
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+		}
+	}
+	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		$OSXPackageNamesArray[]="imagemagick";
+		$NotOSXPackageNamesArray[]="imagemagick";
+		$NotOSXPackageNamesArray[]="libmagickcore-dev";
 	}
 }
-if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
-	$OSXPackageNamesArray[]="imagemagick";
-	$NotOSXPackageNamesArray[]="imagemagick";
-	$NotOSXPackageNamesArray[]="libmagickcore-dev";
-}
-
 
 $ComponentName="desktop";
-if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
-	$Component=colorize($ComponentName,"cyan");
-	$A=dse_ask_yn("Install Component $Component?");
-	print "\n";
-	if($A=='Y'){
-		$vars['DSE']['AddComponents'][]=$ComponentName;
+if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
+	if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		$Component=colorize($ComponentName,"cyan");
+		$A=dse_ask_yn("Install Component $Component?");
+		print "\n";
+		if($A=='Y'){
+			$vars['DSE']['AddComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+		}else{
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+		}
+	}
+	if(in_array("desktop", $vars['DSE']['AddComponents'])){
+		$NotOSXPackageNamesArray[]="xubuntu-desktop";
 	}
 }
-if(in_array("desktop", $vars['DSE']['AddComponents'])){
-	$NotOSXPackageNamesArray[]="xubuntu-desktop";
-}
 
+$ComponentName="tor";
+if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
+	if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		$Component=colorize($ComponentName,"cyan");
+		$A=dse_ask_yn("Install Component $Component?");
+		print "\n";
+		if($A=='Y'){
+			$vars['DSE']['AddComponents'][]=$ComponentName;
+			
+			$release=dse_ubuntu_release();
+			switch($release){
+				case 'karmic':
+				case 'maverick':
+				case 'lucid':
+					dse_file_add_line_if_not($vars['DSE']['SYSTEM_APT_SOURCES_LIST'],"deb http://deb.torproject.org/torproject.org $release main");
+					dse_file_add_line_if_not($vars['DSE']['SYSTEM_APT_SOURCES_LIST'],"deb-src http://deb.torproject.org/torproject.org $release main");
+					
+					passthru("gpg --keyserver keys.gnupg.net --recv 886DDD89");
+					passthru("gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | sudo apt-key add -");
+					dse_apt_uu();
+					
+					break;
+				case 'natty':
+					dse_file_add_line_if_not($vars['DSE']['SYSTEM_APT_SOURCES_LIST'],"deb http://deb.torproject.org/torproject.org $release main");
+					break;
+				default:
+					print colorize("Unknown Linux Release. Can't setup torproject.org rpm repository.\n","white","red");
+					break;
+			}
+			
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+		}else{
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+		}
+	}
+	if(in_array("desktop", $vars['DSE']['AddComponents'])){
+		$NotOSXPackageNamesArray[]="tor";
+		$NotOSXPackageNamesArray[]="tor-geoipdb";
+		$NotOSXPackageNamesArray[]="vidalia";
+		$NotOSXPackageNamesArray[]="polipo";
+		
+	}
+}
 
 
 

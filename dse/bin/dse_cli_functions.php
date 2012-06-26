@@ -19,6 +19,19 @@ if (!function_exists("readline")) { function readline( $prompt = '' ){
     return rtrim( fgets( STDIN ), "\n" );
 }}
 
+	
+function dse_replace_in_file($File,$Needle,$Replacement){
+	global $vars;
+	$tmp=`/dse/bin/dtmp`;
+	
+	$Command="/dse/bin/dreplace $File \"$Needle\" \"$Replacement\" > $tmp";
+	`$Command`;	
+	//print $Command."\n";
+	
+	`mv -f $tmp $File 2>&1`;
+}
+
+			
 function progress_bar($Percent,$Width=60){
 	global $vars,$Rainbow,$RainbowSize;;
 		
@@ -954,6 +967,14 @@ function dse_file_append_contents($filename,$Str){
 	global $vars;
 	return dse_file_put_contents($filename,dse_file_get_contents($filename).$Str);
 }
+function dse_file_add_line_if_not($filename,$Str){
+	global $vars;
+	$Now=dse_file_get_contents($filename);
+	if(!str_contains($Now,$Str)){
+		return dse_file_put_contents($filename,$Now."\n".$Str);
+	}
+}
+
 function dse_file_put_contents($filename,$Str){
 	global $vars;
 	return file_put_contents($filename,$Str);
@@ -1872,6 +1893,27 @@ function dse_is_ubuntu(){
 		}
 	}
 	return $vars['DSE']['IS_UBUNTU'];
+}
+function dse_ubuntu_release(){
+	global $vars;
+	if(isset($vars['DSE']['UBUNTU_RELEASE'])) return $vars['DSE']['UBUNTU_RELEASE'];
+	if(!file_exists("/etc/issue")){
+		$vars['DSE']['IS_UBUNTU']=FALSE;
+	}else{
+		$EtcIssue=dse_file_get_contents("/etc/issue");
+		if(str_contains($EtcIssue,"Ubuntu 9.10.")){
+			$vars['DSE']['UBUNTU_RELEASE']="karmic";
+		}elseif(str_contains($EtcIssue,"Ubuntu 10.04.")){
+			$vars['DSE']['UBUNTU_RELEASE']="lucid";
+		}elseif(str_contains($EtcIssue,"Ubuntu 10.10.")){
+			$vars['DSE']['UBUNTU_RELEASE']="maverick";
+		}elseif(str_contains($EtcIssue,"Ubuntu 11.04.")){
+			$vars['DSE']['UBUNTU_RELEASE']="natty";
+		}else{
+			$vars['DSE']['UBUNTU_RELEASE']="unkown";
+		}
+	}
+	return $vars['DSE']['UBUNTU_RELEASE'];
 }
 function dse_is_centos(){
 	global $vars;

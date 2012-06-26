@@ -254,7 +254,8 @@ function dse_configure_file_install_from_template($DestinationFile,$TemplateFile
 	//}else{
 		$ExpectedMode=$Mode;
 	//}
-	print "DSE template: $TemplateFile ";
+	print "DSE template: ";
+	print colorize("$TemplateFile ","cyan");
 	if(file_exists($DestinationFile)){
 		$CurrentPermissions=dse_file_get_mode($DestinationFile);
 		if(intval($ExpectedMode)!=$CurrentPermissions){
@@ -307,7 +308,9 @@ function dse_configure_file_install_from_template($DestinationFile,$TemplateFile
 
 function dse_file_install($Template,$Destination,$Mode="",$Owner=""){
 	global $vars;
-	print "DSE file: $Template ";
+	print "DSE installing file: ";
+	print colorize("$Template ","cyan");
+	
 	if(str_contains($Template,"/*")){
 		$Template_test=strcut($Template,"","/*");
 	}else{
@@ -317,8 +320,8 @@ function dse_file_install($Template,$Destination,$Mode="",$Owner=""){
 		print getColoredString(" ERROR: Template missing. \n","red","black");
 		return -1;	
 	}
-	//$command="cp -rf $Template $Destination";
-	$command="rsync -rR --size-only --partial $Template $Destination";
+	$command="cp -rf $Template $Destination";
+	//$command="rsync -rR --size-only --partial $Template $Destination";
 	print "\n command: $command\n";
 	passthru($command);
 	if(!file_exists($Destination)) {
@@ -388,9 +391,15 @@ function dse_install_yum(){
 //sudp apt-get -yv upgrade
 //sudo port -v selfupdate
 
-function dse_package_install($PackageName){
+function dse_apt_uu(){
 	global $vars;
-	print pad("Installing Package: ".colorize($PackageName,"cyan")."...   ","90%",colorize("-","blue"))."\n";
+	$Installer=dse_get_installer_name();
+	passthru("sudo $Installer update");
+	passthru("sudo $Installer upgrade");
+}
+				
+function dse_get_installer_name(){
+	global $vars;
 	$Installer="";
 	
 	if(dse_is_osx()){
@@ -438,6 +447,15 @@ function dse_package_install($PackageName){
 		print getColoredString("FATAL ERROR: No Compatible Installer Found missing.\n","red","black");
 		return -1;
 	}
+	return $Installer;
+}
+				
+					
+function dse_package_install($PackageName){
+	global $vars;
+	$PackageNameUpper=strtoupper($PackageName);
+	print pad("Installing Package: ".colorize($PackageNameUpper,"cyan")." ...   ","90%",colorize("-","blue"))."\n";
+	$Installer=dse_get_installer_name();
 	
 	$vars['DSE']['dse_package_install__use_passthru']=TRUE;
   	print "Package $PackageName ";
