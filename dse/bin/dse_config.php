@@ -174,7 +174,7 @@ $vars['DSE']['YellowWords']=array("status","result","permission","login","logout
 	,"removed","configuration","config","version","disabled","message"); 
 
 
-$vars['DSE']['ComponentsAvailable']=array("image-processing","desktop","tor","xurlrunner");
+$vars['DSE']['ComponentsAvailable']=array("image-processing","desktop","tor","xurlrunner","crowbar");
 $vars['DSE']['AddComponents']=array();
 $vars['DSE']['DisabledComponents']=array();
 

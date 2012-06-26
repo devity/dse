@@ -189,6 +189,45 @@ foreach($vars['DSE']['AddComponents'] as $ComponentName){
 
 //	$NotOSXPackageNamesArray[]="xinit";
 
+
+
+$ComponentName="crowbar";
+if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
+	if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		$Component=colorize($ComponentName,"cyan");
+		$A=dse_ask_yn("Install Component $Component?");
+		print "\n";
+		if($A=='Y'){
+			$vars['DSE']['AddComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+		}else{
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+		}
+	}
+	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		$NotOSXPackageNamesArray[]="xulrunner-2.0";
+		$NotOSXPackageNamesArray[]="xulrunner-2.0-dev";
+		$NotOSXPackageNamesArray[]="xulrunner-2.0-gnome-support";
+		$NotOSXPackageNamesArray[]="xulrunner-dev";
+		$NotOSXPackageNamesArray[]="gdm";
+		$NotOSXPackageNamesArray[]="subversion";
+		if(dse_is_ubuntu()){
+			$Command="sudo add-apt-repository ppa:ubuntu-mozilla-daily/ppa";
+			print "Command: $Command\n";
+			//passthru($Command);
+			print "\n";
+			
+			
+			chdir("/tmp");
+			`svn http://simile.mit.edu/repository/crowbar/trunk/`;
+			//$Command="sudo dpkg -i /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb";
+			//print "Command: $Command\n";
+			//passthru($Command);
+			
+		}
+	}
+}
+
 $ComponentName="xurlrunner";
 if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
@@ -214,9 +253,11 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			//passthru($Command);
 			print "\n";
 			
-			`wget -qO- http://launchpadlibrarian.net/67954579/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb > /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb 2>/dev/null`;
-			passthru("sudo dpkg -i /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb");
-			
+			/*`wget -qO- http://launchpadlibrarian.net/67954579/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb > /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb 2>/dev/null`;
+			$Command="sudo dpkg -i /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb";
+			print "Command: $Command\n";
+			passthru($Command);
+			*/
 		}
 	}
 }
