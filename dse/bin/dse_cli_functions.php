@@ -946,7 +946,7 @@ function unk_time($TimeAndDateString){
 	$format=""; $prefix=""; $vars['unk_time__CutTimeAndDateString']="";
 	$months=array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
 	//foreach($months as $n=>$month) str_replace($month,$n+1,$TimeAndDateString);
-	if( preg_match ("/13[0-9]{8} /" , $TimeAndDateString, $matches) >0 ){
+	if( preg_match ("/1[0-9]{9} /" , $TimeAndDateString, $matches) >0 ){
 		$vars['unk_time__CutTimeAndDateString']=substr($TimeAndDateString,0,10);
 		return intval($vars['unk_time__CutTimeAndDateString']);
 	}
@@ -973,6 +973,12 @@ function unk_time($TimeAndDateString){
 		$TimeAndDateString=strcut($TimeAndDateString,""," EDT");
 		$len=52; $format = '%a %B %d, %Y, %H:%M %P';
 	}// Sat June 23rd, 2012, 12:49 pm EDT 
+	if( preg_match ("/^[a-zA-Z]{3} [a-zA-Z]{0,9} [0-9]{1,2}[a-z]{0,2}, [0-9]{4}, [0-9]{1,2}:[0-9]{2} [a-zA-Z]{2}: /" , $TimeAndDateString, $matches) >0 ){
+		$TimeAndDateString=strcut($TimeAndDateString,"",": ");
+		$len=52; $format = '%a %B %d, %Y, %H:%M';
+	}// April 9, 2012, 12:32 pm:
+	
+	 
 	
 	if( str_contains ( $TimeAndDateString, " - - [") >0 ){
 		$TimeAndDateString=strcut($TimeAndDateString,"["," ");
