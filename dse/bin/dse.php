@@ -199,7 +199,8 @@ if($argv[1]=="configure"){
 
 	
 if($ShowUsage){
-	print `/dse/bin/img2txt /dse/images/logo.gif`;
+	//print `/dse/bin/img2txt /dse/images/logo.gif`;
+	print `cat /dse/images/logo.ascii`;
 	print $vars['Usage'];
 }
 if($DoUpdate){

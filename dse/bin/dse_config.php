@@ -163,7 +163,7 @@ $vars['DSE']['RedWords']=array("no such"," no ",")no ","!","ot found","is not","
 	}
 $vars['DSE']['GreenWords']=array(" ok ","granted","uo to date","done","accepted","true","succeeded","success","freeing","cleaned up"
 	,"established","disconnected by user"," 200 ","\"GET ","New connection from"); 
-$vars['DSE']['BlueWords']=array("https","sftp","imaps","http","httpd","inetd","xinetd","ftp","ftpd","imap","ssh","sshd","samba","qmail","mail","smtp","mysql","mysqld"
+$vars['DSE']['BlueWords']=array("https","sftp","imaps","http","httpd","xinetd","inetd","ftp","ftpd","imap","ssh","sshd","samba","qmail","mail","smtp","mysql","mysqld"
 	,"apache","crowbar","vncserver","vnc"); 
 $vars['DSE']['CyanWords']=array("127.0.0.1","localhost",dse_hostname(),"port","protocol");
 $vars['DSE']['MagentaWords']=array("root","permission","sudo","admin");

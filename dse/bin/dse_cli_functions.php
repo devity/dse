@@ -927,13 +927,28 @@ function strcut($haystack,$pre,$post=""){
 	return $r;
 }
 
-function pad($String,$Length,$PadChar=" "){
+function pad($String,$Length,$PadChar=" ",$Justification="left"){
 	global $vars;
 	$CurrentLength=strlen($String);
 	//print "pad($String,$Length,$PadChar) CurrentLength=$CurrentLength\n";
 	if($CurrentLength>=$Length) return substr($String,0,$Length);
 	for($i=$CurrentLength;$i<$Length;$i++){
-		$String.=$PadChar;
+		switch($Justification){
+			case 'right':
+				$String=$PadChar.$String;
+				break;
+			case 'left':
+				$String=$String.$String.$String;
+				break;
+			case 'center':
+				if($i<$Length-1){
+					$String=$String.$String.$String;
+					$i++;
+				}else{
+					$String.=$PadChar;
+				}
+				break;
+		}
 	}
 	return $String;
 }

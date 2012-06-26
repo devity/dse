@@ -1,0 +1,109 @@
+#!/bin/php
+<?php
+include_once ("/dse/bin/dse_cli_functions.php");
+include_once ("/dse/include/system_stat_functions.php");
+
+$dse_sysstats_power_array=dse_sysstats_power();
+$VoltageStr=number_format($dse_sysstats_power_array['BatteryVoltage']/1000,2)."v";
+$AmperageStr=number_format($dse_sysstats_power_array['BatteryCurrentCapacity']/1000,2)."Ah";
+$TemperatureStr=number_format($dse_sysstats_power_array['BatteryTemperature']/32,2)." deg C";
+
+print "Battery: ".$dse_sysstats_power_array['BatteryPercentStr']
+	."   ". $dse_sysstats_power_array['BatteryTemperatureStr']
+	."   ". $dse_sysstats_power_array['BatteryVoltageStr']
+	."   ". $dse_sysstats_power_array['BatteryAmperageStr']
+	."   ". $dse_sysstats_power_array['BatteryCycleCount'] ." cycles"
+	."\n";
+	
+	
+print "Mouse Battery: ".$dse_sysstats_power_array['MouseBatteryPercentStr']."\n";
+
+print "Keyboard Battery: ".$dse_sysstats_power_array['KeyboardBatteryPercentStr']."\n";
+
+if($dse_sysstats_power_array['TrackpadBatteryPercent']!=""){
+	print "Trackpad Battery: ".$dse_sysstats_power_array['TrackpadBatteryPercentStr']."\n";
+}
+
+?>#!/usr/bin/php
+<?
+$so=`vm_stat`;
+
+$sa=split("\n",$so);
+for($i=0;$i<sizeof($sa);$i++){
+	$s=$sa[$i];
+	if($s && ( !(strstr($s,"Pages active:")===FALSE) ) ){
+		while(!(strstr($s,"  ")===FALSE)){
+			$s=str_replace("  "," ",$s);
+		}
+		$s=str_replace(".","",$s);
+		$la=split(" ",$s);
+		$mem_pages_active=$la[2];
+		$mem_bytes_active=$mem_pages_active*4096;
+		$mem_bytes_active_str=number_format($mem_bytes_active/(1024*1024),0)." MB";
+	}elseif($s && ( !(strstr($s,"Pages inactive:")===FALSE) ) ){
+		while(!(strstr($s,"  ")===FALSE)){
+			$s=str_replace("  "," ",$s);
+		}
+		$s=str_replace(".","",$s);
+		$la=split(" ",$s);
+		$mem_pages_inactive=$la[2];
+		$mem_bytes_inactive=$mem_pages_inactive*4096;
+		$mem_bytes_inactive_str=number_format($mem_bytes_inactive/(1024*1024),0)." MB";
+	}elseif($s && ( !(strstr($s,"Pages free:")===FALSE) ) ){
+		while(!(strstr($s,"  ")===FALSE)){
+			$s=str_replace("  "," ",$s);
+		}
+		$s=str_replace(".","",$s);
+		$la=split(" ",$s);
+		$mem_pages_free=$la[2];
+		$mem_bytes_free=$mem_pages_free*4096;
+		$mem_bytes_free_str=number_format($mem_bytes_free/(1024*1024),0)." MB";
+	}elseif($s && ( !(strstr($s,"Pages speculative:")===FALSE) ) ){
+		while(!(strstr($s,"  ")===FALSE)){
+			$s=str_replace("  "," ",$s);
+		}
+		$s=str_replace(".","",$s);
+		$la=split(" ",$s);
+		$mem_pages_speculative=$la[2];
+		$mem_bytes_speculative=$mem_pages_speculative*4096;
+		$mem_bytes_speculative_str=number_format($mem_bytes_speculative/(1024*1024),0)." MB";
+	}elseif($s && ( !(strstr($s,"Pages wired down:")===FALSE) ) ){
+		while(!(strstr($s,"  ")===FALSE)){
+			$s=str_replace("  "," ",$s);
+		}
+		$s=str_replace(".","",$s);
+		$la=split(" ",$s);
+		$mem_pages_wired=$la[2];
+		$mem_bytes_wired=$mem_pages_wired*4096;
+		$mem_bytes_wired_str=number_format($mem_bytes_wired/(1024*1024),0)." MB";
+	}
+}
+
+
+$mem_pages_total=$mem_pages_inactive+$mem_pages_free+$mem_pages_active+$mem_pages_speculative+$mem_pages_wired;
+
+$mem_bytes_total=$mem_pages_total*4096;
+$mem_bytes_total_str=number_format($mem_bytes_total/(1024*1024),0)." MB";
+print "Total: $mem_bytes_total_str\n";
+
+
+
+//print "Used: $mem_bytes_active_str\n";
+//print "Inactive: $mem_bytes_inactive_str\n";
+//print "Free: $mem_bytes_free_str\n";
+
+$mem_pages_available=$mem_pages_inactive+$mem_pages_free;
+$mem_bytes_available=$mem_pages_available*4096;
+$mem_bytes_available_str=number_format($mem_bytes_available/(1024*1024),0)." MB";
+$percent="  ( %".number_format(($mem_pages_available/$mem_pages_total)*100,0)." ) ";
+
+print "Available: $mem_bytes_available_str $percent\n";
+
+$per=number_format(($mem_pages_available/$mem_pages_total)*100,0);
+$per_used=100-$per;
+if(number_format($per_used>=50) ){
+	`say --voice=Victoria Memory $per_used percent used`;
+}
+//print "\n".$so;
+
+?>

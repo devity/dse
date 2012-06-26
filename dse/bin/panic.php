@@ -195,7 +195,9 @@ exit(0);
 
 function dse_panic_offer_interactive(){
 	global $vars,$CFG_array;
-	print getColoredString("Automatic Run Done! ",'bold_green');
+	
+
+	print getColoredString(pad("Automatic Run Done!",cbp_get_screen_width(),"*","center"),'bold_green');
 	print "However, this skips things you need to be asked about. ";
 	$A=dse_ask_yn("Do a more thourough, interactive run now?",'N',68*10);	
 	if($A=='Y'){
