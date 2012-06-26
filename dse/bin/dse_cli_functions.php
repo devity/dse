@@ -998,6 +998,9 @@ function unk_time($TimeAndDateString){
 	}//	Sun June 24th, 2012, 5:46.48 am EDT
 	if( preg_match ("/^[a-zA-Z]{3} [a-zA-Z]{0,9} [0-9]{1,2}, [0-9]{4}, [0-9]{1,2}:[0-9]{2}.[0-9]{2} [a-zA-Z]{2}/" , $TimeAndDateString, $matches) >0 ){
 		dpv(5,"preg_match 8b \n");
+			$TimeAndDateString=str_replace("th, ",", ",$TimeAndDateString);
+		$TimeAndDateString=str_replace("st, ",", ",$TimeAndDateString);
+		$TimeAndDateString=str_replace("rd, ",", ",$TimeAndDateString);
 		$len=52; $format = '%a %B %d, %Y, %H:%M.%S ';
 	}//	Sun June 24, 2012, 5:28.48 am
 	if( preg_match ("/^[a-zA-Z]{3} [a-zA-Z]{0,9} [0-9]{1,2}[a-z]{0,2}, [0-9]{4}, [0-9]{1,2}:[0-9]{2} [a-zA-Z]{2} [a-zA-Z]{3}/" , $TimeAndDateString, $matches) >0 ){
