@@ -1137,6 +1137,11 @@ function dse_service_name_from_common_name($service){
 	}
 	return $service;
 }
+function dse_service_restart($service){
+	global $vars;
+	dse_service_stop($service);
+	dse_service_start($service);
+}
 function dse_service_stop($service){
 	global $vars;
 	$service=dse_service_name_from_common_name($service);

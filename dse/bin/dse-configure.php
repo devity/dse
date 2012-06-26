@@ -446,6 +446,8 @@ if($FullConfig){
 		
 		$InitdFile=$vars['DSE']['SYSTEM_SCRIPTS_DIR']."/".$INITD_SCRIPT_ARRAY['ServiceName']."d";
 		dse_initd_entry_add($InitdFile,$INITD_SCRIPT_ARRAY['ServiceName']."d",85);
+		dse_service_restart($INITD_SCRIPT_ARRAY['ServiceName']);
+		print `/dse/bin/dsc -oc`;
 	}
 	if(str_contains($vars['DSE']['SERVICES'],"dlb")){
 		print "Creating dlb init.d script.\n";
@@ -459,6 +461,8 @@ if($FullConfig){
 		dse_write_daemon_script($INITD_SCRIPT_ARRAY);
 		$InitdFile=$vars['DSE']['SYSTEM_SCRIPTS_DIR']."/".$INITD_SCRIPT_ARRAY['ServiceName']."d";
 		dse_initd_entry_add($InitdFile,$INITD_SCRIPT_ARRAY['ServiceName']."d",91);
+		dse_service_restart($INITD_SCRIPT_ARRAY['ServiceName']);
+		print `/dse/bin/dsc -oc`;
 	}
 	if(str_contains($vars['DSE']['SERVICES'],"dwi")){
 		print "Creating dwi init.d script.\n";
@@ -480,6 +484,8 @@ if($FullConfig){
 		dse_write_daemon_script($INITD_SCRIPT_ARRAY);
 		$InitdFile=$vars['DSE']['SYSTEM_SCRIPTS_DIR']."/".$INITD_SCRIPT_ARRAY['ServiceName']."d";
 		dse_initd_entry_add($InitdFile,$INITD_SCRIPT_ARRAY['ServiceName']."d",91);
+		dse_service_restart($INITD_SCRIPT_ARRAY['ServiceName']);
+		print `/dse/bin/dsc -oc`;
 	}
 	
 	exit();
