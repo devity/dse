@@ -49,6 +49,11 @@ print `gunzip /tmp/bootinfoscript-061.tar.gz`;
 `rm -rf /tmp/bootinfoscript`;
 print `tar xvf /tmp/bootinfoscript-061.tar`;
 
+
+
+
+
+
 //exit(0);
 
 // ********* main script activity START ************
@@ -203,11 +208,15 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		$NotOSXPackageNamesArray[]="xulrunner-2.0-gnome-support";
 		$NotOSXPackageNamesArray[]="xulrunner-dev";
 		$NotOSXPackageNamesArray[]="gdm";
-		if(!dse_is_osx()){
+		if(dse_is_ubuntu()){
 			$Command="sudo add-apt-repository ppa:ubuntu-mozilla-daily/ppa";
 			print "Command: $Command\n";
 			//passthru($Command);
 			print "\n";
+			
+			`wget -qO- http://launchpadlibrarian.net/67954579/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb > /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb 2>/dev/null`;
+			passthru("sudo dpkg -i /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb");
+			
 		}
 	}
 }
@@ -339,6 +348,7 @@ if(dse_is_centos()){
 
 if(dse_is_ubuntu()){
 	$PackageNamesArray[]="dnet-progs";
+	$PackageNamesArray[]="yum";
 }
 	
 if(dse_is_osx()){
