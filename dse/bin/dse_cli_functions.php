@@ -993,7 +993,7 @@ function unk_time($TimeAndDateString){
 			dpv(5,"preg_match 10 \n");
 		
 		$TimeAndDateString=strcut($TimeAndDateString,"",": ");
-		$len=52; $format = '%a %B %d, %Y, %H:%M';
+		$len=52; $format = '%B %d, %Y, %H:%M';
 	}// April 9, 2012, 12:32 pm:
 
   
