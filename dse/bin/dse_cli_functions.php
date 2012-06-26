@@ -952,7 +952,7 @@ function unk_time($TimeAndDateString){
 	if( preg_match ("/[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}/" , $TimeAndDateString, $matches) >0 ){$len=18; $format = '%d/%m/%Y %H:%M:%S';}
 	
 	
-	if( preg_match ("/[.]+ - - \[/" , $TimeAndDateString, $matches) >0 ){
+	if( str_contains ( $TimeAndDateString, " - - [") >0 ){
 		$TimeAndDateString=strcut($TimeAndDateString,"["," ");
 		$format = '%d/%b/%Y:%H:%M:%S';
 	}
