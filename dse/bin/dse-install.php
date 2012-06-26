@@ -210,6 +210,7 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		$NotOSXPackageNamesArray[]="xulrunner-2.0-gnome-support";
 		$NotOSXPackageNamesArray[]="xulrunner-dev";
 		$NotOSXPackageNamesArray[]="gdm";
+		$NotOSXPackageNamesArray[]="libsvn1";
 		$NotOSXPackageNamesArray[]="subversion";
 		if(dse_is_ubuntu()){
 			$Command="sudo add-apt-repository ppa:ubuntu-mozilla-daily/ppa";
