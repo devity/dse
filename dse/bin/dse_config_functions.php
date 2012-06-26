@@ -477,16 +477,21 @@ function dse_file_get_extension($filename){
 		
 function dse_is_package_installed($Package){
 	global $vars;
-	if(dse_is_ubuntu()){
+	//if(dse_is_ubuntu()){
 		$Command="dpkg --get-selections 2>/dev/null";
 		//print colorize("downloading file..\n","red");
-		print "Command: $Command\n";
+		//print "Command: $Command\n";
 		$r=`$Command`;
+		$r=str_replace("\t"," ",$r);
 		foreach(split("\n",$r) as $L){
-			$TP=strcut($L,""," ");
-			if($Package==$TP) return TRUE;
+			$TP=trim(strcut($L,""," "));
+		//	print "[$Package==$TP] \n";
+			if($Package==$TP) {
+			//	print colorize("!!!! $Package=$TP","green");
+				return TRUE;
+			}
 		}
-	}
+	//}
 	return FALSE;
 }
 

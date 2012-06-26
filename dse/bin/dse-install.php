@@ -19,6 +19,9 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 
 $parameters_details = array(
   array('h','help',"this message"),
+  array('p:','is-package-installed:',"tells what version of a package is installe ot nothing if not installed"),
+  array('a','list-installed-packages',"lists installed packages"),
+  array('s:','show-matching-package:',"searches possible packages"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -32,6 +35,24 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   		$ShowUsage=TRUE;
 		$DidSomething=TRUE;
 		break;
+	case 'p':
+  	case 'is-package-installed':
+		$PackageName=$vars['options'][$opt];
+		if(dse_is_package_installed($PackageName)){
+			print $PackageName;
+		}
+		exit();
+	case 'a':
+  	case 'list-installed-packages':
+		print `dpkg --get-selections`;
+		exit();
+	case 's':
+  	case 'show-matching-package':
+		$PackageName=$vars['options'][$opt];
+		if(dse_is_ubuntu()){
+			print `aptitude search $PackageName`;
+		}
+		exit();
 }
 
 dse_cli_script_header();
@@ -174,26 +195,32 @@ $PackageNamesArray=array();
 $OSXPackageNamesArray=array();
 $NotOSXPackageNamesArray=array();
 
+$NotOSXPackageNamesArray[]="perl";
+$PackageNamesArray[]="php5";
 
 $NotOSXPackageNamesArray[]="vim";
-$NotOSXPackageNamesArray[]="perl";
+
 $PackageNamesArray[]="wget";
 $PackageNamesArray[]="curl";
 $OSXPackageNamesArray[]="lynx";
 $NotOSXPackageNamesArray[]="lynx-cur";
+
+
+
+
+
+
 $PackageNamesArray[]="bc";
+
 $NotOSXPackageNamesArray[]="memstat";
 $NotOSXPackageNamesArray[]="iftop";
 $NotOSXPackageNamesArray[]="sysstat";
 $NotOSXPackageNamesArray[]="chkconfig";
 
-$NotOSXPackageNamesArray[]="blkid";
-$NotOSXPackageNamesArray[]="filefrog";
-$NotOSXPackageNamesArray[]="losetup";
-$NotOSXPackageNamesArray[]="gawk";
-
-
-   
+//$NotOSXPackageNamesArray[]="blkid";
+//$NotOSXPackageNamesArray[]="filefrog";
+//$NotOSXPackageNamesArray[]="losetup";
+//$NotOSXPackageNamesArray[]="gawk";
 
 if(dse_is_centos()){
 	$PackageNamesArray[]="jwhois";
@@ -208,8 +235,9 @@ if(dse_is_ubuntu()){
 	$PackageNamesArray[]="alien";
 	$PackageNamesArray[]="dpkg-dev";
 	$PackageNamesArray[]="debhelper";
-	$PackageNamesArray[]="build-essential";
 }
+
+$PackageNamesArray[]="build-essential";
 
 
 /* reddit
