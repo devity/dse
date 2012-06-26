@@ -1,5 +1,24 @@
 <?
 
+/* backup package state!
+Code:
+dpkg --get-selections > installed-software
+And if you wanted to use the list to reinstall this software on a fresh ubuntu setup,
+Code:
+dpkg --set-selections < installed-software
+followed by
+Code:
+dselect
+ * 
+ * 
+ * /etc/apt/sources.list file on your destination system and see if there are any extra third-party repositories or repository subcategories that need to be enabled.
+Once your sources.list file is settled, update your package list to make sure you get the latest version of the packages:
+$ sudo apt-get update
+Import the Package List
+To import the package list, pipe the entire list to xargs, which then splits it into manageable chunks for the apt-get command:
+$ cat package_list | xargs sudo apt-get install
+ * 
+*/
 
 function dse_initd_entry_add($Script,$ServiceName,$Rank=99){
 	global $vars;
@@ -501,6 +520,7 @@ function dse_install_file_from_url($URL){
 	
 	switch($FileExtension){
 		case 'rpm':
+			chdir(dirname($LocalFullFileName));
 			$Command="alien $LocalFullFileName";
 			print "Command: $Command\n";
 			passthru($Command);
