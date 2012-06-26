@@ -1015,7 +1015,12 @@ function unk_time($TimeAndDateString){
 		$len=52; $format = '%B %d, %Y, %H:%M';
 	}// April 9, 2012, 12:32 pm:
 
-  
+  	if( preg_match ("/^[a-zA-Z]{0,9} [0-9]{1,2}[a-z]{0,2} [0-9]{1,2}:[0-9]{2}:[0-9]{2} /" , $TimeAndDateString, $matches) >0 ){
+			dpv(5,"preg_match 10 \n");
+		
+		$TimeAndDateString=strcut($TimeAndDateString,"",": ");
+		$len=52; $format = '%B %d %H:%M:%S';
+	}//Jun 26 02:08:54
 	
 	if( str_contains ( $TimeAndDateString, " - - [") >0 ){
 		$len=0;
