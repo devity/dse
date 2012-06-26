@@ -235,7 +235,7 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 				print "Command: $Command\n";
 				`$Command`;
 
-				print colorize("xulrunner /root/crowbar/trunk/xulapp/application.ini\n","blue","white");
+				print colorize("xulrunner installed! run with: ","green","white").colorize("xulrunner /root/crowbar/trunk/xulapp/application.ini\n","blue","white");
 			}
 		}
 	}
@@ -267,6 +267,11 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			print "\n";
 			
 			
+			`wget -qO- http://launchpadlibrarian.net/70321863/xulrunner-1.9.2_1.9.2.17%2Bbuild3%2Bnobinonly-0ubuntu1_i386.deb > /tmp/xulrunner-1.9.2_1.9.2.17%2Bbuild3%2Bnobinonly-0ubuntu1_i386.deb 2>/dev/null`;
+			$Command="xulrunner-1.9.2_1.9.2.17%2Bbuild3%2Bnobinonly-0ubuntu1_i386.deb";
+			print "Command: $Command\n";
+			
+			/*
 			`wget -qO- http://launchpadlibrarian.net/67954580/xulrunner-2.0-mozjs_2.0%2Bnobinonly-0ubuntu1_i386.deb > /tmp/xulrunner-2.0-mozjs_2.0%2Bnobinonly-0ubuntu1_i386.deb 2>/dev/null`;
 			$Command="sudo dpkg -i /tmp/xulrunner-2.0-mozjs_2.0%2Bnobinonly-0ubuntu1_i386.deb";
 			print "Command: $Command\n";
@@ -275,7 +280,7 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			$Command="sudo dpkg -i /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb";
 			print "Command: $Command\n";
 			//passthru($Command);
-			
+			*/
 		}
 	}
 }
