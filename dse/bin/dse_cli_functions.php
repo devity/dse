@@ -1019,7 +1019,7 @@ function unk_time($TimeAndDateString){
 			dpv(5,"preg_match 10 \n");
 		
 		$TimeAndDateString=strcut($TimeAndDateString,"",": ");
-		$len=52; $format = '%B %d %H:%M:%S';
+		$len=52; $format = '%b %d %H:%M:%S';
 	}//Jun 26 02:08:54
 	
 	if( str_contains ( $TimeAndDateString, " - - [") >0 ){
