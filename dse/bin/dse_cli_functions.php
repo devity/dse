@@ -926,12 +926,13 @@ function strcut($haystack,$pre,$post=""){
 	return $r;
 }
 
-function pad($String,$Length){
+function pad($String,$Length,$PadChar=" "){
 	global $vars;
 	$CurrentLength=strlen($String);
+	//print "pad($String,$Length,$PadChar) CurrentLength=$CurrentLength\n";
 	if($CurrentLength>=$Length) return substr($String,0,$Length);
 	for($i=$CurrentLength;$i<$Length;$i++){
-		$String.=" ";
+		$String.=$PadChar;
 	}
 	return $String;
 }

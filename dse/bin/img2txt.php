@@ -17,7 +17,7 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 $vars['ScriptHeaderShow']=TRUE;
 $speed="normal";
 $CharsWide=cbp_get_screen_width();
-
+$Columns=intval($CharsWide/50);
 
 
 $Coverage=" '`.,-+~:=co*s%@$#O08GM";
@@ -42,7 +42,7 @@ $Coverage=" .-/OM";
 
 $CoverageSlow="  `..,,::;;~~--++==v*szxme(())[[]]{}}%@TOYGXZ#A80NMMM";
 $CoverageNormal=" .-/OM";
-$CoverageFast="#";
+$CoverageFast="&";
 $Coverage=$CoverageNormal;
 
 $FVal=.96;
@@ -54,6 +54,7 @@ $parameters_details = array(
   array('v:','verbosity:',"0=none 1=some 2=more 5=debug"),
   array('s:','speed:',"arg options: [slow|normal(default)|fast]"),
   array('w:','width:',"width in characters"),
+  array('d:','columns:',"# of columns to display on screen if multiple files"),
   array('o','out-file',"saves to outfile <same_base_name>_<width>.ansi"),
   array('c','cache',"adds a -o samename.ansi and prints it instead if there or if whater -o file's .ansi exists'"),
  // array('f:','f-val:',"an color picking adjuctment. argv options = number 0.1 to 10"),
@@ -64,11 +65,16 @@ $parameters_details = array(
  );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
+$vars['Usage'].= "Test sample image with:    /dse/bin/img2txt -v5 -s fast /dse/images/penguin.jpg\n\n";
 $vars['argv_origional']=$argv;
 
 dse_cli_script_start();
 	
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+	case 'd':
+	case 'columns':
+		$Columns=$vars['options'][$opt];
+		break;
 	case 'w':
 	case 'width':
 		$CharsWide=$vars['options'][$opt];
@@ -100,16 +106,6 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$vars['Verbosity']=$vars['options'][$opt];
 		dpv(2,"Verbosity set to ".$vars['Verbosity']."\n");
 		break;
-	case 's':
-  	case 'status':
-		if($RunningPID>0){
-			print "DLB Daemon is RUNNING PID=$RunningPID\n";
-		}else{
-			print "DLB Daemon is NOT RUNNING!\n";
-		}
-		dpv(1,dse_file_get_contents($CFG_array['StatusFile']));
-		//exit(0);
-		break;
 	case 'h':
   	case 'help':
 		print $vars['Usage'];
@@ -133,7 +129,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				$Coverage=$CoverageNormal;
 				break;
 			case 'fast':
-				$Coverage=$CoverageFase;
+				$Coverage=$CoverageFast;
 				break;
 			case 'slow':
 				$Coverage=$CoverageSlow;
@@ -220,20 +216,10 @@ if($vars[Verbosity]>1){
 	dse_cli_script_header();
 }
 $PP=img2txt_build_possibles_map();
-$Columns=4; 
+ 
 $NumFiles=sizeof($argv)-1;
-if($NumFiles<$Columns){
-	$Columns=$NumFiles;
-}
-dpv(5,"Columns=$Columns\nNumFiles=$NumFiles\n");
-$CharsWide=intval($CharsWide/$Columns);
-$Spacer="";
-for($i=0;$i<$CharsWide;$i++) $Spacer.=".";
-$bc=getColoredString("","white","black");
-for($fi=1;$fi<sizeof($argv);$fi++){
-	dpv(5,"for loop for(fi=1;fi<sizeof(argv);$fi++){\n");
-	
-	$InFile=$argv[$fi];
+if($NumFiles==1){
+	$InFile=$argv[1];
 	$Extension=strcut(basename($InFile),".");
 	$FileBaseName=str_replace(".$Extension","", basename($InFile));
 	$CacheFile="$FileBaseName"."_$CharsWide.ansi";
@@ -242,40 +228,72 @@ for($fi=1;$fi<sizeof($argv);$fi++){
 	}else{
 		$OutFile="";
 	}
-	if($vars['img2txt__use_cache'] && dse_file_exists($CacheFile)){
-		dpv(2,"Found cache $CacheFile printing it.\n");
-	
-		print `cat $CacheFile`;
-		exit(0);
+	dpv(1,"Input File: $InFile\n");
+	print img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal);
+}elseif($NumFiles>0){
+	if($NumFiles<$Columns){
+		$Columns=$NumFiles;
 	}
-	$row[($fi-1)%4]=split("\n",img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal));
-	dpv(5,"got img2txt_process_file\n");
-	if(($fi-1)%4==3){
-		dpv(5,"pringing row\n");
-		$Tallest=sizeof($row[0]);
-		for($r=0;$r<$Tallest;$r++){
-			for($i=0;$i<$Columns;$i++){
-				if($row[$i][$r]!="" && $row[$i][$r]!=$bc){
-					print $row[$i][$r];
-				}else{
-					print $Spacer;
+	dpv(5,"Columns=$Columns\nNumFiles=$NumFiles\n");
+	$CharsWide=intval($CharsWide/$Columns);
+	$Spacer="";
+	for($i=0;$i<$CharsWide;$i++) $Spacer.=" ";
+	$bc=getColoredString("","white","black");
+	for($fi=1;$fi<sizeof($argv);$fi++){
+		dpv(5,"for loop for(fi=1;fi<sizeof(argv);$fi++){\n");
+		
+		$InFile=$argv[$fi];
+		$Extension=strcut(basename($InFile),".");
+		$FileBaseName=str_replace(".$Extension","", basename($InFile));
+		$CacheFile="$FileBaseName"."_$CharsWide.ansi";
+		if($DoOutFile || $vars['img2txt__use_cache']){
+			$OutFile=$CacheFile;
+		}else{
+			$OutFile="";
+		}
+		
+		$PreLines="";
+		if($vars[Verbosity]>=1){
+			if(strlen("Input File: $InFile")<=$CharsWide){
+				$PreLines.= pad("Input File: $InFile",$CharsWide)."\n";
+			}else{
+				$PreLines.= pad($InFile,$CharsWide)."\n";
+			}	
+		}
+		
+		$row[($fi-1)%$Columns]=split("\n",$PreLines . img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal));
+		dpv(5,"got img2txt_process_file\n");
+		
+		if(($fi-1)%$Columns==$Columns-1){
+			dpv(5,"pringing row\n");
+			$Tallest=0;	for($ti=0;$ti<$Columns;$ti++) if(sizeof($row[$ti])>$Tallest) $Tallest=sizeof($row[$ti]);
+			for($r=0;$r<$Tallest-1;$r++){
+				for($i=0;$i<$Columns;$i++){
+					if($row[$i][$r]!="" && strlen($row[$i][$r])>10){
+						print $row[$i][$r];
+					}else{
+						print $Spacer;
+					}
 				}
+				print "\n";
+			}
+			for($i=0;$i<$Columns;$i++){
+				$row[$i]="";
+			}	
+		}
+	}
+	dpv(5,"post pringing row\n");
+	$Tallest=0;	for($ti=0;$ti<$Columns;$ti++) if(sizeof($row[$ti])>$Tallest) $Tallest=sizeof($row[$ti]);
+	for($r=0;$r<$Tallest-1;$r++){
+		for($i=0;$i<$Columns;$i++){
+			if($row[$i][$r]!="" && strlen($row[$i][$r])>10){
+				print $row[$i][$r];
+			}else{
+				print $Spacer;
 			}
 		}
+		print "\n";
 	}
-}
-dpv(5,"post pringing row\n");
-print_r($row);
-$Tallest=sizeof($row[1]);
-for($r=0;$r<$Tallest;$r++){
-	for($i=0;$i<$Columns;$i++){
-		if($row[$i][$r]!="" && $row[$i][$r]!=$bc){
-			print $row[$i][$r];
-		}else{
-			print $Spacer;
-		}
-	}
-	print "\n";
 }
 exit(0);
 
@@ -295,8 +313,9 @@ function img2txt_rbg_pair_distance($rbg1,$rbg2){
 function img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal){
 	global $vars,$PP,$Coverage;
 	dpv(5,"starting img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal)\n");
-	if($vars[Verbosity]>=1){
-		print "Input File: $InFile\n";
+	if($vars['img2txt__use_cache'] && dse_file_exists($OutFile)){
+		dpv(2,"Found cache $OutFile printing it.\n");
+		return `cat $OutFile`;
 	}
 	foreach($PP as $P){
 		list($r,$g,$b,$Char,$ForgroundName,$BackgroundName,$ForgroundColorParts,$BackgroundColorParts)=$P;
@@ -307,6 +326,10 @@ function img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal){
 	//print "Command: $Command\n $r\n";
 	list($W,$H)=split(" x ",$r);
 	$W=trim($W);
+	if(!$W){
+		dpv(0,"error. imagemagick's identify did not give width. corrupt or unknown format?\n");
+		return("");
+	}
 	$H=trim($H);
 	//print "$InFile $W x $H\n";
 	$Scale=$CharsWide/$W;
