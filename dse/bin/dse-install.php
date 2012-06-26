@@ -174,6 +174,66 @@ $PackageNamesArray=array();
 $OSXPackageNamesArray=array();
 $NotOSXPackageNamesArray=array();
 
+
+$NotOSXPackageNamesArray[]="vim";
+$NotOSXPackageNamesArray[]="perl";
+$PackageNamesArray[]="wget";
+$PackageNamesArray[]="curl";
+$OSXPackageNamesArray[]="lynx";
+$NotOSXPackageNamesArray[]="lynx-cur";
+$PackageNamesArray[]="bc";
+$NotOSXPackageNamesArray[]="memstat";
+$NotOSXPackageNamesArray[]="iftop";
+$NotOSXPackageNamesArray[]="sysstat";
+$NotOSXPackageNamesArray[]="chkconfig";
+
+$NotOSXPackageNamesArray[]="blkid";
+$NotOSXPackageNamesArray[]="filefrog";
+$NotOSXPackageNamesArray[]="losetup";
+$NotOSXPackageNamesArray[]="gawk";
+
+
+   
+
+if(dse_is_centos()){
+	$PackageNamesArray[]="jwhois";
+}elseif(dse_is_osx()){
+}else{
+	$PackageNamesArray[]="whois";
+}
+
+if(dse_is_ubuntu()){
+	$PackageNamesArray[]="dnet-progs";
+	$PackageNamesArray[]="yum";
+	$PackageNamesArray[]="alien";
+	$PackageNamesArray[]="dpkg-dev";
+	$PackageNamesArray[]="debhelper";
+	$PackageNamesArray[]="build-essential";
+}
+
+
+
+
+if(dse_is_osx()){
+	foreach($OSXPackageNamesArray as $p) $PackageNamesArray[]=$p;
+}else{
+	foreach($NotOSXPackageNamesArray as $p) $PackageNamesArray[]=$p;
+}
+foreach($PackageNamesArray as $PackageName){
+	$r=dse_package_install($PackageName);
+	if($r<0){
+		print getColoredString("FATAL ERROR: installing package $PackageName\n","red","black");
+		print getColoredString($vars['DSE']['SCRIPT_FILENAME']."Exiting.\n","red","black");
+		exit(-1);
+	}
+}
+$PackageNamesArray=array();
+$OSXPackageNamesArray=array();
+$NotOSXPackageNamesArray=array();
+
+
+
+
 foreach($vars['DSE']['DisabledComponents'] as $ComponentName){
 	$Component=colorize($ComponentName,"cyan");
 	print "Component $Component ".colorize("Disabled - no install","red")."\n";
@@ -413,42 +473,6 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 
 
 
-$NotOSXPackageNamesArray[]="vim";
-$NotOSXPackageNamesArray[]="perl";
-$PackageNamesArray[]="wget";
-$PackageNamesArray[]="curl";
-$OSXPackageNamesArray[]="lynx";
-$NotOSXPackageNamesArray[]="lynx-cur";
-$PackageNamesArray[]="bc";
-$NotOSXPackageNamesArray[]="memstat";
-$NotOSXPackageNamesArray[]="iftop";
-$NotOSXPackageNamesArray[]="sysstat";
-$NotOSXPackageNamesArray[]="chkconfig";
-
-$NotOSXPackageNamesArray[]="blkid";
-$NotOSXPackageNamesArray[]="filefrog";
-$NotOSXPackageNamesArray[]="losetup";
-$NotOSXPackageNamesArray[]="gawk";
-
-
-   
-
-if(dse_is_centos()){
-	$PackageNamesArray[]="jwhois";
-}elseif(dse_is_osx()){
-}else{
-	$PackageNamesArray[]="whois";
-}
-
-if(dse_is_ubuntu()){
-	$PackageNamesArray[]="dnet-progs";
-	$PackageNamesArray[]="yum";
-	$PackageNamesArray[]="alien";
-	$PackageNamesArray[]="dpkg-dev";
-	$PackageNamesArray[]="debhelper";
-	$PackageNamesArray[]="build-essential";
-}
-	
 if(dse_is_osx()){
 	foreach($OSXPackageNamesArray as $p) $PackageNamesArray[]=$p;
 }else{

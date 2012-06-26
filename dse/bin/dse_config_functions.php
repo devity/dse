@@ -454,7 +454,24 @@ function dse_file_get_extension($filename){
 	global $vars;
 	$ext = end(explode('.', $filename));
 	return $ext;
+}	
+		
+function dse_is_package_installed($Package){
+	global $vars;
+	if(dse_is_ubuntu()){
+		$Command="dpkg --get-selections 2>/dev/null";
+		//print colorize("downloading file..\n","red");
+		print "Command: $Command\n";
+		$r=`$Command`;
+		foreach(split("\n",$r) as $L){
+			$TP=strcut($L,""," ");
+			if($Package==$TP) return TRUE;
+		}
+	}
+	return FALSE;
 }
+
+
 
 function dse_install_file_from_url($URL){
 	global $vars;
