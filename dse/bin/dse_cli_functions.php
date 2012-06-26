@@ -316,7 +316,7 @@ function dse_popen($Command){
 }
 		
 		
-function dse_ask_yn($Question,$Default="",$Timeout=""){
+function dse_ask_yn($Question=" Press Y or N ",$Default="",$Timeout=""){
 	global $vars;
 	print getColoredString("$Question ","red");
 	print getColoredString(" (","purple");
