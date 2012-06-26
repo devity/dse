@@ -1002,7 +1002,7 @@ function unk_time($TimeAndDateString){
 		$len=0;
 		dpv(5,"preg_match 11 - $TimeAndDateString\n");
 	//	$TimeAndDateString=strcut($TimeAndDateString,"["," ");
-		$TimeAndDateString=strcut($TimeAndDateString,"- - "," ");
+		$TimeAndDateString=substr(strcut($TimeAndDateString,"- - "," "),1);
 		dpv(5,"preg_match 11b - $TimeAndDateString\n");
 		$format = '%d/%b/%Y:%H:%M:%S';
 	}
