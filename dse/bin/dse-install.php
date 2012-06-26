@@ -254,11 +254,11 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			//passthru($Command);
 			print "\n";
 			
-			/*`wget -qO- http://launchpadlibrarian.net/67954579/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb > /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb 2>/dev/null`;
+			`wget -qO- http://launchpadlibrarian.net/67954579/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb > /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb 2>/dev/null`;
 			$Command="sudo dpkg -i /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb";
 			print "Command: $Command\n";
-			passthru($Command);
-			*/
+			//passthru($Command);
+			
 		}
 	}
 }
