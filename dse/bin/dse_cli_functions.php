@@ -2548,6 +2548,14 @@ function getBackgroundColors() {
 	
  
  
+function cbp_get_screen_width(){
+    global $vars;
+	return trim(`stty size | cut -d" " -f2`);
+}
+function cbp_get_screen_height(){
+    global $vars;
+	return trim(`stty size | cut -d" " -f1`);
+}
  
 
 function sbp_cursor_postion($L=0,$C=0){

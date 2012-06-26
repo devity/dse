@@ -15,16 +15,18 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $vars['ScriptHeaderShow']=TRUE;
-$CharsWide=100;
-$Coverage=" '`.,-+~:=co*s%@$#O08GM";//$Coverage=" '`.,-+~:=co*s%@$#O08GM";
-	//$Coverage=" '.,:;-+=*os@$08M";
-	
-	//$Coverage=" '.,:;-o$08M";
-	
+$speed="normal";
+$CharsWide=cbp_get_screen_width();
+
+
+
+$Coverage=" '`.,-+~:=co*s%@$#O08GM";
+$Coverage=" '.,:;-+=*os@$08M";
+$Coverage=" '.,:;-o$08M";
 $Coverage="  '`.,,::;;~-+()[]{}=co*szxmwe%TO@Y#A8G0M";
 $Coverage="  `..,,::;;~~--++==v*szxme(())[[]]{}}%@TOYG#A80M";
 $Coverage=" .,~-+=m@OG0M";
-//$Coverage="M0GO@m=+-~,. ";
+$Coverage="M0GO@m=+-~,. ";
 $Coverage=" .+mO0";
 $Coverage=" .=8";
 $Coverage=" .o0";
@@ -38,10 +40,10 @@ $Coverage=" .-/OM";
 
 
 
-$Coverage="  `..,,::;;~~--++==v*szxme(())[[]]{}}%@TOYGXZ#A80NMMM";
-//$Coverage=" .=8";
-//$Coverage=" .%#M";
-//$Coverage="@";
+$CoverageSlow="  `..,,::;;~~--++==v*szxme(())[[]]{}}%@TOYGXZ#A80NMMM";
+$CoverageNormal=" .-/OM";
+$CoverageFast="#";
+$Coverage=$CoverageNormal;
 
 $FVal=.96;
 $parameters_details = array(
@@ -49,8 +51,11 @@ $parameters_details = array(
  // array('','log-show:',"shows tail of log ".$CFG_array['LogFile']."  argv1 lines"),
   array('h','help',"this message"),
   array('q','quiet',"same as --verbosity 0"),
-  array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('v:','verbosity:',"0=none 1=some 2=more 5=debug"),
+  array('s:','speed:',"arg options: [slow|normal(default)|fast]"),
   array('w:','width:',"width in characters"),
+  array('o','out-file',"saves to outfile <same_base_name>_<width>.ansi"),
+  array('c','cache',"adds a -o samename.ansi and prints it instead if there or if whater -o file's .ansi exists'"),
  // array('f:','f-val:',"an color picking adjuctment. argv options = number 0.1 to 10"),
   //array('s','status',"prints status file".$CFG_array['StatusFile']),
   //array('e','edit',"backs up and launches a vim of ".$vars['DSE']['PANIC_CONFIG_FILE']),
@@ -109,6 +114,38 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'help':
 		print $vars['Usage'];
 		//exit(0);
+		break;
+	case 'c':
+  	case 'cache':
+		$vars['img2txt__use_cache']=TRUE;
+		//exit(0);
+		break;
+	case 's':
+  	case 'speed':
+		if($vars['options'][$opt]){
+			$Speed=$vars['options'][$opt];
+			dpv(2,"Speed set to $Speed\n");
+		}else{
+			dpv(0,"Speed option missing argument! Ignoring. Using speed $Speed\n");
+		}
+		switch($Speed){
+			case 'normal':
+				$Coverage=$CoverageNormal;
+				break;
+			case 'fast':
+				$Coverage=$CoverageFase;
+				break;
+			case 'slow':
+				$Coverage=$CoverageSlow;
+				break;
+		}
+		break;
+	case 'o':
+  	case 'out-file':
+		if($vars['options'][$opt]){
+			$OutFile=$vars['options'][$opt];
+		}
+		$DoOutFiles=TRUE;
 		break;
 	case 'e':
 	case 'edit':
@@ -173,19 +210,72 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 }
 
+
+	
+	
+	
+	
 if($vars[Verbosity]>1){
 	print "\n\n\n";
 	dse_cli_script_header();
 }
 $PP=img2txt_build_possibles_map();
-
+$Columns=4; 
+$NumFiles=sizeof($argv)-1;
+if($NumFiles<$Columns){
+	$Columns=$NumFiles;
+}
+dpv(5,"Columns=$Columns\nNumFiles=$NumFiles\n");
+$CharsWide=intval($CharsWide/$Columns);
+$Spacer="";
+for($i=0;$i<$CharsWide;$i++) $Spacer.=".";
+$bc=getColoredString("","white","black");
 for($fi=1;$fi<sizeof($argv);$fi++){
+	dpv(5,"for loop for(fi=1;fi<sizeof(argv);$fi++){\n");
+	
 	$InFile=$argv[$fi];
 	$Extension=strcut(basename($InFile),".");
 	$FileBaseName=str_replace(".$Extension","", basename($InFile));
-	$OutFile="$FileBaseName.ansi";
+	$CacheFile="$FileBaseName"."_$CharsWide.ansi";
+	if($DoOutFile || $vars['img2txt__use_cache']){
+		$OutFile=$CacheFile;
+	}else{
+		$OutFile="";
+	}
+	if($vars['img2txt__use_cache'] && dse_file_exists($CacheFile)){
+		dpv(2,"Found cache $CacheFile printing it.\n");
 	
-	img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal);
+		print `cat $CacheFile`;
+		exit(0);
+	}
+	$row[($fi-1)%4]=split("\n",img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal));
+	dpv(5,"got img2txt_process_file\n");
+	if(($fi-1)%4==3){
+		dpv(5,"pringing row\n");
+		$Tallest=sizeof($row[0]);
+		for($r=0;$r<$Tallest;$r++){
+			for($i=0;$i<$Columns;$i++){
+				if($row[$i][$r]!="" && $row[$i][$r]!=$bc){
+					print $row[$i][$r];
+				}else{
+					print $Spacer;
+				}
+			}
+		}
+	}
+}
+dpv(5,"post pringing row\n");
+print_r($row);
+$Tallest=sizeof($row[1]);
+for($r=0;$r<$Tallest;$r++){
+	for($i=0;$i<$Columns;$i++){
+		if($row[$i][$r]!="" && $row[$i][$r]!=$bc){
+			print $row[$i][$r];
+		}else{
+			print $Spacer;
+		}
+	}
+	print "\n";
 }
 exit(0);
 
@@ -204,15 +294,14 @@ function img2txt_rbg_pair_distance($rbg1,$rbg2){
 
 function img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal){
 	global $vars,$PP,$Coverage;
+	dpv(5,"starting img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal)\n");
 	if($vars[Verbosity]>=1){
-		print "Read Input File: $InFile\n";
+		print "Input File: $InFile\n";
 	}
-	$PP=img2txt_build_possibles_map();
 	foreach($PP as $P){
 		list($r,$g,$b,$Char,$ForgroundName,$BackgroundName,$ForgroundColorParts,$BackgroundColorParts)=$P;
 		//print "$r,$g,$b \n";
 	}
-	
 	$Command="identify -format \"%w x %h\" $InFile";
 	$r=`$Command`;
 	//print "Command: $Command\n $r\n";
@@ -232,6 +321,7 @@ function img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal){
 	//print "Command: $Command\n $r\n";
 	
 	$raw=dse_file_get_contents("out.txt");
+	`rm out.txt`;
 	//print $raw;
 	$raw=str_replace("rgba","rgb",$raw);
 	$last_x=0;
@@ -257,17 +347,21 @@ function img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal){
 			//print "\n x=$x y=$y\n";
 			$out= img2txt_pixel2printable($p,$x,$y,$FVal);
 			$tbr.=$out;
-			print $out;
+			//print $out;
 		}
-		print "\n";
+		//print "\n";
 		$tbr.="\n";
 	}
-	print getColoredString("","white","black","0",TRUE);
+	//print getColoredString("","white","black","0",TRUE);
 	$tbr.=getColoredString("","white","black","0",TRUE);
-	//dse_file_put_contents($OutFile,$tbr);
-	if($vars[Verbosity]>=1){
-		//print "Wrote Output File: $OutFile\n";
+	if($OutFile){
+		dse_file_put_contents($OutFile,$tbr);
+		if($vars[Verbosity]>=1){
+			dpv(2,"Wrote Output File: $OutFile\n");
+		}
 	}
+	dpv(5,"exiting img2txt_process_file($InFile,$OutFile,$CharsWide,$FVal)\n");
+	return $tbr;
 }
 
 function img2txt_find_best_match_in_map($rgb){
@@ -296,6 +390,8 @@ function img2txt_find_best_match_in_map($rgb){
 
 function img2txt_build_possibles_map(){
 	global $vars,$Coverage;
+	
+	dpv(5,"starting img2txt_build_possibles_map()\n");
 	$CoverageSize=strlen($Coverage);
 	$Colors=array("black"=>array(0,0,0),"white"=>array(255,255,255),
 	"red"=>array(255,0,0),"green"=>array(0,255,0),"blue"=>array(0,0,255)
@@ -327,7 +423,7 @@ function img2txt_build_possibles_map(){
 		}
 	}
 
-	//print_r($PP);
+	dpv(5,"exiting img2txt_build_possibles_map()\n");
 	return($PP);
 	  
 }
@@ -337,7 +433,7 @@ function img2txt_pixel2printable($p,$x,$y,$FVal){
 		return "";
 	}
 	
-	$r=img2txt_find_best_match_in_map($p);;
+	$r=img2txt_find_best_match_in_map($p);
 	list($Char,$ForgroundColor,$BackgroundColor)=$r;
 	//print getColoredString("r=$r\n","white", "black");
 //	print "   list($Char,$ForgroundColor,$BackgroundColor)= \n"; 
