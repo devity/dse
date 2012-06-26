@@ -5,7 +5,7 @@ ini_set('display_errors','On');
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
 
-$Lines=10;
+$Lines=40;
 $MinutesBack=60;
 $NumberOfBytesSameLimit=13;
 
@@ -27,11 +27,26 @@ if($options['n']){
 if($options['m']){
 	$MinutesBack=$options['m'];
 }
+if(key_exists('i', $options)){
+	$Intermingle=TRUE;
+}
 
 $CharsWide=cbp_get_screen_width()-19;
 
 $vars['s2t_abvr']=TRUE;
-//$Intermingle=TRUE;
+
+if(in_array("more", $argv)){
+	$Lines*=3;
+	$MinutesBack*=3;
+}
+if(in_array("much", $argv)){
+	$Lines*=3;
+	$MinutesBack*=3;
+}
+if(in_array("allday", $argv)){
+	$Lines=30000;
+	$MinutesBack=60*60*24;
+}
 
 $SudoReplace="s/sudo/SUDO/g";
 
@@ -41,6 +56,9 @@ $LogsCombined="";
 
 dpv(2,"Using Log Files: ".$vars['DSE']['LGT_LOG_FILES']."\n");
 foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
+	dpv(3,"Doing Log Files: $LogFile\n");
+		
+	
 	$LogFile=trim($LogFile);
 	$LogFileNameColorized=colorize(pad(basename($LogFile),10),"cyan");
 	if($LogFile && dse_file_exists($LogFile)){
@@ -70,16 +88,18 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 						foreach($vars['DSE']['MagentaWords'] as $PurpleWord) $L=str_ireplace($PurpleWord,colorize($PurpleWord,"purple"),$L);
 						foreach($vars['DSE']['YellowWords'] as $YellowWord) $L=str_ireplace($YellowWord,colorize($YellowWord,"yellow"),$L);
 						foreach($vars['DSE']['CyanWords'] as $YellowWord) $L=str_ireplace($YellowWord,colorize($YellowWord,"yellow"),$L);
-			
+						dpv(5," t=$Time $L\n");
+	
 						if($Intermingle){
 							if($Time){
-								$Intermingled[$Time]="$LogFileNameColorized $Ago  $L\n";
+								$Rand=rand(1111,9999);
+								$Intermingled[$Time.$Rand]="$LogFileNameColorized $Ago  $L\n";
 							}else{
 								print "$LogFileNameColorized $Ago  $L\n";;
 							}
 						}else{
-							if((!$PrintedThisLogFileName)) { $LogsCombined.=colorize($LogFile.": ------\n","cyan"); $PrintedThisLogFileName=TRUE; }
-							$LogsCombined.= "$Ago  $L\n";
+							if((!$PrintedThisLogFileName)) { print colorize($LogFile.": ------\n","cyan"); $PrintedThisLogFileName=TRUE; }
+							print  "$Ago  $L\n";
 						}
 					}
 				}
@@ -87,10 +107,11 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 		}
 	}
 }
+//print "printing\n";
 if($Intermingle){
 	ksort($Intermingled); foreach($Intermingled as $L) print $L;
 }else{
-	print $LogsCombined;
+	
 }
 
 //$LogsCombinedCommand.=") | sed $SudoReplace | grep -v NSAutoreleaseNoPool | grep -v geektool | grep -v Geeklet | grep -v Chrome ";
