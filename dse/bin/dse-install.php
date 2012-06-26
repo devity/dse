@@ -212,6 +212,7 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	}
 }
 
+
 $ComponentName="tor";
 if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
