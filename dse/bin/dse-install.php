@@ -218,15 +218,25 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			//passthru($Command);
 			print "\n";
 			
+			if(!is_dir("/root/crowbar/trunk")){
 			
-			chdir("/tmp");
-			$Command="svn http://simile.mit.edu/repository/crowbar/trunk/";
-			print "Command: $Command\n";
-			`$Command`;
-			//$Command="sudo dpkg -i /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb";
-			//print "Command: $Command\n";
-			//passthru($Command);
-			
+				chdir("/tmp");
+				$Command="svn export http://simile.mit.edu/repository/crowbar/trunk/";
+				print "Command: $Command\n";
+				`$Command`;
+				
+				`mkdir /root/crowbar`;
+				`mv /tmp/trunk /root/crowbar/.`;
+				//$Command="sudo dpkg -i /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb";
+				//print "Command: $Command\n";
+				//passthru($Command);
+				
+				$Command="xulrunner --install-app /root/crowbar/trunk/xulapp";
+				print "Command: $Command\n";
+				`$Command`;
+
+				print colorize("xulrunner /root/crowbar/trunk/xulapp/application.ini\n","blue","white");
+			}
 		}
 	}
 }
