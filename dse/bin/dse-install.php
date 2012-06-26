@@ -49,7 +49,7 @@ print `gunzip /tmp/bootinfoscript-061.tar.gz`;
 `rm -rf /tmp/bootinfoscript`;
 print `tar xvf /tmp/bootinfoscript-061.tar`;
 
-exit(0);
+//exit(0);
 
 // ********* main script activity START ************
 
