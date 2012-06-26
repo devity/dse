@@ -1000,7 +1000,7 @@ function unk_time($TimeAndDateString){
 	
 	if( str_contains ( $TimeAndDateString, " - - [") >0 ){
 		dpv(5,"preg_match 11 - $TimeAndDateString\n");
-		$TimeAndDateString=strcut($TimeAndDateString,"\\["," ");
+		$TimeAndDateString=strcut($TimeAndDateString,"["," ");
 		$format = '%d/%b/%Y:%H:%M:%S';
 	}
 		
@@ -1010,6 +1010,9 @@ function unk_time($TimeAndDateString){
 	//print_r($matches);
 	//print "res=".$matches[0].", $format\n";
 	//if($format && $matches[0] ) return strptime($matches[0], $format);
+	if(!$TimeAndDateString){
+		dpv(0,colorize("strptime($TimeAndDateString, $format) no final TimeAndDateString. empty!\n","red"));
+	}
 	if($format &&  $TimeAndDateString){
 		$TimeAndDateString=substr($TimeAndDateString,0,$len);
 		$vars['unk_time__CutTimeAndDateString']=$TimeAndDateString;
