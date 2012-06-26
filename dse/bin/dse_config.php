@@ -101,7 +101,8 @@ if(dse_is_osx()){
 }elseif(dse_is_ubuntu()){
 	$vars['DSE']['LGT_LOG_FILES']="/var/log/syslog,/var/log/kern.log,/var/log/daemon.log,/var/log/messages";
 }elseif(dse_is_centos()){
-	$vars['DSE']['LGT_LOG_FILES']="/var/log/secure,/var/log/kernel,/var/log/dmesg,/var/log/messages,/var/log/maillog";
+	$vars['DSE']['LGT_LOG_FILES']="/var/log/secure,/var/log/kernel,/var/log/messages,/var/log/maillog";
+	//,/var/log/dmesg
 }else{
 	$vars['DSE']['LGT_LOG_FILES']="/var/log/messages";
 }
