@@ -156,19 +156,19 @@ $vars['DSE']['DSE_IPTHROTTLE_KONT_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/ips_ko
 $vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/apache2.conf";
 
 
-$vars['DSE']['RedWords']=array("no such"," no ",")no ","!","ot found","not","false","error","illegal","warning","unexpected","empty","failure","failed","aborted","denied","problem","exhausted"
+$vars['DSE']['RedWords']=array("no such"," no ",")no ","!","ot found","is not","could not open","could not","not","false","error","illegal","warning","unexpected","empty","failure","failed","aborted","denied","problem","exhausted"
 	,"invalid","segfault","crash","denied","disconnected","POSSIBLE BREAK-IN ATTEMPT","BREAK-IN","ATTEMPT","isn't","bounce","sorry"," 403 "," 404 "); 
 	for($e=500;$e<540;$e++){
 		$vars['DSE']['RedWords'][]=" $e ";
 	}
 $vars['DSE']['GreenWords']=array(" ok ","granted","uo to date","done","accepted","true","succeeded","success","freeing","cleaned up"
-	,"established","disconnected by user"," 200 ","\"GET "); 
+	,"established","disconnected by user"," 200 ","\"GET ","New connection from"); 
 $vars['DSE']['BlueWords']=array("https","sftp","imaps","http","httpd","inetd","xinetd","ftp","ftpd","imap","ssh","sshd","samba","mail","smtp","mysql","mysqld"
 	,"apache","crowbar","vncserver","vnc"); 
 $vars['DSE']['CyanWords']=array("127.0.0.1","localhost",dse_hostname(),"port","protocol");
 $vars['DSE']['MagentaWords']=array("root","permission","sudo","admin");
-$vars['DSE']['YellowWords']=array("status","result","permission","login","logout","user","start","exit","stop","started","stopped","info","config"
-	,"removed","configuration","version","disabled","message"); 
+$vars['DSE']['YellowWords']=array("status","result","permission","login","logout","user","start","exit","stop","started","stopped","info"
+	,"removed","configuration","config","version","disabled","message"); 
 
 // *********************************************************************************
 // *********************************************************************************
