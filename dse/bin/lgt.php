@@ -93,6 +93,7 @@ if($Intermingle){
 }else{
 	print $LogsCombined;
 }
+
 //$LogsCombinedCommand.=") | sed $SudoReplace | grep -v NSAutoreleaseNoPool | grep -v geektool | grep -v Geeklet | grep -v Chrome ";
 //| sed 's/louiss-macbook-pro-2//g' | sed 's/Louiss-MacBook-Pro-2//g' 
 //| cut -c 8-1000 
