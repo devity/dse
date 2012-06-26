@@ -2510,7 +2510,16 @@ $vars[shell_foreground_colors]['white'] = '37';
 	//}
 	
 	
-
+function colorize_words($L) {
+	global $vars;
+	foreach($vars['DSE']['RedWords'] as $RedWord) $L=str_ireplace($RedWord,colorize($RedWord,"red"),$L);
+	foreach($vars['DSE']['GreenWords'] as $GreenWord) $L=str_ireplace($GreenWord,colorize($GreenWord,"green"),$L);
+	foreach($vars['DSE']['BlueWords'] as $BlueWord) $L=str_ireplace($BlueWord,colorize($BlueWord,"blue"),$L);
+	foreach($vars['DSE']['MagentaWords'] as $PurpleWord) $L=str_ireplace($PurpleWord,colorize($PurpleWord,"purple"),$L);
+	foreach($vars['DSE']['YellowWords'] as $YellowWord) $L=str_ireplace($YellowWord,colorize($YellowWord,"yellow"),$L);
+	foreach($vars['DSE']['CyanWords'] as $CyanWord) $L=str_ireplace($CyanWord,colorize($CyanWord,"cyan"),$L);
+	return $L;			
+}
 function colorize($string, $forground_color = null, $background_color = null, $ResetColorsAfter=TRUE, $type=null) {
 	global $vars;
 	return getColoredString($string, $forground_color, $background_color, $ResetColorsAfter, $type);

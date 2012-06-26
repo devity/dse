@@ -82,12 +82,7 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 					
 					if($Time<=0 || $Time>$StartTime){
 						$L=substr($L,0,$CharsWide);
-						foreach($vars['DSE']['RedWords'] as $RedWord) $L=str_ireplace($RedWord,colorize($RedWord,"red"),$L);
-						foreach($vars['DSE']['GreenWords'] as $GreenWord) $L=str_ireplace($GreenWord,colorize($GreenWord,"green"),$L);
-						foreach($vars['DSE']['BlueWords'] as $BlueWord) $L=str_ireplace($BlueWord,colorize($BlueWord,"blue"),$L);
-						foreach($vars['DSE']['MagentaWords'] as $PurpleWord) $L=str_ireplace($PurpleWord,colorize($PurpleWord,"purple"),$L);
-						foreach($vars['DSE']['YellowWords'] as $YellowWord) $L=str_ireplace($YellowWord,colorize($YellowWord,"yellow"),$L);
-						foreach($vars['DSE']['CyanWords'] as $CyanWord) $L=str_ireplace($YellowWord,colorize($YellowWord,"cyan"),$L);
+						$L=colorize_words($L);
 						if($Time<=0){
 							dpv(0," t=$Time $L\n","red");
 						}else{
