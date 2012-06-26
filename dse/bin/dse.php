@@ -22,6 +22,7 @@ $parameters_details = array(
   array('u','upgrade',"same as --update"),
   array('v','update-no-backup',"does a --update w/o backing up current dse install"),
   array('e','edit',"backs up and launches a vim of ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']),
+  array('w','config-show',"prints ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']),
   array('','config-show',"prints contents of ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']),
   array('i','install',"launches dse-install"),
   array('c','configure',"launches dse-configure"),
@@ -65,7 +66,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		passthru("/dse/bin/vibk ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']." 2>&1");
 		$DidSomething=TRUE;
 		break;
-	case 'c':
+	case 'w':
   	case 'config-show':
 		print dse_file_get_contents($vars['DSE']['DSE_CONFIG_FILE_GLOBAL']);
 		$DidSomething=TRUE;

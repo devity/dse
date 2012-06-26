@@ -62,38 +62,7 @@ if($wget){
 }
 
 
-
-$DSE_Git_pull_script="/scripts/dse_git_pull";
-$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/scripts/" . "dse_git_pull";
-dse_configure_file_install_from_template($DSE_Git_pull_script,$TemplateFile,"4775","root:root");
-
-$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "dse.conf";
-dse_configure_file_install_from_template($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],$TemplateFile,"664","root:root");
-
-$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "ips_whitelist.txt";
-dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_WHITELIST_FILE'],$TemplateFile,"664","root:root");
-
-$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "ips_droplist.txt";
-dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'],$TemplateFile,"664","root:root");
-
-$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "apache2.conf";
-dse_configure_file_install_from_template($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],$TemplateFile,"664","root:root");
-
-
-
-dse_file_set_mode($vars['DSE']['DSE_IPTHROTTLE_LOG_DIRECTORY'],"777");
-
-
-dse_file_set_mode("/var/log","777");
-dse_file_set_mode("/var","777");
-
-
-if(dse_is_osx()){
-	dse_file_set_owner($vars['DSE']['DSE_BIN_DIR']."/dnetstat.php","root:wheel");
-}else{
-	dse_file_set_owner($vars['DSE']['DSE_BIN_DIR']."/dnetstat.php","root:root");
-}
-dse_file_set_mode($vars['DSE']['DSE_BIN_DIR']."/dnetstat.php","4755");
+print pad("Creating Needed Directories:   ","90%",colorize("-","blue"))."\n";
 
 
 $NeededDirs=array(
@@ -162,6 +131,43 @@ foreach($NeededDirs as $DirArray){
 		print "\n";
 	}
 }
+
+
+
+
+print pad("Installing cfg files from Templates: ".colorize($PackageName,"cyan")."...   ","90%",colorize("-","blue"))."\n";
+	
+$DSE_Git_pull_script="/scripts/dse_git_pull";
+$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/scripts/" . "dse_git_pull";
+dse_configure_file_install_from_template($DSE_Git_pull_script,$TemplateFile,"4775","root:root");
+
+$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "dse.conf";
+dse_configure_file_install_from_template($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],$TemplateFile,"664","root:root");
+
+$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "ips_whitelist.txt";
+dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_WHITELIST_FILE'],$TemplateFile,"664","root:root");
+
+$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "ips_droplist.txt";
+dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'],$TemplateFile,"664","root:root");
+
+$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "apache2.conf";
+dse_configure_file_install_from_template($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],$TemplateFile,"664","root:root");
+
+
+
+dse_file_set_mode($vars['DSE']['DSE_IPTHROTTLE_LOG_DIRECTORY'],"777");
+
+
+dse_file_set_mode("/var/log","777");
+dse_file_set_mode("/var","777");
+
+
+if(dse_is_osx()){
+	dse_file_set_owner($vars['DSE']['DSE_BIN_DIR']."/dnetstat.php","root:wheel");
+}else{
+	dse_file_set_owner($vars['DSE']['DSE_BIN_DIR']."/dnetstat.php","root:root");
+}
+dse_file_set_mode($vars['DSE']['DSE_BIN_DIR']."/dnetstat.php","4755");
 
 
 
