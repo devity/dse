@@ -257,8 +257,8 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			print "\n";
 			
 			
-			`wget -qO- http://launchpadlibrarian.net/67952995/xulrunner-2.0-mozjs_2.0%2Bnobinonly-0ubuntu1_amd64.deb > /tmp/xulrunner-2.0-mozjs_2.0%2Bnobinonly-0ubuntu1_amd64.deb 2>/dev/null`;
-			$Command="sudo dpkg -i xulrunner-2.0-mozjs_2.0%2Bnobinonly-0ubuntu1_amd64.deb";
+			`wget -qO- http://launchpadlibrarian.net/67954580/xulrunner-2.0-mozjs_2.0%2Bnobinonly-0ubuntu1_i386.deb > /tmp/xulrunner-2.0-mozjs_2.0%2Bnobinonly-0ubuntu1_i386.deb 2>/dev/null`;
+			$Command="sudo dpkg -i /tmp/xulrunner-2.0-mozjs_2.0%2Bnobinonly-0ubuntu1_i386.deb";
 			print "Command: $Command\n";
 			
 			`wget -qO- http://launchpadlibrarian.net/67954579/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb > /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb 2>/dev/null`;
