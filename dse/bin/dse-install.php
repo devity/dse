@@ -206,7 +206,7 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		if(!dse_is_osx()){
 			$Command="sudo add-apt-repository ppa:ubuntu-mozilla-daily/ppa";
 			print "Command: $Command\n";
-			passthru($Command);
+			//passthru($Command);
 			print "\n";
 		}
 	}
