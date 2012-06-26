@@ -52,7 +52,8 @@ function dse_pid_get_exe_tree($PID,$Reverse=FALSE){
 function dpv($MinVerbosity,$Message){
 	global $vars;
 	if($vars['Verbosity']>=$MinVerbosity){
-		print "$Message";
+		$Message=colorize(substr($Message,0,cbp_get_screen_width()-2),"yellow")."\n";
+		print $Message;
 	}
 }
 
