@@ -162,28 +162,29 @@ $NotOSXPackageNamesArray=array();
 
 
 
-
-if(!in_array("image-processing", $vars['DSE']['AddComponents'])){
-	$Component=colorize("image-processing","cyan");
+$ComponentName="image-processing";
+if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
+	$Component=colorize($ComponentName,"cyan");
 	$A=dse_ask_yn("Install Component $Component?");
 	print "\n";
 	if($A=='Y'){
-		$vars['DSE']['AddComponents'][]="image-processing";
+		$vars['DSE']['AddComponents'][]=$ComponentName;
 	}
 }
-if(in_array("image-processing", $vars['DSE']['AddComponents'])){
+if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
 	$OSXPackageNamesArray[]="imagemagick";
 	$NotOSXPackageNamesArray[]="imagemagick";
 	$NotOSXPackageNamesArray[]="libmagickcore-dev";
 }
 
 
-if(!in_array("desktop", $vars['DSE']['AddComponents'])){
-	$Component=colorize("desktop","cyan");
+$ComponentName="desktop";
+if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
+	$Component=colorize($ComponentName,"cyan");
 	$A=dse_ask_yn("Install Component $Component?");
 	print "\n";
 	if($A=='Y'){
-		$vars['DSE']['AddComponents'][]="image-processing";
+		$vars['DSE']['AddComponents'][]=$ComponentName;
 	}
 }
 if(in_array("desktop", $vars['DSE']['AddComponents'])){
