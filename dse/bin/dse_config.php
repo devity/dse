@@ -101,10 +101,11 @@ if(dse_is_osx()){
 }elseif(dse_is_ubuntu()){
 	$vars['DSE']['LGT_LOG_FILES']="/var/log/syslog,/var/log/kern.log,/var/log/daemon.log,/var/log/messages";
 }elseif(dse_is_centos()){
-	$vars['DSE']['LGT_LOG_FILES']="/var/log/secure,/var/log/kernel,/var/log/dmesg,/var/log/messages";
+	$vars['DSE']['LGT_LOG_FILES']="/var/log/secure,/var/log/kernel,/var/log/dmesg,/var/log/messages,/var/log/maillog";
 }else{
 	$vars['DSE']['LGT_LOG_FILES']="/var/log/messages";
 }
+$vars['DSE']['LGT_LOG_FILES'].=",/var/log/vibk.log,/var/log/iptable_drops.log,/var/log/dse_publisher.log,/var/log/dse/dse.log";
 
 // *********************************************************************************
 $vars['DSE']['SUGGESTED']=array();

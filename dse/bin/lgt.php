@@ -12,18 +12,16 @@ $NumberOfBytesSameLimit=13;
 $shortopts  = "";
 $shortopts .= "n:";  // Required value
 $shortopts .= "m:";  // Required value
+$shortopts .= "v:";  // Required value
 $shortopts .= "t::"; // Optional value
-$shortopts .= "abc"; // These options do not accept values
+$shortopts .= "i"; // These options do not accept values
 
-$longopts  = array(
-    "required:",     // Required value
-    "required:",     // Required value
-    "optional::",    // Optional value
-    "option",        // No value
-    "opt"           // No value
-);
+$longopts  = array();
 $options = getopt($shortopts, $longopts);
 
+if($options['v']){
+	$vars[Verbosity]=$options['v'];
+}
 if($options['n']){
 	$Lines=$options['n'];
 }
@@ -41,6 +39,8 @@ $SudoReplace="s/sudo/SUDO/g";
 $TailLines=$Lines;
 
 $LogsCombined="";
+
+dpv(2,"Using Log Files: ".$vars['DSE']['LGT_LOG_FILES']."\n");
 foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 	$LogFile=trim($LogFile);
 	$LogFileNameColorized=colorize(pad(basename($LogFile),10),"cyan");
