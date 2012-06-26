@@ -530,7 +530,8 @@ function dse_install_file_from_url($URL){
 			}
 			$DebFileName=strcut($r,""," ");
 			//$LocalFullFileNameDeb=str_replace(".rpm",".deb",$LocalFullFileName);
-			
+			print colorize("$DebFileName generated!\n","green");
+				
 			$Command="sudo dpkg -i $DebFileName";
 			print "Command: $Command\n";
 			passthru($Command);
