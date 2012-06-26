@@ -16,8 +16,7 @@ $shortopts .= "v:";  // Required value
 $shortopts .= "t::"; // Optional value
 $shortopts .= "i"; // These options do not accept values
 
-$longopts  = array();
-$options = getopt($shortopts, $longopts);
+$options = getopt($shortopts);
 
 if($options['v']){
 	$vars[Verbosity]=$options['v'];

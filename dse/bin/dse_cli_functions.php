@@ -942,10 +942,22 @@ function unk_time($TimeAndDateString){
 	$format=""; $prefix=""; $vars['unk_time__CutTimeAndDateString']="";
 	$months=array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
 	//foreach($months as $n=>$month) str_replace($month,$n+1,$TimeAndDateString);
+	if( preg_match ("/13[0-9]{8} /" , $TimeAndDateString, $matches) >0 ){
+		$vars['unk_time__CutTimeAndDateString']=substr($TimeAndDateString,0,10);
+		return intval($vars['unk_time__CutTimeAndDateString']);
+	}
 	if( preg_match ("/[a-zA-Z]{3}  [0-9]{1} [0-9]{2}:[0-9]{2}:[0-9]{2}/" , $TimeAndDateString, $matches) >0 ){$len=15; $format = '%b %d %H:%M:%S';}
 	if( preg_match ("/[a-zA-Z]{3} [0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/" , $TimeAndDateString, $matches) >0 ){$len=15; $format = '%b %d %H:%M:%S';}
 	if( preg_match ("/[0-9]{2}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/" , $TimeAndDateString, $matches) >0 ){$len=17; $format = '%d/%m/%Y %H:%M:%S';}
 	if( preg_match ("/[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}/" , $TimeAndDateString, $matches) >0 ){$len=18; $format = '%d/%m/%Y %H:%M:%S';}
+	
+	
+	if( preg_match ("/[0-9]{1-3}\.[0-9]{1-3}\.[0-9]{1-3}\.[0-9]{1-3} . . \[/" , $TimeAndDateString, $matches) >0 ){
+		$TimeAndDateString=strcut($TimeAndDateString,"["," ");
+		$format = '%d/%b/%Y:%H:%M:%S';
+	}
+		
+	
 	
 	//print_r($matches);
 	//print "res=".$matches[0].", $format\n";
