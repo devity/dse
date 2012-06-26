@@ -450,6 +450,138 @@ function dse_get_installer_name(){
 	return $Installer;
 }
 				
+function dse_file_get_extension($filename){
+	global $vars;
+	$ext = end(explode('.', $filename));
+	return $ext;
+}
+
+function dse_install_file_from_url($URL){
+	global $vars;
+	$DownloadsLocation="/backup/installs";
+	$ar=parse_url($URL);
+	//print_r($ar);
+	$DirAndFile=$ar[path];
+	$FileName=basename($DirAndFile);
+	$LocalFullFileName=$DownloadsLocation."/".$FileName;
+	$FileExtension=dse_file_get_extension($FileName);
+	$FileWithoutExtension=str_remove($FileName,".".$FileExtension);
+	$ThisDownloadsLocation=$DownloadsLocation."/".$FileWithoutExtension;
+	print colorize("Creating Directory: $ThisDownloadsLocation\n","green");
+	`mkdir $ThisDownloadsLocation`;
+		
+	if(!dse_file_exists($LocalFullFileName)){
+		$Command="wget -qO- \"$URL\" > $LocalFullFileName 2>/dev/null";
+		print colorize("downloading file..\n","red");
+		print "Command: $Command\n";
+		`$Command`;
+	}
+	
+	if(!dse_file_exists($LocalFullFileName)){
+		print colorize("error, $LocalFullFileName not there. downlaod problem?\n","red");
+		return;
+	}
+	
+	switch($FileExtension){
+		case 'rpm':
+			$Command="alien $LocalFullFileName";
+			print "Command: $Command\n";
+			passthru($Command);
+			
+			$LocalFullFileNameDeb=str_replace(".rpm",".deb",$LocalFullFileName);
+			
+			$Command="sudo dpkg -i $LocalFullFileNameDeb";
+			print "Command: $Command\n";
+			passthru($Command);
+			
+			break;
+		case 'deb':
+			$Command="sudo dpkg -i $LocalFullFileName";
+			print "Command: $Command\n";
+			passthru($Command);
+			break;
+		case 'gz':
+			$LocalFullUncompressedFileName=str_remove($LocalFullFileName,".gz");
+			
+			$Command="sudo rm -rf $LocalFullUncompressedFileName";
+			print "Command: $Command\n";
+			passthru($Command);
+			
+			$Command="sudo gunzip $LocalFullUncompressedFileName";
+			print "Command: $Command\n";
+			passthru($Command);
+			
+			//$Command="sudo rm -rf $LocalFullUncompressedFileName";
+		//	print "Command: $Command\n";
+			//passthru($Command);
+			$UncompressedFileExtension=dse_file_get_extension($LocalFullUncompressedFileName);
+			
+			if($UncompressedFileExtension=="tar"){
+				$Command="sudo tar xvf $LocalFullUncompressedFileName";
+				print "Command: $Command\n";
+				passthru($Command);
+			}
+			
+			break;
+		case 'tgz':
+			$LocalFullUncompressedFileName=str_remove($LocalFullFileName,".tgz");
+			
+			//$Command="sudo rm -rf $LocalFullUncompressedFileName";
+			//print "Command: $Command\n";
+			//passthru($Command);
+			
+			//$Command="sudo gunzip $LocalFullUncompressedFileName";
+			//print "Command: $Command\n";
+			//passthru($Command);
+			
+			//$Command="sudo rm -rf $LocalFullUncompressedFileName";
+		//	print "Command: $Command\n";
+			//passthru($Command);
+		//	$UncompressedFileExtension=dse_file_get_extension($LocalFullUncompressedFileName);
+			
+			//if($UncompressedFileExtension=="tar"){
+				$Command="sudo tar xvf $LocalFullFileName";
+				print "Command: $Command\n";
+				passthru($Command);
+			//}
+			
+			break;
+	}
+	
+	
+	exit();
+	//if(!is_dir("")){
+			
+				//chdir("/tmp");
+				//$Command="svn export http://simile.mit.edu/repository/crowbar/trunk/";
+				//print "Command: $Command\n";
+				//`$Command`;
+				
+				//`mkdir /root/crowbar`;
+				//`mv /tmp/trunk /root/crowbar/.`;
+				//$Command="sudo dpkg -i /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb";
+				//print "Command: $Command\n";
+				//passthru($Command);
+				
+				//$Command="xulrunner --install-app /root/crowbar/trunk/xulapp";
+				//print "Command: $Command\n";
+				//`$Command`;
+
+				//print colorize("xulrunner installed! run with: ","green","white").colorize("xulrunner /root/crowbar/trunk/xulapp/application.ini\n","blue","white");
+		//	}
+	/*
+`rm -rf /tmp/bootinfoscript-061.tar.gz`;
+`wget -qO- http://downloads.sourceforge.net/project/bootinfoscript/bootinfoscript/0.61/bootinfoscript-061.tar.gz > /tmp/bootinfoscript-061.tar.gz 2>/dev/null`;
+
+`rm -rf /tmp/bootinfoscript-061.tar`;
+print `gunzip /tmp/bootinfoscript-061.tar.gz`;
+
+`rm -rf /tmp/bootinfoscript`;
+print `tar xvf /tmp/bootinfoscript-061.tar`;
+
+	*/
+}		
+				
 					
 function dse_package_install($PackageName,$Remove=FALSE){
 	global $vars;

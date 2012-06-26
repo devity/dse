@@ -191,6 +191,33 @@ foreach($vars['DSE']['AddComponents'] as $ComponentName){
 
 
 
+
+
+$ComponentName="synergy";
+if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
+	if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		$Component=colorize($ComponentName,"cyan");
+		$A=dse_ask_yn("Install Component $Component?");
+		print "\n";
+		if($A=='Y'){
+			$vars['DSE']['AddComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+		}else{
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+		}
+	}
+	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		if(!dse_is_osx()){
+			$NotOSXPackageNamesArray[]="libqt4-gui";
+			$NotOSXPackageNamesArray[]="libqt4-network";
+			$URL="http://downloads.sourceforge.net/project/synergy2/Binaries/1.3.1/synergy-1.3.1-1.i386.rpm";
+			dse_install_file_from_url($URL);
+		}
+	}
+}
+
+
+
 $ComponentName="crowbar";
 if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
@@ -268,7 +295,7 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			
 			
 			`wget -qO- http://launchpadlibrarian.net/70321863/xulrunner-1.9.2_1.9.2.17%2Bbuild3%2Bnobinonly-0ubuntu1_i386.deb > /tmp/xulrunner-1.9.2_1.9.2.17%2Bbuild3%2Bnobinonly-0ubuntu1_i386.deb 2>/dev/null`;
-			$Command="xulrunner-1.9.2_1.9.2.17%2Bbuild3%2Bnobinonly-0ubuntu1_i386.deb";
+			$Command="sudo dpkg -i /tmp/xulrunner-1.9.2_1.9.2.17%2Bbuild3%2Bnobinonly-0ubuntu1_i386.deb";
 			print "Command: $Command\n";
 			
 			/*
@@ -403,6 +430,9 @@ $NotOSXPackageNamesArray[]="filefrog";
 $NotOSXPackageNamesArray[]="losetup";
 $NotOSXPackageNamesArray[]="gawk";
 
+
+   
+
 if(dse_is_centos()){
 	$PackageNamesArray[]="jwhois";
 }elseif(dse_is_osx()){
@@ -413,6 +443,10 @@ if(dse_is_centos()){
 if(dse_is_ubuntu()){
 	$PackageNamesArray[]="dnet-progs";
 	$PackageNamesArray[]="yum";
+	$PackageNamesArray[]="alien";
+	$PackageNamesArray[]="dpkg-dev";
+	$PackageNamesArray[]="debhelper";
+	$PackageNamesArray[]="build-essential";
 }
 	
 if(dse_is_osx()){
