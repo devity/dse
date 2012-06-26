@@ -208,7 +208,9 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		}
 	}
 	if(in_array("desktop", $vars['DSE']['AddComponents'])){
-		$NotOSXPackageNamesArray[]="xubuntu-desktop";
+		if(dse_is_ubuntu()){
+			$NotOSXPackageNamesArray[]="ubuntu-desktop";
+		}
 	}
 }
 
