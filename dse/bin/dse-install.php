@@ -182,6 +182,30 @@ foreach($vars['DSE']['AddComponents'] as $ComponentName){
 	//print "$Component ".colorize("Available - no choice yet","yellow")."\n";
 //}
 
+//	$NotOSXPackageNamesArray[]="xinit";
+
+$ComponentName="xurlrunner";
+if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
+	if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		$Component=colorize($ComponentName,"cyan");
+		$A=dse_ask_yn("Install Component $Component?");
+		print "\n";
+		if($A=='Y'){
+			$vars['DSE']['AddComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+		}else{
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+		}
+	}
+	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		$NotOSXPackageNamesArray[]="xulrunner-2.0";
+		$NotOSXPackageNamesArray[]="xulrunner-2.0-dev";
+		$NotOSXPackageNamesArray[]="xulrunner-2.0-gnome-support";
+		$NotOSXPackageNamesArray[]="xulrunner-dev";
+		$NotOSXPackageNamesArray[]="gdm";
+		
+	}
+}
 
 $ComponentName="image-processing";
 if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
@@ -219,9 +243,8 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	if(in_array("desktop", $vars['DSE']['AddComponents'])){
 		if(dse_is_ubuntu()){
 			$NotOSXPackageNamesArray[]="ubuntu-desktop";
-			//$NotOSXPackageNamesArray[]="xinit";
-			//$NotOSXPackageNamesArray[]="gdm";
-			//
+			$NotOSXPackageNamesArray[]="gdm";
+			
 			$NotOSXPackageRemoveNamesArray[]="gnome-power-manage";
 			$NotOSXPackageRemoveNamesArray[]="modemmanager";
 			$NotOSXPackageRemoveNamesArray[]="powermgmt-base";
