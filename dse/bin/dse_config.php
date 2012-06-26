@@ -87,6 +87,7 @@ $vars['DSE']['SYSTEM_GROUP_FILE']='/etc/group';
 $vars['DSE']['SYSTEM_BASHRC_FILE']='/etc/bashrc';
 $vars['DSE']['SYSTEM_PROFILE_FILE']='/etc/profile';
 $vars['DSE']['SYSTEM_APT_SOURCES_LIST']='/etc/apt/sources.list';
+$vars['DSE']['SERVER_INITD_DIR']='/etc/init.d';
 
 
 $vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']='/etc/php.ini.default';
