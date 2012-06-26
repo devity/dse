@@ -451,7 +451,7 @@ function dse_get_installer_name(){
 }
 				
 					
-function dse_package_install($PackageName){
+function dse_package_install($PackageName,$Remove=TRUE){
 	global $vars;
 	$PackageNameUpper=strtoupper($PackageName);
 	print pad("Installing Package: ".colorize($PackageNameUpper,"cyan")." ...   ","90%",colorize("-","blue"))."\n";
@@ -506,6 +506,11 @@ function dse_package_install($PackageName){
 	}
 	
 	
+	if($Remove){
+		$Action="remove";
+	}else{
+		$Action="install";
+	}
 	
 	
 	$vars['DSE']['dse_package_install__use_passthru']=TRUE;
@@ -515,7 +520,7 @@ function dse_package_install($PackageName){
 		return -1;
 	}
 	if($Installer=='yum'){
-		$Command="sudo yum -y install $PackageName 2>&1";
+		$Command="sudo yum -y $Action $PackageName 2>&1";
 		print " Running: $Command\n";
 		if($vars['DSE']['dse_package_install__use_passthru']){
 			passthru($Command);
@@ -534,7 +539,7 @@ function dse_package_install($PackageName){
 			}
 		}
 	}elseif($Installer=='apt-get'){
-		$Command="sudo $aptget -y install $PackageName 2>&1";
+		$Command="sudo $aptget -y $Action $PackageName 2>&1";
 		print " Running: $Command\n";
 		if($vars['DSE']['dse_package_install__use_passthru']){
 			passthru($Command);
@@ -570,7 +575,7 @@ function dse_package_install($PackageName){
 				return 0;
 			}
 			
-			$Command="sudo fink -yv install $PackageName 2>&1";
+			$Command="sudo fink -yv $Action $PackageName 2>&1";
 			$r=passthru($Command);
 			return (0);
 			// print "cmd: $Command   r=".$r."\n";

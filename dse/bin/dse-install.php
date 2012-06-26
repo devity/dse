@@ -40,7 +40,16 @@ if($argv[1]=="help" || $ShowUsage){
 	print $vars['Usage'];
 }
 
+`rm -rf /tmp/bootinfoscript-061.tar.gz`;
+`wget -qO- http://downloads.sourceforge.net/project/bootinfoscript/bootinfoscript/0.61/bootinfoscript-061.tar.gz > /tmp/bootinfoscript-061.tar.gz 2>/dev/null`;
 
+`rm -rf /tmp/bootinfoscript-061.tar`;
+print `gunzip /tmp/bootinfoscript-061.tar.gz`;
+
+`rm -rf /tmp/bootinfoscript`;
+print `tar xvf /tmp/bootinfoscript-061.tar`;
+
+exit(0);
 
 // ********* main script activity START ************
 
@@ -210,6 +219,21 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	if(in_array("desktop", $vars['DSE']['AddComponents'])){
 		if(dse_is_ubuntu()){
 			$NotOSXPackageNamesArray[]="ubuntu-desktop";
+			//$NotOSXPackageNamesArray[]="xinit";
+			//$NotOSXPackageNamesArray[]="gdm";
+			//
+			$NotOSXPackageRemoveNamesArray[]="gnome-power-manage";
+			$NotOSXPackageRemoveNamesArray[]="modemmanager";
+			$NotOSXPackageRemoveNamesArray[]="powermgmt-base";
+			$NotOSXPackageRemoveNamesArray[]="";
+			$NotOSXPackageRemoveNamesArray[]="";
+		/*
+sudo update-rc.d -f cups remove
+sudo update-rc.d -f modem-manager remove
+sudo update-rc.d -f bluetooth remove
+sudo update-rc.d -f ondemand remove
+*/
+			
 		}
 	}
 }
@@ -273,6 +297,11 @@ $NotOSXPackageNamesArray[]="iftop";
 $NotOSXPackageNamesArray[]="sysstat";
 $NotOSXPackageNamesArray[]="chkconfig";
 
+$NotOSXPackageNamesArray[]="blkid";
+$NotOSXPackageNamesArray[]="filefrog";
+$NotOSXPackageNamesArray[]="losetup";
+$NotOSXPackageNamesArray[]="gawk";
+
 if(dse_is_centos()){
 	$PackageNamesArray[]="jwhois";
 }elseif(dse_is_osx()){
@@ -300,7 +329,27 @@ foreach($PackageNamesArray as $PackageName){
 	}
 }
 
+if(!dse_is_osx()){
+	foreach($NotOSXPackageRemoveNamesArray as $PackageName){
+		$r=dse_package_remove($PackageName);
+		/*if($r<0){
+			print getColoredString("FATAL ERROR: removing package $PackageName\n","red","black");
+			print getColoredString($vars['DSE']['SCRIPT_FILENAME']."Exiting.\n","red","black");
+			exit(-1);
+		}*/
+	}
+}
 
+
+
+if(in_array("desktop", $vars['DSE']['AddComponents'])){
+	if(dse_is_ubuntu()){
+		passthru("sudo update-rc.d -f cups remove");
+		passthru("sudo update-rc.d -f modem-manager remove");
+		passthru("sudo update-rc.d -f bluetooth remove");
+		passthru("sudo update-rc.d -f ondemand remove");
+	}
+}
 
 
 
