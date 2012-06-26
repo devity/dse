@@ -455,7 +455,58 @@ function dse_package_install($PackageName){
 	global $vars;
 	$PackageNameUpper=strtoupper($PackageName);
 	print pad("Installing Package: ".colorize($PackageNameUpper,"cyan")." ...   ","90%",colorize("-","blue"))."\n";
-	$Installer=dse_get_installer_name();
+	
+	//$Installer=dse_get_installer_name();
+		$Installer="";
+	
+	if(dse_is_osx()){
+		/*$port=`which port`;
+		if(($port) && ((strstr($port,"no port in")===FALSE)) ){
+			$Installer="port";
+		}
+		
+		$brew=`which brew`;
+		if(($brew) && ((strstr($brew,"no brew in")===FALSE)) ){
+			$Installer="brew";
+		}*/
+		$fink=dse_which("fink");
+		if($fink){
+			$Installer="fink";
+		}
+	}elseif(dse_is_centos()){
+		$yum=dse_which("yum");
+		if($yum){
+			$Installer="yum";
+		}
+	}
+	if(!$Installer){
+		$aptget=dse_which("apt-get");
+		if($aptget){
+			$Installer="apt-get";
+		}
+	}
+	if(!$Installer){
+		$yum=dse_which("yum");
+		if(!$yum){
+			dse_install_yum();
+			$yum=dse_which("yum");
+			if($yum){
+				$Installer="yum";
+			}
+		}else{
+			$Installer="yum";
+		}
+	}
+	
+	if($Installer){
+		print getColoredString("$Installer ","purple","black");
+	}else{
+		print getColoredString("FATAL ERROR: No Compatible Installer Found missing.\n","red","black");
+		return -1;
+	}
+	
+	
+	
 	
 	$vars['DSE']['dse_package_install__use_passthru']=TRUE;
   	print "Package $PackageName ";
