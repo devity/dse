@@ -950,8 +950,8 @@ function unk_time($TimeAndDateString){
 		$vars['unk_time__CutTimeAndDateString']=substr($TimeAndDateString,0,10);
 		return intval($vars['unk_time__CutTimeAndDateString']);
 	}
-	if( preg_match ("/^[a-zA-Z]{3}  [0-9]{1} [0-9]{2}:[0-9]{2}:[0-9]{2}/" , $TimeAndDateString, $matches) >0 ){$len=15; $format = '%b %d %H:%M:%S';}
-	if( preg_match ("/^[a-zA-Z]{3} [0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/" , $TimeAndDateString, $matches) >0 ){$len=15; $format = '%b %d %H:%M:%S';}
+	if( preg_match ("/^[a-zA-Z]{3} [0-9]{1} [0-9]{2}:[0-9]{2}:[0-9]{2}/" , $TimeAndDateString, $matches) >0 ){$len=14; $format = '%b %d %H:%M:%S';}	// Jun  4 08:16:02
+	if( preg_match ("/^[a-zA-Z]{3} [0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/" , $TimeAndDateString, $matches) >0 ){$len=15; $format = '%b %d %H:%M:%S';}	// Jun  14 08:16:02
 	if( preg_match ("/^[0-9]{2}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/" , $TimeAndDateString, $matches) >0 ){$len=17; $format = '%d/%m/%Y %H:%M:%S';}
 	if( preg_match ("/^[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}/" , $TimeAndDateString, $matches) >0 ){$len=18; $format = '%d/%m/%Y %H:%M:%S';}
 	
@@ -978,7 +978,7 @@ function unk_time($TimeAndDateString){
 		$len=52; $format = '%a %B %d, %Y, %H:%M';
 	}// April 9, 2012, 12:32 pm:
 	
-	 
+  
 	
 	if( str_contains ( $TimeAndDateString, " - - [") >0 ){
 		$TimeAndDateString=strcut($TimeAndDateString,"["," ");

@@ -105,8 +105,8 @@ if(dse_is_osx()){
 }else{
 	$vars['DSE']['LGT_LOG_FILES']="/var/log/messages";
 }
-$vars['DSE']['LGT_LOG_FILES'].=",/var/log/vibk.log,/var/log/iptable_drops.log,/var/log/dse_publisher.log,/var/log/dse/dse.log";
-
+$vars['DSE']['LGT_LOG_FILES'].=",/var/log/vibk.log,/var/log/dse_publisher.log,/var/log/dse/dse.log";
+//,/var/log/iptable_drops.log
 // *********************************************************************************
 $vars['DSE']['SUGGESTED']=array();
 $vars['DSE']['SUGGESTED']['HISTFILESIZE']=100000;
