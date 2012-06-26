@@ -102,6 +102,7 @@ function dse_server_set_hostname($NewHostName){
 		print "Command: $Command = $r\n";
 	}
 	$Hostname=trim(`hostname`);
+	print "[$Hostname]=>[$NewHostName]\n";
 	dse_replace_in_file($vars['DSE']['SYSTEM_ETC_HOSTS'],$Hostname,$NewHostName);
 }
 
