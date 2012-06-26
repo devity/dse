@@ -172,6 +172,10 @@ $vars['DSE']['MagentaWords']=array("root","permission","sudo","admin");
 $vars['DSE']['YellowWords']=array("status","result","permission","login","logout","user","start","exit","stop","started","stopped","info"
 	,"removed","configuration","config","version","disabled","message"); 
 
+
+$vars['DSE']['ComponentsAvailable']=array("image-processing","desktop");
+$vars['DSE']['AddComponents']=array();
+
 // *********************************************************************************
 // *********************************************************************************
 // *********************************************************************************

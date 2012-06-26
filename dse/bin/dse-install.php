@@ -159,6 +159,40 @@ $dse_git_dir="$PWD/dse/dse";
 $PackageNamesArray=array();
 $OSXPackageNamesArray=array();
 $NotOSXPackageNamesArray=array();
+
+
+
+
+if(!in_array("image-processing", $vars['DSE']['AddComponents'])){
+	$Component=colorize("image-processing","cyan");
+	$A=dse_ask_yn("Install Component $Component?");
+	print "\n";
+	if($A=='Y'){
+		$vars['DSE']['AddComponents'][]="image-processing";
+	}
+}
+if(in_array("image-processing", $vars['DSE']['AddComponents'])){
+	$OSXPackageNamesArray[]="imagemagick";
+	$NotOSXPackageNamesArray[]="imagemagick";
+	$NotOSXPackageNamesArray[]="libmagickcore-dev";
+}
+
+
+if(!in_array("desktop", $vars['DSE']['AddComponents'])){
+	$Component=colorize("desktop","cyan");
+	$A=dse_ask_yn("Install Component $Component?");
+	print "\n";
+	if($A=='Y'){
+		$vars['DSE']['AddComponents'][]="image-processing";
+	}
+}
+if(in_array("desktop", $vars['DSE']['AddComponents'])){
+	$NotOSXPackageNamesArray[]="xubuntu-desktop";
+}
+
+
+
+
 $NotOSXPackageNamesArray[]="vim";
 $NotOSXPackageNamesArray[]="perl";
 $PackageNamesArray[]="wget";
@@ -166,9 +200,6 @@ $PackageNamesArray[]="curl";
 $OSXPackageNamesArray[]="lynx";
 $NotOSXPackageNamesArray[]="lynx-cur";
 $PackageNamesArray[]="bc";
-$OSXPackageNamesArray[]="imagemagick";
-$NotOSXPackageNamesArray[]="imagemagick";
-$NotOSXPackageNamesArray[]="libmagickcore-dev";
 $NotOSXPackageNamesArray[]="memstat";
 $NotOSXPackageNamesArray[]="iftop";
 $NotOSXPackageNamesArray[]="sysstat";
