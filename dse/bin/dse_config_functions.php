@@ -97,9 +97,11 @@ function dse_initd_entry_get_info($ServiceName=""){
 function dse_server_set_hostname($NewHostName){
 	global $vars;
 	if(dse_is_ubuntu()){
-		$r=`sudo /bin/hostname $NewHostName`;
+		$Command="sudo /bin/hostname $NewHostName";
+		$r=`$Command`;
+		print "Command: $Command = $r\n";
 	}
-	$Hostname=`hostname`;
+	$Hostname=trim(`hostname`);
 	dse_replace_in_file($vars['DSE']['SYSTEM_ETC_HOSTS'],$Hostname,$NewHostName);
 }
 
