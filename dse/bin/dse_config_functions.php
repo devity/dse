@@ -103,7 +103,11 @@ function dse_server_set_hostname($NewHostName){
 	}
 	$Hostname=trim(`hostname`);
 	print "[$Hostname]=>[$NewHostName]\n";
-	dse_replace_in_file($vars['DSE']['SYSTEM_ETC_HOSTS'],$Hostname,$NewHostName);
+	$Command="sudo perl -p -i -e ‘s/$Hostname/$NewHostName/’ ".$vars['DSE']['SYSTEM_ETC_HOSTS'];
+	$r=`$Command`;
+	
+	print "Command: $Command = $r\n";
+		//dse_replace_in_file($vars['DSE']['SYSTEM_ETC_HOSTS'],$Hostname,$NewHostName);
 }
 
 function dse_server_configure_file_load(){
