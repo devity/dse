@@ -484,9 +484,10 @@ if($FullConfig){
 		dse_write_daemon_script($INITD_SCRIPT_ARRAY);
 		$InitdFile=$vars['DSE']['SYSTEM_SCRIPTS_DIR']."/".$INITD_SCRIPT_ARRAY['ServiceName']."d";
 		dse_initd_entry_add($InitdFile,$INITD_SCRIPT_ARRAY['ServiceName']."d",91);
-		dse_service_restart($INITD_SCRIPT_ARRAY['ServiceName']);
+		dse_service_restart($INITD_SCRIPT_ARRAY['ServiceName']."d");
 		print `/dse/bin/dsc -oc`;
 	}
+
 	
 	exit();
 
