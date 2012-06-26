@@ -61,6 +61,12 @@ if($wget){
 	print getColoredString("ERROR: wget not installed.\n","red","black");
 }
 
+if($vars['DSE']['HOSTNAME']){
+	print pad("Setting hostname to: ".$vars['DSE']['HOSTNAME']."  ","90%",colorize("-","blue"))."\n";
+	print bar("Server REBOOT required for effect!","-","blue","white","white","red")."n";
+	$vars['DSE']['REBOOT_REQUIRED']=TURE;
+	dse_server_set_hostname($vars['DSE']['HOSTNAME']);
+}
 
 print pad("Creating Needed Directories:   ","90%",colorize("-","blue"))."\n";
 

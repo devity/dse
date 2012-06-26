@@ -311,7 +311,8 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		if(!dse_is_osx()){
 			$NotOSXPackageNamesArray[]="libqt4-gui";
 			$NotOSXPackageNamesArray[]="libqt4-network";
-			$URL="http://downloads.sourceforge.net/project/synergy2/Binaries/1.3.1/synergy-1.3.1-1.i386.rpm";
+			//$URL="http://downloads.sourceforge.net/project/synergy2/Binaries/1.3.1/synergy-1.3.1-1.i386.rpm";
+			$URL="http://synergy.googlecode.com/files/synergy-1.3.1-Linux-i386.rpm";
 			dse_install_file_from_url($URL);
 		}
 	}

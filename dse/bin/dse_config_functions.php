@@ -94,6 +94,15 @@ function dse_initd_entry_get_info($ServiceName=""){
 }
 
 
+function dse_server_set_hostname($NewHostName){
+	global $vars;
+	if(dse_is_ubuntu()){
+		$r=`sudo /bin/hostname $NewHostName`;
+	}
+	$Hostname=`hostname`;
+	dse_replace_in_file($vars['DSE']['SYSTEM_ETC_HOSTS'],$Hostname,$NewHostName);
+}
+
 function dse_server_configure_file_load(){
 	global $vars,$strcut_post_haystack;
 	$ConfigDirectory=$vars['DSE']['DSE_CONFIG_DIR'];

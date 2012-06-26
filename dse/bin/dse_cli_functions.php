@@ -1077,6 +1077,13 @@ function strcut($haystack,$pre,$post=""){
 	}
 	return $r;
 }
+print bar("Server REBOOT required for effect!","-","blue","white","white","red")."n";
+	
+function bar($String,$Type,$fg,$bg,$bfg,$bbg){
+	global $vars;
+	print pad(colorize($String,$fg,$bg),"90%",colorize($Type,$bfg,$bbg))."\n";
+}
+
 
 function pad($String,$Length,$PadChar=" ",$Justification="left"){
 	global $vars;
