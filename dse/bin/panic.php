@@ -196,10 +196,11 @@ exit(0);
 function dse_panic_offer_interactive(){
 	global $vars,$CFG_array;
 	
-
-	print getColoredString(pad("Automatic Run Done!",cbp_get_screen_width(),"*","center"),'bold_green');
-	print "However, this skips things you need to be asked about. ";
-	$A=dse_ask_yn("Do a more thourough, interactive run now?",'N',68*10);	
+	print "\n\n";
+	print getColoredString(pad("  Automatic Run Done !  ",cbp_get_screen_width(),"*","center"),'bold_green');
+	print getColoredString(pad("However, this skips things you need to be asked about.",cbp_get_screen_width()," ","center"),'cyan');
+	
+	$A=dse_ask_yn(pad("Do a more thourough, interactive run now?",cbp_get_screen_width()," ","center"),'N',68*10);	
 	if($A=='Y'){
 		dse_panic(TRUE);
 	}
@@ -218,7 +219,7 @@ function dse_panic($Interactive=FALSE){
 
 function dse_panic_hd($Interactive=FALSE){
 	global $vars,$CFG_array;
-	print getColoredString("Section:  Hard Drive / Disk Space\n","green");
+	print getColoredString(pad(" Section:  Hard Drive / Disk Space ",cbp_get_screen_width(),"-","center"),"green");
 	print getColoredString("Starting Disk Stats:\n","cyan");
 	print `df -h`;
 	
@@ -257,11 +258,47 @@ function dse_panic_hd($Interactive=FALSE){
 	
 	
 	if($Interactive){
+		//print "aaaa";
+		`rm /tmp/ls.out`;
+		$c="find / -type f -size +100000k -exec ls -l {} >>/tmp/ls.out \; 2>/dev/null &";
+		print `$c`;
+		//print "bbbb";
+		$FindPID=`/dse/bin/grep2pid "find"`;
+		print "PID=$FindPID\n";
+		$t=time();		
+		progress_bar("reset");
+		while(dse_pid_is_running($FindPID)>0){
+			//print "t$asf"; $asf++;
+			//cbp_screen_clear();
+			
+			if(time()%10==1){
+				$ls=dse_file_get_contents("/tmp/ls.out");
+				$lsa=split("\n",$ls);
+				$lss=sizeof($lsa);
+				if($lss>$lss_last){
+					for($i=$lss_last;$i<$lss;$i++){
+						//print $lsa[$i]."\n";
+					}
+				}
+				
+				cbp_cursor_save();
+				sbp_cursor_postion(3,cbp_get_screen_width()-60);
+				print colorize(pad(" + Found $lss large files",60,"-"),"black","green");
+				cbp_cursor_restore();
+			}
+			
+			//print pad(" current: PID=$FindPID ",cbp_get_screen_width(),"-","center");
+			//print "\n$ls";
+			$lsa_last=$lsa; $lss_last=$lss;
+			
+			progress_bar("time");
+		}
+		
 		
 		$LargeFileRootDir="/";
 		//look for largest fiels
 		$LargeFileCommands=array(
-			"find ROOT_DIR -type f -size +100000k -exec ls -l {} \; 2>/dev/null ",
+			"find ROOT_DIR -type f -size +1000000k -exec ls -l {} \; 2>/dev/null ",
 			"du -a ROOT_DIR 2>/dev/null | sort -n -r | head -n 200",
 			//"for i in G M K; do du -a / 2>/dev/null | grep [0-9]$i | sort -nr -k 1; done | head -n 11",
 			"find ROOT_DIR -type f -print0| xargs -0 ls -s | sort -rn | awk ‘{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}’ | head -200",

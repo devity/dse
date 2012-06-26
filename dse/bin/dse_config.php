@@ -106,6 +106,8 @@ if(dse_is_osx()){
 }else{
 	$vars['DSE']['LGT_LOG_FILES']="/var/log/messages";
 }
+
+
 $vars['DSE']['LGT_LOG_FILES'].=",/var/log/vibk.log,/var/log/dse_publisher.log,/var/log/dse/dse.log";
 //,/var/log/iptable_drops.log
 // *********************************************************************************
@@ -178,6 +180,52 @@ $vars['DSE']['YellowWords']=array("status","result","permission","login","logout
 // ********* Now, we WANT to overwrite these program defaults with the dse.conf file!
 // *********************************************************************************
 $vars['DSE']=dse_read_config_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],$vars['DSE'],TRUE);
+
+
+
+$vars['DSE']['SERVICE_NICKNAMES']=array();
+if(str_contains($vars['DSE']['SERVICES'],"http")){
+	if(dse_which("apache2")) $httpd="apache2";
+		elseif(dse_which("apache")) $httpd="apache";
+		elseif(dse_which("httpd")) $httpd="httpd";
+		elseif(dse_which("http")) $httpd="http";
+		else $httpd="httpd";
+	$vars['DSE']['SERVICE_NICKNAMES']["apache2"]=$httpd;
+	$vars['DSE']['SERVICE_NICKNAMES']["http"]=$httpd;
+	$vars['DSE']['SERVICE_NICKNAMES']["httpd"]=$httpd;
+	$vars['DSE']['SERVICE_NICKNAMES']["apache"]=$httpd;
+	$vars['DSE']['SERVICE_NICKNAMES']["web"]=$httpd;
+	$vars['DSE']['SERVICE_NICKNAMES']["www"]=$httpd;
+}
+if(str_contains($vars['DSE']['SERVICES'],"mysql")){
+	if(dse_which("mysqld")) $mysqld="mysqld";
+		elseif(dse_which("mysql")) $mysqld="mysql";
+		else $mysqld="mysql";
+	$vars['DSE']['SERVICE_NICKNAMES']["mysqld"]=$mysqld;
+	$vars['DSE']['SERVICE_NICKNAMES']["mysql"]=$mysqld;
+	$vars['DSE']['SERVICE_NICKNAMES']["db"]=$mysqld;
+}
+if(str_contains($vars['DSE']['SERVICES'],"dns")){
+	if(dse_which("named")) $dnsd="named";
+		elseif(dse_which("bind")) $dnsd="bind";
+		elseif(dse_which("bind9")) $dnsd="bind9";
+		else $dnsd="named";
+	$vars['DSE']['SERVICE_NICKNAMES']["dns"]=$dnsd;
+	$vars['DSE']['SERVICE_NICKNAMES']["named"]=$dnsd;
+	$vars['DSE']['SERVICE_NICKNAMES']["bind"]=$dnsd;
+	$vars['DSE']['SERVICE_NICKNAMES']["bind9"]=$dnsd;
+}
+
+//$vars['DSE']['SERVICE_PORTS'][1]="dns";
+
+$vars['DSE']['SERVICE_PORTS'][22]="ssh";
+$vars['DSE']['SERVICE_PORTS'][80]="http";
+$vars['DSE']['SERVICE_PORTS'][443]="https";
+$vars['DSE']['SERVICE_PORTS'][5900]="vnc";
+$vars['DSE']['SERVICE_PORTS'][6000]="vnc_2";
+$vars['DSE']['SERVICE_PORTS'][7907]="dwi";
+$vars['DSE']['SERVICE_PORTS'][9980]="aptana";
+$vars['DSE']['SERVICE_PORTS'][10000]="crowbar";
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 

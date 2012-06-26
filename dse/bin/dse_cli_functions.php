@@ -19,6 +19,109 @@ if (!function_exists("readline")) { function readline( $prompt = '' ){
     return rtrim( fgets( STDIN ), "\n" );
 }}
 
+function progress_bar($Percent,$Width=60){
+	global $vars,$Rainbow,$RainbowSize;;
+		
+	if($RainbowSize<1){
+		$Rainbow[]=colorize(" ","red","red");
+		$Rainbow[]=colorize(" ","red","red");
+		$Rainbow[]=colorize("-","black","red");
+		$Rainbow[]=colorize("%","black","red");
+		$Rainbow[]=colorize("%","red","black");
+		$Rainbow[]=colorize("&","red","black");
+		$Rainbow[]=colorize("M","red","black");
+		$Rainbow[]=colorize(" ","black","black");
+		$Rainbow[]=colorize("-","blue","black");
+		$Rainbow[]=colorize("+","green","black");
+		$Rainbow[]=colorize("#","cyan","black");
+		$Rainbow[]=colorize("+","green","black");
+		$Rainbow[]=colorize("-","white","black");
+		$Rainbow[]=colorize(" ","black","black");
+		$Rainbow[]=colorize("M","red","black");
+		$Rainbow[]=colorize("&","red","black");
+		$Rainbow[]=colorize("%","black","red");
+		$Rainbow[]=colorize("-","black","red");
+		$Rainbow[]=colorize(" ","red","red");
+		$Rainbow[]=colorize(" ","red","red");
+		$Rainbow[]=colorize(" ","red","red");
+		$Rainbow[]=colorize(".","yellow","red");
+		$Rainbow[]=colorize(".","yellow","red");
+		$Rainbow[]=colorize("-","yellow","red");
+		$Rainbow[]=colorize("-","yellow","red");
+		$Rainbow[]=colorize("=","yellow","red");
+		$Rainbow[]=colorize("%","yellow","red");
+		$Rainbow[]=colorize("M","yellow","red");
+		$Rainbow[]=colorize("M","red","yellow");
+		$Rainbow[]=colorize("%","red","yellow");	
+		$Rainbow[]=colorize("%","white","yellow");
+		$Rainbow[]=colorize("M","yellow","yellow");
+		$Rainbow[]=colorize("M","white","yellow");
+		$Rainbow[]=colorize("M","yellow","yellow");
+		$Rainbow[]=colorize("%","white","yellow");
+		/*
+		$Rainbow[]=colorize("M","yellow","yellow");
+		$Rainbow[]=colorize("N","green","yellow");
+		$Rainbow[]=colorize("=","green","yellow");
+		$Rainbow[]=colorize("*","green","green");
+		$Rainbow[]=colorize("[","cyan","green");
+		$Rainbow[]=colorize("+","cyan","cyan");
+		$Rainbow[]=colorize("]","blue","cyan");
+		$Rainbow[]=colorize("%","cyan","blue");
+		$Rainbow[]=colorize("M","white","blue");
+		$Rainbow[]=colorize("M","blue","white");
+		$Rainbow[]=colorize("+","white","white");
+		$Rainbow[]=colorize("+","magenta","magenta");
+		*/
+		$Rainbow[]=colorize("&","white","red");
+		$Rainbow[]=colorize("%","white","red");
+		$Rainbow[]=colorize("=","white","red");
+		$Rainbow[]=colorize("-","white","red");
+		$Rainbow[]=colorize(".","white","red");
+		$Rainbow[]=colorize(" ","red","red");
+		$RainbowSize=sizeof($Rainbow);
+	}
+	
+	$ri=$vars[pr_bar__rainbow]++%$RainbowSize;
+	$Needed=$Width;
+	$RainbowBar="";
+	for($i=0;$i<$Needed;$i++){
+		$RainbowBar.=$Rainbow[($i+$ri)%$RainbowSize];
+	}
+	
+	if($Percent=="reset"){
+		$vars[pr_bar__start_time]=time();
+	}elseif($Percent=="time"){
+		$RunTimeStr="*** ".seconds_to_text(time()-$vars[pr_bar__start_time])." of Unkown Time ";
+		$Percent=55;
+	}
+	$GreenPortion=pad($RunTimeStr,intval($Width*($Percent/100)),"*");
+	$GreenPortion2=$RainbowBar;//pad("",intval($Width*($Percent/100)),"*");
+	$RedPortion=pad("",intval($Width*((100-$Percent)/100)),"*");
+	cbp_cursor_save();
+	sbp_cursor_postion(0,cbp_get_screen_width()-$Width);
+	print colorize($GreenPortion,"green","black");
+	//if($vars[pr_bar__last]==TRUE){
+		//print colorize($RedPortion,"red","black");
+	//}else{
+		
+		$Needed=intval($Width*((100-$Percent)/100));
+		$RainbowBar="";
+		for($i=0;$i<$Needed;$i++){
+			$RainbowBar.=$Rainbow[($i+$ri)%$RainbowSize];
+		}
+		print $RainbowBar;
+		//print colorize($RedPortion,"blue","black");
+	//}
+	sbp_cursor_postion(2,cbp_get_screen_width()-$Width);
+	print colorize($GreenPortion2,"green");
+	if($vars[pr_bar__last]==TRUE){
+	//	print colorize($RedPortion,"red");
+	}else{
+		//print colorize($RedPortion,"magenta");
+	}
+	$vars[pr_bar__last]=!$vars[pr_bar__last];
+	cbp_cursor_restore();
+}
 function dse_hostname(){
 	global $vars;
 	if($vars['DSE']['HOSTNAME']) return $vars['DSE']['HOSTNAME'];
@@ -75,6 +178,13 @@ function dse_log($Message,$File=""){
 	if($File)	`echo "$Message" >> $File`;
 }
 
+function dse_ip_port_is_open($Port){
+	global $vars;
+	$Command="/dse/bin/dnetstat -o -d\"\n\" | grep \":$Port \" ";
+	$r=trim(`$Command`);
+	//dse_log("c=$Command r=$r");
+	return($r!="");
+}
 function dse_ip_port_is_listening($IP,$Port){
 	global $vars;
 	$Command="nc -vz $IP $Port 2>&1";
@@ -307,8 +417,20 @@ function dse_ls( $search ){
 } 
 
 
+function dse_pid_is_running($PID){
+	//print " dse_pid_is_running($PID)\n";
+	global $vars;
+	$PIDInfo=dse_pid_get_info($PID);
+	//print_r($PIDInfo);
+	return ($PIDInfo['PPID']>0);
+}
+
 function dse_pid_get_info($PID){
 	global $vars;
+	if(!$PID){
+		return null;
+	}
+	//print "panic A\n";
 	$PIDInfo=array();
 	$PIDInfo['PID']=$PID;
 	$PIDInfo['PPID']=dse_pid_get_ps_columns($PID,"ppid");
@@ -318,9 +440,14 @@ function dse_pid_get_info($PID){
 	$PIDInfo['EXE']=trim(`/dse/bin/pid2exe $PID`);
 	
 	$PIDInfo['EXE_FILE']=$PIDInfo['EXE'];
-	while(str_contains($PIDInfo['EXE_FILE'],"/")){
+	$T=0;
+	//print "panic b\n";
+	while($T<10 && str_contains($PIDInfo['EXE_FILE'],"/")){
+		$T++;
+	//print "panic c\n";
 		$PIDInfo['EXE_FILE']=strcut($PIDInfo['EXE_FILE'],"/");
 	}
+//	print "panic d\n";
 	return $PIDInfo;
 }
 function dse_pid_get_info_str($PID,$Recursive=FALSE,$Reverse=FALSE){
@@ -350,12 +477,15 @@ function dse_pid_get_info_str($PID,$Recursive=FALSE,$Reverse=FALSE){
 
 function dse_pid_get_ps_columns($PID,$o){
 	global $vars;
+	//print "dse_pid_get_ps_columns a dse_pid_get_ps_columns($PID,$o)\n";
 	$PID=intval($PID);
 	if(!$PID){
 		return -1;
 	}
 	$Command="ps -p $PID -o $o=";
+	//print "dse_pid_get_ps_columns b\n";
 	$Value=trim(`$Command`);
+	//print "dse_pid_get_ps_columns b\n";
 	$Message="dse_pid_get_ps_columns($PID,$o) [$Command] returning $Value";
 	//print "$Message\n";
 	dpv(5,$Message);
@@ -929,6 +1059,10 @@ function strcut($haystack,$pre,$post=""){
 
 function pad($String,$Length,$PadChar=" ",$Justification="left"){
 	global $vars;
+	if(str_contains($Length,"%")){
+		$Length=str_remove($Length,"%");
+		$Length=intval(cbp_get_screen_width()*($Length/100));
+	}
 	$CurrentLength=strlen($String);
 	//print "pad($String,$Length,$PadChar) CurrentLength=$CurrentLength\n";
 	if($CurrentLength>=$Length) return substr($String,0,$Length);
@@ -938,12 +1072,11 @@ function pad($String,$Length,$PadChar=" ",$Justification="left"){
 				$String=$PadChar.$String;
 				break;
 			case 'left':
-				$String=$String.$String.$String;
+				$String=$String.$PadChar;
 				break;
 			case 'center':
 				if($i<$Length-1){
-					$String=$String.$String.$String;
-					$i++;
+					if($i%2==1)$String=$PadChar.$String.$PadChar;
 				}else{
 					$String.=$PadChar;
 				}
@@ -2675,6 +2808,12 @@ function sbp_cursor_postion($L=0,$C=0){
 //function sbp_cursor_column($C=0){
   //      print "\033[;${C}H";
 //}
+function cbp_cursor_save(){
+        print "\0337";
+}
+function cbp_cursor_restore(){
+        print "\0337";
+}
 function cbp_screen_clear(){
         print "\033[2J";
 }

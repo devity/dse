@@ -39,6 +39,7 @@ function dse_initd_entry_get_info($ServiceName=""){
 			}else{
 				$Command="sudo launchctl list $ServiceName | grep '^-' | sort";
 			}
+			print "Command: $Command \n";
 			$r=`$Command`;
 			if($vars['DSE']['OUTPUT_FORMAT']=="HTML"){
 				$tbr.= "<b><i>$Command</i></b><table><tr><td><b>Status</b></td><td><b>Exe Tree</b></td><td><b>PID</b></td><td><b>User</b></td><td><b>Label</b></td></tr>";//<td><b>Full Path</b></td>
@@ -389,7 +390,7 @@ function dse_install_yum(){
 
 function dse_package_install($PackageName){
 	global $vars;
-	
+	print pad("Installing Package: ".colorize($PackageName,"cyan")."...   ","90%",colorize("-","blue"))."\n";
 	$Installer="";
 	
 	if(dse_is_osx()){
@@ -438,6 +439,7 @@ function dse_package_install($PackageName){
 		return -1;
 	}
 	
+	$vars['DSE']['dse_package_install__use_passthru']=TRUE;
   	print "Package $PackageName ";
 	if(!$PackageName){
     	print getColoredString(" ERROR: PackageName missing. \n","red","black");
@@ -466,8 +468,8 @@ function dse_package_install($PackageName){
 		$Command="sudo $aptget -y install $PackageName 2>&1";
 		print " Running: $Command\n";
 		if($vars['DSE']['dse_package_install__use_passthru']){
-			//passthru($Command);
-			dse_popen($Command);
+			passthru($Command);
+			//dse_popen($Command);
 		}else{
 			//$r=`$Command`;
 			$r=dse_popen($Command);
@@ -855,19 +857,8 @@ function dse_configure_directories_create(){
 
 function dse_service_name_from_common_name($service){
 	global $vars;
-	switch($service){
-		case "http":
-		case "httpd":
-		case "apache":
-			$service="apache2";
-			break;
-		case "mysql":
-			$service="mysqld";
-			break;
-		case "dns":
-		case "named":
-			$service="bind9";
-			break;
+	if(key_exists($service, $vars['DSE']['SERVICE_NICKNAMES'])){
+		return $vars['DSE']['SERVICE_NICKNAMES'][$service];
 	}
 	return $service;
 }
