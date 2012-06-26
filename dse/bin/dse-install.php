@@ -220,7 +220,9 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			
 			
 			chdir("/tmp");
-			`svn http://simile.mit.edu/repository/crowbar/trunk/`;
+			$Command="svn http://simile.mit.edu/repository/crowbar/trunk/";
+			print "Command: $Command\n";
+			`$Command`;
 			//$Command="sudo dpkg -i /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb";
 			//print "Command: $Command\n";
 			//passthru($Command);
@@ -253,6 +255,11 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			print "Command: $Command\n";
 			//passthru($Command);
 			print "\n";
+			
+			
+			`wget -qO- http://launchpadlibrarian.net/67952995/xulrunner-2.0-mozjs_2.0%2Bnobinonly-0ubuntu1_amd64.deb > /tmp/xulrunner-2.0-mozjs_2.0%2Bnobinonly-0ubuntu1_amd64.deb 2>/dev/null`;
+			$Command="sudo dpkg -i xulrunner-2.0-mozjs_2.0%2Bnobinonly-0ubuntu1_amd64.deb";
+			print "Command: $Command\n";
 			
 			`wget -qO- http://launchpadlibrarian.net/67954579/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb > /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb 2>/dev/null`;
 			$Command="sudo dpkg -i /tmp/xulrunner-2.0_2.0%2Bnobinonly-0ubuntu1_i386.deb";
