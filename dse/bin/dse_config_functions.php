@@ -451,7 +451,7 @@ function dse_get_installer_name(){
 }
 				
 					
-function dse_package_install($PackageName,$Remove=TRUE){
+function dse_package_install($PackageName,$Remove=FALSE){
 	global $vars;
 	$PackageNameUpper=strtoupper($PackageName);
 	print pad("Installing Package: ".colorize($PackageNameUpper,"cyan")." ...   ","90%",colorize("-","blue"))."\n";
