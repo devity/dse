@@ -212,7 +212,20 @@ if(dse_is_ubuntu()){
 }
 
 
+/* reddit
+ * 
+gettext
+make
+optipng
+jpegoptim
 
+memcached
+postgresql
+postgresql-client
+rabbitmq-server
+cassandra
+haproxy
+ * */
 
 if(dse_is_osx()){
 	foreach($OSXPackageNamesArray as $p) $PackageNamesArray[]=$p;

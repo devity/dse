@@ -523,11 +523,15 @@ function dse_install_file_from_url($URL){
 			chdir(dirname($LocalFullFileName));
 			$Command="alien $LocalFullFileName";
 			print "Command: $Command\n";
-			passthru($Command);
+			$r=`$Command`;
+			if(!str_contains($r,"generated")){
+				print colorize("error, alien didnt make a deb as expected\n","red");
+				break;
+			}
+			$DebFileName=strcut($r,""," ");
+			//$LocalFullFileNameDeb=str_replace(".rpm",".deb",$LocalFullFileName);
 			
-			$LocalFullFileNameDeb=str_replace(".rpm",".deb",$LocalFullFileName);
-			
-			$Command="sudo dpkg -i $LocalFullFileNameDeb";
+			$Command="sudo dpkg -i $DebFileName";
 			print "Command: $Command\n";
 			passthru($Command);
 			

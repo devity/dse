@@ -70,49 +70,12 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'config-show':
 		print dse_file_get_contents($vars['DSE']['DSE_CONFIG_FILE_GLOBAL']);
 		$DidSomething=TRUE;
-	case 'u':
-  	case 'update':
-  	case 'upgrade':
-  		$DoUpdate=TRUE;
-		$DidSomething=TRUE;
-		break;
-	case 'v':
-  	case 'update-no-backup':
-		$BackupBeforeUpdate=FALSE;
-  		$DoUpdate=TRUE;
-		$DidSomething=TRUE;
 		break;
 	case 's':
   	case 'set-env':
   		$DoSetEnv=TRUE;
 		$DidSomething=TRUE;
 		break;
-	
-  	case 'i':
-  	case 'install':
-		$r=passthru($vars['DSE']['DSE_BIN_DIR']."/dse-install");
-		if($r<0){
-			if(!$Quiet && !$DoSetEnv){
-				print getColoredString($vars['DSE']['SCRIPT_NAME']." FATAL ERROR. Exiting (0)","black","green");
-				$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
-			}
-			exit(-1);
-		}
-		$DidSomething=TRUE;
-		break;
-  	case 'c':
-  	case 'configure':
-		$r=passthru($vars['DSE']['DSE_BIN_DIR']."/dse-configure");
-		if($r<0){
-			if(!$Quiet && !$DoSetEnv){
-				print getColoredString($vars['DSE']['SCRIPT_NAME']." FATAL ERROR. Exiting (0)","black","green");
-				$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
-			}
-			exit(-1);
-		}
-		$DidSomething=TRUE;
-		break;
-	
 	case 'z':
   	case 'status':
 		include_once ("/dse/bin/dse_config_functions.php");
@@ -126,8 +89,54 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   		}
 		$DidSomething=TRUE;
 		break;
-
+		
 }
+
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+	case 'u':
+  	case 'update':
+  	case 'upgrade':
+  		$DoUpdate=TRUE;
+		$DidSomething=TRUE;
+		break;
+	case 'v':
+  	case 'update-no-backup':
+		$BackupBeforeUpdate=FALSE;
+  		$DoUpdate=TRUE;
+		$DidSomething=TRUE;
+		break;
+}
+
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+  	case 'c':
+  	case 'configure':
+		$r=passthru($vars['DSE']['DSE_BIN_DIR']."/dse-configure");
+		if($r<0){
+			if(!$Quiet && !$DoSetEnv){
+				print getColoredString($vars['DSE']['SCRIPT_NAME']." FATAL ERROR. Exiting (0)","black","green");
+				$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
+			}
+			exit(-1);
+		}
+		$DidSomething=TRUE;
+		break;
+}
+
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+  	case 'i':
+  	case 'install':
+		$r=passthru($vars['DSE']['DSE_BIN_DIR']."/dse-install");
+		if($r<0){
+			if(!$Quiet && !$DoSetEnv){
+				print getColoredString($vars['DSE']['SCRIPT_NAME']." FATAL ERROR. Exiting (0)","black","green");
+				$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
+			}
+			exit(-1);
+		}
+		$DidSomething=TRUE;
+		break;
+}
+
 
 if($DoSetEnv){
 
