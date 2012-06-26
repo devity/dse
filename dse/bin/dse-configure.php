@@ -67,6 +67,7 @@ print pad("Creating Needed Directories:   ","90%",colorize("-","blue"))."\n";
 
 $NeededDirs=array(
  array($vars['DSE']['DSE_BACKUP_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
+ array($vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
  array($vars['DSE']['DSE_LOG_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
  array($vars['DSE']['DSE_LOG_DIR']."/ip_throttle","777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
  array($vars['DSE']['DSE_CONFIG_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
