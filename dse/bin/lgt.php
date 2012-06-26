@@ -31,6 +31,7 @@ if($options['m']){
 	$MinutesBack=$options['m'];
 }
 
+$CharsWide=cbp_get_screen_width()-19;
 
 $vars['s2t_abvr']=TRUE;
 $Intermingle=TRUE;
@@ -48,27 +49,35 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 		if($LogContents){
 			$LogContents=str_remove($LogContents,dse_hostname());
 			
-			foreach($vars['DSE']['RedWords'] as $RedWord) $LogContents=str_ireplace($RedWord,colorize($RedWord,"red"),$LogContents);
-			foreach($vars['DSE']['GreenWords'] as $GreenWord) $LogContents=str_ireplace($GreenWord,colorize($GreenWord,"green"),$LogContents);
-			foreach($vars['DSE']['BlueWords'] as $BlueWord) $LogContents=str_ireplace($BlueWord,colorize($BlueWord,"blue"),$LogContents);
-			foreach($vars['DSE']['MagentaWords'] as $PurpleWord) $LogContents=str_ireplace($PurpleWord,colorize($PurpleWord,"purple"),$LogContents);
-			foreach($vars['DSE']['YellowWords'] as $YellowWord) $LogContents=str_ireplace($YellowWord,colorize($YellowWord,"yellow"),$LogContents);
-			foreach($vars['DSE']['CyanWords'] as $YellowWord) $LogContents=str_ireplace($YellowWord,colorize($YellowWord,"yellow"),$LogContents);
 			
 			$PrintedThisLogFileName=FALSE;
 			foreach(split("\n",$LogContents) as $L){
 				if($L){
+					
 					$Time=unk_time($L);
 					$StartTime=time()-(60*$MinutesBack);
 					if($Time>0){
 						$L=str_remove($L,$vars['unk_time__CutTimeAndDateString']." ");
-						$Ago=pad(seconds_to_text(time()-$Time),8);
+						$Ago=pad(seconds_to_text(time()-$Time),6);
 					}else{
 						$Ago="";
 					}
+					
 					if($Time<=0 || $Time>$StartTime){
+						$L=substr($L,0,$CharsWide);
+						foreach($vars['DSE']['RedWords'] as $RedWord) $L=str_ireplace($RedWord,colorize($RedWord,"red"),$L);
+						foreach($vars['DSE']['GreenWords'] as $GreenWord) $L=str_ireplace($GreenWord,colorize($GreenWord,"green"),$L);
+						foreach($vars['DSE']['BlueWords'] as $BlueWord) $L=str_ireplace($BlueWord,colorize($BlueWord,"blue"),$L);
+						foreach($vars['DSE']['MagentaWords'] as $PurpleWord) $L=str_ireplace($PurpleWord,colorize($PurpleWord,"purple"),$L);
+						foreach($vars['DSE']['YellowWords'] as $YellowWord) $L=str_ireplace($YellowWord,colorize($YellowWord,"yellow"),$L);
+						foreach($vars['DSE']['CyanWords'] as $YellowWord) $L=str_ireplace($YellowWord,colorize($YellowWord,"yellow"),$L);
+			
 						if($Intermingle){
-							$LogsCombined.= "$LogFileNameColorized $Ago  $L\n";
+							if($Time){
+								$Intermingled[$Time]="$LogFileNameColorized $Ago  $L\n";
+							}else{
+								print "$LogFileNameColorized $Ago  $L\n";;
+							}
 						}else{
 							if((!$PrintedThisLogFileName)) { $LogsCombined.=colorize($LogFile.": ------\n","cyan"); $PrintedThisLogFileName=TRUE; }
 							$LogsCombined.= "$Ago  $L\n";
@@ -79,8 +88,11 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 		}
 	}
 }
-print $LogsCombined;
-
+if($Intermingle){
+	ksort($Intermingled); foreach($Intermingled as $L) print $L;
+}else{
+	print $LogsCombined;
+}
 //$LogsCombinedCommand.=") | sed $SudoReplace | grep -v NSAutoreleaseNoPool | grep -v geektool | grep -v Geeklet | grep -v Chrome ";
 //| sed 's/louiss-macbook-pro-2//g' | sed 's/Louiss-MacBook-Pro-2//g' 
 //| cut -c 8-1000 
