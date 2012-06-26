@@ -31,7 +31,7 @@ if($options['m']){
 $CharsWide=cbp_get_screen_width()-19;
 
 $vars['s2t_abvr']=TRUE;
-$Intermingle=TRUE;
+//$Intermingle=TRUE;
 
 $SudoReplace="s/sudo/SUDO/g";
 
