@@ -1000,12 +1000,8 @@ function unk_time($TimeAndDateString){
 	
 	if( str_contains ( $TimeAndDateString, " - - [") >0 ){
 		dpv(5,"preg_match 11 - $TimeAndDateString\n");
-		$TimeAndDateString=strcut($TimeAndDateString,"["," ");
-		dpv(5,"preg_match 11 - $TimeAndDateString\n");
-		$TimeAndDateString2=strcut($TimeAndDateString,"\["," ");
-		dpv(5,"preg_match 11 - $TimeAndDateString2\n");
-		$TimeAndDateString3=strcut($TimeAndDateString,"- - "," ");
-		dpv(5,"preg_match 11 - $TimeAndDateString3\n");
+		$TimeAndDateString=strcut($TimeAndDateString,"- - "," ");
+		dpv(5,"preg_match 11b - $TimeAndDateString3\n");
 		$format = '%d/%b/%Y:%H:%M:%S';
 	}
 		
