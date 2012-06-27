@@ -22,6 +22,7 @@ $parameters_details = array(
   array('p:','is-package-installed:',"tells what version of a package is installe ot nothing if not installed"),
   array('a','list-installed-packages',"lists installed packages"),
   array('s:','show-matching-package:',"searches possible packages"),
+  array('m','manage-packages',"launch dselect to manage packages"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -51,6 +52,13 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$PackageName=$vars['options'][$opt];
 		if(dse_is_ubuntu()){
 			print `aptitude search $PackageName`;
+		}
+		exit();
+	case 'm':
+  	case 'manage-packages':
+		$PackageName=$vars['options'][$opt];
+		if(dse_which("dselect")){
+			passthru(dse_which("dselect"));
 		}
 		exit();
  //dpkg-reconfigure package_name
@@ -249,6 +257,8 @@ if(dse_is_centos()){
 	$PackageNamesArray[]="whois";
 }
 $NotOSXPackageNamesArray[]="dnsutils";
+$NotOSXPackageNamesArray[]="arp-scan";
+$NotOSXPackageNamesArray[]="nmap";
 
 if(dse_is_ubuntu()){
 	$PackageNamesArray[]="dpkg-repack";

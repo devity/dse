@@ -156,6 +156,8 @@ $vars['DSE']['PANIC_CONFIG_FILE']=$vars['DSE']['DSE_CONFIG_DIR']."/"."panic.conf
 // ********* crowbar Settings
 $vars['DSE']['CROWBAR_USER']="root";
 
+$vars['DSE']['VNCSERVER_USER']="root";
+
 
 
 
