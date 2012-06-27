@@ -186,17 +186,22 @@ $dse_git_dir="$PWD/dse/dse";
 	}
 } 
 
+/*
+localepurge: to purge unneeded translations
+readahead: to accelerate boot sequence
 
-
-//"lynx-cur","postfix","cron-apt","perl-tk","xosview","dselect","openvpn",""
-//"memstat","iftop","sysstat","chkconfig","mytop",""
-//"dnsutils","bind9","vsftpd","tasksel",""
+ * 
+ * */
+//,"postfix","cron-apt","","","","",""
+//"","","","","mytop",""
+//"","",""
 
 $PackageNamesArray=array();
 $OSXPackageNamesArray=array();
 $NotOSXPackageNamesArray=array();
 
 $NotOSXPackageNamesArray[]="perl";
+$NotOSXPackageNamesArray[]="perl-tk";
 $PackageNamesArray[]="php5";
 $PackageNamesArray[]="python";
 
@@ -217,22 +222,33 @@ $PackageNamesArray[]="bc";
 
 $NotOSXPackageNamesArray[]="memstat";
 $NotOSXPackageNamesArray[]="iftop";
+$NotOSXPackageNamesArray[]="htop";
+$NotOSXPackageNamesArray[]="hwinfo";
+$NotOSXPackageNamesArray[]="lftp";
 $NotOSXPackageNamesArray[]="sysstat";
-$NotOSXPackageNamesArray[]="chkconfig";
+$NotOSXPackageNamesArray[]="iftop";
+$NotOSXPackageNamesArray[]="xosview";
 
-//$NotOSXPackageNamesArray[]="blkid";
+//$NotOSXPackageNamesArray[]="mytop";
+
+
+
+$PackageNamesArray[]="build-essential";
+$NotOSXPackageNamesArray[]="util-linux";
 //$NotOSXPackageNamesArray[]="filefrog";
-//$NotOSXPackageNamesArray[]="losetup";
+$NotOSXPackageNamesArray[]="loop-aes-utils";
 //$NotOSXPackageNamesArray[]="gawk";
+if(dse_is_centos()){
+	$PackageNamesArray[]="rpmrebuild";
+}
 
 if(dse_is_centos()){
-	
-	$PackageNamesArray[]="rpmrebuild";
 	$PackageNamesArray[]="jwhois";
 }elseif(dse_is_osx()){
 }else{
 	$PackageNamesArray[]="whois";
 }
+$NotOSXPackageNamesArray[]="dnsutils";
 
 if(dse_is_ubuntu()){
 	$PackageNamesArray[]="dpkg-repack";
@@ -242,9 +258,10 @@ if(dse_is_ubuntu()){
 	$PackageNamesArray[]="dpkg-dev";
 	$PackageNamesArray[]="debhelper";
 	$PackageNamesArray[]="sysv-rc-conf";
+	$PackageNamesArray[]="dselect";
+	$PackageNamesArray[]="aptitude";
 }
-
-$PackageNamesArray[]="build-essential";
+$NotOSXPackageNamesArray[]="chkconfig";
 
 
 /* reddit
@@ -479,13 +496,35 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	if(in_array("desktop", $vars['DSE']['AddComponents'])){
 		if(dse_is_ubuntu()){
 			$NotOSXPackageNamesArray[]="ubuntu-desktop";
-			$NotOSXPackageNamesArray[]="gdm";
+			$NotOSXPackageNamesArray[]="lightdm"; //$NotOSXPackageNamesArray[]="gdm";
+			$NotOSXPackageNamesArray[]="x-window-system-core";
+			$NotOSXPackageNamesArray[]="xorg";
+			$NotOSXPackageNamesArray[]="lxde";
+			$NotOSXPackageNamesArray[]="lxdm";
+			$NotOSXPackageNamesArray[]="firefox";
+			$NotOSXPackageNamesArray[]="dillo";
+			$NotOSXPackageNamesArray[]="epiphany-webkit";
+/*			$NotOSXPackageNamesArray[]="idesk";
+			$NotOSXPackageNamesArray[]="thunar";
+			$NotOSXPackageNamesArray[]="xfe";
+			$NotOSXPackageNamesArray[]="rox-filer";
+			$NotOSXPackageNamesArray[]="nautilus";*/
+			$NotOSXPackageNamesArray[]="pcmanfm";
+			$NotOSXPackageNamesArray[]="synaptic";
+			$NotOSXPackageNamesArray[]="firefox";
+			$NotOSXPackageNamesArray[]="firefox";
+			$NotOSXPackageNamesArray[]="firefox";
+			$NotOSXPackageNamesArray[]="firefox";
+			$NotOSXPackageNamesArray[]="firefox";
+			$NotOSXPackageNamesArray[]="firefox";
+			$NotOSXPackageNamesArray[]="firefox";
+			$NotOSXPackageNamesArray[]="firefox";
+			$NotOSXPackageNamesArray[]="firefox";
+			$NotOSXPackageNamesArray[]="firefox";
 			
 			$NotOSXPackageRemoveNamesArray[]="gnome-power-manage";
 			$NotOSXPackageRemoveNamesArray[]="modemmanager";
 			$NotOSXPackageRemoveNamesArray[]="powermgmt-base";
-			$NotOSXPackageRemoveNamesArray[]="";
-			$NotOSXPackageRemoveNamesArray[]="";
 		/*
 sudo update-rc.d -f cups remove
 sudo update-rc.d -f modem-manager remove
