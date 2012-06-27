@@ -180,7 +180,7 @@ $vars['DSE']['YellowWords']=array("status","result","permission","login","logout
 	,"removed","configuration","config","version","disabled","message"); 
 
 
-$vars['DSE']['ComponentsAvailable']=array("image-processing","desktop","tor","xurlrunner","crowbar","synergy");
+$vars['DSE']['ComponentsAvailable']=array("image-processing","desktop","tor","xurlrunner","crowbar","synergy","flyback");
 $vars['DSE']['AddComponents']=array();
 $vars['DSE']['DisabledComponents']=array();
 

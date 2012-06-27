@@ -197,6 +197,7 @@ $NotOSXPackageNamesArray=array();
 
 $NotOSXPackageNamesArray[]="perl";
 $PackageNamesArray[]="php5";
+$PackageNamesArray[]="python";
 
 $NotOSXPackageNamesArray[]="vim";
 
@@ -205,9 +206,10 @@ $PackageNamesArray[]="curl";
 $OSXPackageNamesArray[]="lynx";
 $NotOSXPackageNamesArray[]="lynx-cur";
 
+$PackageNamesArray[]="rsync";
 
-
-
+$PackageNamesArray[]="install";
+$PackageNamesArray[]="apt-get";
 
 
 $PackageNamesArray[]="bc";
@@ -223,6 +225,8 @@ $NotOSXPackageNamesArray[]="chkconfig";
 //$NotOSXPackageNamesArray[]="gawk";
 
 if(dse_is_centos()){
+	
+	$PackageNamesArray[]="rpmrebuild";
 	$PackageNamesArray[]="jwhois";
 }elseif(dse_is_osx()){
 }else{
@@ -230,6 +234,7 @@ if(dse_is_centos()){
 }
 
 if(dse_is_ubuntu()){
+	$PackageNamesArray[]="dpkg-repack";
 	$PackageNamesArray[]="dnet-progs";
 	$PackageNamesArray[]="yum";
 	$PackageNamesArray[]="alien";
@@ -292,8 +297,30 @@ foreach($vars['DSE']['AddComponents'] as $ComponentName){
 
 
 
-
-
+$ComponentName="flyback";
+if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
+	if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		$Component=colorize($ComponentName,"cyan");
+		$A=dse_ask_yn("Install Component $Component?");
+		print "\n";
+		if($A=='Y'){
+			$vars['DSE']['AddComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+		}else{
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+		}
+	}
+	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		if(!dse_is_osx()){
+			$NotOSXPackageNamesArray[]="python-glade2";
+			$NotOSXPackageNamesArray[]="python-gnome2";
+			$NotOSXPackageNamesArray[]="python-sqlite";
+			$NotOSXPackageNamesArray[]="python-gconf";
+			$URL="http://flyback.googlecode.com/files/flyback_0.4.0.tar.gz";
+			print "**********: ". dse_install_file_from_url($URL);
+		}
+	}
+}
 $ComponentName="synergy";
 if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){

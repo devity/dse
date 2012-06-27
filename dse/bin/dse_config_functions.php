@@ -589,9 +589,10 @@ function dse_install_file_from_url($URL){
 			if($UncompressedFileExtension=="tar"){
 				$Command="sudo tar xvf $LocalFullUncompressedFileName";
 				print "Command: $Command\n";
-				passthru($Command);
+				$r=dse_exec($Command);
+				return $r;
 			}
-			
+			return "";
 			break;
 		case 'tgz':
 			$LocalFullUncompressedFileName=str_remove($LocalFullFileName,".tgz");
@@ -1397,10 +1398,10 @@ function dse_backup_server_environment() {
    	dse_exec("df &> ${dir}/df.out");
   // 	dse_exec("memstat &> ${dir}/memstat.out");
   
-   	if($vars[IsUbuntu]){
+   	if(dse_is_osx() || dse_is_ubuntu()){
    		dse_exec("dpkg --get-selections &> ${dir}/dpkg--get-selections.out");
    	}
-   	if($vars[IsCentOS]){
+   	if(dse_is_centos()){
    		dse_exec("rpm -qa &> ${dir}/rpm-qa.out");
 	}
 	if(!dse_is_osx()){
@@ -1444,10 +1445,11 @@ function dse_detect_os_info(){
 	
 function dse_build_clone_server_script(){
 	global $vars;
+	print bar("Starting to build clone generation script in: $clone_directory","-","blue","white","green","white")."n";
 	
 	$clone_directory=$vars['DSE']['DSE_BACKUP_DIR']."/clone";
 	
-	print "Starting to build clone generation script in: $clone_directory/\n";
+	print "/\n";
 	
 
    	dse_exec("mkdir ${clone_directory}");
@@ -1464,6 +1466,19 @@ function dse_build_clone_server_script(){
 	
 	dse_rpms_extract();
 	dse_exec("cp -rf ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms ${clone_directory}/rpms");
+	
+	
+	$dpkg_selections=$clone_directory."/server_environment_inspection_output/dpkg--get-selections.out";
+	//backup etc
+	
+	
+	$RestoreScript="#!/bin/php
+<?php
+
+"/server_environment_inspection_output/dpkg--get-selections.out";
+
+
+?>";
 	
 	
 }
