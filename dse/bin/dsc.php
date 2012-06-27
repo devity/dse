@@ -26,6 +26,9 @@ $parameters_details = array(
   array('o','open-ports',"lists open ports"),
   array('c','color',"colorize"),
   array('r','run-levels',"show current run level settings"),
+  array('s','services-set',"services-set"),
+  array('l',' run-levels-set'," run-levels-set"),
+ 
    //array('s','status',"prints status file".$CFG_array['StatusFile']),
   //array('e','edit',"backs up and launches a vim of ".$vars['DSE']['PANIC_CONFIG_FILE']),
   //array('c','config-show',"prints contents of ".$vars['DSE']['PANIC_CONFIG_FILE']),
@@ -96,10 +99,15 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		}
 		print "\n";
 		exit(0);
-		
-		
-
-		
+	case 's':
+  	case 'services-set':
+		passthru("sudo rcconf");
+		exit(0);
+	case 'l':
+  	case 'run-levels-set':
+		//bootup-manager
+		passthru("sudo sysv-rc-conf");
+		exit(0);
 	case 'r':
   	case 'run-levels':
 		print "Services: ".colorize($vars['DSE']['SERVICES'],"cyan")."\n";
