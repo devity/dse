@@ -433,8 +433,8 @@ if($FullConfig){
 		$crowbarUser=$vars['DSE']['CROWBAR_USER'];
 		$INITD_SCRIPT_ARRAY=array();
 		$INITD_SCRIPT_ARRAY['ServiceName']="crowbar";
-		$INITD_SCRIPT_ARRAY['ActionStart']="sleep 1; sudo -u $crowbarUser -H -s \"/scripts/crowbar_start\"";
-		$INITD_SCRIPT_ARRAY['ActionStop']="sudo -u $crowbarUser -H -s \"/scripts/crowbar_stop\"";
+		$INITD_SCRIPT_ARRAY['ActionStart']="sleep 1; sudo -u $crowbarUser -H -s \"export DISPLAY=:1 ; xulrunner /root/crowbar/trunk/xulapp/application.ini &\"";
+		$INITD_SCRIPT_ARRAY['ActionStop']="sudo -u $crowbarUser -H -s \"killall -9 xulrunner\"";
 		$INITD_SCRIPT_ARRAY['VarIsRunning']="sudo -u $crowbarUser -H -s \"ps aux | egrep xulrunner\"";
 		$INITD_SCRIPT_ARRAY['VarStatus']="sudo -u $crowbarUser -H -s \"ps aux | egrep xulrunner\"";
 		if(dse_is_osx()){
