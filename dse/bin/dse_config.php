@@ -89,6 +89,8 @@ $vars['DSE']['SYSTEM_BASHRC_FILE']='/etc/bashrc';
 $vars['DSE']['SYSTEM_PROFILE_FILE']='/etc/profile';
 $vars['DSE']['SYSTEM_APT_SOURCES_LIST']='/etc/apt/sources.list';
 $vars['DSE']['SERVER_INITD_DIR']='/etc/init.d';
+$vars['DSE']['SYSTEM_YUM_CONF_FILE']='/etc/yum.conf';
+$vars['DSE']['SYSTEM_RPM_UP2DATE_FILE']='//etc/rpm/macros.up2date';
 
 
 $vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']='/etc/php.ini.default';
@@ -103,7 +105,8 @@ if(dse_is_osx()){
 		.",/var/log/install.log,/var/log/mail.log,/var/log/ppp.log,/var/log/secure.log,/var/log/appfirewall.log";
 		//,/var/log/mount.log
 }elseif(dse_is_ubuntu()){
-	$vars['DSE']['LGT_LOG_FILES']="/var/log/syslog,/var/log/kern.log,/var/log/daemon.log,/var/log/messages";
+	$vars['DSE']['LGT_LOG_FILES']="/var/log/syslog,/var/log/kern.log,/var/log/daemon.log,/var/log/messages,/var/log/auth.log";
+	///var/log/dmesg
 }elseif(dse_is_centos()){
 	$vars['DSE']['LGT_LOG_FILES']="/var/log/secure,/var/log/kernel,/var/log/messages,/var/log/maillog";
 	//,/var/log/dmesg

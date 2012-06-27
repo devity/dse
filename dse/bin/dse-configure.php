@@ -254,6 +254,9 @@ if(!str_contains($PATH,$vars['DSE']['DSE_BIN_DIR'])){
 	print "$OK = $PATH\n";
 }
 
+dse_file_add_line_if_not($vars['DSE']['SYSTEM_YUM_CONF_FILE'],"tsflags=repackage");
+dse_file_add_line_if_not($vars['DSE']['SYSTEM_RPM_UP2DATE_FILE'],"%_repackage_all_erasures 1");
+
  
 //larger bash history
 print "Checking HISTFILESIZE: \n";

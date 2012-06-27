@@ -53,6 +53,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			print `aptitude search $PackageName`;
 		}
 		exit();
+ //dpkg-reconfigure package_name
 }
 
 dse_cli_script_header();
