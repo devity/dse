@@ -515,11 +515,14 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			$NotOSXPackageNamesArray[]="x11-xfs-utils";
 			$NotOSXPackageNamesArray[]="libfs6";
 			$NotOSXPackageNamesArray[]="x11-session-utils";
+			$NotOSXPackageNamesArray[]="gnome-power-manage";
+			$NotOSXPackageNamesArray[]="modemmanager";
+			$NotOSXPackageNamesArray[]="powermgmt-base";
 			
+		/*
 			$NotOSXPackageRemoveNamesArray[]="gnome-power-manage";
 			$NotOSXPackageRemoveNamesArray[]="modemmanager";
 			$NotOSXPackageRemoveNamesArray[]="powermgmt-base";
-		/*
 sudo update-rc.d -f cups remove
 sudo update-rc.d -f modem-manager remove
 sudo update-rc.d -f bluetooth remove
