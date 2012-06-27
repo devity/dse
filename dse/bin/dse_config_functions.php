@@ -531,6 +531,8 @@ function dse_install_file_from_url($URL){
 	$FileExtension=dse_file_get_extension($FileName);
 	$FileWithoutExtension=str_remove($FileName,".".$FileExtension);
 	$ThisDownloadsLocation=$DownloadsLocation."/".$FileWithoutExtension;
+	print bar("INSTALLING from URL: $URL  ","<","blue","white","green","white")."n";
+	
 	print colorize("Creating Directory: $ThisDownloadsLocation\n","green");
 	`mkdir $ThisDownloadsLocation`;
 		
@@ -620,7 +622,7 @@ function dse_install_file_from_url($URL){
 	}
 	
 	
-	exit();
+	return();
 	//if(!is_dir("")){
 			
 				//chdir("/tmp");

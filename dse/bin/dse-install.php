@@ -228,7 +228,7 @@ $NotOSXPackageNamesArray[]="lftp";
 $NotOSXPackageNamesArray[]="sysstat";
 $NotOSXPackageNamesArray[]="iftop";
 $NotOSXPackageNamesArray[]="xosview";
-
+//http://bootinfoscript.sourceforge.net
 //$NotOSXPackageNamesArray[]="mytop";
 
 
