@@ -241,6 +241,7 @@ if(dse_is_ubuntu()){
 	$PackageNamesArray[]="alien";
 	$PackageNamesArray[]="dpkg-dev";
 	$PackageNamesArray[]="debhelper";
+	$PackageNamesArray[]="sysv-rc-conf";
 }
 
 $PackageNamesArray[]="build-essential";
@@ -318,7 +319,7 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			$NotOSXPackageNamesArray[]="python-sqlite";
 			$NotOSXPackageNamesArray[]="python-gconf";
 			$URL="http://flyback.googlecode.com/files/flyback_0.4.0.tar.gz";
-			print "**********: ". dse_install_file_from_url($URL);
+			$r=dse_install_file_from_url($URL);
 		}
 	}
 }

@@ -1136,7 +1136,7 @@ function dse_configure_directories_create(){
 
 function dse_service_name_from_common_name($service){
 	global $vars;
-	if(key_exists($service, $vars['DSE']['SERVICE_NICKNAMES'])){
+	if(@key_exists($service, $vars['DSE']['SERVICE_NICKNAMES'])){
 		return $vars['DSE']['SERVICE_NICKNAMES'][$service];
 	}
 	return $service;
