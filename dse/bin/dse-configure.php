@@ -430,10 +430,17 @@ if($FullConfig){
 	
 	if(str_contains($vars['DSE']['SERVICES'],"crowbar")){
 		print "Creating crowbar init.d script.\n";
+		
+		$StartFileName=$vars['DSE']['SYSTEM_SCRIPTS_DIR']."/crowbar_start";
+		$StartFileContents="#!/bin/sh
+export DISPLAY=:1
+xulrunner /root/crowbar/trunk/xulapp/application.ini &
+";
+		dse_put_file_contents($StartFileName,$StartFileContents);
 		$crowbarUser=$vars['DSE']['CROWBAR_USER'];
 		$INITD_SCRIPT_ARRAY=array();
 		$INITD_SCRIPT_ARRAY['ServiceName']="crowbar";
-		$INITD_SCRIPT_ARRAY['ActionStart']="sleep 1; sudo -u $crowbarUser -H -s \"export DISPLAY=:1 ; xulrunner /root/crowbar/trunk/xulapp/application.ini &\"";
+		$INITD_SCRIPT_ARRAY['ActionStart']="sleep 1; sudo -u $crowbarUser -H -s \"/scripts/crowbar_start\"";
 		$INITD_SCRIPT_ARRAY['ActionStop']="sudo -u $crowbarUser -H -s \"killall -9 xulrunner\"";
 		$INITD_SCRIPT_ARRAY['VarIsRunning']="sudo -u $crowbarUser -H -s \"ps aux | egrep xulrunner\"";
 		$INITD_SCRIPT_ARRAY['VarStatus']="sudo -u $crowbarUser -H -s \"ps aux | egrep xulrunner\"";
