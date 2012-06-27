@@ -81,7 +81,8 @@ if(dse_is_osx()){
 	$vars['DSE']['USER_BASH_PROFILE']=$vars['DSE']['USER_HOME_DIR']."/.bash_profile";
 }
 
-$vars['DSE']['SYSTEM_ETC_HOSTS']='/etc/hosts';
+$vars['DSE']['SYSTEM_ETC_HOSTS_FILE']='/etc/hosts';
+$vars['DSE']['SYSTEM_HOSTNAME_FILE']='/etc/hostname';
 $vars['DSE']['SYSTEM_USER_FILE']='/etc/passwd';
 $vars['DSE']['SYSTEM_GROUP_FILE']='/etc/group';
 $vars['DSE']['SYSTEM_BASHRC_FILE']='/etc/bashrc';
