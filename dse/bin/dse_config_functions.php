@@ -1274,4 +1274,214 @@ exit 0
 	dse_file_put_contents($InitdFile,$tbr);
 	dse_file_set_mode($InitdFile,"775");
 }
+
+
+
+function dse_backup_mysqld() {
+	global $vars;
+	dse_detect_os_info();
+	
+	print "MySQL Backup Directory: ".$vars['DSE']['BACKUP_DIR_MYSQL']." ";
+	if(!is_dir($vars['DSE']['BACKUP_DIR_MYSQL'])){
+		print " $Missing. Create? ";
+		$A=dse_ask_yn();
+		if($A=='Y'){
+			dse_directory_create($vars['DSE']['BACKUP_DIR_MYSQL'],"777","root:root");
+		}else{
+			print "\n  Can't backup w/o backup dir. Exiting.\n";
+			exit(-1);	
+		}
+	}else{
+		print $OK;
+	}
+	print "\n";
+	
+	print " Saving Copy of mysqld Data: ";
+	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
+ 	$file=$vars['DSE']['BACKUP_DIR_MYSQL']."/mysqldump".$DATE_TIME_NOW.".sql";
+	$Command="mysqldump --all-databases --user=localroot --add-drop-database --comments --debug-info --disable-keys --dump-date --force --quick --routines --verbose --result-file=$file";
+	print " Command: $Command\n";
+	`$Command`;
+	`gzip $file`;
+	//`mysqlhotcopy-all-databases`;
+
+
+	print " $_OK MySQL backup saved in  ${dir}\n";
+}
+   
+   
+
+
+function dse_backup_httpd() {
+	global $vars; 
+	dse_detect_os_info();
+
+	print "httpd Backup Directory: ".$vars['DSE']['BACKUP_DIR_HTTP']." ";
+	if(!is_dir($vars['DSE']['BACKUP_DIR_HTTP'])){
+		print " $Missing. Create? ";
+		$A=dse_ask_yn();
+		if($A=='Y'){
+			dse_directory_create($vars['DSE']['BACKUP_DIR_HTTP'],"777","root:root");
+		}else{
+			print "\n  Can't backup w/o backup dir. Exiting.\n";
+			exit(-1);	
+		}
+	}else{
+		print $OK;
+	}
+	print "\n";
+	
+	$web_data_dir=$vars['DSE']['BACKUP_HTTP_ROOT'];
+	$dse_server_httpd_backup_directory=$vars['DSE']['BACKUP_DIR_HTTP'];
+	
+	print " Saving Copy of httpd Data: ";
+	
+   	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
+   	if(!file_exists($dse_server_httpd_backup_directory)){
+   		print "Backup directory $dse_server_httpd_backup_directory missing - fatal error. exiting.\n";
+   		exit(1);
+   	}
+	
+	$dir=$dse_server_httpd_backup_directory . "/" . $DATE_TIME_NOW;
+	`mkdir $dir`;   
+   
+   	$web_conf_dir="/etc/httpd";
+   	if(!is_dir($web_conf_dir)){
+   		$web_conf_dir="/etc/apache2";
+	   	if(!is_dir($web_conf_dir)){
+	   		$web_conf_dir="";
+	   	}
+   	}
+   
+   	if($web_conf_dir){
+		$Command="cp -rf $web_conf_dir ${dir}/.";
+		print "Command: $Command\n";
+		`$Command`;
+	}
+	//foreach($web_data_dirs as $web_data_dir){
+		$Command="cp -rf $web_data_dir ${dir}/.";
+		print "Command: $Command\n";
+		`$Command`;
+	//}
+
+	print "$_OK  saved in  ${dir}\n";
+}
+   
+   
+
+
+function dse_backup_server_environment() {
+	global $vars;
+	dse_detect_os_info();
+	
+	$dse_server_environment_backup_directory=$vars['DSE']['DSE_BACKUP_DIR']."/server_environment";
+	
+	print "Saving Image of Environment Variables in: $dse_server_environment_backup_directory\n";
+	
+   	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
+   	$dir=$dse_server_environment_backup_directory . "/" . $DATE_TIME_NOW;
+   	`mkdir ${dir}`;
+   	if(!file_exists($dse_server_environment_backup_directory)){
+   		print "Backup directory $dse_server_environment_backup_directory missing - fatal error. exiting.\n";
+   		exit(1);
+   	}
+
+
+    dse_exec("ps aux &> ${dir}/ps-aux.out");
+   	dse_exec("ps axjf &> ${dir}/ps-axjf.out");
+   	dse_exec("ps AFl &> ${dir}/ps-AFl.out");
+   	dse_exec("netstat -pn -l -A inet &> ${dir}/netstat-pn-l-Ainet.out");
+   	dse_exec("lsof -i | grep LISTEN &> ${dir}/lsof-i.out");
+   	dse_exec("nmap -v -sS localhost &> ${dir}/nmap-v-sSlocalhost.out");
+   	dse_exec("printenv &> ${dir}/printenv.out");
+   	dse_exec("df &> ${dir}/df.out");
+  // 	dse_exec("memstat &> ${dir}/memstat.out");
+  
+   	if($vars[IsUbuntu]){
+   		dse_exec("dpkg --get-selections &> ${dir}/dpkg--get-selections.out");
+   	}
+   	if($vars[IsCentOS]){
+   		dse_exec("rpm -qa &> ${dir}/rpm-qa.out");
+	}
+	if(!dse_is_osx()){
+		dse_exec("cat /etc/*-release &> ${dir}/cat-etc-release.out");
+		dse_exec("cat /etc/issue &> ${dir}/cat-etc-issue.out");
+		dse_exec("uname -a &> ${dir}/uname-a.out");
+	}
+	
+	print "$_OK  saved in  ${dir}\n";
+	return $dir;
+}
+
+
+   
+function dse_exec($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
+	global $vars;
+	if($ShowCommand){
+		print colorize("Command: ","yellow","black");
+		print colorize($Command,"blue","white");
+		print "\n";	
+	}
+	$r=`$Command`;
+	if($ShowOutput) print $r;
+	return $r;
+}
+
+   
+function dse_detect_os_info(){
+	global $vars;
+	
+	$vars[dse_osinfo_release]=trim(dse_exec("cat /etc/*-release"));
+	$vars[dse_osinfo_uname]=trim(dse_exec("uname -a"));
+	if( !(strstr($vars[dse_osinfo_release],"CentOS")===FALSE) ){
+		$vars[IsCentOS]=TRUE;
+	}elseif( !(strstr($vars[dse_osinfo_release],"Ubuntu")===FALSE) ){
+		$vars[IsUbuntu]=TRUE;
+	}
+
+}
+
+	
+function dse_build_clone_server_script(){
+	global $vars;
+	
+	$clone_directory=$vars['DSE']['DSE_BACKUP_DIR']."/clone";
+	
+	print "Starting to build clone generation script in: $clone_directory/\n";
+	
+
+   	dse_exec("mkdir ${clone_directory}");
+   	dse_exec("rm -rf ${clone_directory}/*");
+   	if(!is_dir($clone_directory)){
+   		print "Clone directory $clone_directory missing and uncreatable - fatal error. exiting.\n";
+   		exit(1);
+   	}
+	
+	$dir=dse_backup_server_environment();
+	if(is_dir($dir)){
+		dse_exec("mv $dir ${clone_directory}/server_environment_inspection_output");
+	}
+	
+	dse_rpms_extract();
+	dse_exec("cp -rf ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms ${clone_directory}/rpms");
+	
+	
+}
+
+
+function dse_rpms_extract(){
+	global $vars;
+	print "Rebuilding rpms in: ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms/\n";
+	$rpms=`rpm -qa`;
+	foreach(split("\n",$rpms) as $rpm){
+		$exists=trim(dse_exec("find ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms -iname ${rpm}*"));
+		if( strstr($exists,$rpm)===FALSE ){
+			print "extracting $rpm\n";
+			print dse_exec("rpmrebuild -n -b -d ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms/ $rpm");
+		}else{
+			print "$exists exists.\n";
+		}
+	}
+}
+
 ?>
