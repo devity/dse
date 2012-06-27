@@ -1473,12 +1473,15 @@ function dse_build_clone_server_script(){
 	
 	
 	$RestoreScript="#!/bin/php
-<?php
-
-"/server_environment_inspection_output/dpkg--get-selections.out";
+<"."?php
 
 
-?>";
+dpkg < /server_environment_inspection_output/dpkg--get-selections.out
+apt-get update
+apt-get upgrade
+
+
+?".">";
 	
 	
 }
