@@ -495,7 +495,7 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	}
 	if(in_array("desktop", $vars['DSE']['AddComponents'])){
 		if(dse_is_ubuntu()){
-			$NotOSXPackageNamesArray[]="ubuntu-desktop";
+			//$NotOSXPackageNamesArray[]="ubuntu-desktop";
 			$NotOSXPackageNamesArray[]="lightdm"; //$NotOSXPackageNamesArray[]="gdm";
 			$NotOSXPackageNamesArray[]="x-window-system-core";
 			$NotOSXPackageNamesArray[]="xorg";
@@ -511,16 +511,10 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			$NotOSXPackageNamesArray[]="nautilus";*/
 			$NotOSXPackageNamesArray[]="pcmanfm";
 			$NotOSXPackageNamesArray[]="synaptic";
-			$NotOSXPackageNamesArray[]="firefox";
-			$NotOSXPackageNamesArray[]="firefox";
-			$NotOSXPackageNamesArray[]="firefox";
-			$NotOSXPackageNamesArray[]="firefox";
-			$NotOSXPackageNamesArray[]="firefox";
-			$NotOSXPackageNamesArray[]="firefox";
-			$NotOSXPackageNamesArray[]="firefox";
-			$NotOSXPackageNamesArray[]="firefox";
-			$NotOSXPackageNamesArray[]="firefox";
-			$NotOSXPackageNamesArray[]="firefox";
+			$NotOSXPackageNamesArray[]="x11apps";
+			$NotOSXPackageNamesArray[]="x11-xfs-utils";
+			$NotOSXPackageNamesArray[]="libfs6";
+			$NotOSXPackageNamesArray[]="x11-session-utils";
 			
 			$NotOSXPackageRemoveNamesArray[]="gnome-power-manage";
 			$NotOSXPackageRemoveNamesArray[]="modemmanager";
