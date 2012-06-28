@@ -375,11 +375,15 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		$PackageNamesArray[]="aide";
 	}
 }
-str_contains($vars['DSE']['SERVICES'],"dwi"){
+if(str_contains($vars['DSE']['SERVICES'],"cacti")){
 	$PackageNamesArray[]="cacti";
 	$PackageNamesArray[]="rrdtool";
 }
+if(str_contains($vars['DSE']['SERVICES'],"ntop")){
+	$PackageNamesArray[]="ntop";
+}
 
+		
 
 $ComponentName="flyback";
 if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
