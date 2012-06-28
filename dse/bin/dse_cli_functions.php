@@ -56,7 +56,7 @@ function dse_fss($FileNameOrPartialString){
 	$FileNameOrPartialString=trim($FileNameOrPartialString);
 	$FileNameOrPartialString=dse_exec_esc($FileNameOrPartialString);
 	$Command="/dse/bin/fss -q $FileNameOrPartialString";
-	$r=dse_exec($Command);
+	return dse_exec($Command);
 }
 
 $OK=getColoredString("OK","green","black");
