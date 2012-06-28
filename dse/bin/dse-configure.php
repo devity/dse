@@ -109,7 +109,7 @@ foreach($NeededDirs as $DirArray){
 			}
 		}else{
 			print "Exists. ";
-			if($Mode!=dse_file_get_mode($Dir)){
+			if($Mode!=dse_file_get_mode($Dir) && "2".$Mode!=dse_file_get_mode($Dir) ){
 				print "Mode $NotOK =".dse_file_get_mode($Dir)." ";
 				$A=dse_ask_yn("Set to $Mode?");
 				if($A=='Y'){
