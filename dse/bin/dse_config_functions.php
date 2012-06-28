@@ -1476,7 +1476,7 @@ function dse_build_clone_server_script(){
 	
 	$SystemLSOutputFile=$clone_directory."/ls_of_all_files.txt";
 	print bar("Capturing list of all system files and owner,mode,size  in: $SystemLSOutputFile","-","blue","white","green","white")."n";
-	dse_exec("sudo find . -type d -exec ls -lad {}  2>/dev/null \;  > $SystemLSOutputFile 2>/dev/null",TRUE);
+	dse_exec("sudo find / -type d -exec ls -lad {}  2>/dev/null \;  > $SystemLSOutputFile 2>/dev/null",TRUE);
 	
 	
 	print bar("Done Saving/Capturing.  Creating Re-Create / Build Clone Scripts...","-","blue","white","green","white")."n";
