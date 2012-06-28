@@ -381,6 +381,8 @@ if(str_contains($vars['DSE']['SERVICES'],"cacti")){
 }
 if(str_contains($vars['DSE']['SERVICES'],"ntop")){
 	$PackageNamesArray[]="ntop";
+	$PackageNamesArray[]="graphviz";
+	
 }
 
 		
@@ -546,6 +548,7 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		$OSXPackageNamesArray[]="imagemagick";
 		$NotOSXPackageNamesArray[]="imagemagick";
 		$NotOSXPackageNamesArray[]="libmagickcore-dev";
+		$PackageNamesArray[]="graphviz";
 	}
 }
 

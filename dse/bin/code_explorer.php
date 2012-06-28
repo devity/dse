@@ -253,7 +253,27 @@ if($DidSomething){
 	if(!$NoExit) exit(-1);
 }
 
+/*
+ * dot -Tpng schema.gv -o schema.png
+ * 
+digraph g {
+graph [ rankdir = "LR" ];
+node [ fontsize = "16" shape = "ellipse" ];
+edge [ ];
+"node_accounts" [ label = "<f0> Accounts| <f_un> UserNumber" shape = "record" ]; 
+"node_crafters" [ label = "<f0> Crafters| <f_cn> CrafterNumber| <f_un> UserNumber| " shape = "record" ];
+"node_events" [ label = "<f0> Events|<f_en>EventNumber|<f_pn> PromoterNumber" shape = "record" ];
+"node_promoters" [ label = "<f0> Promoters| <f_pn> PromoterNumber| <f_un> UserNumber" shape = "record" ];
+"node_comments" [ label = "<f0> Comments| <f_cn> CrafterNumber| <f_en> EventNumber| Rating| Comment" shape = "record" ];
 
+"node_accounts": f_un -> "node_crafters":f_un [ id = 0 ];
+"node_accounts":f_un -> "node_promoters":f_un [ id = 3 ];
+"node_crafters":f_cn -> "node_comments":f_cn [ id = 4 ];
+"node_promoters":f_pn -> "node_events":f_pn [ id = 5 ];
+"node_events":f_en -> "node_comments":f_en [ id = 6 ];
+}
+ * 
+ */
 
 
 	 

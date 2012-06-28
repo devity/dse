@@ -1422,11 +1422,13 @@ function dse_backup_server_environment() {
 	
 function dse_build_clone_server_script(){
 	global $vars;
-	print bar("Starting to build clone generation script in: $clone_directory","-","blue","white","green","white")."n";
-	
 	$clone_directory=$vars['DSE']['DSE_BACKUP_DIR']."/clone";
 	
+	print bar("Starting to build clone generation script in: $clone_directory","-","blue","white","blue","white")."n";
 	print "/\n";
+	
+	
+
 	
 
    	dse_exec("mkdir ${clone_directory}");
@@ -1436,26 +1438,62 @@ function dse_build_clone_server_script(){
    		exit(1);
    	}
 	
+
+	print bar("Starting backup of server environment in: $clone_directory/server_environment_inspection_output","-","blue","white","green","white")."n";
 	$dir=dse_backup_server_environment();
 	if(is_dir($dir)){
 		dse_exec("mv $dir ${clone_directory}/server_environment_inspection_output");
 	}
 	
+	
+	print bar("Starting backup of rpms in: $clone_directory/rpms","-","blue","white","green","white")."n";
+	dse_rpms_extract();
+	dse_exec("cp -rf ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms ${clone_directory}/rpms");
+	$dpkg_selections=$clone_directory."/server_environment_inspection_output/dpkg--get-selections.out";
+	`cp $dpkg_selections $clone_directory/rpms/.`;
+
+	
+	print bar("Starting backup of rpms in: $clone_directory/rpms","-","blue","white","green","white")."n";
 	dse_rpms_extract();
 	dse_exec("cp -rf ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms ${clone_directory}/rpms");
 	
 	
-	$dpkg_selections=$clone_directory."/server_environment_inspection_output/dpkg--get-selections.out";
-	//backup etc
+	print bar("Starting backup of /etc in: $clone_directory/etc/*","-","blue","white","green","white")."n";
+	dse_rpms_extract();
+	dse_exec("mkdir ".$vars['DSE']['DSE_BACKUP_DIR']."/etc");
+	dse_exec("cp -rf ".$vars['DSE']['DSE_BACKUP_DIR']."/etc /etc");
+	
 	
 	
 	$RestoreScript="#!/bin/php
 <"."?php
 
+echo \"***************************** Starting DSE Clone Restore Script *************************************\"
 
-dpkg < /server_environment_inspection_output/dpkg--get-selections.out
+echo \"***************************** Run Level Check *************************************\"
+
+echo \"***************************** Stopping Services *************************************\"
+
+
+
+echo \"***************************** Restoring RPMs *************************************\"
+dpkg < ./server_environment_inspection_output/dpkg--get-selections.out
 apt-get update
 apt-get upgrade
+
+
+echo \"***************************** Restoring /etc *************************************\"
+
+
+
+
+
+
+echo \"***************************** Restoring /etc *************************************\"
+
+
+
+echo \"***************************** Starting Services *************************************\"
 
 
 ?".">";
