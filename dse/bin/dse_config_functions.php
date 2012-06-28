@@ -1460,8 +1460,10 @@ function dse_build_clone_server_script(){
 	
 	print bar("Starting backup of /etc in: $clone_directory/etc/*","-","blue","white","green","white")."n";
 	dse_rpms_extract();
-	dse_exec("mkdir ".$vars['DSE']['DSE_BACKUP_DIR']."/etc");
-	dse_exec("cp -rf ".$vars['DSE']['DSE_BACKUP_DIR']."/etc /etc");
+	if(!file_exists($vars['DSE']['DSE_BACKUP_DIR']."/etc")){
+		dse_exec("mkdir ".$vars['DSE']['DSE_BACKUP_DIR']."/etc");
+	}
+	dse_exec("cp -rf ".$vars['DSE']['DSE_BACKUP_DIR']."/etc /etc",TRUE);
 	
 	
 	print bar("Starting backup of .bash history: $clone_directory/etc/*","-","blue","white","green","white")."n";
@@ -1474,7 +1476,7 @@ function dse_build_clone_server_script(){
 	
 	$SystemLSOutputFile=$clone_directory."/ls_of_all_files.txt";
 	print bar("Capturing list of all system files and owner,mode,size  in: $SystemLSOutputFile","-","blue","white","green","white")."n";
-	dse_exec("sudo find . -type d -exec ls -lad {}  2>/dev/null \;  > $SystemLSOutputFile 2>/dev/null");
+	dse_exec("sudo find . -type d -exec ls -lad {}  2>/dev/null \;  > $SystemLSOutputFile 2>/dev/null",TRUE);
 	
 	
 	print bar("Done Saving/Capturing.  Creating Re-Create / Build Clone Scripts...","-","blue","white","green","white")."n";
