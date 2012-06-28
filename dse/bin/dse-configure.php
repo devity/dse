@@ -174,7 +174,7 @@ if(str_contains($vars['DSE']['SERVICES'],"dwi") && dse_is_package_installed("apa
 		dse_configure_file_install_from_template($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],$TemplateFile,"664","root:root");
 		if($Apache2ModuleDirectory){
 			print  "found Apache2ModuleDirectory=$Apache2ModuleDirectory   replacing.\n";
-			dse_file_replace_string($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],"libexec/apache2/",$Apache2ModuleDirectory);
+			dse_file_replace_str($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],"libexec/apache2/",$Apache2ModuleDirectory);
 		}
 	}
 }
