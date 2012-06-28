@@ -1,5 +1,6 @@
 #!/usr/bin/php
 <?
+$Quiet=FALSE;
 
 if(sizeof($argv)>1 && $argv[1]=="--build-cache"){
 	if(sizeof($argv)>2){
@@ -9,7 +10,8 @@ if(sizeof($argv)>1 && $argv[1]=="--build-cache"){
 	}
 	$CacheFile=$d.".dse-fss-cache-file";
 	$ts=time();
-	`find $d > $CacheFile`;
+	$Command="sudo find $d > $CacheFile";
+	dse_exec($Command,TRUE);
 	print "Done! ";
 	print time()-$ts . " seconds. ";
 	print trim(`wc -l $CacheFile`). " files found/indexed. ";
@@ -64,5 +66,18 @@ function str_remove_blank_lines($Contents){
 	}
 	return $tbr;
 }
- 
+
+
+function dse_exec($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
+	global $vars;
+	if($ShowCommand){
+		print "Command: ";
+		print $Command;
+		print "\n";	
+	}
+	$r=`$Command`;
+	if($ShowOutput) print $r;
+	return $r;
+}
+
 ?>
