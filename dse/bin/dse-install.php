@@ -246,9 +246,8 @@ $NotOSXPackageNamesArray[]="util-linux";
 //$NotOSXPackageNamesArray[]="filefrog";
 $NotOSXPackageNamesArray[]="loop-aes-utils";
 //$NotOSXPackageNamesArray[]="gawk";
-if(dse_is_centos()){
-	$PackageNamesArray[]="rpmrebuild";
-}
+
+
 
 if(dse_is_centos()){
 	$PackageNamesArray[]="jwhois";
@@ -267,10 +266,12 @@ if(dse_is_ubuntu()){
 	$PackageNamesArray[]="alien";
 	$PackageNamesArray[]="dpkg-dev";
 	$PackageNamesArray[]="debhelper";
-	$PackageNamesArray[]="sysv-rc-conf";
-	$PackageNamesArray[]="dselect";
 	$PackageNamesArray[]="aptitude";
 }
+$NotOSXPackageNamesArray[]="rpmrebuild";
+$NotOSXPackageNamesArray[]="dselect";
+$NotOSXPackageNamesArray[]="sysv-rc-conf";
+
 $NotOSXPackageNamesArray[]="chkconfig";
 
 $PackageNamesArray[]="etckeeper";
@@ -429,8 +430,10 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			$NotOSXPackageNamesArray[]="libqt4-gui";
 			$NotOSXPackageNamesArray[]="libqt4-network";
 			//$URL="http://downloads.sourceforge.net/project/synergy2/Binaries/1.3.1/synergy-1.3.1-1.i386.rpm";
-			$URL="http://synergy.googlecode.com/files/synergy-1.3.1-Linux-i386.rpm";
-			dse_install_file_from_url($URL);
+			if(!dse_is_package_installed("synergy")){
+				$URL="http://synergy.googlecode.com/files/synergy-1.3.1-Linux-i386.rpm";
+				dse_install_file_from_url($URL);
+			}
 		}
 	}
 }
