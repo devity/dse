@@ -53,7 +53,7 @@ function dse_detect_os_info(){
 
 function dse_fss($FileNameOrPartialString){
 	global $vars;
-	$FileNameOrPartialString=trim();
+	$FileNameOrPartialString=trim($FileNameOrPartialString);
 	$FileNameOrPartialString=dse_exec_esc($FileNameOrPartialString);
 	$Command="/dse/bin/fss $FileNameOrPartialString";
 	$r=dse_exec($Command);

@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?
 
-if($argv[1]=="--build-cache"){
+if(sizeof($argv)>1 && $argv[1]=="--build-cache"){
 	if(sizeof($argv)>2){
 		$d=str_replace("//","/",$argv[2]."/");
 	}else{
@@ -17,7 +17,7 @@ if($argv[1]=="--build-cache"){
 	exit(0);
 }
 
-if($argv[1]=="-q"){
+if(sizeof($argv)>1 && $argv[1]=="-q"){
 	$Quiet=TRUE;
 	$ss=$argv[2];
 	if(sizeof($argv)>3){
