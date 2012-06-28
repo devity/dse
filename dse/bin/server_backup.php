@@ -26,6 +26,8 @@ $parameters_details = array(
   array('y','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('z:','status:',"shows status on all or arg1. options: [initd]"),
   array('c','clone',"build a recreate / clone script"),
+  //interact w etckeeper
+  //rpm rebuild stored restore points
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);

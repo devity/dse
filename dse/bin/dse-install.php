@@ -273,6 +273,7 @@ if(dse_is_ubuntu()){
 }
 $NotOSXPackageNamesArray[]="chkconfig";
 
+$PackageNamesArray[]="etckeeper";
 
 /* reddit
  * 
@@ -374,6 +375,11 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		$PackageNamesArray[]="aide";
 	}
 }
+str_contains($vars['DSE']['SERVICES'],"dwi"){
+	$PackageNamesArray[]="cacti";
+	$PackageNamesArray[]="rrdtool";
+}
+
 
 $ComponentName="flyback";
 if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){

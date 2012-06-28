@@ -164,7 +164,7 @@ dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_DROPLIST_F
 
 
 if(str_contains($vars['DSE']['SERVICES'],"dwi") && dse_is_package_installed("apache2") ){
-	$Apache2ModuleDirectory=filedir(dse_fss("mod_authn_file.so"));
+	$Apache2ModuleDirectory=dirname(dse_fss("mod_authn_file.so"));
 	$Apache2ModuleDirectory=str_remove($Apache2ModuleDirectory,"/mod_authn_file.so");
 	$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "apache2.conf";
 	dse_configure_file_install_from_template($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],$TemplateFile,"664","root:root");
