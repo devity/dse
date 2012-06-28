@@ -164,12 +164,16 @@ dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_DROPLIST_F
 
 
 if(str_contains($vars['DSE']['SERVICES'],"dwi") && dse_is_package_installed("apache2") ){
-	$Apache2ModuleDirectory=dirname(dse_fss("mod_authn_file.so"));
-	$Apache2ModuleDirectory=str_remove($Apache2ModuleDirectory,"/mod_authn_file.so");
-	$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "apache2.conf";
-	dse_configure_file_install_from_template($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],$TemplateFile,"664","root:root");
-	if($Apache2ModuleDirectory){
-		dse_file_replace_string($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],"libexec/apache2/",$Apache2ModuleDirectory);
+	if(!dse_file_exists($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'])){
+		print "No ".$vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE']."   using template.\n";
+		$Apache2ModuleDirectory=dirname(dse_fss("mod_authn_file.so"));
+		$Apache2ModuleDirectory=str_remove($Apache2ModuleDirectory,"/mod_authn_file.so");
+		$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "apache2.conf";
+		dse_configure_file_install_from_template($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],$TemplateFile,"664","root:root");
+		if($Apache2ModuleDirectory){
+			print  "found Apache2ModuleDirectory=$Apache2ModuleDirectory   replacing.\n";
+			dse_file_replace_string($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],"libexec/apache2/",$Apache2ModuleDirectory);
+		}
 	}
 }
 
