@@ -6,6 +6,7 @@ include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/include/system_stat_functions.php");
 include_once ("/dse/bin/dse_config.php");
 $Verbosity=0;
+$TreatNeedleAsPattern=FALSE;
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE Replace";
