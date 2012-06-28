@@ -53,7 +53,7 @@ if(sizeof($argv)>1 && $argv[1]=="-q"){
 
 
 
-$find_cmd="sudo find $d -iname $ss 2>/dev/null";
+$find_cmd="sudo find $d -iname \"$ss\" 2>/dev/null";
 
 if(!$Quiet) print "Searching for: $ss\n";
 if(!$Quiet) print "Command: $find_cmd\n";
@@ -64,7 +64,10 @@ $out=str_remove_blank_lines($out);
 if($out){
 	if($ReturnFirstOnly){
 		$ra=split("\n",$out);
-		return $ra[0];
+		foreach($ra as $L) if($L) {
+			print $L;
+			break;
+		}
 	}else{
 		print $out;
 	}
