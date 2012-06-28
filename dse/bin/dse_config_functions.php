@@ -1419,32 +1419,6 @@ function dse_backup_server_environment() {
 
 
    
-function dse_exec($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
-	global $vars;
-	if($ShowCommand){
-		print colorize("Command: ","yellow","black");
-		print colorize($Command,"blue","white");
-		print "\n";	
-	}
-	$r=`$Command`;
-	if($ShowOutput) print $r;
-	return $r;
-}
-
-   
-function dse_detect_os_info(){
-	global $vars;
-	
-	$vars[dse_osinfo_release]=trim(dse_exec("cat /etc/*-release"));
-	$vars[dse_osinfo_uname]=trim(dse_exec("uname -a"));
-	if( !(strstr($vars[dse_osinfo_release],"CentOS")===FALSE) ){
-		$vars[IsCentOS]=TRUE;
-	}elseif( !(strstr($vars[dse_osinfo_release],"Ubuntu")===FALSE) ){
-		$vars[IsUbuntu]=TRUE;
-	}
-
-}
-
 	
 function dse_build_clone_server_script(){
 	global $vars;

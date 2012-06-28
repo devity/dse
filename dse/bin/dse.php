@@ -137,6 +137,16 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 }
 
+if($argv[1]=="push"){
+	$Command="git_ul dse";
+	if(sizeof($argv)>2 && $argv[2]){
+		$Command .= " " . $argv[2];
+	}else{
+		$Command .= " no_message";
+	}
+	exit(passthru($Command));
+}
+
 
 if($DoSetEnv){
 

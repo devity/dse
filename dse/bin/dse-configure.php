@@ -162,9 +162,16 @@ dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_WHITELIST_
 $TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "ips_droplist.txt";
 dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'],$TemplateFile,"664","root:root");
 
-$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "apache2.conf";
-dse_configure_file_install_from_template($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],$TemplateFile,"664","root:root");
 
+if(str_contains($vars['DSE']['SERVICES'],"dwi") && dse_is_package_installed("apache2") ){
+	$Apache2ModuleDirectory=filedir(dse_fss("mod_authn_file.so"));
+	$Apache2ModuleDirectory=str_remove($Apache2ModuleDirectory,"/mod_authn_file.so");
+	$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "apache2.conf";
+	dse_configure_file_install_from_template($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],$TemplateFile,"664","root:root");
+	if($Apache2ModuleDirectory){
+		dse_file_replace_string($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],"libexec/apache2/",$Apache2ModuleDirectory);
+	}
+}
 
 
 dse_file_set_mode($vars['DSE']['DSE_IPTHROTTLE_LOG_DIRECTORY'],"777");
@@ -357,7 +364,18 @@ else
    exit -1;
 fi*/
 
-
+if(dse_is_ubuntu()){
+	if(in_array("desktop", $vars['DSE']['AddComponents'])
+	 && dse_is_package_installed("xorg") ){
+		$DesktopPowerPolicyFile="/usr/share/polkit-1/actions/org.freedesktop.upower.policy";
+		if(!dse_file_exists($DesktopPowerPolicyFile)){
+			$DesktopPowerPolicyFile=dse_fss("org.freedesktop.upower.policy");
+		}
+		if(dse_file_exists($DesktopPowerPolicyFile)){
+			dse_file_replace_str($DesktopPowerPolicyFile,"<allow_active>yes</allow_active>","<allow_active>no</allow_active>");
+		}
+	}
+}
 
 if(dse_file_exists($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'])){
 	$display_errors=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"display_errors");
@@ -454,7 +472,7 @@ vncserver -kill $DISPLAY
 		$INITD_SCRIPT_ARRAY['ServiceName']=$vars['DSE']['SERVICES'];
 		$INITD_SCRIPT_ARRAY['ActionStart']="sleep 1; sudo -u $vncserverUser -H -s \"/scripts/vncserver_start\"";
 		$INITD_SCRIPT_ARRAY['ActionStop']="sudo -u $vncserverUser -H -s \"/scripts/vncserver_stop\"";
-		$INITD_SCRIPT_ARRAY['VarStatus']="sudo -u $vncserverUser -H -s \"ps aux | egrep xorg\"";
+		$INITD_SCRIPT_ARRAY['VarStatus']="sudo -u $vncserverUser -H -s \"ps aux | egrep xorg11\"";
 		if(dse_is_osx()){
 			$INITD_SCRIPT_ARRAY['VarNetstat']="netstat -ta | egrep 5902";
 		}else{

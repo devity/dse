@@ -5,6 +5,60 @@ ini_set('log_errors','On');
 error_reporting( (E_ALL & ~E_NOTICE) ^ E_DEPRECATED);
 	
 
+function str_remove_blank_lines($Contents){
+	$tbr="";
+	foreach(split("\n",$Contents) as $L){
+		if(trim($L)!=""){
+			if($tbr!="") $tbr.="\n";
+			$tbr.=$L;
+		}
+	}
+	return $tbr;
+}
+
+function dse_exec_esc($StringToEscape){
+	global $vars;
+	$StringToEscape=str_replace(" ", "\\ ", $StringToEscape);
+	$StringToEscape=str_replace(";", "\\;", $StringToEscape);
+	$StringToEscape=str_replace("&", "\\& ", $StringToEscape);
+	return $StringToEscape;
+}
+	
+function dse_exec($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
+	global $vars;
+	if($ShowCommand){
+		print colorize("Command: ","yellow","black");
+		print colorize($Command,"blue","white");
+		print "\n";	
+	}
+	$r=`$Command`;
+	if($ShowOutput) print $r;
+	return $r;
+}
+
+   
+function dse_detect_os_info(){
+	global $vars;
+	
+	$vars[dse_osinfo_release]=trim(dse_exec("cat /etc/*-release"));
+	$vars[dse_osinfo_uname]=trim(dse_exec("uname -a"));
+	if( !(strstr($vars[dse_osinfo_release],"CentOS")===FALSE) ){
+		$vars[IsCentOS]=TRUE;
+	}elseif( !(strstr($vars[dse_osinfo_release],"Ubuntu")===FALSE) ){
+		$vars[IsUbuntu]=TRUE;
+	}
+
+}
+
+
+function dse_fss($FileNameOrPartialString){
+	global $vars;
+	$FileNameOrPartialString=trim();
+	$FileNameOrPartialString=dse_exec_esc($FileNameOrPartialString);
+	$Command="/dse/bin/fss $FileNameOrPartialString";
+	$r=dse_exec($Command);
+}
+
 $OK=getColoredString("OK","green","black");
 $Fixed=getColoredString("Fixed","green","black");
 $Added=getColoredString("Added","green","black");
@@ -973,6 +1027,11 @@ function dse_file_add_line_if_not($filename,$Str){
 	if(!str_contains($Now,$Str)){
 		return dse_file_put_contents($filename,$Now."\n".$Str);
 	}
+}
+
+function dse_file_replace_str($File,$Needle,$Replacement){
+	global $vars;
+	dse_replace_in_file($File,$Needle,$Replacement);
 }
 
 function dse_file_put_contents($filename,$Str){
