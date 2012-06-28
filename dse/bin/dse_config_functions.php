@@ -1464,6 +1464,20 @@ function dse_build_clone_server_script(){
 	dse_exec("cp -rf ".$vars['DSE']['DSE_BACKUP_DIR']."/etc /etc");
 	
 	
+	print bar("Starting backup of .bash history: $clone_directory/etc/*","-","blue","white","green","white")."n";
+	
+	
+	print bar("Starting backup of logs in: $clone_directory/var/logs/*","-","blue","white","green","white")."n";
+	
+	
+	print bar("Starting backup of user home directories: $clone_directory/home/*","-","blue","white","green","white")."n";
+	
+	$SystemLSOutputFile=$clone_directory."/ls_of_all_files.txt";
+	print bar("Capturing list of all system files and owner,mode,size  in: $SystemLSOutputFile","-","blue","white","green","white")."n";
+	dse_exec("sudo find . -type d -exec ls -lad {}  2>/dev/null \;  > $SystemLSOutputFile 2>/dev/null");
+	
+	
+	print bar("Done Saving/Capturing.  Creating Re-Create / Build Clone Scripts...","-","blue","white","green","white")."n";
 	
 	$RestoreScript="#!/bin/php
 <"."?php
@@ -1487,9 +1501,22 @@ echo \"***************************** Restoring /etc ****************************
 
 
 
+echo \"***************************** Restoring /etc *************************************\"
 
 
 echo \"***************************** Restoring /etc *************************************\"
+
+
+echo \"***************************** Restoring /etc *************************************\"
+
+
+
+
+echo \"***************************** Restoring users and groups *************************************\"
+
+
+echo \"***************************** Restoring file permissions *************************************\"
+
 
 
 
