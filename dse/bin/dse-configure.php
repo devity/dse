@@ -81,6 +81,7 @@ $NeededDirs=array(
  array($vars['DSE']['DSE_VIBK_BACKUP_DIRECTORY'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
  array($vars['DSE']['DSE_LOG_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
  array($vars['DSE']['DSE_LOG_DIR']."/ip_throttle","777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
+ array($vars['DSE']['DSE_LOG_DIR']."/dwi_apache2","777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
  array($vars['DSE']['DSE_CONFIG_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
  array($vars['DSE']['SYSTEM_SCRIPTS_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
 );
@@ -165,6 +166,9 @@ dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_DROPLIST_F
 
 if(str_contains($vars['DSE']['SERVICES'],"dwi") && dse_is_package_installed("apache2") ){
 	if(!dse_file_exists($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'])){
+		
+ 		
+		dse_file_link("/usr/mime.types",dse_fss("mime.types"));
 		print "No ".$vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE']."   using template.\n";
 		$t=dse_fss("mod_headers.so");
 		print "t=$t =dse_fss(\"mod_headers.so\")\n";

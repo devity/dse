@@ -1,6 +1,7 @@
 #!/usr/bin/php
 <?
 $Quiet=FALSE;
+$ReturnFirstOnly=FALSE;
 
 if(sizeof($argv)>1 && $argv[1]=="--build-cache"){
 	if(sizeof($argv)>2){
@@ -21,11 +22,25 @@ if(sizeof($argv)>1 && $argv[1]=="--build-cache"){
 
 if(sizeof($argv)>1 && $argv[1]=="-q"){
 	$Quiet=TRUE;
-	$ss=$argv[2];
-	if(sizeof($argv)>3){
-		$d=$argv[3];
+	
+	if(sizeof($argv)>2 && $argv[2]=="-f"){
+		$ReturnFirstOnly=TRUE;
+		
+		$ss=$argv[3];
+		if(sizeof($argv)>4){
+			$d=$argv[4];
+		}else{
+			$d="/";
+		}
 	}else{
-		$d="/";
+		
+		
+		$ss=$argv[2];
+		if(sizeof($argv)>3){
+			$d=$argv[3];
+		}else{
+			$d="/";
+		}
 	}
 }else{
 	$ss=$argv[1];
@@ -45,7 +60,18 @@ if(!$Quiet) print "Command: $find_cmd\n";
 
 $out=trim(`$find_cmd`);
 $out=str_remove_blank_lines($out);
-print $out;
+
+if($out){
+	if($ReturnFirstOnly){
+		$ra=split("\n",$out);
+		return $ra[0];
+	}else{
+		print $out;
+	}
+}else{
+	if(!$Quiet) print "No Matches";
+}
+
 
 if(!$Quiet) print "\n";
 
