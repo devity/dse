@@ -765,7 +765,8 @@ function dse_file_get_mtime($DestinationFile){
 function dse_file_get_stat_array($DestinationFile){
 	global $vars;
 	$stat_field_names=array('dev'=>0,'ino'=>1,'mode'=>2,'nlink'=>3,'uid'=>4,'gid'=>5,'rdev'=>6,'size'=>7,'atime'=>8,'mtime'=>9,'ctime'=>10,'blksize'=>11,'blocks'=>12);
-	if(!dse_file_exists($DestinationFile)){
+	//if(!dse_file_exists($DestinationFile)){
+	if(!file_exists($DestinationFile)){
 		print "Error in dse_file_get_mode($DestinationFile,$field) - file does not exist.\n";
 		return -1;
 	}
