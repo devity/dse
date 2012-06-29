@@ -174,19 +174,20 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				if(dse_file_exists($F2)){
 					$F2_sa=dse_file_get_stat_array($F2);
 					$F2_size=$F2_sa[7];
-					dpv(5,"dse_file_exists($F2)=TRUE");
-					if($F2_size==$F1_size && $F1_md5==$F2_md5){
-						print colorize(" => ","white","red");
-					}else{
-						print colorize(" => ","white","green");
-					}
-				//	print "wrwqerw\n";
+					//	print "wrwqerw\n";
 					if(is_dir($F2)){
 						$F2_md5="dir";
 					}else{
 						$F2_md5=md5_of_file($F2);
 					//	print "334r234t43f\n";
 					}
+					dpv(5,"dse_file_exists($F2)=TRUE");
+					if($F2_size==$F1_size && $F1_md5==$F2_md5){
+						print colorize(" => ","white","red");
+					}else{
+						print colorize(" => ","white","green");
+					}
+				
 					
 					if($F2_size==$F1_size){
 						print colorize(pad($F2_size,12," ","right")."b  ","white","blue");
