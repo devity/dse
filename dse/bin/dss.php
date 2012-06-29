@@ -26,6 +26,8 @@ $parameters_details = array(
   array('h','help',"this message"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('a','all',"print all available system stats"),
+  array('p','prompt',"print brief info for use in shell prompt w: export PS1=\"[\$(/dse/bin/dss --prompt)]  \w:\$ \"
+  "),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -44,6 +46,13 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'h':
   	case 'help':
 		print $vars['Usage'];
+		exit(0);
+		
+	case 'p':
+  	case 'prompt':
+		$Load=get_load();
+		$Load=number_format($Load,1);
+		print "L$Load";
 		exit(0);
 		
 		
