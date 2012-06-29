@@ -116,7 +116,8 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$Command="rsync -rnvc $Dir1/* $Dir2/.  2>/dev/null | grep -v \".git\" | grep -v \"skipping non-regular file\" "
 			." | grep -v \"ding incremental file list\" | grep -v \"bytes/sec\" | grep -v \"speedup is\" ";
 		$Command="rsync -rnvc $Dir1/ $Dir2  2>/dev/null | grep -v \".git\" | grep -v \"skipping non-regular file\" "
-			." | grep -v \"ding incremental file list\" | grep -v \"bytes/sec\" | grep -v \"speedup is\" ";
+			." | grep -v \"ding incremental file list\" | grep -v \"bytes/sec\" | grep -v \"speedup is\" | grep -v \"/dse/\" "
+			." | grep -v \"/CONF/\" | grep -v \"/DSE/\"  ";
 		$r=dse_exec($Command,TRUE);
 		foreach(split("\n",$r) as $L){
 			$L=trim($L);
