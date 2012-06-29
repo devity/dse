@@ -1926,6 +1926,9 @@ function strpos_alnum($haystack, $offset=0){
 }
 
 
+function time_float(){
+	return (time()+microtime());
+}
 
 function SQLDate2time($in){
 	return YYYYMMDD2time($in);
