@@ -1571,7 +1571,7 @@ echo \"***************************** Starting Services *************************
 
 $clone_directory=$vars['DSE']['DSE_BACKUP_DIR']."/clone";
 	
-	$OutFile==$vars['DSE']['DSE_BACKUP_DIR']."/clone.tgz";
+	$OutFile=$vars['DSE']['DSE_BACKUP_DIR']."/clone.tgz";
 	$Command="tar --atime-preserve --preserve -czf $OutFile $clone_directory";
 	dse_exec($Command,TRUE);
 	
