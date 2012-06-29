@@ -1391,26 +1391,30 @@ function dse_backup_server_environment() {
    	}
 
 
-    dse_exec("ps aux &> ${dir}/ps-aux.out");
-   	dse_exec("ps axjf &> ${dir}/ps-axjf.out");
-   	dse_exec("ps AFl &> ${dir}/ps-AFl.out");
-   	dse_exec("netstat -pn -l -A inet &> ${dir}/netstat-pn-l-Ainet.out");
-   	dse_exec("lsof -i | grep LISTEN &> ${dir}/lsof-i.out");
-   	dse_exec("nmap -v -sS localhost &> ${dir}/nmap-v-sSlocalhost.out");
-   	dse_exec("printenv &> ${dir}/printenv.out");
-   	dse_exec("df &> ${dir}/df.out");
+    dse_exec("ps aux &> ${dir}/ps-aux.out",TRUE);
+   	dse_exec("ps axjf &> ${dir}/ps-axjf.out",TRUE);
+   	dse_exec("ps AFl &> ${dir}/ps-AFl.out",TRUE);
+   	dse_exec("netstat -pn -l -A inet &> ${dir}/netstat-pn-l-Ainet.out",TRUE);
+   	dse_exec("lsof -i | grep LISTEN &> ${dir}/lsof-i.out",TRUE);
+   	dse_exec("nmap -v -sS localhost &> ${dir}/nmap-v-sSlocalhost.out",TRUE,TRUE);
+    dse_exec("/dse/bin/dnetstat -o &> ${dir}/dnetstat-o.out",TRUE,TRUE);
+    dse_exec("/dse/bin/dnetstat -a &> ${dir}/dnetstat-a.out",TRUE,TRUE);
+    dse_exec("iptables -nvL &> ${dir}/iptables-nvl.out",TRUE);
+	
+   	dse_exec("printenv &> ${dir}/printenv.out",TRUE,TRUE);
+   	dse_exec("df &> ${dir}/df.out",TRUE,TRUE);
   // 	dse_exec("memstat &> ${dir}/memstat.out");
   
    	if(dse_is_osx() || dse_is_ubuntu()){
-   		dse_exec("dpkg --get-selections &> ${dir}/dpkg--get-selections.out");
+   		dse_exec("dpkg --get-selections &> ${dir}/dpkg--get-selections.out",TRUE);
    	}
    	if(dse_is_centos()){
-   		dse_exec("rpm -qa &> ${dir}/rpm-qa.out");
+   		dse_exec("rpm -qa &> ${dir}/rpm-qa.out",TRUE);
 	}
 	if(!dse_is_osx()){
-		dse_exec("cat /etc/*-release &> ${dir}/cat-etc-release.out");
-		dse_exec("cat /etc/issue &> ${dir}/cat-etc-issue.out");
-		dse_exec("uname -a &> ${dir}/uname-a.out");
+		dse_exec("cat /etc/*-release &> ${dir}/cat-etc-release.out",TRUE);
+		dse_exec("cat /etc/issue &> ${dir}/cat-etc-issue.out",TRUE,TRUE);
+		dse_exec("uname -a &> ${dir}/uname-a.out",TRUE,TRUE);
 	}
 	
 	print "$_OK  saved in  ${dir}\n";
