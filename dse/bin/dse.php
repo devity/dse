@@ -101,47 +101,50 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		}
 		//dse_launch_code_edit
 		
-		$Li=0;
-		if(!$LaunchNumber) print bar("FILE NAME Results:","-","blue","white","green","white");
-		$Command=$vars['DSE']['DSE_BIN_DIR']."/fss \"$String\" ".$vars['DSE']['DSE_ROOT'];
-  		$r=dse_exec($Command,$vars['Verbosity']>3);
-		foreach(split("\n",$r) as $L){
-			$Li++;
-			if(!$LaunchNumber){
-				print colorize("$Li","cyan","black");
-				print colorize(": ","blue","black");
-				$L=str_replace($String,colorize($String,"black","yellow"),$L);
-				print "$L\n";
-			}
-		}
 		
-		if(!$LaunchNumber) print bar("STRING GREP Results","-","blue","white","green","white");
-		$Command=$vars['DSE']['DSE_BIN_DIR']."/gss \"$String\" ".$vars['DSE']['DSE_ROOT'];
-  		$r=dse_exec($Command,$vars['Verbosity']>3);
-		foreach(split("\n",$r) as $L){
-			$L=trim($L);
-			if($L){
-				list($FileName,$LineNumber,$Line)=split(":",$L);
-				if($FileName && dse_file_exists($FileName)){
-					$Li++;
-					if(!$LaunchNumber){
-						print colorize("$Li","yellow","black");
-						print colorize(": ","blue","black");
-						
-						print colorize($FileName,"cyan","black");
-						print colorize("::","yellow","black");
-						print colorize($LineNumber,"green","black");
-						$L=str_replace($String,colorize($String,"black","yellow"),$Line);
-						print "$L\n";
-					}
-					if($LaunchNumber==$Li){
-						dse_launch_code_edit($FileName,$LineNumber);
-						exit(0);
+		foreach ($vars['DSE']['CODE_BROWSE_DIRECTORIES'] as $DoDirStr){ 
+			$DoDir=strcut($DoDirStr,""," ");
+			$Li=0;
+			if(!$LaunchNumber) print bar("FILE NAME Results: $DoDir","-","blue","white","green","white");
+			$Command=$vars['DSE']['DSE_BIN_DIR']."/fss \"$String\" ".$DoDir;
+	  		$r=dse_exec($Command,$vars['Verbosity']>3);
+			foreach(split("\n",$r) as $L){
+				$Li++;
+				if(!$LaunchNumber){
+					print colorize("$Li","cyan","black");
+					print colorize(": ","blue","black");
+					$L=str_replace($String,colorize($String,"black","yellow"),$L);
+					print "$L\n";
+				}
+			}
+			
+			if(!$LaunchNumber) print bar("STRING GREP Results: $DoDir","-","blue","white","green","white");
+			$Command=$vars['DSE']['DSE_BIN_DIR']."/gss \"$String\" ".$DoDir;
+	  		$r=dse_exec($Command,$vars['Verbosity']>3);
+			foreach(split("\n",$r) as $L){
+				$L=trim($L);
+				if($L){
+					list($FileName,$LineNumber,$Line)=split(":",$L);
+					if($FileName && dse_file_exists($FileName)){
+						$Li++;
+						if(!$LaunchNumber){
+							print colorize("$Li","yellow","black");
+							print colorize(": ","blue","black");
+							
+							print colorize($FileName,"cyan","black");
+							print colorize("::","yellow","black");
+							print colorize($LineNumber,"green","black");
+							$L=str_replace($String,colorize($String,"black","yellow"),$Line);
+							print "$L\n";
+						}
+						if($LaunchNumber==$Li){
+							dse_launch_code_edit($FileName,$LineNumber);
+							exit(0);
+						}
 					}
 				}
 			}
 		}
-		
 		
 		$DidSomething=TRUE;
 		break;

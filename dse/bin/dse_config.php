@@ -263,4 +263,7 @@ putenv ("DSE_MYSQL_LOG_FILE=".$vars['DSE']['MYSQL_LOG_FILE']);
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 
+$vars['DSE']['CODE_BROWSE_DIRECTORIES'][]=$vars['DSE']['DSE_BIN_DIR'];
+
+
 ?>
