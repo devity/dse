@@ -29,6 +29,7 @@ $parameters_details = array(
   array('m:','mid:',"returns tail -1 arg1 | head -n arg2"),
   array('','number',"adds a incrementing line number to start of each line"),
   array('','find-large-files',"finds larges files in arg1"),
+  array('','empty',"empties file arg1"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -71,6 +72,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$Limit=$argv[2];
 		$DoLargeFileFind=TRUE;
 		break;
+	case 'empty':
+		$DoFileEmpty=TRUE;
+		break;
 }
 
 dpv(4,"parsed args");
@@ -94,6 +98,12 @@ if($DoLargeFileFind){
 }
 $File=$argv[1];
 dpv(4,"file=$File");
+			
+if($DoFileEmpty){
+	dpv(4,"in DoFileEmpty");
+	dse_file_set_contents($File,"");
+	exit(0);
+}
 			
 if($DoNumber){
 	$Message="dfi numbering lines in $File :\n";
