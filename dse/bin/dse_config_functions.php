@@ -1453,13 +1453,7 @@ function dse_build_clone_server_script(){
 	`cp $dpkg_selections $clone_directory/rpms/.`;
 
 	
-	print bar("Starting backup of rpms in: $clone_directory/rpms","-","blue","white","green","white")."n";
-	dse_rpms_extract();
-	dse_exec("cp -rf ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms ${clone_directory}/rpms");
-	
-	
 	print bar("Starting backup of /etc in: $clone_directory/etc/*","-","blue","white","green","white")."n";
-	dse_rpms_extract();
 	if(!file_exists($vars['DSE']['DSE_BACKUP_DIR']."/etc")){
 		dse_exec("mkdir ".$vars['DSE']['DSE_BACKUP_DIR']."/etc");
 	}
@@ -1473,10 +1467,29 @@ function dse_build_clone_server_script(){
 	
 	
 	print bar("Starting backup of user home directories: $clone_directory/home/*","-","blue","white","green","white")."n";
+	if(dse_is_osx()){
+		$UserDirs=dse_ls("/Users");
+	}else{
+		$UserDirs=dse_ls("/home");
+	}	
+	foreach($UserDirs as $UserDirArray){
+		list($Type,$FileName)=$UserDirArray;
+		$bn=basename($FileName);
+		if($bn[0]!='.'){
+			$UserHomeDir="/home/".$bn;
+			$UserHomeDirBackup=$clone_directory.$UserHomeDir;
+			print "Backing up user $FileName's home dir $UserHomeDir to $UserHomeDirBackup\n";
+			$Command="cp -rf $UserHomeDir $clone_directory/home/.";
+			print "C=$Command\n";
+			exit();
+			//dse_exec(,TRUE);
+		}
+	}
+	
 	
 	$SystemLSOutputFile=$clone_directory."/ls_of_all_files.txt";
 	print bar("Capturing list of all system files and owner,mode,size  in: $SystemLSOutputFile","-","blue","white","green","white")."n";
-	dse_exec("sudo find / -type d -exec ls -lad {}  2>/dev/null \;  > $SystemLSOutputFile 2>/dev/null",TRUE);
+	//dse_exec("sudo find / -type d -exec ls -lad {}  2>/dev/null \;  > $SystemLSOutputFile 2>/dev/null",TRUE);
 	
 	
 	print bar("Done Saving/Capturing.  Creating Re-Create / Build Clone Scripts...","-","blue","white","green","white")."n";

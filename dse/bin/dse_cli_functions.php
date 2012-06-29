@@ -5,6 +5,16 @@ ini_set('log_errors','On');
 error_reporting( (E_ALL & ~E_NOTICE) ^ E_DEPRECATED);
 	
 
+function dse_get_stdin(){
+	global $vars;
+	$STDIN_Content="";
+	$fd = fopen("php://stdin", "r"); 
+	while (!feof($fd)) {
+		$STDIN_Content .= fread($fd, 1024);
+	}
+	return $STDIN_Content;
+}
+ 
 function str_remove_blank_lines($Contents){
 	$tbr="";
 	foreach(split("\n",$Contents) as $L){
@@ -237,7 +247,8 @@ function dse_pid_get_exe_tree($PID,$Reverse=FALSE){
 function dpv($MinVerbosity,$Message){
 	global $vars;
 	if($vars['Verbosity']>=$MinVerbosity){
-		$Message=colorize(substr($Message,0,cbp_get_screen_width()-2),"yellow")."\n";
+		//$Message=colorize(substr($Message,0,cbp_get_screen_width()-2),"yellow")."\n";
+		$Message=colorize($Message,"yellow")."\n";
 		print $Message;
 	}
 }
@@ -464,17 +475,23 @@ function dse_ask_choice($Options,$Question="Select an option:",$Default="",$Time
 	
 function dse_directory_ls( $path = '.', $level = 0 ){ 
 	global $vars;
+	//print "function dse_directory_ls( $path \n";
 	$path.="/";  $path=str_replace("//", "/", $path);
     $ignore = array( '.', '..' ); 
     $dh = @opendir( $path ); 
 	$tbr=array();
-    while( false !== ( $file = readdir( $dh ) ) ){ 
-        if( !in_array( $file, $ignore ) ){ 
-            if( is_dir( "$path$file" ) ){ 
-                $tbr[]=array("DIR",dse_directory_ls( "$path$file", ($level+1) ) ); 
-            } else { 
-             	$tbr[]=array("FILE","$path$file");
-            } 
+    while( false !== ( $file = readdir( $dh ) ) ){
+    	//print "readdir returned file=$file\n";
+    	if($file){
+    		//print "p=$path f=$file\n"; 
+	        if( !in_array( $file, $ignore ) ){ 
+	            if( is_dir( "$path$file" ) ){
+	            //	print "calling dse_directory_ls( $path $file\n"; 
+	                $tbr[]=array("DIR",dse_directory_ls( "$path$file", ($level+1) ) ); 
+	            } else { 
+	             	$tbr[]=array("FILE","$path$file");
+	            } 
+			}
         } 
     } 
     closedir( $dh );
@@ -1847,9 +1864,9 @@ function variable_name( &$var, $scope=false, $prefix='UNIQUE', $suffix='VARIABLE
 
 
 
-function remove_duplicate_lines($Lines){
+function remove_duplicate_lines($String){
 	$out=array();
-	foreach(split("\n",$Lines) as $Line){
+	foreach(split("\n",$String) as $Line){
 		$Found=FALSE;
 		for($i=0;$i<sizeof($out);$i++){
 			if($out[$i]==$Line){
@@ -1872,6 +1889,28 @@ function remove_duplicate_lines($Lines){
 
 
 
+function remove_blank_lines($String){
+	$out=array();
+	foreach(split("\n",$String) as $Line){
+		if(trim($Line)!=""){
+			$out[]=$Line;
+		}
+	}
+	$Out2="";
+	foreach($out as $Line){
+		if($Out2){
+			$Out2.="\n";
+		}
+		$Out2.=$Line;
+	}
+	return $Out2;
+}
+
+
+function file_count_lines($File){
+	global $vars;
+	return (trim(dse_exec("wc -l $File",$vars['Verbosity']>4)));
+}
 
 function combine_sameprefixed_lines($LogsCombined){
 	global $NumberOfBytesSameLimit;

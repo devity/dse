@@ -9,7 +9,7 @@ include_once ("/dse/bin/dse_config.php");
 
 $DidSomething=FALSE;
 $BHF="~/.bash_history";
-$DefaultLinesBackToLimitWithTail=10000;
+$DefaultLinesBackToLimitWithTail=10000000;
 $CaseInsensitiveFlag="";
 $RunCommands=FALSE;
 $RunInBackground=FALSE;
@@ -18,7 +18,8 @@ $Verbosity=0;
 
 $parameters = array(
   'h' => 'help',
-  'r' => 'run',
+  'r' => 'run-grep',
+  'n' => 'run',
   'i' => 'insensitivecase',
   'b' => 'background',
   'q' => 'quiet',
@@ -29,6 +30,7 @@ $parameters = array(
 $flag_help_lines = array(
   'h' => "\tthis message",
   'r' => "\trun the matching commands",
+  'n' => "\trun the command number argv1",
   'i' => "search the bash history using case insensitivity",
   'b' => "if running, run in background",
   'q' => "quiet - same as -v 0",
@@ -84,9 +86,20 @@ if($options['s'] || $options['stdinin']){
 if($options['b'] || $options['background']){
 	$RunInBackground=TRUE;
 }
-if(isset($options['r']) || isset($options['run'])){
+if(isset($options['r']) || isset($options['run-grep'])){
 	$RunCommands=TRUE;
 	if($Verbosity>=2)  print "RunCommands set to TRUE - matched commands will be re-exected!!!!! Do test runs!!!\n";
+}
+if(isset($options['n'])) {
+	$RunCommandNumber=$options['n'];
+	if($Verbosity>=2)  print "Run Command # $RunCommandNumber !\n";
+	//passthru("!$RunCommandNumber");
+	exit(0);
+}elseif(isset($options['run'])){
+	$RunCommandNumber=$options['run'];
+	if($Verbosity>=2)  print "Run Command # $RunCommandNumber !\n";
+	//passthru("!$RunCommandNumber");
+	exit(0);
 }
 if($options['i'] || $options['insensitivecase']){
 	print $Usage;
@@ -112,10 +125,7 @@ $MatchingUniqueCommands=0;
 
 $STDIN_Content="";
 if($UseSTDIN){
-	$fd = fopen("php://stdin", "r"); 
-	while (!feof($fd)) {
-		$STDIN_Content .= fread($fd, 1024);
-	}
+	$STDIN_Content=dse_get_stdin();
 }
 
 
@@ -141,20 +151,43 @@ if($argv[1] || $STDIN_Content){
  		   $return_value = proc_close($process);
 		}
 	}else{
-		$BH_acquire_command="cat ~/.bash_history | tail -n $DefaultLinesBackToLimitWithTail | $GrepPhrase ";
-		if($Verbosity>=3) print "BH_acquire_command=$BH_acquire_command\n";
-		$BH=`$BH_acquire_command`;
+		//$BH_acquire_command="cat ~/.bash_history 2>&1 | tail -n $DefaultLinesBackToLimitWithTail | $GrepPhrase ";
+		//$BH_acquire_command="sh history 2>&1 | tail -n $DefaultLinesBackToLimitWithTail | $GrepPhrase ";
+		$BH_acquire_command="cat ~/.bash_history";
+		$BH=dse_exec($BH_acquire_command,$Verbosity>=3);
 		//$BH=passthru($BH_acquire_command);
 	}
 	
 	
-	if($Verbosity>=3) print "BH=$BH\n";
+	//if($Verbosity>=3) print "BH=$BH\n";
 	
-	$BH=remove_duplicate_lines($BH);
+	//$BH=remove_duplicate_lines($BH);
 	
-	if($Verbosity>=3) print "duplicates removed BH=$BH\n";
+	//if($Verbosity>=3) print "duplicates removed BH=$BH\n";
 	
+	$Li=0;
+	$ShownArray=array();
+	foreach(split("\n",$BH) as $Line){
+		$Li++;
+		if(str_contains($Line,$GrepString)){
+			if(!in_array($Line, $ShownArray)){
+				$MatchingUniqueCommands++;
+				$LineStr=str_replace($GrepString,colorize($GrepString,"yellow","black"),$Line);
+				print "$Li  $LineStr";
+				if($RunCommands){
+					print " ->RUNNING: ";
+					if(RunInBackground){
+						$Line.=" &";
+					}
+					passthru($Line);
+				}
+				print "\n";
+				$ShownArray[]=$Line;
+			}
+		}
+	}
 	
+	/*
 	foreach(split("\n",$BH) as $Line){
 		if($Line){
 			$MatchingUniqueCommands++;
@@ -171,7 +204,7 @@ if($argv[1] || $STDIN_Content){
 			}
 		}
 		print "\n";
-	}
+	}*/
 	
 	
 	$DidSomething=TRUE;

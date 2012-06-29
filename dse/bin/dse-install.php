@@ -347,7 +347,8 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		$PackageNamesArray[]="netperf"; //http://www.netperf.org/netperf/NetperfPage.html
 		$PackageNamesArray[]="x86info"; 		//http://codemonkey.org.uk/projects/x86info/
 		$PackageNamesArray[]="smartmontools"; //http://sourceforge.net/apps/trac/smartmontools/wiki/FAQ
-		$PackageNamesArray[]="hardinfo";
+		$PackageNamesArray[]="bonnie"; //http://www.textuality.com/bonnie/intro.html
+		$NotOSXPackageNamesArray[]="bonnie++"; //http://www.textuality.com/bonnie/intro.html
 		
 		//OpenBenchmarking.org.
 		//http://www.stresslinux.org/sl/downloads
