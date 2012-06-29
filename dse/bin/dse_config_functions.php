@@ -1453,7 +1453,7 @@ function dse_build_clone_server_script(){
 	}else{
 		print "error! dse_backup_server_environment() did not return a path to env dump\n";
 	}
-	exit();
+	
 	
 	print bar("Starting backup of rpms in: $clone_directory/rpms","-","blue","white","green","white")."n";
 	dse_rpms_extract();
