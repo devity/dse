@@ -199,6 +199,11 @@ function dse_debug_bt2html_sub($last){
 	return $tbr;
 }	
 			
+function dse_ide_file_open_url($URL,$LineNumber=0){
+	global $vars;
+	print "dse_ide_file_open_url() unimplimented!\n";
+	return;
+}
 function dse_launch_url($URL){
 	global $vars;
 	$Command=$vars['DSE']['URL_LAUNCH_COMMAND'];
