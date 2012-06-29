@@ -1437,7 +1437,7 @@ function dse_build_clone_server_script(){
 	
 	
    	if(!is_dir($clone_directory)){
-   		dse_exec("mkdir ${clone_directory}");
+   		dse_mkdir($clone_directory);
    	}
    	dse_exec("rm -rf ${clone_directory}/*");
    	if(!is_dir($clone_directory)){
@@ -1453,7 +1453,7 @@ function dse_build_clone_server_script(){
 	}else{
 		print "error! dse_backup_server_environment() did not return a path to env dump\n";
 	}
-	
+	exit();
 	
 	print bar("Starting backup of rpms in: $clone_directory/rpms","-","blue","white","green","white")."n";
 	dse_rpms_extract();
@@ -1474,7 +1474,7 @@ function dse_build_clone_server_script(){
 	
 	print bar("Starting backup of logs in: $clone_directory/logs/*","-","blue","white","green","white")."n";
 	if(!file_exists($clone_directory."/logs")){
-		dse_exec("mkdir ".$clone_directory."/logs");
+		dse_mkdir($clone_directory."/logs");
 	}
 	dse_exec("cp /var/log/sudo* ".$clone_directory."/logs/.",TRUE);
 	
@@ -1482,7 +1482,7 @@ function dse_build_clone_server_script(){
 	
 	print bar("Starting backup of user home directories: $clone_directory/home/*","-","blue","white","green","white")."n";
 	if(!file_exists($clone_directory."/home")){
-		dse_exec("mkdir ".$clone_directory."/home");
+		dse_mkdir($clone_directory."/home");
 	}
 	if(dse_is_osx()){
 		$UserDirs=dse_ls("/Users");
