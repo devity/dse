@@ -190,14 +190,14 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				
 					
 					if($F2_size==$F1_size){
-						print colorize(pad($F2_size,12," ","right")."b  ","white","blue");
-					}elseif($F2_size>$F1_size){
 						print colorize(pad($F2_size,12," ","right")."b  ","white","green");
+					}elseif($F2_size>$F1_size){
+						print colorize(pad($F2_size,12," ","right")."b  ","white","magenta");
 					}elseif($F2_size<$F1_size){
 						print colorize(pad($F2_size,12," ","right")."b  ","white","red");
 					}
 					if($F1_md5==$F2_md5){
-						print colorize(pad($F2_md5,12," ","right")."#  ","white","cyan");
+						print colorize(pad($F2_md5,12," ","right")."#  ","white","green");
 					}else{
 						print colorize(pad($F2_md5,12," ","right")."#  ","white","red");
 					}
