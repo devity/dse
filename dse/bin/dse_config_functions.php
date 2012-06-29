@@ -1449,7 +1449,7 @@ function dse_build_clone_server_script(){
 	print bar("Starting backup of server environment in: $clone_directory/server_environment_inspection_output","-","blue","white","green","white")."n";
 	$dir=dse_backup_server_environment();
 	if(is_dir($dir)){
-		dse_exec("mv $dir ${clone_directory}/server_environment_inspection_output",TRUE);
+		dse_exec("cp $dir ${clone_directory}/server_environment_inspection_output",TRUE);
 	}else{
 		print "error! dse_backup_server_environment() did not return a path to env dump\n";
 	}

@@ -832,6 +832,11 @@ function dse_file_set_owner($DestinationFile,$Owner){
 	return -1;
 }
 
+function dse_mkdir($Destination,$Mode="",$Owner=""){
+	global $vars;
+	return dse_directory_create($Destination,$Mode,$Owner);
+}
+
 function dse_directory_create($Destination,$Mode="",$Owner=""){
 	global $vars;
 	print "DSE dir: $Destination ";
