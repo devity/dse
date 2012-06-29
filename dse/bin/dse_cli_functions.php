@@ -38,7 +38,7 @@ function dse_exec($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
 	global $vars;
 	if($ShowCommand){
 		print colorize("Command: ","yellow","black");
-		print colorize($Command,"blue","white");
+		print colorize($Command,"magenta","white");
 		print "\n";	
 	}
 	$r=`$Command`;
@@ -1186,12 +1186,18 @@ function bar($String,$Type,$fg,$bg,$bfg,$bbg){
 	global $vars;
 	
 	$HeaderText=$String;
-	while(strlen($HeaderText)<cbp_get_screen_width()*(2/3)){
-		$HeaderText.="  ".$Type.$Type.$Type."  ".$String;
+	if(strlen($HeaderText)*2<cbp_get_screen_width()*(2/3)){
+	//	$HeaderText.="  ".$Type.$Type.$Type."  ".$String;
+	
+		$BarWidth=cbp_get_screen_width()-(strlen($HeaderText)*2-4);
+		print colorize($HeaderText."  ",$fg,$bg);
+		print colorize(pad("",$BarWidth,$Type),$bfg,$bbg);
+		print colorize("  ".$HeaderText,$fg,$bg);
+	}else{
+		$BarWidth=cbp_get_screen_width()-(strlen($HeaderText)-2);
+		print colorize($HeaderText."  ",$fg,$bg);
+		print colorize(pad("",$BarWidth,$Type),$bfg,$bbg);
 	}
-	$BarWidth=cbp_get_screen_width()-(strlen($HeaderText)-2);
-	print colorize($HeaderText."  ",$fg,$bg);
-	print colorize(pad("",$BarWidth,$Type),$bfg,$bbg);
 	print "\n";
 }
 
