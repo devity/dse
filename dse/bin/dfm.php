@@ -127,6 +127,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		foreach(split("\n",$r) as $L){
 			$L=trim($L);
 			if($L){
+				print colorize(pad("L=".$L." ",100),"white","magenta");
+				
+				
 				$F1=$Dir1."/".$L;
 				$F2=$Dir2."/".$L;
 				$F1_sa=dse_file_get_stat_array($F1);
@@ -186,9 +189,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 						print colorize(pad($F2_md5,12," ","right")."  ","white","red");
 					}
 				}else{	
+				print "v2344\n";
 					print colorize(" => ","white","red");
 					print colorize(pad("missing",26," ","center")."  ","black","yellow");
 				}
+				print "252345dfgs\n";
 				print "\n";
 			}
 		}
