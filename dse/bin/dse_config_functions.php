@@ -1392,8 +1392,8 @@ function dse_backup_server_environment() {
 	 
 	//}
 
-    dse_exec("ps aux &> ${dir}/ps-aux.out",TRUE);
-   	dse_exec("ps axjf &> ${dir}/ps-axjf.out",TRUE);
+    dse_exec("ps aux 2>&1 > ${dir}/ps-aux.out",TRUE);
+   	dse_exec("ps axjf 2>&1 > ${dir}/ps-axjf.out",TRUE);
    //	dse_exec("ps AFl &> ${dir}/ps-AFl.out",TRUE);
    	dse_exec("netstat -pn -l -A inet &> ${dir}/netstat-pn-l-Ainet.out",TRUE);
    	dse_exec("lsof -i | grep LISTEN &> ${dir}/lsof-i.out",TRUE);
@@ -1476,7 +1476,7 @@ function dse_build_clone_server_script(){
 	if(!file_exists($clone_directory."/logs")){
 		dse_mkdir($clone_directory."/logs");
 	}
-	dse_exec("cp /var/log/sudo* ".$clone_directory."/logs/.",TRUE);
+	dse_exec("cp -rf /var/log/sudo* ".$clone_directory."/logs/.",TRUE);
 	
 	
 	
