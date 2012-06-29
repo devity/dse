@@ -1140,38 +1140,53 @@ function strcut($haystack,$pre,$post=""){
 	
 function bar($String,$Type,$fg,$bg,$bfg,$bbg){
 	global $vars;
-	print colorize($String."  ",$fg,$bg);
-	print colorize(pad("","50%",$Type),$bfg,$bbg);
+	
+	$HeaderText=$String;
+	while(strlen($HeaderText)<cbp_get_screen_width()*(2/3)){
+		$HeaderText.="  ".$Type.$Type.$Type."  ".$String;
+	}
+	$BarWidth=cbp_get_screen_width()-(strlen($HeaderText)-2);
+	print colorize($HeaderText."  ",$fg,$bg);
+	print colorize(pad("",$BarWidth,$Type),$bfg,$bbg);
 	print "\n";
 }
 
 
 function pad($String,$Length,$PadChar=" ",$Justification="left"){
 	global $vars;
+	
 	if(str_contains($Length,"%")){
+		$ScreenWidth=cbp_get_screen_width();
 		$Length=str_remove($Length,"%");
-		$Length=intval(cbp_get_screen_width()*($Length/100));
+		$Length=intval($ScreenWidth*($Length/100));
 	}
 	$CurrentLength=strlen($String);
-	//print "pad($String,$Length,$PadChar) CurrentLength=$CurrentLength\n";
+	//print "pad($String,$Length,$PadChar) ScreenWidth=$ScreenWidth CurrentLength=$CurrentLength\n";
 	if($CurrentLength>=$Length) return substr($String,0,$Length);
 	for($i=$CurrentLength;$i<$Length;$i++){
 		switch($Justification){
 			case 'right':
+				$Added++;
 				$String=$PadChar.$String;
 				break;
 			case 'left':
+				$Added++;
 				$String=$String.$PadChar;
 				break;
 			case 'center':
 				if($i<$Length-1){
-					if($i%2==1)$String=$PadChar.$String.$PadChar;
+					if($i%2==1){
+						$Added+=2;
+						$String=$PadChar.$String.$PadChar;
+					}
 				}else{
+					$Added++;
 					$String.=$PadChar;
 				}
 				break;
 		}
 	}
+//	print "Added=$Added \n";
 	return $String;
 }
 	

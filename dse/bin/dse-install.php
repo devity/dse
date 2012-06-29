@@ -328,6 +328,31 @@ foreach($vars['DSE']['AddComponents'] as $ComponentName){
 
 
 
+$ComponentName="performance";
+if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
+	if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		$Component=colorize($ComponentName,"cyan");
+		$A=dse_ask_yn("Install Component $Component?");
+		print "\n";
+		if($A=='Y'){
+			$vars['DSE']['AddComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+		}else{
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+		}
+	}
+	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		$PackageNamesArray[]="hardinfo";
+		$PackageNamesArray[]="phoronix";
+		$PackageNamesArray[]="netperf"; //http://www.netperf.org/netperf/NetperfPage.html
+		$PackageNamesArray[]="x86info"; 		//http://codemonkey.org.uk/projects/x86info/
+		$PackageNamesArray[]="smartmontools"; //http://sourceforge.net/apps/trac/smartmontools/wiki/FAQ
+		$PackageNamesArray[]="hardinfo";
+		
+		//OpenBenchmarking.org.
+		//http://www.stresslinux.org/sl/downloads
+	}
+}
 $ComponentName="network-analysis";
 if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){

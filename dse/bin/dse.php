@@ -29,6 +29,8 @@ $parameters_details = array(
   array('s','set-env',"set shell environment variables"),
   array('y','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('z:','status:',"shows status on all or arg1. options: [initd]"),
+  array('x:','code-query:',"shows status of string arg1. grep is unknown string or more info if known as a file, function, of variable name"),
+  array('','reboot',"reboots the server"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -89,7 +91,23 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   		}
 		$DidSomething=TRUE;
 		break;
+	case 'x':
+  	case 'code-query':
+  		$String=$vars['options'][$opt];
 		
+		print bar("FILE NAME Results:","-","blue","white","green","white")."n";
+		$Command=$vars['DSE']['DSE_BIN_DIR']."/fss \"$String\" ".$vars['DSE']['DSE_ROOT'];
+  		print dse_exec($Command,TRUE);
+		
+		print bar("STRING GREP Results","-","blue","white","green","white")."n";
+		$Command=$vars['DSE']['DSE_BIN_DIR']."/gss \"$String\" ".$vars['DSE']['DSE_ROOT'];
+  		print dse_exec($Command,TRUE);
+		
+		$DidSomething=TRUE;
+		break;
+		
+	case 'reboot':
+		exit (dse_passthru("sudo shutdown -r now",TRUE));
 }
 
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
