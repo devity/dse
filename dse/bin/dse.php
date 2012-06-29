@@ -31,6 +31,8 @@ $parameters_details = array(
   array('z:','status:',"shows status on all or arg1. options: [initd]"),
   array('x:','code-query:',"shows status of string arg1. grep is unknown string or more info if known as a file, function, of variable name"),
   array('','reboot',"reboots the server"),
+  array('','halt',"halts the server (turns it off! use w/ caution. if you just need to disconnect it from the work because of an attack, run: ".
+  	$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']."/panic   and answer the questions  )"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -118,7 +120,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			sleep(1);
 		}
 		break;
-	case 'shutdown':
+	case 'halt':
 		$RebootCommand="sudo shutdown -h now";
 		dse_passthru($RebootCommand,TRUE);
 		$t=time();
