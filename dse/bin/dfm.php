@@ -149,7 +149,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				$F2_md5="?";
 				 
 				dpv(4,"F1=$F1 F21=$F2");
-				//print colorize(pad($L." ",70),"blue","white");
+				print colorize(pad($L." ",70),"blue","white");
 				
 				
 				if(dse_file_exists($F1)){
