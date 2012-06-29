@@ -107,7 +107,30 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 		
 	case 'reboot':
-		exit (dse_passthru("sudo shutdown -r now",TRUE));
+		$RebootCommand="sudo shutdown -r now";
+		dse_passthru($RebootCommand,TRUE);
+		$t=time();
+		while(TRUE){
+			$td=time()-$t;
+			$h=cbp_get_screen_height()-3;
+			print "REBOOT COMMAND ISSUED  $td seconds ago:     $RebootCommand\n";
+			dse_exec("ps -aux | head -n $h",TRUE,TRUE);
+			sleep(1);
+		}
+		break;
+	case 'shutdown':
+		$RebootCommand="sudo shutdown -h now";
+		dse_passthru($RebootCommand,TRUE);
+		$t=time();
+		while(TRUE){
+			$td=time()-$t;
+			$h=cbp_get_screen_height()-3;
+			print "SHUTDOWN COMMAND ISSUED  $td seconds ago:     $RebootCommand\n";
+			dse_exec("ps -aux | head -n $h",TRUE,TRUE);
+			sleep(1);
+		}
+		break;
+		
 }
 
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {

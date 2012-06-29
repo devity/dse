@@ -2933,11 +2933,13 @@ function getBackgroundColors() {
  
 function cbp_get_screen_width(){
     global $vars;
-	return trim(`stty size | cut -d" " -f2`);
+	$Command="stty size | cut -d\" \" -f2";
+	return trim(dse_exec($Command));
 }
 function cbp_get_screen_height(){
     global $vars;
-	return trim(`stty size | cut -d" " -f1`);
+	$Command="stty size | cut -d\" \" -f1";
+	return trim(dse_exec($Command));
 }
  
 
