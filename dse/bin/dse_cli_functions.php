@@ -277,10 +277,16 @@ function dse_pid_get_exe_tree($PID,$Reverse=FALSE){
 function dpv($MinVerbosity,$Message){
 	global $vars;
 	if($vars['Verbosity']>=$MinVerbosity){
-		//$Message=colorize(substr($Message,0,cbp_get_screen_width()-2),"yellow")."\n";
-		$Message=colorize($Message,"yellow")."\n";
-		print $Message;
+		print colorize($Message,"yellow")."\n";
 	}
+}
+function dep($ErrorMessage){
+	global $vars;
+	if($vars['Verbosity']>0){
+		print colorize($ErrorMessage,"white","red")."\n";
+	}
+	$PWD=getcwd();
+	dse_log("ERROR ".$vars['DSE']['SCRIPT_FILENAME']."-".$vars['DSE']['DSE_DSE_VERSION']." PWD=$PWD ".$ErrorMessage);
 }
 
 function dse_log($Message,$File=""){

@@ -101,7 +101,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		exit(dse_launch_code_edit($File));
 	case 'compare-directories':
 		$Dir1=$argv[1];
-		print "hi2412";
+		dvp(4, "doing compare-directories");
 		if(sizeof($argv)>2){
 			$Dir2=$argv[2];
 		}else{
@@ -136,7 +136,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		}
 		$DidSomething=TRUE;
 		break;
-
+	default:
+		dep("unknown option passed to dfm: opt='$opt'");
+		break;
 		//list by most recent changed fiels in dir
 		
 }
