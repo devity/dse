@@ -136,8 +136,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				
 				$F1=$Dir1."/".$L;
 				$F2=$Dir2."/".$L;
+				print colorize(pad(" aa",70),"blue","yellow");
 				$F1_sa=dse_file_get_stat_array($F1);
+				print colorize(pad("bb ",70),"blue","yellow");
 				$F2_sa=dse_file_get_stat_array($F2);
+				print colorize(pad("cc ",70),"blue","yellow");
 				$F1_size=$F1_sa[7];
 				$F2_size=$F2_sa[7];
 				

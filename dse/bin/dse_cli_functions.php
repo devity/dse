@@ -8,14 +8,17 @@ error_reporting( (E_ALL & ~E_NOTICE) ^ E_DEPRECATED);
 	
 function dse_shutdown(){
 	global $vars; dse_trace();
-	
+	print "dse_shutdown()\n";
 	if($vars[dse_Trace_Stack]){
 			
 	
+	print "vars[dse_Trace_Stack]=TRUE\n";
 		
 		$tn=0;
 		foreach ($vars[dse_Trace_Stack] as $t){
 			$tn++;
+			
+	print "tn=$tn\n";
 			$LevelsDeep=sizeof($t);
 			$last=$t[sizeof($t)-1];
 			$args="";
