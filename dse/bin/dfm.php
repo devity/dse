@@ -128,8 +128,8 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 					$F1_md5=md5_of_file($F1);
 					$F2_md5=md5_of_file($F2);
 				}
-				
-				print colorize(pad($L." ",90),"blue","white");
+				 
+				print colorize(pad($L." ",70),"blue","white");
 				
 				
 				if(dse_file_exists($F1)){
