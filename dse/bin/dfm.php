@@ -122,15 +122,24 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				$F1_size=$F1_sa[7];
 				$F2_size=$F2_sa[7];
 				
-				print colorize($L." ","blue","white");
-				print colorize($F1_size,"","");
+				print colorize(pad($L." ",90),"blue","white");
+				if(dse_file_exists($F1)){
+					print colorize(pad($F1_size,12),"yellow","black");
+				}else{
+					print colorize("missing","black","yellow");
+				}
 				print colorize(" => ","","");
-				if($F2_size==$F1_size){
-					print colorize($F2_size,"white","blue");
-				}elseif($F2_size>$F1_size){
-					print colorize($F2_size,"white","green");
-				}elseif($F2_size<$F1_size){
-					print colorize($F2_size,"white","red");
+				if(dse_file_exists($F1)){
+					
+					if($F2_size==$F1_size){
+						print colorize(pad($F2_size,12),"white","blue");
+					}elseif($F2_size>$F1_size){
+						print colorize(pad($F2_size,12),"white","green");
+					}elseif($F2_size<$F1_size){
+						print colorize(pad($F2_size,12),"white","red");
+					}
+				}else{	
+					print colorize("missing","black","yellow");
 				}
 				print "\n";
 			}
