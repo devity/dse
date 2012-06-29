@@ -102,7 +102,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'c':
 	case 'compare-directories':
 		$Dir1=$argv[1];
-		dvp(4, "doing compare-directories");
+		dpv(4, "doing compare-directories");
 		if(sizeof($argv)>2){
 			$Dir2=$argv[2];
 		}else{
