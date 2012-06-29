@@ -110,7 +110,8 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		}
 		$Dir1=dse_directory_strip_trail($Dir1);
 		$Dir2=dse_directory_strip_trail($Dir2);
-		$Command="rsync -rnvc $Dir1/ $Dir2/  2>/dev/null | grep -v \".git\" | grep -v \"skipping non-regular file\" ";
+		$Command="rsync -rnvc $Dir1/ $Dir2/  2>/dev/null | grep -v \".git\" | grep -v \"skipping non-regular file\" "
+			." | grep -v \"ding incremental file list\" | grep -v \"bytes/sec\" ";
 		$r=dse_exec($Command,TRUE);
 		foreach(split("\n",$r) as $L){
 			$L=trim($L);
@@ -133,10 +134,10 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				
 				
 				if(dse_file_exists($F1)){
-					print colorize(pad($F1_size,12," ","right"),"white","blue");
-					print colorize(pad($F1_md5,30," ","right"),"white","blue");
+					print colorize(pad($F1_size,12," ","right")."  ","white","blue");
+					print colorize(pad($F1_md5,12," ","right")."  ","white","blue");
 				}else{
-					print colorize(pad("missing",42," ","center"),"black","yellow");
+					print colorize(pad("missing",26," ","center")."  ","black","yellow");
 				}
 				
 				
@@ -149,19 +150,19 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				
 				if(dse_file_exists($F1)){
 					if($F2_size==$F1_size){
-						print colorize(pad($F2_size,12," ","right"),"white","blue");
+						print colorize(pad($F2_size,12," ","right")."  ","white","blue");
 					}elseif($F2_size>$F1_size){
-						print colorize(pad($F2_size,12," ","right"),"white","green");
+						print colorize(pad($F2_size,12," ","right")."  ","white","green");
 					}elseif($F2_size<$F1_size){
-						print colorize(pad($F2_size,12," ","right"),"white","red");
+						print colorize(pad($F2_size,12," ","right")."  ","white","red");
 					}
 					if($F1_md5==$F2_md5){
-						print colorize(pad($F2_md5,30," ","right"),"white","cyan");
+						print colorize(pad($F2_md5,12," ","right")."  ","white","cyan");
 					}else{
-						print colorize(pad($F2_md5,30," ","right"),"white","red");
+						print colorize(pad($F2_md5,12," ","right")."  ","white","red");
 					}
 				}else{	
-					print colorize(pad("missing",42," ","center"),"black","yellow");
+					print colorize(pad("missing",26," ","center")."  ","black","yellow");
 				}
 				print "\n";
 			}
