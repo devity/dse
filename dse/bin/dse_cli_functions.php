@@ -276,15 +276,19 @@ function dse_pid_get_exe_tree($PID,$Reverse=FALSE){
 	
 function dpv($MinVerbosity,$Message){
 	global $vars;
-	if($vars['Verbosity']>=$MinVerbosity){
-		print colorize($Message,"yellow")."\n";
+	if(str_icontains($Message,"error")){
+		dep($Message);
+	}else{
+		//if($vars['Verbosity']>=$MinVerbosity){
+			print colorize($Message,"yellow")."\n";
+		//}
 	}
 }
 function dep($ErrorMessage){
 	global $vars;
-	if($vars['Verbosity']>0){
+	//if($vars['Verbosity']>0){
 		print colorize($ErrorMessage,"white","red")."\n";
-	}
+	//}
 	$PWD=getcwd();
 	dse_log("ERROR ".$vars['DSE']['SCRIPT_FILENAME']."-".$vars['DSE']['DSE_DSE_VERSION']." PWD=$PWD ".$ErrorMessage);
 }
@@ -764,10 +768,12 @@ function dse_file_get_mtime($DestinationFile){
 
 function dse_file_get_stat_array($DestinationFile){
 	global $vars;
-	$stat_field_names=array('dev'=>0,'ino'=>1,'mode'=>2,'nlink'=>3,'uid'=>4,'gid'=>5,'rdev'=>6,'size'=>7,'atime'=>8,'mtime'=>9,'ctime'=>10,'blksize'=>11,'blocks'=>12);
+	dpv(5, "dse_file_get_stat_array($DestinationFile)");
+//	$stat_field_names=array('dev'=>0,'ino'=>1,'mode'=>2,'nlink'=>3,'uid'=>4,'gid'=>5,'rdev'=>6,'size'=>7,'atime'=>8,'mtime'=>9,'ctime'=>10,'blksize'=>11,'blocks'=>12);
 	//if(!dse_file_exists($DestinationFile)){
 	if(!file_exists($DestinationFile)){
-		print "Error in dse_file_get_mode($DestinationFile,$field) - file does not exist.\n";
+		print "\n";
+		dpv(4, "Error in dse_file_get_mode($DestinationFile,$field) - file does not exist.");
 		return -1;
 	}
 	$sa=stat($DestinationFile);
@@ -777,7 +783,7 @@ function dse_file_get_stat_field($DestinationFile,$field=""){
 	global $vars;
 	$stat_field_names=array('dev'=>0,'ino'=>1,'mode'=>2,'nlink'=>3,'uid'=>4,'gid'=>5,'rdev'=>6,'size'=>7,'atime'=>8,'mtime'=>9,'ctime'=>10,'blksize'=>11,'blocks'=>12);
 	if(!dse_file_exists($DestinationFile)){
-		print "Error in dse_file_get_mode($DestinationFile,$field) - file does not exist.\n";
+		dpv(4,  "Error in dse_file_get_mode($DestinationFile,$field) - file does not exist.");
 		return -1;
 	}
 	$sa=stat($DestinationFile);
