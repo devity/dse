@@ -41,15 +41,17 @@ dse_cli_script_start();
 		
 $BackupBeforeUpdate=TRUE;
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
-	case 'q':
-	case 'quiet':
-		$Quiet=TRUE;
-		$vars['Verbosity']=0;
-		break;
   	case 'y':
 	case 'verbosity':
 		$vars['Verbosity']=$vars['options'][$opt];
 		if($vars['Verbosity']>=2) print "Verbosity set to ".$vars['Verbosity']."\n";
+		break;
+}
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+	case 'q':
+	case 'quiet':
+		$Quiet=TRUE;
+		$vars['Verbosity']=0;
 		break;
 	case 'h':
   	case 'help':
@@ -342,6 +344,9 @@ fink selfupdate-rsync
 fink index -f
 fink selfupdate*/
 }
+
+
+dse_shutdown();
 
 if($DidSomething){
 	if(!$Quiet && !$DoSetEnv){
