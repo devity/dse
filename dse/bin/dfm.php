@@ -121,25 +121,38 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				$F2_sa=dse_file_get_stat_array($F2);
 				$F1_size=$F1_sa[7];
 				$F2_size=$F2_sa[7];
+				$F1_md5=md5_of_file($F1);
+				$F2_md5=md5_of_file($F2);
 				
 				print colorize(pad($L." ",90),"blue","white");
+				
+				
 				if(dse_file_exists($F1)){
-					print colorize(pad($F1_size,12),"white","blue");
+					print colorize(pad($F1_size,12," ","right"),"white","blue");
+					print colorize(pad($F1_md5,12," ","right"),"white","blue");
 				}else{
-					print colorize("missing","black","yellow");
+					print colorize(pad("missing",24," ","center"),"black","yellow");
 				}
+				
+				
 				print colorize(" => ","","");
+				
+				
 				if(dse_file_exists($F1)){
-					
 					if($F2_size==$F1_size){
-						print colorize(pad($F2_size,12),"white","blue");
+						print colorize(pad($F2_size,12," ","right"),"white","blue");
 					}elseif($F2_size>$F1_size){
-						print colorize(pad($F2_size,12),"white","green");
+						print colorize(pad($F2_size,12," ","right"),"white","green");
 					}elseif($F2_size<$F1_size){
-						print colorize(pad($F2_size,12),"white","red");
+						print colorize(pad($F2_size,12," ","right"),"white","red");
+					}
+					if($F1_md5==$F2_md5){
+						print colorize(pad($F2_md5,12," ","right"),"white","blue");
+					}else{
+						print colorize(pad($F2_md5,12," ","right"),"white","red");
 					}
 				}else{	
-					print colorize("missing","black","yellow");
+					print colorize(pad("missing",24," ","center"),"black","yellow");
 				}
 				print "\n";
 			}
