@@ -956,7 +956,7 @@ function dse_file_get_stat_array($DestinationFile){
 	//if(!dse_file_exists($DestinationFile)){
 	if(!file_exists($DestinationFile)){
 		print "\n";
-		dpv(4, "Error in dse_file_get_mode($DestinationFile,$field) - file does not exist.");
+		dpv(4, "Error in dse_file_get_stat_array($DestinationFile) - file does not exist.");
 		return -1;
 	}
 	$sa=stat($DestinationFile);
