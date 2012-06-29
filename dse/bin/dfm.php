@@ -33,7 +33,9 @@ $parameters_details = array(
   array('','launch-url',"launch url arg1"),
   array('','launch-vibk-edit',"launch vibk edit of file arg1"),
   array('','launch-code-edit',"launch code edit of file arg1"),
-  array('','compare-directories',"compare-directories"),
+  array('','compare-directories',"compare-directories arg1 to arg2 or if no arg2, pwd"),
+ // array('','tree',"show dir as a tree"),
+  array('','ls',"a colorfull and more info version of ls"),
   
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
@@ -98,8 +100,31 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		}
 		$Dir1=dse_directory_strip_trail($Dir1);
 		$Dir2=dse_directory_strip_trail($Dir2);
-		$Command="rsync -rRc --dry-run $Dir1/ $Dir2/";
-		print dse_exec($Command,TRUE);
+		$Command="rsync -rnvc $Dir1/ $Dir2/  | grep -v \".git\"";
+		$r=dse_exec($Command,TRUE);
+		foreach($r as $L){
+			$L=trim($L);
+			if($L){
+				$F1=$Dir1."/".$L;
+				$F2=$Dir1."/".$L;
+				$F1_sa=dse_file_get_stat_array($F1);
+				$F2_sa=dse_file_get_stat_array($F2);
+				$F1_size=$F1_sa[7];
+				$F2_size=$F2_sa[7];
+				
+				print colorize($L." ","blue","white");
+				print colorize($F1_size,"","");
+				print colorize(" => ","","");
+				if($F2_size==$F1_size){
+					print colorize($F2_size,"white","blue");
+				}elseif($F2_size>$F1_size){
+					print colorize($F2_size,"white","green");
+				}elseif($F2_size<$F1_size){
+					print colorize($F2_size,"white","red");
+				}
+				print "\n";
+			}
+		}
 		break;
 
 		//list by most recent changed fiels in dir
