@@ -154,7 +154,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 					print colorize(" => ","white","green");
 				}
 				
-				if(dse_file_exists($F1)){
+				if(dse_file_exists($F2)){
 					if($F2_size==$F1_size){
 						print colorize(pad($F2_size,12," ","right")."  ","white","blue");
 					}elseif($F2_size>$F1_size){
