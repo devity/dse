@@ -1395,27 +1395,27 @@ function dse_backup_server_environment() {
     dse_exec("ps aux 2>&1 > ${dir}/ps-aux.out",TRUE);
    	dse_exec("ps axjf 2>&1 > ${dir}/ps-axjf.out",TRUE);
    //	dse_exec("ps AFl &> ${dir}/ps-AFl.out",TRUE);
-   	dse_exec("netstat -pn -l -A inet &> ${dir}/netstat-pn-l-Ainet.out",TRUE);
-   	dse_exec("lsof -i | grep LISTEN &> ${dir}/lsof-i.out",TRUE);
-   	dse_exec("nmap -v -sS localhost &> ${dir}/nmap-v-sSlocalhost.out",TRUE,TRUE);
-    dse_exec("/dse/bin/dnetstat -o &> ${dir}/dnetstat-o.out",TRUE,TRUE);
-    dse_exec("/dse/bin/dnetstat -a &> ${dir}/dnetstat-a.out",TRUE,TRUE);
-    dse_exec("iptables -nvL &> ${dir}/iptables-nvl.out",TRUE);
+   	dse_exec("netstat -pn -l -A inet 2>&1 > ${dir}/netstat-pn-l-Ainet.out",TRUE);
+   	dse_exec("lsof -i | grep LISTEN 2>&1 > ${dir}/lsof-i.out",TRUE);
+   	dse_exec("nmap -v -sS localhost 2>&1 > ${dir}/nmap-v-sSlocalhost.out",TRUE,TRUE);
+    dse_exec("/dse/bin/dnetstat -o 2>&1 > ${dir}/dnetstat-o.out",TRUE,TRUE);
+    dse_exec("/dse/bin/dnetstat -a 2>&1 > ${dir}/dnetstat-a.out",TRUE,TRUE);
+    dse_exec("iptables -nvL 2>&1 > ${dir}/iptables-nvl.out",TRUE);
 	
-   	dse_exec("printenv &> ${dir}/printenv.out",TRUE,TRUE);
-   	dse_exec("df &> ${dir}/df.out",TRUE,TRUE);
+   	dse_exec("printenv 2>&1 > ${dir}/printenv.out",TRUE,TRUE);
+   	dse_exec("df 2>&1 > ${dir}/df.out",TRUE,TRUE);
   // 	dse_exec("memstat &> ${dir}/memstat.out");
   
    	if(dse_is_osx() || dse_is_ubuntu()){
-   		dse_exec("dpkg --get-selections &> ${dir}/dpkg--get-selections.out",TRUE);
+   		dse_exec("dpkg --get-selections 2>&1 > ${dir}/dpkg--get-selections.out",TRUE);
    	}
    	if(dse_is_centos()){
-   		dse_exec("rpm -qa &> ${dir}/rpm-qa.out",TRUE);
+   		dse_exec("rpm -qa 2>&1 > ${dir}/rpm-qa.out",TRUE);
 	}
 	if(!dse_is_osx()){
-		dse_exec("cat /etc/*-release &> ${dir}/cat-etc-release.out",TRUE);
-		dse_exec("cat /etc/issue &> ${dir}/cat-etc-issue.out",TRUE,TRUE);
-		dse_exec("uname -a &> ${dir}/uname-a.out",TRUE,TRUE);
+		dse_exec("cat /etc/*-release 2>&1 > ${dir}/cat-etc-release.out",TRUE);
+		dse_exec("cat /etc/issue 2>&1 > ${dir}/cat-etc-issue.out",TRUE,TRUE);
+		dse_exec("uname -a 2>&1 > ${dir}/uname-a.out",TRUE,TRUE);
 	}
 	
 	print "$_OK  saved in  ${dir}\n";
@@ -1449,7 +1449,7 @@ function dse_build_clone_server_script(){
 	print bar("Starting backup of server environment in: $clone_directory/server_environment_inspection_output","-","blue","white","green","white")."n";
 	$dir=dse_backup_server_environment();
 	if(is_dir($dir)){
-		dse_exec("cp $dir ${clone_directory}/server_environment_inspection_output",TRUE);
+		dse_exec("cp -rf $dir ${clone_directory}/server_environment_inspection_output",TRUE);
 	}else{
 		print "error! dse_backup_server_environment() did not return a path to env dump\n";
 	}
