@@ -121,22 +121,31 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				$F2_sa=dse_file_get_stat_array($F2);
 				$F1_size=$F1_sa[7];
 				$F2_size=$F2_sa[7];
-				$F1_md5=md5_of_file($F1);
-				$F2_md5=md5_of_file($F2);
+				if(is_dir($F1)||is_dir($F2) ){
+					$F1_md5="dir";
+					$F2_md5="dir";
+				}else{
+					$F1_md5=md5_of_file($F1);
+					$F2_md5=md5_of_file($F2);
+				}
 				
 				print colorize(pad($L." ",90),"blue","white");
 				
 				
 				if(dse_file_exists($F1)){
 					print colorize(pad($F1_size,12," ","right"),"white","blue");
-					print colorize(pad($F1_md5,12," ","right"),"white","blue");
+					print colorize(pad($F1_md5,30," ","right"),"white","blue");
 				}else{
-					print colorize(pad("missing",24," ","center"),"black","yellow");
+					print colorize(pad("missing",42," ","center"),"black","yellow");
 				}
 				
 				
-				print colorize(" => ","","");
 				
+				if($F2_size==$F1_size && $F1_md5==$F2_md5){
+					print colorize(" => ","green","red");
+				}else{
+					print colorize(" => ","red","green");
+				}
 				
 				if(dse_file_exists($F1)){
 					if($F2_size==$F1_size){
@@ -147,12 +156,12 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 						print colorize(pad($F2_size,12," ","right"),"white","red");
 					}
 					if($F1_md5==$F2_md5){
-						print colorize(pad($F2_md5,12," ","right"),"white","blue");
+						print colorize(pad($F2_md5,30," ","right"),"white","cyan");
 					}else{
-						print colorize(pad($F2_md5,12," ","right"),"white","red");
+						print colorize(pad($F2_md5,30," ","right"),"white","red");
 					}
 				}else{	
-					print colorize(pad("missing",24," ","center"),"black","yellow");
+					print colorize(pad("missing",42," ","center"),"black","yellow");
 				}
 				print "\n";
 			}
