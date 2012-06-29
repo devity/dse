@@ -53,34 +53,42 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'h':
   	case 'help':
 		print $vars['Usage'];
+		$DidSomething=TRUE;
 		exit(0);
 	case 'u':
 	case 'remove-duplicate-lines':
 		$DoRemoveDuplicateLines=TRUE;
+		$DidSomething=TRUE;
 		break;
 	case 'b':
 	case 'remove-blank-lines':
 		$DoRemoveBlankLines=TRUE;
+		$DidSomething=TRUE;
 		break;
 	case 'e':
 	case 'edit':
 		$DoFileEdit=TRUE;
+		$DidSomething=TRUE;
 		break;
 	case 'm':
 	case 'mid':
 		$MidOptions=$vars['options'][$opt];
 		$DoFileMid=TRUE;
+		$DidSomething=TRUE;
 		break;
 	case 'number':
 		$DoNumber=TRUE;
+		$DidSomething=TRUE;
 		break;
 	case 'find-large-files':
 		$RootDir=$argv[1];
 		$Limit=$argv[2];
 		$DoLargeFileFind=TRUE;
+		$DidSomething=TRUE;
 		break;
 	case 'empty':
 		$DoFileEmpty=TRUE;
+		$DidSomething=TRUE;
 		break;
 	case 'launch-url':
 		$URL=$argv[1];
@@ -93,6 +101,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		exit(dse_launch_code_edit($File));
 	case 'compare-directories':
 		$Dir1=$argv[1];
+		print "hi2412";
 		if(sizeof($argv)>2){
 			$Dir2=$argv[2];
 		}else{
@@ -125,6 +134,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				print "\n";
 			}
 		}
+		$DidSomething=TRUE;
 		break;
 
 		//list by most recent changed fiels in dir

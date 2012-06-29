@@ -107,7 +107,7 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 	}
 }
 //print "printing\n";
-if($Intermingle){
+if($Intermingle && is_array($Intermingle)){
 	ksort($Intermingled); foreach($Intermingled as $L) print $L;
 }else{
 	
