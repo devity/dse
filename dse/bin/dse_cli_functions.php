@@ -37,6 +37,20 @@ function dse_exec($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
 }
 
    
+	
+function dse_passthru($Command,$ShowCommand=FALSE){
+	global $vars;
+	if($ShowCommand){
+		print colorize("Command: ","yellow","black");
+		print colorize($Command,"blue","white");
+		print "\n";	
+	}
+	$r=passthru($Command);
+	//if($ShowOutput) print $r;
+	return $r;
+}
+
+   
 function dse_detect_os_info(){
 	global $vars;
 	
