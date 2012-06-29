@@ -1189,12 +1189,12 @@ function bar($String,$Type,$fg,$bg,$bfg,$bbg){
 	if(strlen($HeaderText)*2<cbp_get_screen_width()*(2/3)){
 	//	$HeaderText.="  ".$Type.$Type.$Type."  ".$String;
 	
-		$BarWidth=cbp_get_screen_width()-(strlen($HeaderText)*2-4);
+		$BarWidth=cbp_get_screen_width()-(strlen($HeaderText)*2-10);
 		print colorize($HeaderText."  ",$fg,$bg);
 		print colorize(pad("",$BarWidth,$Type),$bfg,$bbg);
 		print colorize("  ".$HeaderText,$fg,$bg);
 	}else{
-		$BarWidth=cbp_get_screen_width()-(strlen($HeaderText)-2);
+		$BarWidth=cbp_get_screen_width()-(strlen($HeaderText)-5);
 		print colorize($HeaderText."  ",$fg,$bg);
 		print colorize(pad("",$BarWidth,$Type),$bfg,$bbg);
 	}

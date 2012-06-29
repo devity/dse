@@ -1459,7 +1459,7 @@ function dse_build_clone_server_script(){
 	dse_rpms_extract();
 	dse_exec("cp -rf ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms ${clone_directory}/rpms");
 	$dpkg_selections=$clone_directory."/server_environment_inspection_output/dpkg--get-selections.out";
-	`cp $dpkg_selections $clone_directory/rpms/.`;
+	`cp -rf $dpkg_selections $clone_directory/rpms/.`;
 
 	
 	print bar("Starting backup of /etc in: $clone_directory/etc/*","-","blue","white","green","white")."n";
@@ -1480,7 +1480,7 @@ function dse_build_clone_server_script(){
 	
 	
 	
-	print bar("Starting backup of user home directories: $clone_directory/home/*","-","blue","white","green","white")."n";
+	print bar("Starting backup of users' home directories: $clone_directory/home/*","-","blue","white","green","white")."n";
 	if(!file_exists($clone_directory."/home")){
 		dse_mkdir($clone_directory."/home");
 	}
@@ -1497,12 +1497,11 @@ function dse_build_clone_server_script(){
 			$UserHomeDirBackup=$clone_directory.$UserHomeDir;
 			print "Backing up user $FileName's home dir $UserHomeDir to $UserHomeDirBackup\n";
 			$Command="cp -rf $UserHomeDir $clone_directory/home/.";
-			print "C=$Command\n";
-			exit();
-			//dse_exec(,TRUE);
+			dse_exec($Command,TRUE);
 		}
 	}
 	
+	print bar("Starting backup of root's home directory: $clone_directory/home/root","-","blue","white","green","white")."n";
 	
 		$bn="root";
 		if($bn[0]!='.'){
@@ -1510,9 +1509,7 @@ function dse_build_clone_server_script(){
 			$UserHomeDirBackup=$clone_directory.$UserHomeDir;
 			print "Backing up user $FileName's home dir $UserHomeDir to $UserHomeDirBackup\n";
 			$Command="cp -rf $UserHomeDir $clone_directory/home/.";
-			print "C=$Command\n";
-			exit();
-			//dse_exec(,TRUE);
+			dse_exec($Command,TRUE);
 		}
 		
 		
