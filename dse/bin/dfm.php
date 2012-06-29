@@ -123,7 +123,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			$L=trim($L);
 			if($L){
 				$F1=$Dir1."/".$L;
-				$F2=$Dir1."/".$L;
+				$F2=$Dir2."/".$L;
 				$F1_sa=dse_file_get_stat_array($F1);
 				$F2_sa=dse_file_get_stat_array($F2);
 				$F1_size=$F1_sa[7];
