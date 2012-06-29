@@ -1429,9 +1429,9 @@ function dse_build_clone_server_script(){
 	global $vars;
 	$clone_directory=$vars['DSE']['DSE_BACKUP_DIR']."/clone";
 	
-	print bar("Starting to build clone generation script in: $clone_directory","-","blue","white","blue","white")."n";
+	print bar("Starting to build clone generation script in: $clone_directory","-","blue","white","blue","white")."\n";
 	print "/\n";
-	
+	 
 	
 
 	
@@ -1446,7 +1446,7 @@ function dse_build_clone_server_script(){
    	}
 	
 
-	print bar("Starting backup of server environment in: $clone_directory/server_environment_inspection_output","-","blue","white","green","white")."n";
+	print bar("Starting backup of server environment in: $clone_directory/server_environment_inspection_output","-","blue","white","green","white")."\n";
 	$dir=dse_backup_server_environment();
 	if(is_dir($dir)){
 		dse_exec("cp -rf $dir ${clone_directory}/server_environment_inspection_output",TRUE);
@@ -1455,24 +1455,24 @@ function dse_build_clone_server_script(){
 	}
 	
 	
-	print bar("Starting backup of rpms in: $clone_directory/rpms","-","blue","white","green","white")."n";
+	print bar("Starting backup of rpms in: $clone_directory/rpms","-","blue","white","green","white")."\n";
 	dse_rpms_extract();
 	dse_exec("cp -rf ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms ${clone_directory}/rpms");
 	$dpkg_selections=$clone_directory."/server_environment_inspection_output/dpkg--get-selections.out";
 	`cp -rf $dpkg_selections $clone_directory/rpms/.`;
 
 	
-	print bar("Starting backup of /etc in: $clone_directory/etc/*","-","blue","white","green","white")."n";
+	print bar("Starting backup of /etc in: $clone_directory/etc/*","-","blue","white","green","white")."\n";
 	if(!file_exists($clone_directory."/etc")){
 		//dse_exec("mkdir ".$clone_directory."/etc");
 	}
 	dse_exec("cp -rf /etc ".$clone_directory."/.",TRUE);
 	
 	
-	print bar("Starting backup of .bash history: $clone_directory/etc/*","-","blue","white","green","white")."n";
+	print bar("Starting backup of .bash history: $clone_directory/etc/*","-","blue","white","green","white")."\n";
 	
 	
-	print bar("Starting backup of logs in: $clone_directory/logs/*","-","blue","white","green","white")."n";
+	print bar("Starting backup of logs in: $clone_directory/logs/*","-","blue","white","green","white")."\n";
 	if(!file_exists($clone_directory."/logs")){
 		dse_mkdir($clone_directory."/logs");
 	}
@@ -1480,7 +1480,7 @@ function dse_build_clone_server_script(){
 	
 	
 	
-	print bar("Starting backup of users' home directories: $clone_directory/home/*","-","blue","white","green","white")."n";
+	print bar("Starting backup of users' home directories: $clone_directory/home/*","-","blue","white","green","white")."\n";
 	if(!file_exists($clone_directory."/home")){
 		dse_mkdir($clone_directory."/home");
 	}
@@ -1501,11 +1501,11 @@ function dse_build_clone_server_script(){
 		}
 	}
 	
-	print bar("Starting backup of root's home directory: $clone_directory/home/root","-","blue","white","green","white")."n";
+	print bar("Starting backup of root's home directory: $clone_directory/home/root","-","blue","white","green","white")."\n";
 	
 		$bn="root";
 		if($bn[0]!='.'){
-			$UserHomeDir="/root/";
+			$UserHomeDir="/root";
 			$UserHomeDirBackup=$clone_directory.$UserHomeDir;
 			print "Backing up user $FileName's home dir $UserHomeDir to $UserHomeDirBackup\n";
 			$Command="cp -rf $UserHomeDir $clone_directory/home/.";
@@ -1516,11 +1516,11 @@ function dse_build_clone_server_script(){
 	
 	
 	$SystemLSOutputFile=$clone_directory."/ls_of_all_files.txt";
-	print bar("Capturing list of all system files and owner,mode,size  in: $SystemLSOutputFile","-","blue","white","green","white")."n";
+	print bar("Capturing list of all system files and owner,mode,size  in: $SystemLSOutputFile","-","blue","white","green","white")."\n";
 	//dse_exec("sudo find / -type d -exec ls -lad {}  2>/dev/null \;  > $SystemLSOutputFile 2>/dev/null",TRUE);
 	
 	
-	print bar("Done Saving/Capturing.  Creating Re-Create / Build Clone Scripts...","-","blue","white","green","white")."n";
+	print bar("Done Saving/Capturing.  Creating Re-Create / Build Clone Scripts...","-","blue","white","green","white")."\n";
 	
 	$RestoreScript="#!/bin/php
 <"."?php
@@ -1567,6 +1567,16 @@ echo \"***************************** Starting Services *************************
 
 
 ?".">";
+
+
+$clone_directory=$vars['DSE']['DSE_BACKUP_DIR']."/clone";
+	
+	$OutFile==$vars['DSE']['DSE_BACKUP_DIR']."/clone.tgz";
+	$Command="tar --atime-preserve --preserve -czf $OutFile $clone_directory";
+	dse_exec($Command,TRUE);
+	
+	print bar("Clone Backup Done! $OutFile","-","blue","white","green","white")."\n";
+	print bar("Clone Backup Done! $OutFile","-","black","green","black","green")."\n";
 	
 	
 }
