@@ -52,7 +52,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 }
 
-if($vars['Verbosity']>4){
+if($vars['Verbosity']>3){
 	$vars[dse_enable_debug_code]=TRUE;
 }
 
@@ -131,7 +131,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		foreach(split("\n",$r) as $L){
 			$L=trim($L);
 			if($L){
-				print colorize(pad("L=".$L." ",100),"white","magenta");
+				//print colorize(pad("L=".$L." ",100),"white","magenta");
 				
 				
 				$F1=$Dir1."/".$L;
@@ -149,7 +149,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				$F2_md5="?";
 				 
 				dpv(4,"F1=$F1 F21=$F2");
-				print colorize(pad($L." ",70),"blue","white");
+				//print colorize(pad($L." ",70),"blue","white");
 				
 				
 				if(dse_file_exists($F1)){

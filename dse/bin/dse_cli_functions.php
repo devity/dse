@@ -8,17 +8,17 @@ error_reporting( (E_ALL & ~E_NOTICE) ^ E_DEPRECATED);
 	
 function dse_shutdown(){
 	global $vars; dse_trace();
-	print "dse_shutdown()\n";
+	//print "dse_shutdown()\n";
 	if(is_array($vars[dse_Trace_Stack])){
 			
 	
-	print "vars[dse_Trace_Stack]=TRUE\n";
+	//print "vars[dse_Trace_Stack]=TRUE\n";
 		
 		$tn=0;
 		foreach ($vars[dse_Trace_Stack] as $t){
 			$tn++;
 			
-	print "tn=$tn\n";
+	//print "tn=$tn\n";
 			$LevelsDeep=sizeof($t);
 			$last=$t[sizeof($t)-1];
 			$args="";
@@ -52,7 +52,7 @@ function dse_shutdown(){
 		}
 		
 	*/
-		
+		print "\n";
 	}
 }
 
@@ -68,7 +68,11 @@ function dse_firewall_internet_hide(){
 
 $dse_Trace_Stack=Array();
 $vars[dse_Trace_Stack]=Array();
-$vars[dse_Trace_Indent_String]="&nbsp; &nbsp; + ";
+if($vars['DSE']['OUTPUT_FORMAT']=="HTML"){
+	$vars[dse_Trace_Indent_String]="&nbsp; &nbsp; + ";
+}else{
+	$vars[dse_Trace_Indent_String]=colorize("   + ","green","black");
+}
 $vars[dse_Trace_Indent_Current]=0;
 $vars[dse_Trace_Count]=0;
 $vars[dse_Trace_Count_Max]=1000;
@@ -145,16 +149,28 @@ function dse_debug_bt2html($t,$tn){
 		if($dse_debug_bt2html_lla[$LevelsDeep]!=$tt){
 			$part=dse_debug_bt2html_sub($tt);
 			if($part){
-				$tbr.="<br>";
+				if($vars['DSE']['OUTPUT_FORMAT']=="HTML"){
+					$tbr.="<br>";
+				}else{
+					$tbr.="\n";
+				}
 				if($i==1){
 					$extra="";
 					if($vars[dse_enable_debug_code_markpoints_in_html]){
 						$section=$tn;
 						$extra=" id=section$section ";
 					}
-					$tbr.="<font class='f7pt' $extra>[t$tn]</font>";
+					if($vars['DSE']['OUTPUT_FORMAT']=="HTML"){
+						$tbr.="<font class='f7pt' $extra>[t$tn]</font>";
+					}else{
+					//	$tbr.="[t".colorize($tn,"white","red")."]";
+					}
 				}else{
-					$tbr.=" &nbsp; &nbsp; ";
+					if($vars['DSE']['OUTPUT_FORMAT']=="HTML") {
+						$tbr.=" &nbsp; &nbsp; ";
+					}else {
+						$tbr.="     ";
+					}
 				}
 				$tbr.=$IndentThis.$part;
 			}
@@ -185,23 +201,42 @@ function dse_debug_bt2html_sub($last){
 		}else{
 			$a=debug_tostring($a);
 			$a=str_replace("\n","",$a);
-			$a=str_ireplace("<br>","",$a);
+			if($vars['DSE']['OUTPUT_FORMAT']=="HTML") $a=str_ireplace("<br>","",$a);
 		}
-		$args.=" [$a]";
+		if($vars['DSE']['OUTPUT_FORMAT']=="HTML"){
+			$args.=" [$a]";
+		}else{
+			$args.=colorize(" [","yellow","black");
+			$args.=colorize($a,"green","black");
+			$args.=colorize("]","yellow","black");
+		
+		}
 	}
 	$file=$last['file'];
 	$line_number=$last['line'];
 	$file_str="$file";
 	$url=dse_ide_file_open_url($file,$line_number);
-	$line_number_str="<a href=$url>$line_number</a>";
+	if($vars['DSE']['OUTPUT_FORMAT']=="HTML"){
+		$line_number_str="<a href=$url>$line_number</a>";
+	}else{
+		$line_number_str=colorize($line_number,"blue","yellow");
+	}
 	$file_str=str_replace("/home/admin/dev-batteriesdirect_com","",$file_str);
-	$tbr.="<b>".$last['function']."</b>(<font class='f7pt'>$args</font>) &nbsp; &nbsp; &nbsp; -*- <font class='f7pt'>${file_str}:$line_number_str</font>";
+	if($vars['DSE']['OUTPUT_FORMAT']=="HTML"){
+		$tbr.="<b>".$last['function']."</b>(<font class='f7pt'>$args</font>) &nbsp; &nbsp; &nbsp; -*- <font class='f7pt'>${file_str}:$line_number_str</font>";
+	}else{
+		//$args=colorize($args,"yellow","blue");
+		$line_number_str=colorize($line_number_str,"cyan","black");
+		$file_str=colorize($file_str,"cyan","black");
+		$tbr.=$last['function'];
+		$tbr.="($args) -*- ${file_str}:$line_number_str";
+	}
 	return $tbr;
 }	
 			
 function dse_ide_file_open_url($URL,$LineNumber=0){
 	global $vars;
-	print "dse_ide_file_open_url() unimplimented!\n";
+	dpv(5, "dse_ide_file_open_url() unimplimented!");
 	return;
 }
 function dse_launch_url($URL){
@@ -467,16 +502,16 @@ function dpv($MinVerbosity,$Message){
 	if(str_icontains($Message,"error")){
 		dep($Message);
 	}else{
-		//if($vars['Verbosity']>=$MinVerbosity){
+		if($vars['Verbosity']>=$MinVerbosity){
 			print colorize($Message,"yellow")."\n";
-		//}
+		}
 	}
 }
 function dep($ErrorMessage){
 	global $vars;
-	//if($vars['Verbosity']>0){
+	if($vars['Verbosity']>0){
 		print colorize($ErrorMessage,"white","red")."\n";
-	//}
+	}
 	$PWD=getcwd();
 	dse_log("ERROR ".$vars['DSE']['SCRIPT_FILENAME']."-".$vars['DSE']['DSE_DSE_VERSION']." PWD=$PWD ".$ErrorMessage);
 }
