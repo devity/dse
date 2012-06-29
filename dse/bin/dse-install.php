@@ -268,7 +268,7 @@ $NotOSXPackageNamesArray[]="nmap";
 
 if(dse_is_ubuntu()){
 	$PackageNamesArray[]="dpkg-repack";
-	$PackageNamesArray[]="dnet-progs";
+	//$PackageNamesArray[]="dnet-progs";
 	$PackageNamesArray[]="yum";
 	$PackageNamesArray[]="alien";
 	$PackageNamesArray[]="dpkg-dev";
@@ -350,15 +350,24 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
 		$PackageNamesArray[]="hardinfo";
+		$NotOSXPackageNamesArray[]="lshw";
+		$PackageNamesArray[]="lm-sensors";
+		$NotOSXPackageNamesArray[]="hddtemp";
+		$NotOSXPackageNamesArray[]="mysql-bench";
+		$NotOSXPackageNamesArray[]="apache2-utils";
 		$PackageNamesArray[]="phoronix";
+		$PackageNamesArray[]="cpuburn";
+		$PackageNamesArray[]="lmbench";
+		$PackageNamesArray[]="dbench";
 		$PackageNamesArray[]="netperf"; //http://www.netperf.org/netperf/NetperfPage.html
 		$PackageNamesArray[]="x86info"; 		//http://codemonkey.org.uk/projects/x86info/
 		$PackageNamesArray[]="smartmontools"; //http://sourceforge.net/apps/trac/smartmontools/wiki/FAQ
 		$PackageNamesArray[]="bonnie"; //http://www.textuality.com/bonnie/intro.html
 		$NotOSXPackageNamesArray[]="bonnie++"; //http://www.textuality.com/bonnie/intro.html
-		
+		//http://www.tux.org/~mayer/linux/bmark.html
 		//OpenBenchmarking.org.
 		//http://www.stresslinux.org/sl/downloads
+		//http://www.iozone.org/
 	}
 }
 $ComponentName="network-analysis";
@@ -407,6 +416,7 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		$PackageNamesArray[]="logwatch";
 		$PackageNamesArray[]="tripwire";
 		$PackageNamesArray[]="aide";
+		$PackageNamesArray[]="snort"; //http://code.google.com/p/pulledpork/
 	}
 }
 if(str_contains($vars['DSE']['SERVICES'],"cacti")){

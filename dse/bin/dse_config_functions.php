@@ -1392,6 +1392,7 @@ function dse_backup_server_environment() {
 	 
 	//}
 
+    dse_exec("mount 2>&1 > ${dir}/mount.out",TRUE);
     dse_exec("ps aux 2>&1 > ${dir}/ps-aux.out",TRUE);
    	dse_exec("ps axjf 2>&1 > ${dir}/ps-axjf.out",TRUE);
    //	dse_exec("ps AFl &> ${dir}/ps-AFl.out",TRUE);
