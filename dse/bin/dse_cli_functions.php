@@ -1185,16 +1185,19 @@ function strcut($haystack,$pre,$post=""){
 function bar($String,$Type,$fg,$bg,$bfg,$bbg){
 	global $vars;
 	
+	$HeaderColorCodeCount=substr_count ($String , "[")+1;
 	$HeaderText=$String;
 	if(strlen($HeaderText)*2<cbp_get_screen_width()*(2/3)){
 	//	$HeaderText.="  ".$Type.$Type.$Type."  ".$String;
 	
-		$BarWidth=cbp_get_screen_width()-(strlen($HeaderText)*2-20);
+		$BarWidth=cbp_get_screen_width()-strlen($HeaderText)*2-($HeaderColorCodeCount*9)*2;
+		print "HeaderColorCodeCount=$HeaderColorCodeCount BarWidth=$BarWidth\n";
 		print colorize($HeaderText."  ",$fg,$bg);
 		print colorize(pad("",$BarWidth,$Type),$bfg,$bbg);
 		print colorize("  ".$HeaderText,$fg,$bg);
 	}else{
-		$BarWidth=cbp_get_screen_width()-(strlen($HeaderText)-10);
+		$BarWidth=cbp_get_screen_width()-strlen($HeaderText)-($HeaderColorCodeCount*9);
+		print "HeaderColorCodeCount=$HeaderColorCodeCount BarWidth=$BarWidth\n";
 		print colorize($HeaderText."  ",$fg,$bg);
 		print colorize(pad("",$BarWidth,$Type),$bfg,$bbg);
 	}
