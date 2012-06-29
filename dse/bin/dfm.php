@@ -110,7 +110,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		}
 		$Dir1=dse_directory_strip_trail($Dir1);
 		$Dir2=dse_directory_strip_trail($Dir2);
-		$Command="rsync -rnvc $Dir1/ $Dir2/  2>/dev/null | grep -v \".git\"";
+		$Command="rsync -rnvc $Dir1/ $Dir2/  2>/dev/null | grep -v \".git\" | grep -v \"skipping non-regular file\" ";
 		$r=dse_exec($Command,TRUE);
 		foreach(split("\n",$r) as $L){
 			$L=trim($L);
@@ -124,7 +124,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				
 				print colorize(pad($L." ",90),"blue","white");
 				if(dse_file_exists($F1)){
-					print colorize(pad($F1_size,12),"yellow","black");
+					print colorize(pad($F1_size,12),"white","blue");
 				}else{
 					print colorize("missing","black","yellow");
 				}
