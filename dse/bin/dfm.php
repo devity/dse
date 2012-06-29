@@ -143,9 +143,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				
 				
 				if($F2_size==$F1_size && $F1_md5==$F2_md5){
-					print colorize(" => ","green","red");
+					print colorize(" => ","white","red");
 				}else{
-					print colorize(" => ","red","green");
+					print colorize(" => ","white","green");
 				}
 				
 				if(dse_file_exists($F1)){
