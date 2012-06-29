@@ -137,6 +137,8 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				
 				
 				if(dse_file_exists($F1)){
+					dpv(5,"dse_file_exists($F1)=TRUE");
+				
 					if(is_dir($F1)){
 						$F1_md5="dir";
 					}else{
@@ -150,13 +152,14 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				
 				
 				
-				if($F2_size==$F1_size && $F1_md5==$F2_md5){
-					print colorize(" => ","white","red");
-				}else{
-					print colorize(" => ","white","green");
-				}
 				
 				if(dse_file_exists($F2)){
+					dpv(5,"dse_file_exists($F2)=TRUE");
+					if($F2_size==$F1_size && $F1_md5==$F2_md5){
+						print colorize(" => ","white","red");
+					}else{
+						print colorize(" => ","white","green");
+					}
 					if(is_dir($F2)){
 						$F2_md5="dir";
 					}else{
@@ -175,6 +178,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 						print colorize(pad($F2_md5,12," ","right")."  ","white","red");
 					}
 				}else{	
+					print colorize(" => ","white","red");
 					print colorize(pad("missing",26," ","center")."  ","black","yellow");
 				}
 				print "\n";
