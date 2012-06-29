@@ -384,6 +384,8 @@ if(dse_is_ubuntu()){
 		if(dse_file_exists($DesktopPowerPolicyFile)){
 			dse_file_replace_str($DesktopPowerPolicyFile,"<allow_active>yes</allow_active>","<allow_active>no</allow_active>");
 		}
+		
+		dse_exec("sudo gsettings set org.gnome.settings-daemon.plugins.power active false");
 	}
 }
 
