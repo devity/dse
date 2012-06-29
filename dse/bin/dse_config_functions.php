@@ -1377,23 +1377,24 @@ function dse_backup_httpd() {
 function dse_backup_server_environment() {
 	global $vars;
 	dse_detect_os_info();
-	
-	$dse_server_environment_backup_directory=$vars['DSE']['DSE_BACKUP_DIR']."/server_environment";
-	
-	print "Saving Image of Environment Variables in: $dse_server_environment_backup_directory\n";
-	
-   	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
-   	$dir=$dse_server_environment_backup_directory . "/" . $DATE_TIME_NOW;
-   	`mkdir ${dir}`;
-   	if(!file_exists($dse_server_environment_backup_directory)){
-   		print "Backup directory $dse_server_environment_backup_directory missing - fatal error. exiting.\n";
-   		exit(1);
-   	}
-
+	//if(!$dir){
+		$dse_server_environment_backup_directory=$vars['DSE']['DSE_BACKUP_DIR']."/server_environment";
+		
+		print "Saving Image of Environment Variables in: $dse_server_environment_backup_directory\n";
+		
+	   	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
+	   	$dir=$dse_server_environment_backup_directory . "/" . $DATE_TIME_NOW;
+	   	dse_exec("mkdir ${dir}",TRUE,TRUE);
+	   	if(!file_exists($dse_server_environment_backup_directory)){
+	   		print "Backup directory $dse_server_environment_backup_directory missing - fatal error. exiting.\n";
+	   		exit(1);
+	   	}
+	 
+	//}
 
     dse_exec("ps aux &> ${dir}/ps-aux.out",TRUE);
    	dse_exec("ps axjf &> ${dir}/ps-axjf.out",TRUE);
-   	dse_exec("ps AFl &> ${dir}/ps-AFl.out",TRUE);
+   //	dse_exec("ps AFl &> ${dir}/ps-AFl.out",TRUE);
    	dse_exec("netstat -pn -l -A inet &> ${dir}/netstat-pn-l-Ainet.out",TRUE);
    	dse_exec("lsof -i | grep LISTEN &> ${dir}/lsof-i.out",TRUE);
    	dse_exec("nmap -v -sS localhost &> ${dir}/nmap-v-sSlocalhost.out",TRUE,TRUE);
@@ -1448,7 +1449,9 @@ function dse_build_clone_server_script(){
 	print bar("Starting backup of server environment in: $clone_directory/server_environment_inspection_output","-","blue","white","green","white")."n";
 	$dir=dse_backup_server_environment();
 	if(is_dir($dir)){
-		dse_exec("mv $dir ${clone_directory}/server_environment_inspection_output");
+		dse_exec("mv $dir ${clone_directory}/server_environment_inspection_output",TRUE);
+	}else{
+		print "error! dse_backup_server_environment() did not return a path to env dump\n";
 	}
 	
 	
@@ -1577,12 +1580,14 @@ function dse_rpms_extract(){
 	print "Rebuilding rpms in: ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms/\n";
 	$rpms=`rpm -qa`;
 	foreach(split("\n",$rpms) as $rpm){
-		$exists=trim(dse_exec("find ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms -iname ${rpm}*"));
-		if( strstr($exists,$rpm)===FALSE ){
-			print "extracting $rpm\n";
-			print dse_exec("rpmrebuild -n -b -d ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms/ $rpm");
-		}else{
-			print "$exists exists.\n";
+		if($rpm){
+			$exists=trim(dse_exec("find ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms -iname ${rpm}*"));
+			if( strstr($exists,$rpm)===FALSE ){
+				print "extracting $rpm\n";
+				print dse_exec("rpmrebuild -n -b -d ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms/ $rpm");
+			}else{
+				print "$exists exists.\n";
+			}
 		}
 	}
 }
