@@ -65,7 +65,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'list-rollbacks':
 		dse_exec("up2date --list-rolbacks",TRUE,TRUE);
 		exit();
-		//up2date --list-rollbacks
+		//up2date --list-rollbacks   http://nrh-up2date.sourceforge.net/download.html
+		//yum history list
+		//apt-get changelog
  //dpkg-reconfigure package_name
 }
 
