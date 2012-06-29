@@ -21,6 +21,7 @@ $CFG_array=array();
 
 $parameters_details = array(
  
+  array('c','compare-directories',"compare-directories arg1 to arg2 or if no arg2, pwd"),
   array('h','help',"this message"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('e','edit',"backs up and launches a vim of arg1 "),
@@ -33,7 +34,6 @@ $parameters_details = array(
   array('','launch-url',"launch url arg1"),
   array('','launch-vibk-edit',"launch vibk edit of file arg1"),
   array('','launch-code-edit',"launch code edit of file arg1"),
-  array('','compare-directories',"compare-directories arg1 to arg2 or if no arg2, pwd"),
  // array('','tree',"show dir as a tree"),
   array('','ls',"a colorfull and more info version of ls"),
   
@@ -99,6 +99,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'launch-code-edit':
 		$File=$argv[1];
 		exit(dse_launch_code_edit($File));
+	case 'c':
 	case 'compare-directories':
 		$Dir1=$argv[1];
 		dvp(4, "doing compare-directories");
