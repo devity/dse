@@ -5,6 +5,36 @@ ini_set('log_errors','On');
 error_reporting( (E_ALL & ~E_NOTICE) ^ E_DEPRECATED);
 	
 
+function dse_firewall_internet_hide(){
+	global $vars;
+	
+	//save current policy / conf file
+	
+	//prompt for ips to allow in. offer the ips on ssh now
+	
+	//update policy and restart
+}
+
+		
+function dse_launch_url($URL){
+	global $vars;
+	$Command=$vars['DSE']['URL_LAUNCH_COMMAND'];
+	$Command=str_replace("<URL>", "\"$URL\"", $Command);
+	return dse_passthru($Command,TRUE);
+}
+function dse_launch_code_edit($File,$LineNumber=0){
+	global $vars;
+	$Command=$vars['DSE']['CODE_EDIT_LAUNCH_COMMAND'];
+	$Command=str_replace("<FILE>", "\"$File\"", $Command);
+	return dse_passthru($Command,TRUE);
+}
+function dse_launch_vibk_edit($File,$LineNumber=0){
+	global $vars;
+	$Command=$vars['DSE']['VIBK_EDIT_LAUNCH_COMMAND'];
+	$Command=str_replace("<FILE>", "\"$File\"", $Command);
+	return dse_passthru($Command,TRUE);
+}
+		
 function dse_get_stdin(){
 	global $vars;
 	$STDIN_Content="";
@@ -38,7 +68,7 @@ function dse_exec($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
 	global $vars;
 	if($ShowCommand){
 		print colorize("Command: ","yellow","black");
-		print colorize($Command,"red","yellow");
+		print colorize($Command,"white","red");
 		print "\n";	
 	}
 	$r=`$Command`;
@@ -473,10 +503,26 @@ function dse_ask_choice($Options,$Question="Select an option:",$Default="",$Time
 	return dse_ask_choice($Question,$Options,$Default,$Timeout);
 }
 	
+function dse_directory_strip_trail( $path ){ 
+	global $vars;
+	if(!$path){
+		return "";
+	}
+	$path.="/";
+	$path=str_replace("//","/",$path);
+	
+	//$LastChar=$path[strlen($path)-1];	
+	//if($LastChar=="/"){
+		return substr($path,0,strlen($path)-1);
+	//}
+	return $path;
+}
+
+
 function dse_directory_ls( $path = '.', $level = 0 ){ 
 	global $vars;
 	//print "function dse_directory_ls( $path \n";
-	$path.="/";  $path=str_replace("//", "/", $path);
+	$path.="/";  $path=dse_directory_strip_trail($path);
     $ignore = array( '.', '..' ); 
     $dh = @opendir( $path ); 
 	$tbr=array();
@@ -1190,14 +1236,14 @@ function bar($String,$Type,$fg,$bg,$bfg,$bbg){
 	if(strlen($HeaderText)*2<cbp_get_screen_width()*(2/3)){
 	//	$HeaderText.="  ".$Type.$Type.$Type."  ".$String;
 	
-		$BarWidth=cbp_get_screen_width()-strlen($HeaderText)*2-($HeaderColorCodeCount*9)*2;
-		print "HeaderColorCodeCount=$HeaderColorCodeCount BarWidth=$BarWidth\n";
+		$BarWidth=cbp_get_screen_width()-strlen($HeaderText)*2-($HeaderColorCodeCount*5)*2;
+		//print "HeaderColorCodeCount=$HeaderColorCodeCount BarWidth=$BarWidth\n";
 		print colorize($HeaderText."  ",$fg,$bg);
 		print colorize(pad("",$BarWidth,$Type),$bfg,$bbg);
 		print colorize("  ".$HeaderText,$fg,$bg);
 	}else{
-		$BarWidth=cbp_get_screen_width()-strlen($HeaderText)-($HeaderColorCodeCount*9);
-		print "HeaderColorCodeCount=$HeaderColorCodeCount BarWidth=$BarWidth\n";
+		$BarWidth=cbp_get_screen_width()-strlen($HeaderText)-($HeaderColorCodeCount*5);
+		//print "HeaderColorCodeCount=$HeaderColorCodeCount BarWidth=$BarWidth\n";
 		print colorize($HeaderText."  ",$fg,$bg);
 		print colorize(pad("",$BarWidth,$Type),$bfg,$bbg);
 	}

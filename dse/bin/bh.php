@@ -172,8 +172,10 @@ if($argv[1] || $STDIN_Content){
 		if(str_contains($Line,$GrepString)){
 			if(!in_array($Line, $ShownArray)){
 				$MatchingUniqueCommands++;
-				$LineStr=str_replace($GrepString,colorize($GrepString,"yellow","black"),$Line);
-				print "$Li  $LineStr";
+				$LineStr=str_replace($GrepString,colorize($GrepString,"black","yellow"),$Line);
+				print colorize("!","blue","black");
+				print colorize($Li,"cyan","black");
+				print "  $LineStr";
 				if($RunCommands){
 					print " ->RUNNING: ";
 					if(RunInBackground){

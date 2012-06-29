@@ -131,7 +131,8 @@ if($ListBackups){
 		}
 	}
 	
-	passthru("$vim $file 2>&1");
+	//passthru("$vim $file 2>&1");
+	dse_launch_vibk_edit($file);
 	
 	if(files_are_same($file,$backupfilename)){
 		print "No change to $file. backup at $backupfilename removed\n";

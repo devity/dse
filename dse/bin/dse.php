@@ -96,14 +96,52 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'x':
   	case 'code-query':
   		$String=$vars['options'][$opt];
+		if(sizeof($argv)>1 && $argv[1]){
+			$LaunchNumber=$argv[1];
+		}
+		//dse_launch_code_edit
 		
-		print bar("FILE NAME Results:","-","blue","white","green","white")."n";
+		$Li=0;
+		if(!$LaunchNumber) print bar("FILE NAME Results:","-","blue","white","green","white");
 		$Command=$vars['DSE']['DSE_BIN_DIR']."/fss \"$String\" ".$vars['DSE']['DSE_ROOT'];
-  		print dse_exec($Command,TRUE);
+  		$r=dse_exec($Command,$vars['Verbosity']>3);
+		foreach(split("\n",$r) as $L){
+			$Li++;
+			if(!$LaunchNumber){
+				print colorize("$Li","cyan","black");
+				print colorize(": ","blue","black");
+				$L=str_replace($String,colorize($String,"black","yellow"),$L);
+				print "$L\n";
+			}
+		}
 		
-		print bar("STRING GREP Results","-","blue","white","green","white")."n";
+		if(!$LaunchNumber) print bar("STRING GREP Results","-","blue","white","green","white");
 		$Command=$vars['DSE']['DSE_BIN_DIR']."/gss \"$String\" ".$vars['DSE']['DSE_ROOT'];
-  		print dse_exec($Command,TRUE);
+  		$r=dse_exec($Command,$vars['Verbosity']>3);
+		foreach(split("\n",$r) as $L){
+			$L=trim($L);
+			if($L){
+				list($FileName,$LineNumber,$Line)=split(":",$L);
+				if($FileName && dse_file_exists($FileName)){
+					$Li++;
+					if(!$LaunchNumber){
+						print colorize("$Li","yellow","black");
+						print colorize(": ","blue","black");
+						
+						print colorize($FileName,"cyan","black");
+						print colorize("::","yellow","black");
+						print colorize($LineNumber,"green","black");
+						$L=str_replace($String,colorize($String,"black","yellow"),$Line);
+						print "$L\n";
+					}
+					if($LaunchNumber==$Li){
+						dse_launch_code_edit($FileName,$LineNumber);
+						exit(0);
+					}
+				}
+			}
+		}
+		
 		
 		$DidSomething=TRUE;
 		break;

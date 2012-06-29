@@ -69,6 +69,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		//yum history list
 		//apt-get changelog
  //dpkg-reconfigure package_name
+ 
+ //show files of package.
+ //show owner package of file
 }
 
 dse_cli_script_header();

@@ -8,6 +8,7 @@ include_once ("/dse/bin/dse_config.php");
 $Lines=40;
 $MinutesBack=60;
 $NumberOfBytesSameLimit=13;
+$Intermingle=TRUE;
 
 $shortopts  = "";
 $shortopts .= "n:";  // Required value
@@ -28,7 +29,7 @@ if($options['m']){
 	$MinutesBack=$options['m'];
 }
 if(key_exists('i', $options)){
-	$Intermingle=TRUE;
+	$Intermingle=FALSE;
 }
 
 $CharsWide=cbp_get_screen_width()-19;

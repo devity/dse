@@ -35,6 +35,9 @@ $parameters_details = array(
   array('e','edit',"backs up and launches a vim of ".$vars['DSE']['PANIC_CONFIG_FILE']),
   array('c','config-show',"prints contents of ".$vars['DSE']['PANIC_CONFIG_FILE']),
  // array('d:','daemon:',"manages the checking daemon. options: [start|stop|restart|status]"),
+  array('z','internet-hide',"updates iptables to drop everything incoming except what you are prompted for and enter"),
+ //close firewall to world! except...
+ 
  );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -95,6 +98,10 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'config-show':
 		print dse_file_get_contents($vars['DSE']['PANIC_CONFIG_FILE']);
 		//exit(0);
+		break;
+	case 'z':
+  	case 'internet-hide':
+		dse_firewall_internet_hide();
 		break;
 }
 
@@ -243,7 +250,8 @@ function dse_panic_hd($Interactive=FALSE){
 	//gzip as much as possible in /backup and /var/log
 	
 	
-	
+	//nohup.out
+	//core dumps
 	
 	//look for large uncompressed info
 	//find redundant files
@@ -298,27 +306,31 @@ function dse_panic_hd($Interactive=FALSE){
 		$LargeFileRootDir="/";
 		//look for largest fiels
 		$LargeFileCommands=array(
-			"find ROOT_DIR -type f -size +1000000k -exec ls -l {} \; 2>/dev/null ",
-			"du -a ROOT_DIR 2>/dev/null | sort -n -r | head -n 200",
+			//"find ROOT_DIR -type f -size +1000000k -exec ls -l {} \; 2>/dev/null ",
+			"du -a ROOT_DIR 2>/dev/null | sort -n -r", //du -am / 2>/dev/null | sort -n -r | head -n 200
 			//"for i in G M K; do du -a / 2>/dev/null | grep [0-9]$i | sort -nr -k 1; done | head -n 11",
-			"find ROOT_DIR -type f -print0| xargs -0 ls -s | sort -rn | awk ‘{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}’ | head -200",
+			//"find ROOT_DIR -type f -print0| xargs -0 ls -s | sort -rn | awk ‘{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}’ | head -200",
 			//"sudo find / -type f -print0 2>/dev/null | xargs -0 ls -s | sort -rn | awk '{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}' | head",
 			
 		);
+		
+		$Command="/dse/bin/dfm --empty ".$CFG_array['OutFile'];
+		dse_exec($Command,TRUE,TRUE);
 		foreach($LargeFileCommands as $Command){
 			$CommandReal=str_replace("ROOT_DIR",$LargeFileRootDir,$Command);
 			$A=dse_ask_choice(array(
 				"Y"=>"Yes",
 				"N"=>"No",
-				"C"=>"Change Root Directory for start of large fole search",
+				"C"=>"Change Root Directory for start of large file search",
 				"Q"=>"Quit / Exit",
 			),"Run $CommandReal ?");
 			if($A=='Y'){
 				$StartTime=time()+microtime();
 				print getColoredString("Running File Large Files Command:  $CommandReal \n","cyan");
-				$r=`$CommandReal`;  $EndTime=time()+microtime(); $RunTime=number_format($EndTime-$StartTime,2);
+				$r=dse_exec("$CommandReal");  $EndTime=time()+microtime(); $RunTime=number_format($EndTime-$StartTime,2);
 				print getColoredString("File Large Files:  $CommandReal (runtime $RunTime s)\n","cyan");
-				print getColoredString($r,"yellow");
+				$r_show=substr($r,0,2000);
+				print getColoredString($r_show,"yellow");
 				dse_file_append_contents($CFG_array['OutFile'],"File Large Files:  $CommandReal (runtime $RunTime s)\n");
 				dse_file_append_contents($CFG_array['OutFile'],$r);
 			}elseif($A=='Q'){
@@ -330,9 +342,10 @@ function dse_panic_hd($Interactive=FALSE){
 					$CommandReal=str_replace("ROOT_DIR",$LargeFileRootDir,$Command);
 					print getColoredString("Running File Large Files Command:  $CommandReal \n","cyan");
 					$StartTime=time()+microtime();
-					$r=`$CommandReal`;  $EndTime=time()+microtime(); $RunTime=number_format($EndTime-$StartTime,2);
+					$r=dse_exec("$CommandReal"); $EndTime=time()+microtime(); $RunTime=number_format($EndTime-$StartTime,2);
 					print getColoredString("Command Done:  $CommandReal (runtime: $RunTime s)\n","cyan");
-					print getColoredString($r,"yellow");
+					$r_show=substr($r,0,2000);
+					print getColoredString($r_show,"yellow");
 					dse_file_append_contents($CFG_array['OutFile'],"File Large Files:  $CommandReal (runtime $RunTime s)\n");
 					dse_file_append_contents($CFG_array['OutFile'],$r);
 				}else{

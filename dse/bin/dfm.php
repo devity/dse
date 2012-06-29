@@ -30,6 +30,11 @@ $parameters_details = array(
   array('','number',"adds a incrementing line number to start of each line"),
   array('','find-large-files',"finds larges files in arg1"),
   array('','empty',"empties file arg1"),
+  array('','launch-url',"launch url arg1"),
+  array('','launch-vibk-edit',"launch vibk edit of file arg1"),
+  array('','launch-code-edit',"launch code edit of file arg1"),
+  array('','compare-directories',"compare-directories"),
+  
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -75,6 +80,30 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'empty':
 		$DoFileEmpty=TRUE;
 		break;
+	case 'launch-url':
+		$URL=$argv[1];
+		exit(dse_launch_url($URL));
+	case 'launch-vibk-edit':
+		$File=$argv[1];
+		exit (dse_launch_vibk_edit($File));
+	case 'launch-code-edit':
+		$File=$argv[1];
+		exit(dse_launch_code_edit($File));
+	case 'compare-directories':
+		$Dir1=$argv[1];
+		if(sizeof($argv)>2){
+			$Dir2=$argv[2];
+		}else{
+			$Dir2=getcwd();
+		}
+		$Dir1=dse_directory_strip_trail($Dir1);
+		$Dir2=dse_directory_strip_trail($Dir2);
+		$Command="rsync -rRc --dry-run $Dir1/ $Dir2/";
+		print dse_exec($Command,TRUE);
+		break;
+
+		//list by most recent changed fiels in dir
+		
 }
 
 dpv(4,"parsed args");
@@ -83,8 +112,9 @@ dpv(4,"parsed args");
 if($DoLargeFileFind){
 	if(!$RootDir) $RootDir="/";
 	if(!$Limit) $Limit=100;
-	$r=dse_exec("du -ak $RootDir 2>/dev/null | sort -n -r | head -n $Limit",TRUE,TRUE);
-	$BlockSize=1024;
+	$r=dse_exec("du -am $RootDir 2>/dev/null | sort -n -r | head -n $Limit",TRUE,TRUE);
+	//du -am / 2>/dev/null | sort -n -r 
+	$BlockSize=1024*1024;
 	
 	//dse_passthru("find $RootDir -type f -size +1000000k -exec ls -l {} \; 2>/dev/null ",TRUE);
 	exit(0);
