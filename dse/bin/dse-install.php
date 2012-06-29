@@ -23,6 +23,7 @@ $parameters_details = array(
   array('a','list-installed-packages',"lists installed packages"),
   array('s:','show-matching-package:',"searches possible packages"),
   array('m','manage-packages',"launch dselect to manage packages"),
+  array('','list-rollbacks',"list rollbacks"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -61,6 +62,10 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			passthru(dse_which("dselect"));
 		}
 		exit();
+  	case 'list-rollbacks':
+		dse_exec("up2date --list-rolbacks",TRUE,TRUE);
+		exit();
+		//up2date --list-rollbacks
  //dpkg-reconfigure package_name
 }
 

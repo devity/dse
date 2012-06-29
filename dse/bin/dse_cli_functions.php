@@ -1053,8 +1053,16 @@ function dse_file_append_contents($filename,$Str){
 	global $vars;
 	return dse_file_put_contents($filename,dse_file_get_contents($filename).$Str);
 }
-function dse_file_add_line_if_not($filename,$Str){
-	global $vars;
+function dse_file_add_line_if_not($filename,$Str,$ShowCommand=FALSE){
+	global $vars;	
+	if($ShowCommand){
+		print colorize("dse_file_add_line_if_not(","yellow","black");
+		print colorize($filename,"magenta","black");
+		print colorize(",","yellow","black");
+		print colorize($Str,"green","black");
+		print colorize(")","yellow","black");
+		print "\n";	
+	}
 	$Now=dse_file_get_contents($filename);
 	if(!str_contains($Now,$Str)){
 		return dse_file_put_contents($filename,$Now."\n".$Str);

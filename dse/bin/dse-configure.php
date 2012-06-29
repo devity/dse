@@ -199,6 +199,9 @@ if(dse_is_osx()){
 dse_file_set_mode($vars['DSE']['DSE_BIN_DIR']."/dnetstat.php","4755");
 
 
+print bar("Enabeling yum/rpm restore points: ","-","blue","white","green","white")."n";
+dse_file_add_line_if_not($vars['DSE']['SYSTEM_YUM_CONF_FILE'],"tsflags=repackage");
+dse_file_add_line_if_not($vars['DSE']['SYSTEM_RPM_MACROS_FILE'],"%_repackage_all_erasures 1");
 
 //sudo logging
 //echo -n "sudo Logging: "

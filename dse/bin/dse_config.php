@@ -90,7 +90,8 @@ $vars['DSE']['SYSTEM_PROFILE_FILE']='/etc/profile';
 $vars['DSE']['SYSTEM_APT_SOURCES_LIST']='/etc/apt/sources.list';
 $vars['DSE']['SERVER_INITD_DIR']='/etc/init.d';
 $vars['DSE']['SYSTEM_YUM_CONF_FILE']='/etc/yum.conf';
-$vars['DSE']['SYSTEM_RPM_UP2DATE_FILE']='//etc/rpm/macros.up2date';
+$vars['DSE']['SYSTEM_RPM_UP2DATE_FILE']='/etc/rpm/macros.up2date';
+$vars['DSE']['SYSTEM_RPM_MACROS_FILE']='/etc/rpm/macros';
 
 
 $vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']='/etc/php.ini.default';
