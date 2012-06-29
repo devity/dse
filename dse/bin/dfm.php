@@ -128,19 +128,20 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				$F2_sa=dse_file_get_stat_array($F2);
 				$F1_size=$F1_sa[7];
 				$F2_size=$F2_sa[7];
-				if(is_dir($F1)||is_dir($F2) ){
-					$F1_md5="dir";
-					$F2_md5="dir";
-				}else{
-					$F1_md5=md5_of_file($F1);
-					$F2_md5=md5_of_file($F2);
-				}
+				
+				$F1_md5="?";
+				$F2_md5="?";
 				 
-				print "F1=$F1 F21=$F2\n";
+				dpv(4,"F1=$F1 F21=$F2");
 				print colorize(pad($L." ",70),"blue","white");
 				
 				
 				if(dse_file_exists($F1)){
+					if(is_dir($F1)){
+						$F1_md5="dir";
+					}else{
+						$F1_md5=md5_of_file($F1);
+					}
 					print colorize(pad($F1_size,12," ","right")."  ","white","blue");
 					print colorize(pad($F1_md5,12," ","right")."  ","white","blue");
 				}else{
@@ -156,6 +157,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				}
 				
 				if(dse_file_exists($F2)){
+					if(is_dir($F2)){
+						$F2_md5="dir";
+					}else{
+						$F2_md5=md5_of_file($F2);
+					}
 					if($F2_size==$F1_size){
 						print colorize(pad($F2_size,12," ","right")."  ","white","blue");
 					}elseif($F2_size>$F1_size){
