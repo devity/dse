@@ -50,6 +50,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$vars['Verbosity']=$vars['options'][$opt];
 		dpv(2,"Verbosity set to ".$vars['Verbosity']."\n");
 		break;
+}
+
+dse_cli_script_header();
+
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'h':
   	case 'help':
 		print $vars['Usage'];
@@ -152,7 +157,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				
 				
 				
-				
+				print "ff321rfwc\n";
 				if(dse_file_exists($F2)){
 					dpv(5,"dse_file_exists($F2)=TRUE");
 					if($F2_size==$F1_size && $F1_md5==$F2_md5){
@@ -160,11 +165,14 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 					}else{
 						print colorize(" => ","white","green");
 					}
+					print "wrwqerw\n";
 					if(is_dir($F2)){
 						$F2_md5="dir";
 					}else{
 						$F2_md5=md5_of_file($F2);
+						print "334r234t43f\n";
 					}
+					
 					if($F2_size==$F1_size){
 						print colorize(pad($F2_size,12," ","right")."  ","white","blue");
 					}elseif($F2_size>$F1_size){
@@ -301,7 +309,6 @@ if($DoRemoveBlankLines){
 }
 
 
-dse_cli_script_header();
 
 
 if($DidSomething){
