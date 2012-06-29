@@ -1200,14 +1200,26 @@ function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 }
 
 
-function str_contains($str,$needle){
+function str_icontains($str,$needle){
+	global $vars;
+	return str_contains($str,$needle,TRUE);;
+}
+function str_contains($str,$needle,$CaseInSensitive=FALSE){
 	global $vars;
 	if(is_array($needle)){
 		foreach($needle as $n){
-			if(!(strstr($str,$n)===FALSE)) return TRUE;
+			if($CaseInSensitive){
+				if(!(stristr($str,$n)===FALSE)) return TRUE;
+			}else{
+				if(!(strstr($str,$n)===FALSE)) return TRUE;
+			}
 		}
 	}else{
-		if(!(strstr($str,$needle)===FALSE)) return TRUE;
+		if($CaseInSensitive){
+			if(!(stristr($str,$needle)===FALSE)) return TRUE;
+		}else{
+			if(!(strstr($str,$needle)===FALSE)) return TRUE;
+		}
 	}
 	return FALSE;
 }
