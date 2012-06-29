@@ -330,6 +330,7 @@ if($DidSomething){
 	if(!$NoExit) exit(-1);
 }
 
+dse_shutdown();
 
 exit(0);
 

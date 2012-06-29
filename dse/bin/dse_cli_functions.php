@@ -4,9 +4,57 @@ ini_set('display_startup_errors','On');
 ini_set('log_errors','On');
 error_reporting( (E_ALL & ~E_NOTICE) ^ E_DEPRECATED);
 	
+	
+	
+function dse_shutdown(){
+	global $vars; dse_trace();
+	
+	if($vars[dse_Trace_Stack] && $vars['Debug']>=1){
+			
+	
+		
+		$tn=0;
+		foreach ($vars[dse_Trace_Stack] as $t){
+			$tn++;
+			$LevelsDeep=sizeof($t);
+			$last=$t[sizeof($t)-1];
+			$args="";
+			$tt=$last['args'];
+			if(is_array($last) && is_array($last['args']) && $last['args']) foreach($last['args'] as $a){
+				if($args){
+					$args.=", ";
+				}
+				if(is_object($a)){
+					$n=get_class($a);
+					$a="($n object)";
+				}
+				$args.=" [$a]";
+			}
+			$call=$last['function']."($args)";
+			$call=dse_debug_bt2html($t,$tn);
+			print $call;
+		}
+		//print " Trace &nbsp; ";
+	
+	/*
+		foreach ($vars[dpd_Trace_phpfiles] as $phpfile=>$a){
+			print "File: $phpfile<br>";
+			foreach($a as $phpfunction=>$phpfunction_a){
+				$callcount=$phpfunction_a[0];
+				$firsttime=$phpfunction_a[1];
+				$lasttime=$phpfunction_a[2];
+				$totaltime=$phpfunction_a[3];
+				print " &nbsp; ${phpfunction}() - $callcount calls, $totaltime<br>";
+			}
+		}
+		
+	*/
+		
+	}
+}
 
 function dse_firewall_internet_hide(){
-	global $vars;
+	global $vars; dse_trace();
 	
 	//save current policy / conf file
 	
@@ -15,7 +63,139 @@ function dse_firewall_internet_hide(){
 	//update policy and restart
 }
 
+$dse_Trace_Stack=Array();
+$vars[dse_Trace_Stack]=Array();
+$vars[dse_Trace_Indent_String]="&nbsp; &nbsp; + ";
+$vars[dse_Trace_Indent_Current]=0;
+$vars[dse_Trace_Count]=0;
+$vars[dse_Trace_Count_Max]=1000;
+function dse_trace(){
+	//$tbr=debug_tostring($bt);
+	global $vars,$dseTrace_Stack;
+    if(!$vars[dse_enable_debug_code]) return;
+	$vars[dse_Trace_Count]++;
+    if( $vars[dse_Trace_Count]>$vars[dse_Trace_Count_Max] ) return;
+	
+   	$bt=debug_backtrace();
+	if($vars[dse_enable_debug_code_markpoints_in_html]){
+		$section=$vars[dse_Trace_Count];
+		print "<font class='f7pt'>[<A href=#section$section>t".$vars[dse_Trace_Count]."</a>]</font>";
+	}
+   	//array_walk( debug_backtrace(), create_function( '$a,$b', 'print "<br /><b>". basename( $a[\'file\'] ). "</b> &nbsp; <font color=\"red\">{$a[\'line\']}</font> &nbsp; <font color=\"green\">{$a[\'function\']} ()</font> &nbsp; -- ". dirname( $a[\'file\'] ). "/";' ) ); 
+	 
+	 
+	 
+	$LevelsDeep=sizeof($bt);
+	$last=$bt[sizeof($bt)-2];
+	$phpfile=$last['file'];
+	$phpfunction=$last['function'];
+	$vars[dse_Trace_phpfile_list][]=$phpfile;
+	if(!$vars[dse_Trace_phpfiles][$phpfile]){
+		$vars[dse_Trace_phpfiles][$phpfile]=array();
+	}
+	if(!$vars[dse_Trace_phpfiles][$phpfile][$phpfunction]){
+		$vars[dse_Trace_phpfiles][$phpfile][$phpfunction]=array();
+		$LastFunctionCallTime=0;
+		$vars[dse_Trace_phpfiles][$phpfile][$phpfunction][0]=0;
+		$vars[dse_Trace_phpfiles][$phpfile][$phpfunction][1]=time_float();
+	}else{
+		$LastFunctionCallTime=$vars[dse_Trace_phpfiles][$phpfile][$phpfunction][1];
+	}
+	$vars[dse_Trace_phpfiles][$phpfile][$phpfunction][0]++;
+	$vars[dse_Trace_phpfiles][$phpfile][$phpfunction][2]=time_float();
+	if($LastFunctionCallTime>0){
+		$FunctionRunTime=time_float()-$LastFunctionCallTime;
+		$vars[dse_Trace_phpfiles][$phpfile][$phpfunction][3]+=$FunctionRunTime;
+	}else{
+		$vars[dse_Trace_phpfiles][$phpfile][$phpfunction][3]=0;
+	}
+	$vars[dse_Trace_Stack][]=$bt;
+}
+
+
+
+function dse_whereami(){
+	global $vars;
+   	$bt=debug_backtrace();
+   	
+	print "whereami: "; 
+	print_r($bt);
+	print "<br>";
+}
+
+$dse_debug_bt2html_lla=array();
+function dse_debug_bt2html($t,$tn){
+	global $vars;	dse_trace();
+	global $dse_debug_bt2html_lla;
+	$tbr="";
+	/*$LevelsDeep=sizeof($t);
+	*/
+	$LevelsDeep=0;
+	for($i=sizeof($t)-1;$i>=0;$i--){
+		$tt=$t[$i];
 		
+		$LevelsDeep++;
+		$IndentThis="";
+		for($in=0;$in<$LevelsDeep;$in++){
+			$IndentThis.=$vars[dse_Trace_Indent_String];
+		}
+		if($dse_debug_bt2html_lla[$LevelsDeep]!=$tt){
+			$part=dse_debug_bt2html_sub($tt);
+			if($part){
+				$tbr.="<br>";
+				if($i==1){
+					$extra="";
+					if($vars[dse_enable_debug_code_markpoints_in_html]){
+						$section=$tn;
+						$extra=" id=section$section ";
+					}
+					$tbr.="<font class='f7pt' $extra>[t$tn]</font>";
+				}else{
+					$tbr.=" &nbsp; &nbsp; ";
+				}
+				$tbr.=$IndentThis.$part;
+			}
+		}
+		$dse_debug_bt2html_lla[$LevelsDeep]=$tt;
+	}
+	return $tbr;
+}		
+function dse_debug_bt2html_sub($last){
+	global $vars;	dse_trace();
+    global $dpd_debug_bt2html_lla;
+    if($last['function']=="dpd_trace"){
+    	return "";
+    }
+	$tbr="";
+	$args="";
+	if(is_array($last) && is_array($last['args']) && $last['args']) foreach($last['args'] as $a){
+		/*	$a=str_replace("<font color=green><b>INSERT</b></font> INTO","INSERT INTO",$a);
+			$a=str_replace("<font color=green><b>DELETE</b></font> FROM","DELETE FROM",$a);
+			$a=str_replace("<font color=green><b>UPDATE</b></font> ","UPDATE ",$a);
+		*/
+		if($args){
+			$args.=", ";
+		}
+		$size=strlen(serialize($a));
+		if($size>1000){
+			$a="[TOO LARGE: ${size}B]";
+		}else{
+			$a=debug_tostring($a);
+			$a=str_replace("\n","",$a);
+			$a=str_ireplace("<br>","",$a);
+		}
+		$args.=" [$a]";
+	}
+	$file=$last['file'];
+	$line_number=$last['line'];
+	$file_str="$file";
+	$url=dse_ide_file_open_url($file,$line_number);
+	$line_number_str="<a href=$url>$line_number</a>";
+	$file_str=str_replace("/home/admin/dev-batteriesdirect_com","",$file_str);
+	$tbr.="<b>".$last['function']."</b>(<font class='f7pt'>$args</font>) &nbsp; &nbsp; &nbsp; -*- <font class='f7pt'>${file_str}:$line_number_str</font>";
+	return $tbr;
+}	
+			
 function dse_launch_url($URL){
 	global $vars;
 	$Command=$vars['DSE']['URL_LAUNCH_COMMAND'];
@@ -65,7 +245,7 @@ function dse_exec_esc($StringToEscape){
 }
 	
 function dse_exec($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
-	global $vars;
+	global $vars; dse_trace();
 	if($ShowCommand){
 		print colorize("Command: ","yellow","black");
 		print colorize($Command,"white","red");
@@ -514,7 +694,7 @@ function dse_ask_choice($Options,$Question="Select an option:",$Default="",$Time
 }
 	
 function dse_directory_strip_trail( $path ){ 
-	global $vars;
+	global $vars; dse_trace();
 	if(!$path){
 		return "";
 	}
@@ -767,7 +947,7 @@ function dse_file_get_mtime($DestinationFile){
 }
 
 function dse_file_get_stat_array($DestinationFile){
-	global $vars;
+	global $vars; dse_trace();
 	dpv(5, "dse_file_get_stat_array($DestinationFile)");
 //	$stat_field_names=array('dev'=>0,'ino'=>1,'mode'=>2,'nlink'=>3,'uid'=>4,'gid'=>5,'rdev'=>6,'size'=>7,'atime'=>8,'mtime'=>9,'ctime'=>10,'blksize'=>11,'blocks'=>12);
 	//if(!dse_file_exists($DestinationFile)){
@@ -797,7 +977,7 @@ function dse_file_get_stat_field($DestinationFile,$field=""){
 }
 
 function dse_file_exists($DestinationFile){
-	global $vars;
+	global $vars; dse_trace();
 	$r=`ls -la $DestinationFile 2>&1`;
 	if(str_contains($r,'No such file or directory')){
 		return FALSE;
@@ -2960,7 +3140,7 @@ function colorize_words($L) {
 	return $L;			
 }
 function colorize($string, $forground_color = null, $background_color = null, $ResetColorsAfter=TRUE, $type=null) {
-	global $vars;
+	global $vars; dse_trace();
 	return getColoredString($string, $forground_color, $background_color, $ResetColorsAfter, $type);
 }
 
