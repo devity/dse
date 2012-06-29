@@ -108,11 +108,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		}else{
 			$Dir2=getcwd();
 		}
-		$Dir1=dse_directory_strip_trail($Dir1);
-		$Dir2=dse_directory_strip_trail($Dir2);
+		//$Dir1=dse_directory_strip_trail($Dir1);
+		//$Dir2=dse_directory_strip_trail($Dir2);
 		$Command="rsync -rnvc $Dir1/* $Dir2/.  2>/dev/null | grep -v \".git\" | grep -v \"skipping non-regular file\" "
 			." | grep -v \"ding incremental file list\" | grep -v \"bytes/sec\" | grep -v \"speedup is\" ";
-		$Command="rsync -rnvc $Dir1/ $Dir2/  2>/dev/null | grep -v \".git\" | grep -v \"skipping non-regular file\" "
+		$Command="rsync -rnvc $Dir1 $Dir2  2>/dev/null | grep -v \".git\" | grep -v \"skipping non-regular file\" "
 			." | grep -v \"ding incremental file list\" | grep -v \"bytes/sec\" | grep -v \"speedup is\" ";
 		$r=dse_exec($Command,TRUE);
 		foreach(split("\n",$r) as $L){
