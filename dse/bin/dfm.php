@@ -53,7 +53,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 }
 
 if($vars['Verbosity']>4){
-	$vars[dse_Trace_Stack]=TRUE;
+	$vars[dse_enable_debug_code]=TRUE;
 }
 
 dse_cli_script_header();
