@@ -136,6 +136,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 					$F2_md5=md5_of_file($F2);
 				}
 				 
+				print "F1=$F1 F21=$F2\n";
 				print colorize(pad($L." ",70),"blue","white");
 				
 				
