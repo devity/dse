@@ -9,7 +9,7 @@ error_reporting( (E_ALL & ~E_NOTICE) ^ E_DEPRECATED);
 function dse_shutdown(){
 	global $vars; dse_trace();
 	
-	if($vars[dse_Trace_Stack] && $vars['Debug']>=1){
+	if($vars[dse_Trace_Stack]){
 			
 	
 		

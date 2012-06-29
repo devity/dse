@@ -52,6 +52,10 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 }
 
+if($vars['Verbosity']>4){
+	$vars[dse_Trace_Stack]=TRUE;
+}
+
 dse_cli_script_header();
 
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
@@ -160,7 +164,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				
 				
 				
-				print "ff321rfwc\n";
+				//print "ff321rfwc\n";
 				if(dse_file_exists($F2)){
 					dpv(5,"dse_file_exists($F2)=TRUE");
 					if($F2_size==$F1_size && $F1_md5==$F2_md5){
@@ -189,15 +193,19 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 						print colorize(pad($F2_md5,12," ","right")."  ","white","red");
 					}
 				}else{	
-				print "v2344\n";
+				//print "v2344\n";
 					print colorize(" => ","white","red");
 					print colorize(pad("missing",26," ","center")."  ","black","yellow");
 				}
-				print "252345dfgs\n";
+				//print "252345dfgs\n";
 				print "\n";
 			}
 		}
 		$DidSomething=TRUE;
+		break;
+			
+	case 'v':
+	case 'verbosity':
 		break;
 	default:
 		dep("unknown option passed to dfm: opt='$opt'");
