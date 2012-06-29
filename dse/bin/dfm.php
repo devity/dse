@@ -110,7 +110,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		}
 		$Dir1=dse_directory_strip_trail($Dir1);
 		$Dir2=dse_directory_strip_trail($Dir2);
-		$Command="rsync -rnvc $Dir1/ $Dir2/  | grep -v \".git\"";
+		$Command="rsync -rnvc $Dir1/ $Dir2/  2>/dev/null | grep -v \".git\"";
 		$r=dse_exec($Command,TRUE);
 		foreach(split("\n",$r) as $L){
 			$L=trim($L);
