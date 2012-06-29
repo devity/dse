@@ -1430,8 +1430,10 @@ function dse_build_clone_server_script(){
 	
 
 	
-
-   	dse_exec("mkdir ${clone_directory}");
+	
+   	if(!is_dir($clone_directory)){
+   		dse_exec("mkdir ${clone_directory}");
+   	}
    	dse_exec("rm -rf ${clone_directory}/*");
    	if(!is_dir($clone_directory)){
    		print "Clone directory $clone_directory missing and uncreatable - fatal error. exiting.\n";
@@ -1455,18 +1457,26 @@ function dse_build_clone_server_script(){
 	
 	print bar("Starting backup of /etc in: $clone_directory/etc/*","-","blue","white","green","white")."n";
 	if(!file_exists($vars['DSE']['DSE_BACKUP_DIR']."/etc")){
-		dse_exec("mkdir ".$vars['DSE']['DSE_BACKUP_DIR']."/etc");
+		//dse_exec("mkdir ".$vars['DSE']['DSE_BACKUP_DIR']."/etc");
 	}
-	dse_exec("cp -rf ".$vars['DSE']['DSE_BACKUP_DIR']."/etc /etc",TRUE);
+	dse_exec("cp -rf /etc ".$vars['DSE']['DSE_BACKUP_DIR']."/.",TRUE);
 	
 	
 	print bar("Starting backup of .bash history: $clone_directory/etc/*","-","blue","white","green","white")."n";
 	
 	
-	print bar("Starting backup of logs in: $clone_directory/var/logs/*","-","blue","white","green","white")."n";
+	print bar("Starting backup of logs in: $clone_directory/logs/*","-","blue","white","green","white")."n";
+	if(!file_exists($vars['DSE']['DSE_BACKUP_DIR']."/logs")){
+		dse_exec("mkdir ".$vars['DSE']['DSE_BACKUP_DIR']."/logs");
+	}
+	dse_exec("cp /var/log/sudo* ".$vars['DSE']['DSE_BACKUP_DIR']."/logs/.",TRUE);
+	
 	
 	
 	print bar("Starting backup of user home directories: $clone_directory/home/*","-","blue","white","green","white")."n";
+	if(!file_exists($vars['DSE']['DSE_BACKUP_DIR']."/home")){
+		dse_exec("mkdir ".$vars['DSE']['DSE_BACKUP_DIR']."/home");
+	}
 	if(dse_is_osx()){
 		$UserDirs=dse_ls("/Users");
 	}else{
@@ -1485,6 +1495,20 @@ function dse_build_clone_server_script(){
 			//dse_exec(,TRUE);
 		}
 	}
+	
+	
+		$bn="root";
+		if($bn[0]!='.'){
+			$UserHomeDir="/root/";
+			$UserHomeDirBackup=$clone_directory.$UserHomeDir;
+			print "Backing up user $FileName's home dir $UserHomeDir to $UserHomeDirBackup\n";
+			$Command="cp -rf $UserHomeDir $clone_directory/home/.";
+			print "C=$Command\n";
+			exit();
+			//dse_exec(,TRUE);
+		}
+		
+		
 	
 	
 	$SystemLSOutputFile=$clone_directory."/ls_of_all_files.txt";
