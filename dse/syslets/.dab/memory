@@ -1,0 +1,91 @@
+#!/bin/php
+<?php
+include_once ("/dse/bin/dse_cli_functions.php");
+include_once ("/dse/include/system_stat_functions.php");
+
+
+$so=`vm_stat`;
+
+$sa=split("\n",$so);
+for($i=0;$i<sizeof($sa);$i++){
+	$s=$sa[$i];
+	if($s && ( !(strstr($s,"Pages active:")===FALSE) ) ){
+		while(!(strstr($s,"  ")===FALSE)){
+			$s=str_replace("  "," ",$s);
+		}
+		$s=str_replace(".","",$s);
+		$la=split(" ",$s);
+		$mem_pages_active=$la[2];
+		$mem_bytes_active=$mem_pages_active*4096;
+		$mem_bytes_active_str=number_format($mem_bytes_active/(1024*1024),0)." MB";
+	}elseif($s && ( !(strstr($s,"Pages inactive:")===FALSE) ) ){
+		while(!(strstr($s,"  ")===FALSE)){
+			$s=str_replace("  "," ",$s);
+		}
+		$s=str_replace(".","",$s);
+		$la=split(" ",$s);
+		$mem_pages_inactive=$la[2];
+		$mem_bytes_inactive=$mem_pages_inactive*4096;
+		$mem_bytes_inactive_str=number_format($mem_bytes_inactive/(1024*1024),0)." MB";
+	}elseif($s && ( !(strstr($s,"Pages free:")===FALSE) ) ){
+		while(!(strstr($s,"  ")===FALSE)){
+			$s=str_replace("  "," ",$s);
+		}
+		$s=str_replace(".","",$s);
+		$la=split(" ",$s);
+		$mem_pages_free=$la[2];
+		$mem_bytes_free=$mem_pages_free*4096;
+		$mem_bytes_free_str=number_format($mem_bytes_free/(1024*1024),0)." MB";
+	}elseif($s && ( !(strstr($s,"Pages speculative:")===FALSE) ) ){
+		while(!(strstr($s,"  ")===FALSE)){
+			$s=str_replace("  "," ",$s);
+		}
+		$s=str_replace(".","",$s);
+		$la=split(" ",$s);
+		$mem_pages_speculative=$la[2];
+		$mem_bytes_speculative=$mem_pages_speculative*4096;
+		$mem_bytes_speculative_str=number_format($mem_bytes_speculative/(1024*1024),0)." MB";
+	}elseif($s && ( !(strstr($s,"Pages wired down:")===FALSE) ) ){
+		while(!(strstr($s,"  ")===FALSE)){
+			$s=str_replace("  "," ",$s);
+		}
+		$s=str_replace(".","",$s);
+		$la=split(" ",$s);
+		$mem_pages_wired=$la[2];
+		$mem_bytes_wired=$mem_pages_wired*4096;
+		$mem_bytes_wired_str=number_format($mem_bytes_wired/(1024*1024),0)." MB";
+	}
+}
+
+
+$mem_pages_total=$mem_pages_inactive+$mem_pages_free+$mem_pages_active+$mem_pages_speculative+$mem_pages_wired;
+
+$mem_bytes_total=$mem_pages_total*4096;
+$mem_bytes_total_str=number_format($mem_bytes_total/(1024*1024*1024),1)."";
+
+
+
+//print "Used: $mem_bytes_active_str\n";
+//print "Inactive: $mem_bytes_inactive_str\n";
+//print "Free: $mem_bytes_free_str\n";
+
+$mem_pages_available=$mem_pages_inactive+$mem_pages_free;
+$mem_bytes_available=$mem_pages_available*4096;
+$mem_bytes_available_str=number_format($mem_bytes_available/(1024*1024*1024),1)."";
+$percent=($mem_pages_available/$mem_pages_total)*100;
+$percent_str=number_format($percent,0)."%";
+
+if($percent<40) $percent_str=colorize($percent_str,"red");
+	elseif($percent<60) $percent_str=colorize($percent_str,"yellow");
+	else $percent_str=colorize($percent_str,"green");
+
+print "Ram: $mem_bytes_available_str / $mem_bytes_total_str GB  $percent_str\n";
+
+$per=number_format(($mem_pages_available/$mem_pages_total)*100,0);
+$per_used=100-$per;
+if(number_format($per_used>=70) ){
+	`say --voice=Victoria Memory $per_used percent used`;
+}
+//print "\n".$so;
+
+?>

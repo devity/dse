@@ -8,8 +8,18 @@ function dse_sysstats_sdvcqwev(){
 
 function dse_print_df(){
 	global $vars,$CFG_array;
-	$NameWidth=30; $FreeWidth=16; $TotalWidth=16; $FreeWidth=16;
-	$Seperator=colorize(" | ","blue","black");
+	$W=cbp_get_screen_width();
+	//if($W>100){
+		$Seperator=" | ";
+		$Wn=15;
+		$Wl=$W-3*$Wn-4*strlen($Seperator);
+		$Seperator=colorize($Seperator,"blue","black");
+		$NameWidth=intval($Wl*(4/7));
+		$FileSystemWidth=intval($Wl*(3/7));
+		$FreeWidth=$Wn; $TotalWidth=$Wn; $FreeWidth=$Wn;
+	//}
+	
+	
 	
 	print bar("Disk Usage: ","-","yellow","black","blue","black");
 	print color_pad("Mount","yellow","black",$NameWidth,"right");
@@ -30,7 +40,7 @@ function dse_print_df(){
 		print $Seperator;
 		if($DiskInfoArray['PercentFree']<10){
 			if($DiskInfoArray['Total']==0){
-				print color_pad("remote","blue","black",$FreeWidth,"right");
+				print color_pad("virtual","blue","black",$FreeWidth,"right");
 			}else{
 				print color_pad($DiskInfoArray['PercentFree']." % free","red","black",$FreeWidth,"right");
 			}
@@ -46,14 +56,17 @@ function dse_print_df(){
 			print $Seperator;
 			print color_pad($f_str,"blue","black",$FreeWidth,"right");
 		}else{
-			$f_str=dse_file_size_to_readable($f);
-			print color_pad($f_str,"cyan","black",$TotalWidth,"right");
-			
+			if($DiskInfoArray['Total']==0){
+				print color_pad("virtual","blue","black",$FreeWidth,"right");
+			}else{
+				$f_str=dse_file_size_to_readable($f);
+				print color_pad($f_str,"cyan","black",$FreeWidth,"right");
+			}
 			print $Seperator;
 			$f_str=dse_file_size_to_readable($DiskInfoArray['Free']);
 			if($f<1000000){
 				if($DiskInfoArray['Total']==0){
-					print color_pad($f_str,"green","black",$FreeWidth,"right");
+					print color_pad("virtual","blue","black",$FreeWidth,"right");
 				}else{
 					print color_pad($f_str,"red","black",$FreeWidth,"right");
 				}
@@ -62,7 +75,7 @@ function dse_print_df(){
 			}
 		}
 		print $Seperator;
-		print color_pad($DiskInfoArray['FileSystem'],"cyan","black",45,"left");
+		print color_pad($DiskInfoArray['FileSystem'],"cyan","black",$FileSystemWidth,"left");
 		print "\n";
 	}
 	print bar("","-","cyan","black","blue","black");

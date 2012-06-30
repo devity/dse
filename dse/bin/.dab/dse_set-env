@@ -1,0 +1,7 @@
+#!/bin/bash
+
+tempname=`/dse/bin/dtmp`.bash;
+/dse/bin/dse --set-env > $tempname
+chmod 770 $tempname
+. $tempname
+rm $tempname

@@ -1,0 +1,12 @@
+#!/bin/php
+<?php
+$cmd="";
+for($i=1;$i<sizeof($argv);$i++){
+	$cmd.=" $argv[$i]";
+}
+$c="sudo -i $cmd";
+print "command: $c\n";
+passthru($c);
+
+
+?>

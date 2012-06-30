@@ -1,0 +1,4 @@
+#!/bin/bash
+
+. /dse/bin/dse_set-env
+sudo echo -n > $DSE_MYSQL_LOG_FILE
