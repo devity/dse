@@ -99,10 +99,12 @@ function dse_sysstats_net_listening(){
 				if(!$port_already_added){
 					$str.= "$exe:$port ";
 					$tbr_array[]=$lpa;
+						$ports_array[]=$port;
 				}
 			}
 		}
-		return array($tbr_array,$raw,$raw_array,$str);
+	//print "ports_array=";	print_r($ports_array);
+		return array($tbr_array,$raw,$raw_array,$str,$ports_array);
 	}elseif(dse_which("netstat")){
 		$str="";
 		if(file_exists("/scripts/netstat-tulpn")){
@@ -136,11 +138,12 @@ function dse_sysstats_net_listening(){
 					if(!$port_already_added){
 						$str.= "$exe:$port ";
 						$tbr_array[]=$lpa;
+						$ports_array[]=$port;
 					}
 				}
 			}
 		}
-		return array($tbr_array,$raw,$raw_array,$str);
+		return array($tbr_array,$raw,$raw_array,$str,$ports_array);
 	}
 	return array(NULL,NULL,NULL,"no netstat found");
 }	

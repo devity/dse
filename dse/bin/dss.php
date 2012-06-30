@@ -58,9 +58,12 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		
 	case 'a':
   	case 'all':
-		
-		dse_exec("hddtemp /dev/sda",FALSE,TRUE);	
-		dse_exec("hddtemp /dev/sdb",FALSE,TRUE);	
+		if(dse_which("hddtemp")){
+			dse_exec("hddtemp /dev/sda",FALSE,TRUE);	
+			dse_exec("hddtemp /dev/sdb",FALSE,TRUE);	
+		}
+		dse_exec("/dse/bin/dnetstat -c",FALSE,TRUE);	
+		//dse_exec("hddtemp /dev/sdb",FALSE,TRUE);	
 //		lshw -short -C disk
 		
 		exit(0);
@@ -74,12 +77,16 @@ switch($Command){
 		$StatName=$argv[2];
 		switch($StatName){
 			case 'hddtemp':
-				$Identifier=$argv[3];
-				$r=dse_exec("hddtemp /dev/$Identifier");
-				$TempA=split(": ",$r);
-				$Temp=$TempA[2];
-				$Temp=substr($Temp,0,strlen($Temp)-3);
-				print $Temp;
+				if(dse_which("hddtemp")){
+					$Identifier=$argv[3];
+					$r=dse_exec("hddtemp /dev/$Identifier");
+					$TempA=split(": ",$r);
+					$Temp=$TempA[2];
+					$Temp=substr($Temp,0,strlen($Temp)-3);
+					print $Temp;
+				}else{
+					print "hddtemp program not found. install or add to PATH. Fatal ERROR. Exiting.\n";
+				}
 				exit(0);
 		}
 		break;

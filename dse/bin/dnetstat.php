@@ -169,9 +169,19 @@ if($ShowOpen){
 	print $section_net_listening."\n";	
 } 
 if($ShowConnected){
-	$dse_sysstats_connected_array=dse_sysstats_connected($Port);
-	$section_net_connected=$dse_sysstats_connected_array[3];
-	print $section_net_connected."\n";	
+	if($Port){
+		$dse_sysstats_connected_array=dse_sysstats_connected($Port);
+		$section_net_connected=$dse_sysstats_connected_array[3];
+		print $section_net_connected."\n";	
+	}else{
+		$dse_sysstats_net_listening_array=dse_sysstats_net_listening();
+		//print "dse_sysstats_net_listening_array=";	print_r($dse_sysstats_net_listening_array);
+		foreach($dse_sysstats_net_listening_array[4] as $Port){
+			$dse_sysstats_connected_array=dse_sysstats_connected($Port);
+			$section_net_connected=$dse_sysstats_connected_array[3];
+			print $Port.":: ".$section_net_connected."\n";	
+		}
+	}
 }
 
 if($ShowExternalIP){
