@@ -23,7 +23,8 @@ $parameters_details = array(
   array('a','list-installed-packages',"lists installed packages"),
   array('s:','show-matching-package:',"searches possible packages"),
   array('m','manage-packages',"launch dselect to manage packages"),
-  array('','list-rollbacks',"list rollbacks"),
+  array('r','list-rollbacks',"list rollbacks"),
+  array('u','pakage-upgrade',"run apt/yum/fink/macport update;upgrade"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -64,6 +65,10 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		exit();
   	case 'list-rollbacks':
 		dse_exec("up2date --list-rolbacks",TRUE,TRUE);
+		exit();
+	case 'u':
+  	case 'pakage-upgrade':
+		dse_package_run_upgrade();
 		exit();
 		//up2date --list-rollbacks   http://nrh-up2date.sourceforge.net/download.html
 		//yum history list

@@ -839,6 +839,188 @@ function dse_package_install($PackageName,$Remove=FALSE){
 	} */
 }
 
+function dse_package_run_upgrade(){
+	global $vars;
+	$PackageNameUpper=strtoupper($PackageName);
+	print pad("Updating Packages: ...   ","90%",colorize("-","blue"))."\n";
+	
+	//$Installer=dse_get_installer_name();
+		$Installer="";
+	
+	if(dse_is_osx()){
+		/*$port=`which port`;
+		if(($port) && ((strstr($port,"no port in")===FALSE)) ){
+			$Installer="port";
+		}
+		
+		$brew=`which brew`;
+		if(($brew) && ((strstr($brew,"no brew in")===FALSE)) ){
+			$Installer="brew";
+		}*/
+		$fink=dse_which("fink");
+		if($fink){
+			$Installer="fink";
+		}
+	}elseif(dse_is_centos()){
+		$yum=dse_which("yum");
+		if($yum){
+			$Installer="yum";
+		}
+	}
+	if(!$Installer){
+		$aptget=dse_which("apt-get");
+		if($aptget){
+			$Installer="apt-get";
+		}
+	}
+	if(!$Installer){
+		$yum=dse_which("yum");
+		if(!$yum){
+			dse_install_yum();
+			$yum=dse_which("yum");
+			if($yum){
+				$Installer="yum";
+			}
+		}else{
+			$Installer="yum";
+		}
+	}
+	
+	if($Installer){
+		print getColoredString("$Installer ","purple","black");
+	}else{
+		print getColoredString("FATAL ERROR: No Compatible Installer Found missing.\n","red","black");
+		return -1;
+	}
+	
+	
+	if($Remove){
+		$Action="remove";
+	}else{
+		$Action="install";
+	}
+	
+	
+	$vars['DSE']['dse_package_install__use_passthru']=TRUE;
+  	print "Package $PackageName ";
+	if(!$PackageName){
+    	print getColoredString(" ERROR: PackageName missing. \n","red","black");
+		return -1;
+	}
+	if($Installer=='yum'){
+		$Command="sudo yum upgrade 2>&1";
+		print " Running: $Command\n";
+		if($vars['DSE']['dse_package_install__use_passthru']){
+			passthru($Command);
+		}else{
+			$r=`$Command`;
+		//	 print "cmd: $Command   r=".$r."\n";
+			if(str_contains($r,"already installed")){
+				print getColoredString(" Already Installed.\n","green","black");
+				return 0;
+		  	}elseif(str_contains($r,"Installed:")){
+				print getColoredString(" Installed!\n","green","black");
+				return 0;
+		  	}else{
+			    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
+				return -1;
+			}
+		}
+	}elseif($Installer=='apt-get'){
+		$Command="sudo $aptget -y upgrade 2>&1";
+		print " Running: $Command\n";
+		if($vars['DSE']['dse_package_install__use_passthru']){
+			passthru($Command);
+			//dse_popen($Command);
+		}else{
+			//$r=`$Command`;
+			$r=dse_popen($Command);
+			 print "cmd: $Command   r=".$r."\n";
+			if(str_contains($r,"will be installed")){
+				print getColoredString(" Installed.\n","green","black");
+				return 0;
+		  	}elseif(str_contains($r,"is already ")){
+				print getColoredString(" Already Installed.\n","green","black");
+				return 0;
+		  	}elseif(str_contains($r,"ldn't find pack")){
+		  		print getColoredString(" Unknown Package Name: $PackageName!\n","red","black");
+				return 1;
+		  	}else{
+			    print getColoredString(" ERROR w/ cmd: $Command\n$r\n","red","black");
+				return -1;
+			}
+		}
+	}elseif($Installer=='fink'){
+		
+		$Command="dpkg upgrade 2>&1";
+		print " Running: $Command\n";
+		if($vars['DSE']['dse_package_install__use_passthru']){
+			passthru($Command);
+		}else{
+			$r=`$Command`;
+			if(!str_contains($r,"s not installed") ){
+				print getColoredString(" Already Installed.\n","green","black");
+				return 0;
+			}
+			
+			$Command="sudo fink -yv $Action $PackageName 2>&1";
+			$r=passthru($Command);
+			return (0);
+			// print "cmd: $Command   r=".$r."\n";
+			if(str_contains($r,"Failed")){
+				print getColoredString(" Install Failed!\n","red","black");
+				return -1;
+		  	}elseif(str_contains($r,"Installed:")){
+				print getColoredString(" Installed!\n","green","black");
+				return 0;
+		  	}elseif(str_contains($r,"o package found fo")){
+				print getColoredString(" Unkown Package Name: $PackageName!\n","red","black");
+				return -1;
+		  	}else{
+			    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
+				return -1;
+			}
+		}
+	}else{
+		print getColoredString(" ERROR: no supported package installer found \n","red","black");
+		   
+	}
+	/* else if($Installer=='port'){
+		$Command="sudo port self-update 2>&1";
+		$r=`$Command`;
+		 print "cmd: $Command   r=".$r."\n";
+		if(!(strstr($r,"already installed")===FALSE)){
+			print getColoredString(" Already Installed.\n","green","black");
+			return 0;
+	  	}elseif(!(strstr($r,"Installed:")===FALSE)){
+			print getColoredString(" Installed!\n","green","black");
+			return 0;
+	  	}else{
+		    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
+		   // print "r=".$r."\n";
+			return -1;
+		}
+	}elseif($Installer=='brew'){
+		$Command="sudo -u louis /usr/local/bin/brew install $PackageName 2>&1";
+		$r=`$Command`;
+		// print "cmd: $Command   r=".$r."\n";
+		if(!(strstr($r,"already installed")===FALSE)){
+			print getColoredString(" Already Installed.\n","green","black");
+			return 0;
+	  	}elseif(!(strstr($r,"Installed:")===FALSE)){
+			print getColoredString(" Installed!\n","green","black");
+			return 0;
+	  	}elseif(!(strstr($r,"No available formula for")===FALSE)){
+			print getColoredString(" Unkown Package name: $PackageName!\n","red","black");
+			return 0;
+	  	}else{
+		    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
+		    print "r=".$r."\n";
+			return -1;
+		}
+	} */
+}
+
 
 function dse_configure_iptables_init(){
 	global $vars;
