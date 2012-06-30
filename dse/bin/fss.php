@@ -1,5 +1,11 @@
 #!/usr/bin/php
 <?
+
+error_reporting(E_ALL && ~E_NOTICE);
+ini_set('display_errors','On');	
+include_once ("/dse/bin/dse_cli_functions.php");
+include_once ("/dse/bin/dse_config.php");
+
 $Quiet=FALSE;
 $ReturnFirstOnly=FALSE;
 
@@ -65,11 +71,16 @@ if(!$Quiet) print "Command: $find_cmd\n";
 
 $out=trim(`$find_cmd`);
 $out=str_remove_blank_lines($out);
+$out=str_ireplace($ss,colorize($ss,"black","yellow"),$out);
 
+$Li=0;
 if($out){
 	if($ReturnFirstOnly){
 		$ra=split("\n",$out);
 		foreach($ra as $L) if($L) {
+			$Li++;
+			print colorize($Li,"cyan","black");
+			print colorize(": ","blue","black");
 			print $L;
 			break;
 		}
@@ -89,29 +100,5 @@ if($out){
 	exit(1);
 }
  
- 
-function str_remove_blank_lines($Contents){
-	$tbr="";
-	foreach(split("\n",$Contents) as $L){
-		if(trim($L)!=""){
-			if($tbr!="") $tbr.="\n";
-			$tbr.=$L;
-		}
-	}
-	return $tbr;
-}
-
-
-function dse_exec($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
-	global $vars;
-	if($ShowCommand){
-		print "Command: ";
-		print $Command;
-		print "\n";	
-	}
-	$r=`$Command`;
-	if($ShowOutput) print $r;
-	return $r;
-}
 
 ?>

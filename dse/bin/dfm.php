@@ -28,14 +28,15 @@ $parameters_details = array(
   array('u','remove-duplicate-lines',"remove duplicate lines"),
   array('b','remove-blank-lines',"remove blank lines"),
   array('m:','mid:',"returns tail -1 arg1 | head -n arg2"),
-  array('','number',"adds a incrementing line number to start of each line"),
-  array('','find-large-files',"finds larges files in arg1"),
-  array('','empty',"empties file arg1"),
-  array('','launch-url',"launch url arg1"),
-  array('','launch-vibk-edit',"launch vibk edit of file arg1"),
-  array('','launch-code-edit',"launch code edit of file arg1"),
+  array('n','number',"adds a incrementing line number to start of each line"),
+  array('l','find-large-files',"finds larges files in arg1"),
+  array('y','empty',"empties file arg1"),
+  array('w','launch-url',"launch url arg1"),
+  array('z','launch-vibk-edit',"launch vibk edit of file arg1"),
+  array('x','launch-code-edit',"launch code edit of file arg1"),
+  array('s','shrink',"try to compress file arg1 more"),
  // array('','tree',"show dir as a tree"),
-  array('','ls',"a colorfull and more info version of ls"),
+  array('i','ls',"a colorfull and more info version of ls"),
   
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
@@ -216,6 +217,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'v':
 	case 'verbosity':
 		break;
+	case 's':
+	case 'shrink':
+		$FileName=$argv[1];
+		dse_file_shrink($FileName);
+		exit(0);
 	default:
 		dep("unknown option passed to dfm: opt='$opt'");
 		break;

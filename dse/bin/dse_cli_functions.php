@@ -6,6 +6,29 @@ error_reporting( (E_ALL & ~E_NOTICE) ^ E_DEPRECATED);
 	
 	
 	
+function dse_file_shrink($FileName){
+	global $vars; dse_trace();
+	$Base=basename($FileName);
+	$Extension=dse_file_extension($FileName);
+	$FileNameWOExtension=str_remove($FileName,".".$Extension);
+	$BaseWOExtension=str_remove($Base,".".$Extension);
+	$Dir=dirname($FileName);
+	$StartSize=dse_file_get_size($FileName);
+	switch($Extension){
+		case 'gz':
+			$r=dse_exec("gunzip $FileName",TRUE);
+			$UncompressedSize=dse_file_get_size($FileNameWOExtension);
+			$r=dse_exec("gzip -9 $FileNameWOExtension",TRUE);
+			$EndSize=dse_file_get_size($FileName);
+			break;
+	}
+	
+	$Percent=number_format(100*($EndSize/$StartSize));
+	print "$Base:  Size $StartSize => $EndSize  $Percent%\n";
+	
+	
+}
+
 function dse_shutdown(){
 	global $vars; dse_trace();
 	//print "dse_shutdown()\n";
@@ -982,6 +1005,14 @@ function files_are_same($f1,$f2){
 function dse_file_get_size($DestinationFile){
 	global $vars;
 	return dse_file_get_stat_field($DestinationFile,"size");
+}
+
+function dse_file_extension($File){
+	global $vars;
+	$File=basename($File);
+	$Extension=strcut($File,".");
+	if(str_contains($Extension,".")) return dse_file_extension($Extension);
+	return $Extension;
 }
 
 function dse_file_get_mtime($DestinationFile){

@@ -249,7 +249,7 @@ function dse_panic_hd($Interactive=FALSE){
 	//delete unneeded packages
 	//gzip as much as possible in /backup and /var/log
 	
-	
+	//a.out *.out
 	//nohup.out
 	//core dumps
 	
