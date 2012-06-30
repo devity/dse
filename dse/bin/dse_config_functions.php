@@ -841,7 +841,6 @@ function dse_package_install($PackageName,$Remove=FALSE){
 
 function dse_package_run_upgrade(){
 	global $vars;
-	$PackageNameUpper=strtoupper($PackageName);
 	print pad("Updating Packages: ...   ","90%",colorize("-","blue"))."\n";
 	
 	//$Installer=dse_get_installer_name();
@@ -902,16 +901,12 @@ function dse_package_run_upgrade(){
 	
 	
 	$vars['DSE']['dse_package_install__use_passthru']=TRUE;
-  	print "Package $PackageName ";
-	if(!$PackageName){
-    	print getColoredString(" ERROR: PackageName missing. \n","red","black");
-		return -1;
-	}
+  	
 	if($Installer=='yum'){
 		$Command="sudo yum upgrade 2>&1";
 		print " Running: $Command\n";
 		if($vars['DSE']['dse_package_install__use_passthru']){
-			passthru($Command);
+			dse_passthru($Command,TRUE);
 		}else{
 			$r=`$Command`;
 		//	 print "cmd: $Command   r=".$r."\n";
@@ -930,7 +925,7 @@ function dse_package_run_upgrade(){
 		$Command="sudo $aptget -y upgrade 2>&1";
 		print " Running: $Command\n";
 		if($vars['DSE']['dse_package_install__use_passthru']){
-			passthru($Command);
+			dse_passthru($Command,TRUE);
 			//dse_popen($Command);
 		}else{
 			//$r=`$Command`;
@@ -955,7 +950,7 @@ function dse_package_run_upgrade(){
 		$Command="dpkg upgrade 2>&1";
 		print " Running: $Command\n";
 		if($vars['DSE']['dse_package_install__use_passthru']){
-			passthru($Command);
+			dse_passthru($Command,TRUE);
 		}else{
 			$r=`$Command`;
 			if(!str_contains($r,"s not installed") ){
