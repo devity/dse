@@ -4,6 +4,7 @@ error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
+include_once ("/dse/include/system_stat_functions.php");
 $vars['Verbosity']=1;
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
@@ -26,8 +27,8 @@ $parameters_details = array(
   array('h','help',"this message"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('a','all',"print all available system stats"),
-  array('p','prompt',"print brief info for use in shell prompt w: export PS1=\"[\$(/dse/bin/dss --prompt)]  \w:\$ \"
-  "),
+  array('p','prompt',"print brief info for use in shell prompt w: export PS1=\"[\$(/dse/bin/dss --prompt)]  \w:\$ \""),
+  array('d','df',"colorized version of df"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -67,7 +68,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 //		lshw -short -C disk
 		
 		exit(0);
-	
+		
+	case 'd':
+  	case 'df':
+		dse_print_df();
+		exit(0);
 }
 
 

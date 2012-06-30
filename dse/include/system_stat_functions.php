@@ -5,6 +5,68 @@ function dse_sysstats_sdvcqwev(){
 	return array($mysql_processes_array,$mysql_processes_raw,$mysql_processes_line_array,$mysql_processes);
 }	
 	
+
+function dse_print_df(){
+	global $vars,$CFG_array;
+	$NameWidth=30; $FreeWidth=16; $TotalWidth=16; $FreeWidth=16;
+	$Seperator=colorize(" | ","blue","black");
+	
+	print bar("Disk Usage: ","-","yellow","black","blue","black");
+	print color_pad("Mount","yellow","black",$NameWidth,"right");
+	print $Seperator;
+	print color_pad("Percent Free","yellow","black",$FreeWidth,"right");
+	print $Seperator;
+	print color_pad("Total","yellow","black",$TotalWidth,"right	");
+	print $Seperator;
+	print color_pad("Free","yellow","black",$FreeWidth,"right");
+	print $Seperator;
+	print color_pad("File System","yellow","black",45,"left");
+	print "\n";
+	print bar("","-","cyan","black","blue","black");
+	
+	list($disks_array,$disks_detailed_array)=dse_sysstats_disks();
+	foreach ($disks_detailed_array as $DiskName => $DiskInfoArray){
+		print color_pad($DiskName,"cyan","black",$NameWidth,"right");
+		print $Seperator;
+		if($DiskInfoArray['PercentFree']<10){
+			if($DiskInfoArray['Total']==0){
+				print color_pad("remote","blue","black",$FreeWidth,"right");
+			}else{
+				print color_pad($DiskInfoArray['PercentFree']." % free","red","black",$FreeWidth,"right");
+			}
+		}else{
+			print color_pad($DiskInfoArray['PercentFree']." % free","green","black",$FreeWidth,"right");
+		}
+		print $Seperator;
+		
+		$f=$DiskInfoArray['Total'];
+		if($f!="0" && $f=="remote"){
+			$f_str=$f;
+			print color_pad($f_str,"blue","black",$TotalWidth,"right	");
+			print $Seperator;
+			print color_pad($f_str,"blue","black",$FreeWidth,"right");
+		}else{
+			$f_str=dse_file_size_to_readable($f);
+			print color_pad($f_str,"cyan","black",$TotalWidth,"right");
+			
+			print $Seperator;
+			$f_str=dse_file_size_to_readable($DiskInfoArray['Free']);
+			if($f<1000000){
+				if($DiskInfoArray['Total']==0){
+					print color_pad($f_str,"green","black",$FreeWidth,"right");
+				}else{
+					print color_pad($f_str,"red","black",$FreeWidth,"right");
+				}
+			}else{
+				print color_pad($f_str,"green","black",$FreeWidth,"right");
+			}
+		}
+		print $Seperator;
+		print color_pad($DiskInfoArray['FileSystem'],"cyan","black",45,"left");
+		print "\n";
+	}
+	print bar("","-","cyan","black","blue","black");
+}
 	
 function dse_sysstats_power(){
 	global $vars;
@@ -516,6 +578,36 @@ function dse_get_proc_io_as_array($PID){
 	}
 	return $tbr;
 }
+
+	
+function dse_sysstats_disks(){
+	global $vars;
+	$disks_array=array();
+	$disks_detailed_array=array();
+	$DiskUse="";
+	$df=`df -k | grep -v Mounted`;
+	foreach (split("\n",$df) as $line){
+		if(trim($line)){
+			$line=str_replace("map ","map->",$line);
+			$line=preg_replace("/[ ]+/"," ",$line);
+			$fields=split(" ",$line);	
+			if($fields[5]){
+				//print_r($fields);
+				if($fields[1]==1048576000){
+					$Total="remote";
+				}else{
+					$Total=$fields[1]*1024;
+				}
+				$fields[4]=100-str_replace("%","",$fields[4]);	
+				$disks_array[$fields[5]]=$fields[4];	
+				$FileSystem=trim($fields[0]);
+				$disks_detailed_array[$fields[5]]=array("Name"=>$fields[5],"PercentFree"=>$fields[4],"FileSystem"=>$FileSystem,"Total"=>$Total,
+					"Free"=>$fields[3]*1024,"Used"=>$fields[2]*1024);
+			}
+		}
+	}
+	return array($disks_array,$disks_detailed_array);
+}	
 
 
 

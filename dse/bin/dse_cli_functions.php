@@ -1361,15 +1361,15 @@ function dse_file_get_size_readable($file){
 function dse_file_size_to_readable($size){
 	global $vars;
 	if($size<1024){
-		return number_format($size,0)."B";
+		return number_format($size,0)." B";
 	}elseif($size<1024*1024){
-		return number_format($size/1024,0)."kB";
+		return number_format($size/1024,0)." kB";
 	}elseif($size<1024*1024*1024){
-		return number_format($size/(1024*1024),1)."MB";
+		return number_format($size/(1024*1024),1)." MB";
 	}elseif($size<1024*1024*1024*1024){
-		return number_format($size/(1024*1024*1024),2)."GB";
+		return number_format($size/(1024*1024*1024),2)." GB";
 	}else{
-		return number_format($size,0)."B";
+		return number_format($size,0)." B";
 	}
 }
 
@@ -1520,18 +1520,18 @@ function strcut($haystack,$pre,$post=""){
 function bar($String,$Type,$fg,$bg,$bfg,$bbg){
 	global $vars;
 	
-	$HeaderColorCodeCount=substr_count ($String , "[")+1;
+	$HeaderColorCodeCount=substr_count ($String , "[");
 	$HeaderText=$String;
 	if(strlen($HeaderText)*2<cbp_get_screen_width()*(2/3)){
 	//	$HeaderText.="  ".$Type.$Type.$Type."  ".$String;
 	
-		$BarWidth=cbp_get_screen_width()-strlen($HeaderText)*2-($HeaderColorCodeCount*5)*2;
+		$BarWidth=cbp_get_screen_width()-strlen($HeaderText)*2-($HeaderColorCodeCount*5)*2-7;
 		//print "HeaderColorCodeCount=$HeaderColorCodeCount BarWidth=$BarWidth\n";
 		print colorize($HeaderText."  ",$fg,$bg);
 		print colorize(pad("",$BarWidth,$Type),$bfg,$bbg);
 		print colorize("  ".$HeaderText,$fg,$bg);
 	}else{
-		$BarWidth=cbp_get_screen_width()-strlen($HeaderText)-($HeaderColorCodeCount*5);
+		$BarWidth=cbp_get_screen_width()-strlen($HeaderText)-($HeaderColorCodeCount*5)-7;
 		//print "HeaderColorCodeCount=$HeaderColorCodeCount BarWidth=$BarWidth\n";
 		print colorize($HeaderText."  ",$fg,$bg);
 		print colorize(pad("",$BarWidth,$Type),$bfg,$bbg);
@@ -1548,15 +1548,35 @@ function pad($String,$Length,$PadChar=" ",$Justification="left"){
 		$Length=str_remove($Length,"%");
 		$Length=intval($ScreenWidth*($Length/100));
 	}
-	$CurrentLength=strlen($String);
-	//print "pad($String,$Length,$PadChar) ScreenWidth=$ScreenWidth CurrentLength=$CurrentLength\n";
+	
+	
+	$tbr="";
+	$tbr_len=0;
+	while($tbr_len<$Length && strlen($String)>0){
+		$l=substr($String,0,1);
+		$String=substr($String,1);
+		if($l=='\033'){
+			$tbr.=$l;
+			while($l!='m' && strlen($String)>0){
+				$l=substr($String,0,1);
+				$String=substr($String,1);
+				$tbr.=$l;
+			}
+		}else{
+			$tbr_len++;
+			$tbr.=$l;
+		}
+	}
+	$String=$tbr;
+	
+	$CurrentLength=$tbr_len;
+	$sl=strlen($String);
+	//print "\n pad($String,$Length,$PadChar)  sl=$sl CurrentLength=$CurrentLength\n";
+	
+//	print "pad($String,$Length,$PadChar) ScreenWidth=$ScreenWidth CurrentLength=$CurrentLength\n";
 	if($CurrentLength>=$Length) return substr($String,0,$Length);
 	for($i=$CurrentLength;$i<$Length;$i++){
 		switch($Justification){
-			case 'right':
-				$Added++;
-				$String=$PadChar.$String;
-				break;
 			case 'left':
 				$Added++;
 				$String=$String.$PadChar;
@@ -1572,9 +1592,15 @@ function pad($String,$Length,$PadChar=" ",$Justification="left"){
 					$String.=$PadChar;
 				}
 				break;
+			case '':
+			case 'right':
+			default:
+				$Added++;
+				$String=$PadChar.$String;
+				break;
 		}
 	}
-//	print "Added=$Added \n";
+	//print "Added=$Added \n";
 	return $String;
 }
 	
@@ -3216,6 +3242,11 @@ function colorize_words($L) {
 	foreach($vars['DSE']['CyanWords'] as $CyanWord) $L=str_ireplace($CyanWord,colorize($CyanWord,"cyan"),$L);
 	return $L;			
 }
+function color_pad($string, $forground_color, $background_color, $PadSize, $Align="left") {
+	global $vars; dse_trace();
+	return getColoredString(pad($string,$PadSize," ",$Align), $forground_color, $background_color);
+}
+
 function colorize($string, $forground_color = null, $background_color = null, $ResetColorsAfter=TRUE, $type=null) {
 	global $vars; dse_trace();
 	return getColoredString($string, $forground_color, $background_color, $ResetColorsAfter, $type);

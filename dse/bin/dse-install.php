@@ -236,6 +236,7 @@ $OSXPackageNamesArray[]="lynx";
 $NotOSXPackageNamesArray[]="lynx-cur";
 
 $PackageNamesArray[]="rsync";
+$PackageNamesArray[]="bnz";
 
 $PackageNamesArray[]="install";
 $PackageNamesArray[]="apt-get";
@@ -288,6 +289,7 @@ $NotOSXPackageNamesArray[]="dselect";
 $NotOSXPackageNamesArray[]="sysv-rc-conf";
 
 $NotOSXPackageNamesArray[]="chkconfig";
+
 
 $PackageNamesArray[]="etckeeper";
 

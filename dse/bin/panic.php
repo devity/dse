@@ -4,6 +4,7 @@ error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
+include_once ("/dse/include/system_stat_functions.php");
 $vars['Verbosity']=1;
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
@@ -224,11 +225,14 @@ function dse_panic($Interactive=FALSE){
 }
 
 
+
 function dse_panic_hd($Interactive=FALSE){
 	global $vars,$CFG_array;
 	print getColoredString(pad(" Section:  Hard Drive / Disk Space ",cbp_get_screen_width(),"-","center"),"green");
+
 	print getColoredString("Starting Disk Stats:\n","cyan");
-	print `df -h`;
+	dse_print_df();
+	print "\n";
 	
 	//delete $CFG_array[RemoveFiles[]]
 	if(is_array($CFG_array['RemovableFiles'])){
@@ -256,7 +260,8 @@ function dse_panic_hd($Interactive=FALSE){
 	//look for large uncompressed info
 	//find redundant files
 	print getColoredString("Final Disk Stats:\n","cyan");
-	print `df -h`;
+	dse_print_df();
+	print "\n";
 	
 	
 	
