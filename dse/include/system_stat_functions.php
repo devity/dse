@@ -6,6 +6,167 @@ function dse_sysstats_sdvcqwev(){
 }	
 	
 
+
+function dse_color_ls($FileArg){
+	global $vars,$CFG_array;
+	$W=cbp_get_screen_width()-1;
+	
+	if($W>100){
+		$ShowFullPermissions=TRUE;
+	}
+	
+	$NameWidth=30;
+	if($W>100){
+		$NameWidth=30;
+		$ShowPath=TRUE;
+	}
+	
+	$Wn=15;
+	$Wl=$W-3*$Wn-4*strlen($Seperator);
+	$Seperator=colorize($Seperator,"blue","black");
+	
+	
+	$TypeWidth=6;
+	$SizeWidth=8;
+	$BlockSizeWidth=15;
+	$OwnerWidth=16;
+	if($ShowFullPermissions){
+		$PermissionsWidth=16;
+	}else{
+		$PermissionsWidth=5;
+	}
+	$TimesWidth=10;
+	$NeededWidth=$TypeWidth+$SizeWidth+$BlockSizeWidth+$OwnerWidth+$PermissionsWidth+$TimesWidth*3+(3*8);
+	if($NeededWidth+$NameWidth<$W){
+		$NameWidth=$W-($NeededWidth+2);
+	}
+	dpv(4,"w=$W nw=$NeededWidth NameWidth=$NameWidth");
+	$Seperator=colorize(" | ","blue","black");
+	
+	
+	$Dir=dirname(($FileArg."/asdf"));
+	$t=time();
+	$vars['s2t_abvr']=TRUE;
+	
+	
+		
+	
+	print bar("ls of $FileArg ","-","yellow","black","blue","black");
+	print color_pad("File Name","yellow","black",$NameWidth,"right");
+	print $Seperator;
+	print color_pad("Type","yellow","black",$TypeWidth,"right");
+	print $Seperator;
+	print color_pad("Size","yellow","black",$SizeWidth,"right");
+	print $Seperator;
+	print color_pad("Block Size","yellow","black",$BlockSizeWidth,"right");
+	print $Seperator;
+	print color_pad("Owner","yellow","black",$OwnerWidth,"center");
+	print $Seperator;
+	print color_pad("Permissions","yellow","black",$PermissionsWidth,"right");
+	print $Seperator;
+	print color_pad("Modified","yellow","black",$TimesWidth,"right");
+	print $Seperator;
+	print color_pad("Accessed","yellow","black",$TimesWidth,"right");
+	print $Seperator;
+	print color_pad("Created","yellow","black",$TimesWidth,"right");
+	print "\n";
+	print bar("","-","cyan","black","blue","black");
+	$ls_Array=dse_ls($FileArg);
+	foreach ($ls_Array as $DiskName => $lsEntry){
+		list($Type,$FileName)=$lsEntry;
+		$FullFileName=$Dir."/".$FileName;
+		if($FileName=="."){
+			$FullFileName=substr($FullFileName,0,strlen($FullFileName)-2);
+		}
+		if($FileName==".."){
+			$FullFileName=substr($FullFileName,0,strlen($FullFileName)-2);
+		}
+		$sa=dse_file_get_stat_array($FullFileName);
+		//print_r($sa);
+		$uid=$sa['uid'];
+		$gid=$sa['gid'];
+		$Size=$sa['size'];
+		$aTime=$sa['atime'];
+		$mTime=$sa['mtime'];
+		$cTime=$sa['ctime'];
+		$BlockSize=$sa['blksize']*$sa['blocks'];
+		$Owner_str=dse_gid_name($gid).":".dse_uid_name($uid);
+		dpv(5,"getting sizes");
+		if($Type=="DIR"){
+			if($vars['dse_dfm_do_dir_sizes']){
+				$Size_str=trim(dse_exec("/dse/bin/dsizeof -r \"$FullFileName\"",$vars['Verbosity']>4));
+				$BlockSize_str=trim(dse_exec("/dse/bin/dsizeof -br \"$FullFileName\"",$vars['Verbosity']>4));
+			}else{
+				$Size_str="D";
+				$BlockSize_str="D";
+			}
+		}else{
+			$Size_str=dse_file_size_to_readable($Size);
+			$BlockSize_str="$sa[11]*$sa[12]";//=dse_file_size_to_readable($BlockSize);
+		}
+		$asa=dse_file_get_alt_stat_array($FullFileName);
+		//print_r($asa);
+		if($ShowFullPermissions){
+			$Permissions_str=$asa['perms']['human'] . " " . $asa['perms']['octal2'];
+		}else{
+			$Permissions_str=$asa['perms']['octal2'];
+		}
+		$mTime_str=seconds_to_text($t-$mTime);
+		$aTime_str=seconds_to_text($t-$aTime);
+		$cTime_str=seconds_to_text($t-$cTime);
+	//	print "cTime=$cTime\n";
+		if($ShowPath){
+			$sl=strlen("$Dir/$FileName");
+			$sl3=strlen("/Users/louis/Desktop/Shared/work/dse/dse_git/dse/aliases/empty");
+			$NameOverRun=$sl-$NameWidth;
+			dpv(5,"NameOverRun=$NameOverRun  sl=$sl  sl2=$sl3  =strlen(\"$Dir/$FileName\")-$NameWidth;");
+		
+			if($NameOverRun>=0){
+				$Dir_str=str_tail($Dir,$NameWidth-(strlen($FileName)+1)-3);
+				$FileName_str=colorize("...","white","black").colorize($Dir_str,"red","black")."/".colorize($FileName,"yellow","black");	
+			}else{
+				$FileName_str=colorize($Dir,"red","black")."/".colorize($FileName,"yellow","black");
+				$FileName_str.=colorize(pad("",-1*$NameOverRun,"-"),"blue","black");
+			}
+			
+			
+		}else{
+			$FileName_str=colorize($FileName,"cyan","black");
+			$FileName_str.=colorize(pad(" ",$NameWidth-strlen($FileName),"-"),"blue","black");
+		}
+		if(dse_file_is_link($FullFileName)){
+			$D=dse_file_link_get_destination($FullFileName);
+			$Type="LINK";
+		}
+		print $FileName_str;
+		print $Seperator;
+		if($Type!="DIR" && str_contains($asa['perms']['human'],"x")){
+			print color_pad($Type,"black","green",$TypeWidth,"right");
+		}else{
+			print color_pad($Type,"cyan","black",$TypeWidth,"right");
+		}
+		print $Seperator;
+		print color_pad($Size_str,"green","black",$SizeWidth,"right");
+		print $Seperator;
+		print color_pad($BlockSize_str,"red","black",$BlockSizeWidth,"right");
+		print $Seperator;
+		print color_pad($Owner_str,"magenta","black",$OwnerWidth,"right");
+		print $Seperator;
+		print color_pad($Permissions_str,"yellow","black",$PermissionsWidth,"right");
+		print $Seperator;
+		print color_pad($mTime_str,"green","black",$TimesWidth,"right");
+		print $Seperator;
+		print color_pad($aTime_str,"green","black",$TimesWidth,"right");
+		print $Seperator;
+		print color_pad($cTime_str,"green","black",$TimesWidth,"right");
+		
+				
+		print "\n";
+	}
+	print bar("","-","cyan","black","blue","black");
+}
+	
+
 function dse_print_df(){
 	global $vars,$CFG_array;
 	$W=cbp_get_screen_width();

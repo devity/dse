@@ -612,11 +612,11 @@ function dse_date_format($Time="NOW",$FormatName="FULLREADABLE"){
 function seconds_to_text($Seconds){
 	global $vars;
 	if($Seconds<60*3){
-		if($vars['s2t_abvr'])return "$Seconds secs";
+		if($vars['s2t_abvr'])return "$Seconds sec";
 		return "$Seconds seconds";
 	}elseif($Seconds<60*60*2){
 		$Minutes=intval($Seconds/60);
-		if($vars['s2t_abvr'])return "$Minutes mins";
+		if($vars['s2t_abvr'])return "$Minutes min";
 		return "$Minutes minutes";
 	}elseif($Seconds<60*60*24*2){
 		$Hours=intval($Seconds/(60*60));
@@ -632,7 +632,7 @@ function seconds_to_text($Seconds){
 		return "$Months months";
 	}else{
 		$Years=intval($Seconds/(60*60*24*30*12));
-		if($vars['s2t_abvr'])return "$Years yr";
+		if($vars['s2t_abvr'])return "$Years yrs";
 		return "$Years years";
 	}			
 }
@@ -1035,6 +1035,102 @@ function dse_file_get_stat_array($DestinationFile){
 	$sa=stat($DestinationFile);
 	return $sa;
 }
+
+function dse_file_get_alt_stat_array($file) {
+ 
+ clearstatcache();
+ $ss=@stat($file);
+ if(!$ss) return false; //Couldnt stat file
+ 
+ $ts=array(
+  0140000=>'ssocket',
+  0120000=>'llink',
+  0100000=>'-file',
+  0060000=>'bblock',
+  0040000=>'ddir',
+  0020000=>'cchar',
+  0010000=>'pfifo'
+ );
+ 
+ $p=$ss['mode'];
+ $t=decoct($ss['mode'] & 0170000); // File Encoding Bit
+ 
+ $str =(array_key_exists(octdec($t),$ts))?$ts[octdec($t)]{0}:'u';
+ $str.=(($p&0x0100)?'r':'-').(($p&0x0080)?'w':'-');
+ $str.=(($p&0x0040)?(($p&0x0800)?'s':'x'):(($p&0x0800)?'S':'-'));
+ $str.=(($p&0x0020)?'r':'-').(($p&0x0010)?'w':'-');
+ $str.=(($p&0x0008)?(($p&0x0400)?'s':'x'):(($p&0x0400)?'S':'-'));
+ $str.=(($p&0x0004)?'r':'-').(($p&0x0002)?'w':'-');
+ $str.=(($p&0x0001)?(($p&0x0200)?'t':'x'):(($p&0x0200)?'T':'-'));
+ 
+ $s=array(
+ 'perms'=>array(
+  'umask'=>sprintf("%04o",@umask()),
+  'human'=>$str,
+  'octal1'=>sprintf("%o", ($ss['mode'] & 000777)),
+  'octal2'=>sprintf("0%o", 0777 & $p),
+  'decimal'=>sprintf("%04o", $p),
+  'fileperms'=>@fileperms($file),
+  'mode1'=>$p,
+  'mode2'=>$ss['mode']),
+ 
+ 'owner'=>array(
+  'fileowner'=>$ss['uid'],
+  'filegroup'=>$ss['gid'],
+  'owner'=>
+  (function_exists('posix_getpwuid'))?
+  @posix_getpwuid($ss['uid']):'',
+  'group'=>
+  (function_exists('posix_getgrgid'))?
+  @posix_getgrgid($ss['gid']):''
+  ),
+ 
+ 'file'=>array(
+  'filename'=>$file,
+  'realpath'=>(@realpath($file) != $file) ? @realpath($file) : '',
+  'dirname'=>@dirname($file),
+  'basename'=>@basename($file)
+  ),
+
+ 'filetype'=>array(
+  'type'=>substr($ts[octdec($t)],1),
+  'type_octal'=>sprintf("%07o", octdec($t)),
+  'is_file'=>@is_file($file),
+  'is_dir'=>@is_dir($file),
+  'is_link'=>@is_link($file),
+  'is_readable'=> @is_readable($file),
+  'is_writable'=> @is_writable($file)
+  ),
+  
+ 'device'=>array(
+  'device'=>$ss['dev'], //Device
+  'device_number'=>$ss['rdev'], //Device number, if device.
+  'inode'=>$ss['ino'], //File serial number
+  'link_count'=>$ss['nlink'], //link count
+  'link_to'=>($s['type']=='link') ? @readlink($file) : ''
+  ),
+ 
+ 'size'=>array(
+  'size'=>$ss['size'], //Size of file, in bytes.
+  'blocks'=>$ss['blocks'], //Number 512-byte blocks allocated
+  'block_size'=> $ss['blksize'] //Optimal block size for I/O.
+  ), 
+ 
+ 'time'=>array(
+  'mtime'=>$ss['mtime'], //Time of last modification
+  'atime'=>$ss['atime'], //Time of last access.
+  'ctime'=>$ss['ctime'], //Time of last status change
+  'accessed'=>@date('Y M D H:i:s',$ss['atime']),
+  'modified'=>@date('Y M D H:i:s',$ss['mtime']),
+  'created'=>@date('Y M D H:i:s',$ss['ctime'])
+  ),
+ );
+ 
+ clearstatcache();
+ return $s;
+}
+
+
 function dse_file_get_stat_field($DestinationFile,$field=""){
 	global $vars;
 	$stat_field_names=array('dev'=>0,'ino'=>1,'mode'=>2,'nlink'=>3,'uid'=>4,'gid'=>5,'rdev'=>6,'size'=>7,'atime'=>8,'mtime'=>9,'ctime'=>10,'blksize'=>11,'blocks'=>12);
@@ -1083,6 +1179,24 @@ function dse_file_get_owner($DestinationFile,$ReturnGroupAlso=TRUE){
 	return $Owner;
 }
 	
+function dse_gid_name($gid){ 
+	global $vars;
+	if($gid){
+		$a=dse_posix_getgrgid($gid);
+		if($a) return $a['name'];
+	}
+	return $gid;
+}
+function dse_uid_name($uid){ 
+	global $vars;
+	if($uid){
+		$a=dse_posix_getpwuid($uid);
+		if($a) return $a['name'];
+	}
+	return $uid;
+}
+
+
 function dse_posix_getgrgid($gid){ 
 	global $vars;
   	if (function_exists('posix_getgrgid')) { 
@@ -1255,7 +1369,7 @@ function dse_file_link($LinkFile,$DestinationFile){
 
 function dse_file_is_link($File){
 	global $vars;
-	$DestinationFileCurrent=`ls -la $File`;
+	$DestinationFileCurrent=dse_exec("ls -la \"$File\"");
 	if(str_contains($DestinationFileCurrent,"->")){
 		return TRUE;
 	}
@@ -1268,7 +1382,7 @@ function dse_file_link_get_destination($LinkFile){
 	if(!file_exists($LinkFile)) {
 		//return -1;	
 	}
-	$DestinationFile=(`ls -la $LinkFile`);
+	$DestinationFile=dse_exec("ls -la $LinkFile");
 	$DestinationFile=strcut($DestinationFile,"-> ","\n");	
 	if($DestinationFile!="") {
 		return $DestinationFile;	
@@ -1485,7 +1599,24 @@ function str_remove($String,$toRemove){
 	return str_replace($toRemove,"",$String);
 }
 
+function str_head($String,$N){
+	global $vars;
+	return substr($String,0,$N);
+}
+
+function str_tail($String,$N){
+	dpv(6,"str_tail($String,$N)");
+	global $vars;
+	$sl=strlen($String);
+	$pos=$sl-$N;
+	$tbr=substr($String,$pos);
+	
+	dpv(6,"sl=$sl pos=$pos tbr=$tbr");
+	return $tbr;
+}
+
 function strcut($haystack,$pre,$post=""){
+	global $vars;
 	global $strcut_post_haystack;
 	$strcut_post_haystack="";
 	if($pre=="" || !(stristr($haystack,$pre)===FALSE)){
@@ -1549,7 +1680,7 @@ function bar($String,$Type,$fg,$bg,$bfg="",$bbg=""){
 
 function pad($String,$Length,$PadChar=" ",$Justification="left"){
 	global $vars;
-	
+	if($vars['Verbosity']>5)$inString=$String;
 	if(str_contains($Length,"%")){
 		$ScreenWidth=cbp_get_screen_width();
 		$Length=str_remove($Length,"%");
@@ -1608,6 +1739,7 @@ function pad($String,$Length,$PadChar=" ",$Justification="left"){
 		}
 	}
 	//print "Added=$Added \n";
+	dpv(6," pad($inString,$Length,$PadChar,$Justification) = [$String] ");
 	return $String;
 }
 	

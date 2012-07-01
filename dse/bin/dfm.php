@@ -39,6 +39,7 @@ $parameters_details = array(
  // array('','tree',"show dir as a tree"),
   array('i','ls',"a colorfull and more info version of ls"),
   array('d','df',"colorized version of df"),
+  array('a','dir-sizes',"get dir sizes in ls"),
   
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
@@ -61,6 +62,15 @@ if($vars['Verbosity']>3){
 
 dse_cli_script_header();
 
+
+
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+	case 'a':
+	case 'dir-sizes':
+		$vars['dse_dfm_do_dir_sizes']=TRUE;
+		break;
+}
+		
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'h':
   	case 'help':
@@ -227,6 +237,15 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'd':
   	case 'df':
 		dse_print_df();
+		exit(0);
+	case 'l':
+  	case 'ls':
+		if(sizeof($argv)>1){
+			dse_color_ls($argv[1]);
+		}else{
+			$CWD=getcwd();
+			dse_color_ls($CWD);
+		}
 		exit(0);
 	default:
 		dep("unknown option passed to dfm: opt='$opt'");

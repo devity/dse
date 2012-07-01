@@ -12,9 +12,11 @@ $Verbosity=0;
 
 $parameters = array(
   'r' => 'human',
+  'b' => 'block-size',
 );
 $flag_help_lines = array(
   'r' => "\thuman - human readable",
+  'b' => "\block-size - return total space used on disks by used blocks",
 );
 
 
@@ -60,6 +62,10 @@ foreach (array_keys($options) as $opt) switch ($opt) {
   	case 'human':
   		$OutputHumanReadable=TRUE;
 		$Options.="h";
+		break;
+	case 'b':
+  	case 'block-size':
+  		$ReturnBlockSize=TRUE;
 		break;
 }
 
