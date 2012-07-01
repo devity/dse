@@ -442,6 +442,30 @@ if(str_contains($vars['DSE']['SERVICES'],"ssh")){
 	$PackageNamesArray[]="openssh-server";
 }
 
+
+if(str_contains($vars['DSE']['SERVICES'],"mysql")){
+	$PackageNamesArray[]="mysql-server";
+	$PackageNamesArray[]="php5-mysql";
+	$PackageNamesArray[]="mysql-admin";
+	$PackageNamesArray[]="php5-mcrypt";
+	$PackageNamesArray[]="phpmyadmin";
+	$PackageNamesArray[]="mysql-admin";
+	$PackageNamesArray[]="libdbd-mysql";
+	$PackageNamesArray[]="libdbd-mysql-perl";
+	$PackageNamesArray[]="libzip1";
+	$PackageNamesArray[]="python-paramiko";
+	$PackageNamesArray[]="python-pysqlite2";
+	$PackageNamesArray[]="libctemplate0";
+	$PackageNamesArray[]="libgtkmm-2.4-1c2a";
+	$PackageNamesArray[]="mysql-workbench";
+	$PackageNamesArray[]="mysql-workbench-gpl"; //http://www.mysql.com/downloads/workbench/#downloads
+	$PackageNamesArray[]="mysql-gui-tools-common";
+	$PackageNamesArray[]="mysql-query-browser";
+		
+}
+$PackageNamesArray[]="mysql-client";
+$PackageNamesArray[]="libmysqlclient16";
+$PackageNamesArray[]="libmysqlclient16-dev";
 		
 		
 
