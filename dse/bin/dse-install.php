@@ -242,8 +242,6 @@ $PackageNamesArray[]="install";
 $PackageNamesArray[]="apt-get";
 
 
-$PackageNamesArray[]="bc";
-
 $NotOSXPackageNamesArray[]="memstat";
 $NotOSXPackageNamesArray[]="iftop";
 $NotOSXPackageNamesArray[]="htop";
@@ -265,6 +263,7 @@ $NotOSXPackageNamesArray[]="loop-aes-utils";
 
 
 
+$PackageNamesArray[]="openssh-client";
 if(dse_is_centos()){
 	$PackageNamesArray[]="jwhois";
 }elseif(dse_is_osx()){
@@ -439,6 +438,11 @@ if(str_contains($vars['DSE']['SERVICES'],"ntop")){
 	
 }
 
+if(str_contains($vars['DSE']['SERVICES'],"ssh")){
+	$PackageNamesArray[]="openssh-server";
+}
+
+		
 		
 
 $ComponentName="flyback";

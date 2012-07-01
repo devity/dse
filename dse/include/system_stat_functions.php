@@ -21,27 +21,24 @@ function dse_color_ls($FileArg){
 		$ShowPath=TRUE;
 	}
 	
-	$Wn=15;
-	$Wl=$W-3*$Wn-4*strlen($Seperator);
-	$Seperator=colorize($Seperator,"blue","black");
 	
 	
-	$TypeWidth=6;
+	$TypeWidth=4;
 	$SizeWidth=8;
-	$BlockSizeWidth=15;
+	$BlockSizeWidth=8;
 	$OwnerWidth=16;
 	if($ShowFullPermissions){
 		$PermissionsWidth=16;
 	}else{
 		$PermissionsWidth=5;
 	}
-	$TimesWidth=10;
+	$TimesWidth=8;
 	$NeededWidth=$TypeWidth+$SizeWidth+$BlockSizeWidth+$OwnerWidth+$PermissionsWidth+$TimesWidth*3+(3*8);
 	if($NeededWidth+$NameWidth<$W){
 		$NameWidth=$W-($NeededWidth+2);
 	}
 	dpv(4,"w=$W nw=$NeededWidth NameWidth=$NameWidth");
-	$Seperator=colorize(" | ","blue","black");
+	$Seperator=colorize(" | ","blue","black",TRUE,1);
 	
 	
 	$Dir=dirname(($FileArg."/asdf"));
@@ -94,20 +91,26 @@ function dse_color_ls($FileArg){
 		dpv(5,"getting sizes");
 		if($Type=="DIR"){
 			if($vars['dse_dfm_do_dir_sizes']){
-				$Size_str=trim(dse_exec("/dse/bin/dsizeof -r \"$FullFileName\"",$vars['Verbosity']>4));
-				$BlockSize_str=trim(dse_exec("/dse/bin/dsizeof -br \"$FullFileName\"",$vars['Verbosity']>4));
+				if($FileName=="." || $FileName==".."){
+					$Size_str="-";
+					$BlockSize_str="-";
+				}else{
+					$Size_str=trim(dse_exec("/dse/bin/dsizeof -r \"$FullFileName\"",$vars['Verbosity']>4));
+					$BlockSize_str=trim(dse_exec("/dse/bin/dsizeof -br \"$FullFileName\"",$vars['Verbosity']>4));
+				}
 			}else{
 				$Size_str="-";
 				$BlockSize_str="-";
 			}
 		}else{
 			$Size_str=dse_file_size_to_readable($Size);
-			$BlockSize_str="$sa[11]*$sa[12]";//=dse_file_size_to_readable($BlockSize);
+			$BlockSize_str="$sa[11]*$sa[12]";
+			$BlockSize_str=dse_file_size_to_readable($BlockSize);
 		}
 		$asa=dse_file_get_alt_stat_array($FullFileName);
 		//print_r($asa);
 		if($ShowFullPermissions){
-			$Permissions_str=$asa['perms']['human'] . " " . $asa['perms']['octal2'];
+			$Permissions_str=$asa['perms']['human'] . "  " . $asa['perms']['octal2'];
 		}else{
 			$Permissions_str=$asa['perms']['octal2'];
 		}
@@ -154,7 +157,7 @@ function dse_color_ls($FileArg){
 		print $Seperator;
 		print color_pad($Permissions_str,"yellow","black",$PermissionsWidth,"right");
 		print $Seperator;
-		print color_pad($mTime_str,"green","black",$TimesWidth,"right");
+		print color_pad($mTime_str,"red","black",$TimesWidth,"right");
 		print $Seperator;
 		print color_pad($aTime_str,"green","black",$TimesWidth,"right");
 		print $Seperator;

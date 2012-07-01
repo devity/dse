@@ -238,7 +238,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'df':
 		dse_print_df();
 		exit(0);
-	case 'l':
+	case 'i':
   	case 'ls':
 		if(sizeof($argv)>1){
 			dse_color_ls($argv[1]);
@@ -246,6 +246,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			$CWD=getcwd();
 			dse_color_ls($CWD);
 		}
+		exit(0);
+	case 'a':
+	case 'dir-sizes':
 		exit(0);
 	default:
 		dep("unknown option passed to dfm: opt='$opt'");

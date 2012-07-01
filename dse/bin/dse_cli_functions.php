@@ -3399,13 +3399,14 @@ function color_pad($string, $forground_color, $background_color, $PadSize, $Alig
 
 function colorize($string, $forground_color = null, $background_color = null, $ResetColorsAfter=TRUE, $type=null) {
 	global $vars; dse_trace();
+	//print " colorize(string, $forground_color , $background_color , $ResetColorsAfter, $type) \n";
 	return getColoredString($string, $forground_color, $background_color, $ResetColorsAfter, $type);
 }
 
 function getColoredString($string, $forground_color = null, $background_color = null, $ResetColorsAfter=TRUE, $type=null) {
 	global $vars;
-	
-	//print "\n\ngetColoredString($string, $forground_color = null, $background_color = null, $ResetColorsAfter=TRUE, $type=null) \n\n";
+	//print "getColoredString(string, $forground_color, $background_color, $ResetColorsAfter, $type) {\n";
+	////print "\n\ngetColoredString($string, $forground_color = null, $background_color = null, $ResetColorsAfter=TRUE, $type=null) \n\n";
 	/*if($forground_color!=null && $forground_color!=""){
 		$vars[dst_lst__foreground_color]=$forground_color;
 	}else{
