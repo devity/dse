@@ -97,8 +97,8 @@ function dse_color_ls($FileArg){
 				$Size_str=trim(dse_exec("/dse/bin/dsizeof -r \"$FullFileName\"",$vars['Verbosity']>4));
 				$BlockSize_str=trim(dse_exec("/dse/bin/dsizeof -br \"$FullFileName\"",$vars['Verbosity']>4));
 			}else{
-				$Size_str="D";
-				$BlockSize_str="D";
+				$Size_str="-";
+				$BlockSize_str="-";
 			}
 		}else{
 			$Size_str=dse_file_size_to_readable($Size);
