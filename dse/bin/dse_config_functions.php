@@ -137,9 +137,12 @@ function dse_server_configure_file_load(){
 			}else{	
 				$ConfigFileContents_new.=substr($Line,0,strpos($Line,"#")-1)."\n";
 			}
+		}else{
+			$ConfigFileContents_new.=$Line."\n";
 		}
 	}
 	$ConfigFileContents=$ConfigFileContents_new;
+	dpv(0,"ConfigFileContents=$ConfigFileContents");
 	
 	$IncludeCommand="INCLUDE ";
 	$Loops=0;
