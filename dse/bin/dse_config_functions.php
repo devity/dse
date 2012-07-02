@@ -684,7 +684,15 @@ print `tar xvf /tmp/bootinfoscript-061.tar`;
 					
 function dse_package_install($PackageName,$Remove=FALSE){
 	global $vars;
+	if(!$PackageName){
+		return;
+	}
 	$PackageNameUpper=strtoupper($PackageName);
+	if(dse_is_package_installed($PackageName)){
+		print pad("Package Present: ".colorize($PackageNameUpper,"cyan")." ...   ","90%",colorize("-","green"))."\n";
+		return;
+	}
+	
 	print pad("Installing Package: ".colorize($PackageNameUpper,"cyan")." ...   ","90%",colorize("-","blue"))."\n";
 	
 	//$Installer=dse_get_installer_name();
