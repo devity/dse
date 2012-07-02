@@ -170,7 +170,7 @@ dse_configure_file_install_from_template($DestinationFile,$TemplateFile,"664","r
 
 }
 
-print "hcecking for apache2 conf in etc/dse\n";
+print colorize("hcecking for apache2 conf in etc/dse\n","yellow","cyan");
 
 if(str_contains($vars['DSE']['SERVICES'],"dwi") && dse_is_package_installed("apache2") ){
 print "2hcecking fin etc/dse\n";

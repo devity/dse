@@ -493,8 +493,10 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			$NotOSXPackageNamesArray[]="python-gnome2";
 			$NotOSXPackageNamesArray[]="python-sqlite";
 			$NotOSXPackageNamesArray[]="python-gconf";
-			$URL="http://flyback.googlecode.com/files/flyback_0.4.0.tar.gz";
-			$r=dse_install_file_from_url($URL);
+			if(!dse_is_package_installed("flyback")){
+				$URL="http://flyback.googlecode.com/files/flyback_0.4.0.tar.gz";
+				$r=dse_install_file_from_url($URL);
+			}
 		}
 	}
 }
