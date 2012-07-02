@@ -439,6 +439,9 @@ if(str_contains($vars['DSE']['SERVICES'],"ntop")){
 	
 }
 
+if(str_contains($vars['DSE']['SERVICES'],"dns")){
+	$PackageNamesArray[]="bind9";
+}
 if(str_contains($vars['DSE']['SERVICES'],"ssh")){
 	$PackageNamesArray[]="openssh-server";
 }
