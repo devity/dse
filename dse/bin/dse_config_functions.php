@@ -241,7 +241,7 @@ function dse_server_configure_file_load(){
 									$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host]=$IP;
 								}
 							}else{
-								$Webroot=$Lpa[3];
+								$Webroot=$Lpa[2];
 							}
 							$vars['DSE']['SERVER_CONF']['Webroots'][$Domain][$Hosts]=$Webroot;
 							print "added ['Webroots'][$Domain][$Hosts]=$Webroot\n";
