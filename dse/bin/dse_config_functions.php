@@ -119,6 +119,7 @@ function dse_server_set_hostname($NewHostName){
 
 function dse_server_configure_file_load(){
 	global $vars,$strcut_post_haystack;
+	dpv(5,"dse_server_configure_file_load");
 	$ConfigDirectory=$vars['DSE']['DSE_CONFIG_DIR'];
 	$ConfigFileContents=file_get_contents($vars['DSE']['SERVER_CONFIG_FILE']);
 	
@@ -191,6 +192,7 @@ function dse_server_configure_file_load(){
 	
 	}
 	
+	dpv(5,"looking for domains");
 	//print "Defines="; print_r($Defines); print "\n";
 	//print "Sets="; print_r($Sets); print "\n";
 	
