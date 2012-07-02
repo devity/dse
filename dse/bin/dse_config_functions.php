@@ -209,11 +209,13 @@ function dse_server_configure_file_load(){
 	while( (!( strstr($ProcessedFileContents,$Command)=== FALSE)) && ($Loops<100)){
 	        $Loops++;
 	        $DomainTag=strcut($ProcessedFileContents,$Command." ","END ".$Command);
+			dpv(5,"1 DomainTag=$DomainTag");
 	        $Pre=strcut($ProcessedFileContents,"",$Command." ");
 	        $Post=strcut($ProcessedFileContents,"END ".$Command);
 	        $ProcessedFileContents=$Pre."".$Post;
 			$Domain=strcut($DomainTag,"","\n");
 			$DomainTag=strcut($DomainTag,"\n");
+			dpv(5,"2 Domain=$Domain DomainTag=$DomainTag");
 			$DomainTags[$Domain]=$DomainTag;
 			$vars['DSE']['SERVER_CONF']['Domains'][]=$Domain;
 			$vars['DSE']['SERVER_CONF']['Webroots'][$Domain]=array();
@@ -1044,10 +1046,12 @@ function dse_configure_create_named_conf(){
 	global $vars;
 	
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
-		print "Domain: $Domain\n";	
-		foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
-			print " Host: $Host.$Domain => $IP\n";
-		}	
+		if($Domain) {
+			print "Domain: $Domain\n";	
+			foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
+				print " Host: $Host.$Domain => $IP\n";
+			}	
+		}
 	}
 	 
 	 

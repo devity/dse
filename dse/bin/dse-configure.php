@@ -447,7 +447,8 @@ if($FullConfig){
 	}
 
 	dse_server_configure_file_load();
-	print "Services to be Setup/Configured: ".$vars['DSE']['SERVICES']."\n";
+	print colorize("Services to be Setup/Configured: ","yellow","black");
+	print colorize($vars['DSE']['SERVICES']."\n","red","cyan");
 	
 	if(str_contains($vars['DSE']['SERVICES'],"dns")) dse_configure_create_named_conf();
 	if(str_contains($vars['DSE']['SERVICES'],"http")) dse_configure_create_httpd_conf();
@@ -474,7 +475,7 @@ if($FullConfig){
 		
 	
 	if(str_contains($vars['DSE']['SERVICES'],"vncserver")){
-		print "Creating vncserver init.d script.\n";
+		print colorize("Creating vncserver init.d script.\n","white","blue");
 		$StartFileName=$vars['DSE']['SYSTEM_SCRIPTS_DIR']."/vncserver_start";
 		$StartFileContents="#!/bin/sh
 export DISPLAY=:2
@@ -482,7 +483,7 @@ export DISPLAY=:2
 vncserver $DISPLAY -geometry 1500x800 -depth 16
 gnome-session --display=$DISPLAY &
 ";
-		dse_put_file_contents($StartFileName,$StartFileContents);
+		dse_file_put_contents($StartFileName,$StartFileContents);
 		$StartFileName=$vars['DSE']['SYSTEM_SCRIPTS_DIR']."/vncserver_stop";
 		$StartFileContents="#!/bin/sh
 export DISPLAY=:2
@@ -508,13 +509,13 @@ vncserver -kill $DISPLAY
 		print `/dse/bin/dsc -oc`;
 	}
 	if(str_contains($vars['DSE']['SERVICES'],"crowbar")){
-		print "Creating crowbar init.d script.\n";
+		print colorize("Creating crowbar init.d script.\n","white","blue");
 		$StartFileName=$vars['DSE']['SYSTEM_SCRIPTS_DIR']."/crowbar_start";
 		$StartFileContents="#!/bin/sh
 export DISPLAY=:1
 xulrunner /root/crowbar/trunk/xulapp/application.ini &
 ";
-		dse_put_file_contents($StartFileName,$StartFileContents);
+		dse_file_put_contents($StartFileName,$StartFileContents);
 		$crowbarUser=$vars['DSE']['CROWBAR_USER'];
 		$INITD_SCRIPT_ARRAY=array();
 		$INITD_SCRIPT_ARRAY['ServiceName']=$vars['DSE']['SERVICES'];
@@ -534,7 +535,7 @@ xulrunner /root/crowbar/trunk/xulapp/application.ini &
 		print `/dse/bin/dsc -oc`;
 	}
 	if(str_contains($vars['DSE']['SERVICES'],"dlb")){
-		print "Creating dlb init.d script.\n";
+		print colorize("Creating dlb init.d script.\n","white","blue");
 		$INITD_SCRIPT_ARRAY=array();
 		$INITD_SCRIPT_ARRAY['ServiceName']=$vars['DSE']['SERVICES'];
 		$INITD_SCRIPT_ARRAY['ActionStart']="sudo /dse/bin/dlb -d start";
@@ -549,7 +550,7 @@ xulrunner /root/crowbar/trunk/xulapp/application.ini &
 		print `/dse/bin/dsc -oc`;
 	}
 	if(str_contains($vars['DSE']['SERVICES'],"dwi")){
-		print "Creating dwi init.d script.\n";
+		print colorize("Creating dwi init.d script.\n","white","blue");
 		$INITD_SCRIPT_ARRAY=array();
 		$INITD_SCRIPT_ARRAY['ServiceName']=$vars['DSE']['SERVICES'];
 		$INITD_SCRIPT_ARRAY['ActionStart']="sudo apachectl -f /etc/dse/apache2.conf";
