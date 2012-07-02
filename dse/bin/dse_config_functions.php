@@ -229,6 +229,7 @@ function dse_server_configure_file_load(){
 	       		$Line=trim($Line);
 	       		if($Line){
 	       			$Lpa=split(" ",$Line);
+					print_r($Lpa);
 					$Protocol=$Lpa[0];
 					switch($Protocol){
 						case "HTTP":
