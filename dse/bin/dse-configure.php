@@ -170,10 +170,13 @@ dse_configure_file_install_from_template($DestinationFile,$TemplateFile,"664","r
 
 }
 
+print "hcecking for apache2 conf in etc/dse\n";
 
 if(str_contains($vars['DSE']['SERVICES'],"dwi") && dse_is_package_installed("apache2") ){
+print "2hcecking fin etc/dse\n";
 	if(!dse_file_exists($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'])){
 		
+print "3hcecking fin etc/dse\n";
  		
 		dse_file_link("/usr/mime.types",dse_fss("mime.types"));
 		print "No ".$vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE']."   using template.\n";
