@@ -127,6 +127,19 @@ function dse_server_configure_file_load(){
 		return -1;
 	}
 	
+	$ConfigFileContents_new="";
+	foreach(split("\n",$ConfigFileContents) as $Line){
+		if(!(strstr($Line,"#")===FALSE)){
+			//print "CCC\n";
+			if(strpos($Line,"#")==0){
+				$Line="";
+			}else{	
+				$ConfigFileContents_new.=substr($Line,0,strpos($Line,"#")-1)."\n";
+			}
+		}
+	}
+	$ConfigFileContents=$ConfigFileContents_new;
+	
 	$IncludeCommand="INCLUDE ";
 	$Loops=0;
 	while( (!( strstr($ConfigFileContents,$IncludeCommand)=== FALSE)) && ($Loops<100)){
@@ -213,12 +226,17 @@ function dse_server_configure_file_load(){
 					switch($Protocol){
 						case "HTTP":
 							$Hosts=$Lpa[1];
-							$IP=$Lpa[2];
-							$Webroot=$Lpa[3];
-							$vars['DSE']['SERVER_CONF']['Webroots'][$Domain][$Hosts]=$Webroot;
-							foreach(split(",",$Hosts) as $Host){
-								$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host]=$IP;
+							if($Lpa[3]){
+								$IP=$Lpa[2];
+								$Webroot=$Lpa[3];
+								foreach(split(",",$Hosts) as $Host){
+									$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host]=$IP;
+								}
+							}else{
+								$Webroot=$Lpa[3];
 							}
+							$vars['DSE']['SERVER_CONF']['Webroots'][$Domain][$Hosts]=$Webroot;
+							
 							break;
 						case "HOST":
 						case "HOSTS":
