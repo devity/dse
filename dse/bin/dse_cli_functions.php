@@ -356,11 +356,12 @@ function dse_detect_os_info(){
 }
 
 
-function dse_fss($FileNameOrPartialString){
+function dse_fss($FileNameOrPartialString, $Dir=""){
 	global $vars;
 	$FileNameOrPartialString=trim($FileNameOrPartialString);
 	$FileNameOrPartialString=dse_exec_esc($FileNameOrPartialString);
-	$Command="/dse/bin/fss -q -f $FileNameOrPartialString";
+	$Dir=dse_exec_esc(trim($Dir));
+	$Command="/dse/bin/fss -q -f $FileNameOrPartialString $Dir";
 	$r=dse_exec($Command);
 	return $r;
 }
@@ -382,13 +383,18 @@ if (!function_exists("readline")) { function readline( $prompt = '' ){
 	
 function dse_replace_in_file($File,$Needle,$Replacement){
 	global $vars;
-	$tmp=`/dse/bin/dtmp`;
-	
+	if(!dse_file_exists($File)) return FALSE;
+	$tmp=dse_exec("/dse/bin/dtmp");
+	$MD5=md5_of_file($File);
 	$Command="/dse/bin/dreplace $File \"$Needle\" \"$Replacement\" > $tmp";
-	`$Command`;	
-	//print $Command."\n";
-	
-	`mv -f $tmp $File 2>&1`;
+	dse_exec($Command);	
+	if(!dse_file_exists($tmp)) return FALSE;
+	$MD52=md5_of_file($tmp);
+	if($MD5!=$MD52){
+		dse_exec("mv -f $tmp $File 2>&1");
+		return TRUE;
+	}
+	return FALSE;
 }
 
 			

@@ -180,7 +180,7 @@ print "3hcecking fin etc/dse\n";
  		
 		dse_file_link("/usr/mime.types",dse_fss("mime.types"));
 		print "No ".$vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE']."   using template.\n";
-		$t=dse_fss("mod_headers.so");
+		$t=dse_fss("mod_headers.so","/usr/lib");
 		print "t=$t =dse_fss(\"mod_headers.so\")\n";
 		$Apache2ModuleDirectory=dirname($t);
 		$Apache2ModuleDirectory=str_remove($Apache2ModuleDirectory,"/mod_headers.so");
