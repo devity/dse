@@ -227,7 +227,7 @@ if(str_contains($vars['DSE']['SERVICES'],"dns")){
 	if(dse_which("named")) $dnsd="named";
 		elseif(dse_which("bind")) $dnsd="bind";
 		elseif(dse_which("bind9")) $dnsd="bind9";
-		else $dnsd="named";
+		else $dnsd="bind9";
 	$vars['DSE']['SERVICE_NICKNAMES']["dns"]=$dnsd;
 	$vars['DSE']['SERVICE_NICKNAMES']["named"]=$dnsd;
 	$vars['DSE']['SERVICE_NICKNAMES']["bind"]=$dnsd;

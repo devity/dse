@@ -870,6 +870,11 @@ function dse_package_install($PackageName,$Remove=FALSE){
 			return -1;
 		}
 	} */
+	if(!dse_is_package_installed($PackageName)){
+		print dep("Package Failed to Install: ".colorize($PackageNameUpper,"cyan"));
+		return;
+	}
+	
 }
 
 function dse_package_run_upgrade(){
@@ -1070,7 +1075,7 @@ function dse_configure_create_named_conf(){
 	 
 	
 	dse_service_stop("named");
-
+print "adding /etc/bind/local/$Domain to named conf\n";
 	$named_conf_local="";
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		$Domain=strtolower($Domain);
