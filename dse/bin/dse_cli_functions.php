@@ -1284,9 +1284,8 @@ function dse_directory_create($Destination,$Mode="",$Owner=""){
 	global $vars;
 	print "DSE dir: $Destination ";
 	if(!file_exists($Destination)) {
-		$command="mkdir $Destination";
-		`$command`;
-		print getColoredString(" creating. ","green","black");
+		$command="mkdir -p $Destination";
+		dse_exec($command,TRUE);
 	}
 	
 	if(!file_exists($Destination)) {
