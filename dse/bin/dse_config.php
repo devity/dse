@@ -224,14 +224,16 @@ if(str_contains($vars['DSE']['SERVICES'],"mysql")){
 	$vars['DSE']['SERVICE_NICKNAMES']["db"]=$mysqld;
 }
 if(str_contains($vars['DSE']['SERVICES'],"dns")){
-	if(dse_which("named")) $dnsd="named";
+	
+	$vars['DSE']['SERVICE_NICKNAMES']["named"]="bind9";
+	/*if(dse_which("named")) $dnsd="named";
 		elseif(dse_which("bind")) $dnsd="bind";
 		elseif(dse_which("bind9")) $dnsd="bind9";
 		else $dnsd="bind9";
 	$vars['DSE']['SERVICE_NICKNAMES']["dns"]=$dnsd;
 	$vars['DSE']['SERVICE_NICKNAMES']["named"]=$dnsd;
 	$vars['DSE']['SERVICE_NICKNAMES']["bind"]=$dnsd;
-	$vars['DSE']['SERVICE_NICKNAMES']["bind9"]=$dnsd;
+	$vars['DSE']['SERVICE_NICKNAMES']["bind9"]=$dnsd;*/
 }
 
 //$vars['DSE']['SERVICE_PORTS'][1]="dns";
