@@ -8,7 +8,7 @@ include_once ("$DSE_ROOT/include/web_config.php");
 include_once ("$DSE_ROOT/include/dwi_functions.php");
 dse_print_page_header();
 
-print "<br><center><b class='f10pt'>Welcome to Devity Server Environment's Web Interface!</b></center><br><br>";
+print "<br><center><b class='f10pt'>DSE Web Interface</b></center><br><br>";
 
 
 print "<br><b class='f10pt'>Sections:</b><br>";

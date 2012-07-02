@@ -163,6 +163,13 @@ dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_WHITELIST_
 $TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "ips_droplist.txt";
 dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'],$TemplateFile,"664","root:root");
 
+$TemplateFile="/usr/share/logwatch/default.conf/logwatch.conf";
+$DestinationFile="/etc/logwatch/conf/logwatch.conf";
+if(dse_file_exists($TemplateFile) && !dse_file_exists($DestinationFile)){
+dse_configure_file_install_from_template($DestinationFile,$TemplateFile,"664","root:root");
+
+}
+
 
 if(str_contains($vars['DSE']['SERVICES'],"dwi") && dse_is_package_installed("apache2") ){
 	if(!dse_file_exists($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'])){

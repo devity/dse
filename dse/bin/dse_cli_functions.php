@@ -276,8 +276,12 @@ function dse_launch_code_edit($File,$LineNumber=0){
 }
 function dse_launch_vibk_edit($File,$LineNumber=0){
 	global $vars;
-	$Command=$vars['DSE']['VIBK_EDIT_LAUNCH_COMMAND'];
-	$Command=str_replace("<FILE>", "\"$File\"", $Command);
+	if($vars['DSE']['VIBK_EDIT_LAUNCH_COMMAND']){
+		$Command=$vars['DSE']['VIBK_EDIT_LAUNCH_COMMAND'];
+		$Command=str_replace("<FILE>", "\"$File\"", $Command);
+	}else{
+		$Command="vi \"$File\" ";
+	}
 	return dse_passthru($Command,TRUE);
 }
 		

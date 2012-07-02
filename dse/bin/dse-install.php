@@ -273,6 +273,7 @@ if(dse_is_centos()){
 $NotOSXPackageNamesArray[]="dnsutils";
 $NotOSXPackageNamesArray[]="arp-scan";
 $NotOSXPackageNamesArray[]="nmap";
+$NotOSXPackageNamesArray[]="ifupdown-extra";
 
 if(dse_is_ubuntu()){
 	$PackageNamesArray[]="dpkg-repack";
