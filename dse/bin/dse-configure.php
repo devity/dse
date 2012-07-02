@@ -190,6 +190,8 @@ print "3hcecking fin etc/dse\n";
 			print  "found Apache2ModuleDirectory=$Apache2ModuleDirectory   replacing.\n";
 			dse_file_replace_str($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],"libexec/apache2",$Apache2ModuleDirectory);
 		}
+	}else{
+		print $vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE']." exists!\n";
 	}
 }
 
