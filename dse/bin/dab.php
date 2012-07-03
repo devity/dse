@@ -179,6 +179,7 @@ print "\n";
 
 if($DoBackup){
 	global $FilesChecked,$FilesNew,$FilesChanged,$FilesSame;
+	global $FilesCheckedA,$FilesNewA,$FilesChangedA,$FilesSameA;
 	
 	dse_print_df();
 	$DidSomething=TRUE;
@@ -219,6 +220,16 @@ if($DoBackup){
 	}
 	
 	$Msg="Files Checked: $FilesChecked   New: $FilesNew   Changed: $FilesChanged   Same: $FilesSame\n";
+	
+	$Msg.="\nFiles New: +++++++++++++++++++++\n";
+	foreach ($FilesNewA as $File){
+		$Msg.="   $File\n";
+	}
+	$Msg.="\nFiles Changed: xxxxxxxxxxxxxxxxxxxx\n";
+	foreach ($FilesNewA as $File){
+		$Msg.="   $File\n";
+	}
+	
 	
 	ddab_log($Msg); print $Msg;
 	
@@ -271,6 +282,7 @@ function ddab_recursive_do_dir($Dir){
 	global $DoClean,$BytesCleanedTotal;
 	global $BackupLocationsCleanedArray;
 	global $FilesChecked,$FilesNew,$FilesChanged,$FilesSame;
+	global $FilesCheckedA,$FilesNewA,$FilesChangedA,$FilesSameA;
 	$warn_size_limit=1000*1000;
 	dpv(3,"ddab_recursive_do_dir($Dir)");
 	//if(!str_contains($vars['Verbosity'],"0")){	print "v=".$vars['Verbosity']."\n";exit();}
@@ -359,12 +371,14 @@ function ddab_recursive_do_dir($Dir){
 						}
 					}else{
 						$FilesChecked++;
+						$FilesCheckedA[]=$full_filename;
 						if(!file_exists($BackupLocation)){
 							//print "%%%%%% $BackupLocation \n";
 							mkdir($BackupLocation,0777,TRUE);
 						}
 						if(!file_exists($BackupFile)){
 							$FilesNew++;
+							$FilesNewA[]=$full_filename;
 							$Command="cp -fp \"$full_filename\" \"$BackupFile\"";
 							print colorize($Command,"white","red")."\n";
 							dse_exec($Command,$vars['Verbosity']>2);
@@ -380,6 +394,7 @@ function ddab_recursive_do_dir($Dir){
 							
 							){
 								$FilesChanged++;
+								$FilesChangedA[]=$full_filename;
 							//|| filemtime($full_filename)!=filemtime($BackupFile)
 								$BytesNeededTotal+=filesize($full_filename);
 								$mtime=filemtime($BackupFile);
@@ -396,7 +411,8 @@ function ddab_recursive_do_dir($Dir){
 								dpv(0," ****** ".colorize(" UPDATED FILE ","yellow").": $full_filename");
 							}else{
 								$FilesSame++;
-								dpv(0,colorize(" OK == ","green").$full_filename);
+								$FilesSameA[]=$full_filename;
+								dpv(0,colorize(" OK == ","green").$BackupFile);
 							}	
 						}
 					}
