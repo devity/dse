@@ -129,7 +129,7 @@ if($UseSTDIN){
 }
 
 
-if($argv[1] || $STDIN_Content){
+//if($argv[1] || $STDIN_Content){
 	if($Verbosity>=2) print "Searching for commands in history containing: \"$argv[1]\"\n";
 	$GrepString=$argv[1];
 	
@@ -169,7 +169,7 @@ if($argv[1] || $STDIN_Content){
 	$ShownArray=array();
 	foreach(split("\n",$BH) as $Line){
 		$Li++;
-		if(str_contains($Line,$GrepString)){
+		if(!$GrepString || str_contains($Line,$GrepString)){
 			if(!in_array($Line, $ShownArray)){
 				$MatchingUniqueCommands++;
 				$LineStr=str_replace($GrepString,colorize($GrepString,"black","yellow"),$Line);
@@ -210,13 +210,13 @@ if($argv[1] || $STDIN_Content){
 	
 	
 	$DidSomething=TRUE;
-}
+//}
 
 
-if(!$DidSomething){
-	print "bh: error! incorrect usage / command arguments\n";
-	print $Usage;
-}
+//if(!$DidSomething){
+//	print "bh: error! incorrect usage / command arguments\n";
+//	print $Usage;
+//}
 exit();
 
 
