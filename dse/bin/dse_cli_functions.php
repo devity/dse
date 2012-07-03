@@ -276,7 +276,7 @@ function dse_debug_bt2html_sub($last){
 if($vars['Verbosity']>5) print "dse_cli_functions.php: line 269\n";
 function dse_ide_file_open_url($URL,$LineNumber=0){
 	global $vars; dse_trace();
-	dpv(5, "dse_ide_file_open_url() unimplimented!");
+	//dpv(5, "dse_ide_file_open_url() unimplimented!");
 	return;
 }
 function dse_launch_url($URL){
