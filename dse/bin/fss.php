@@ -56,14 +56,14 @@ if(sizeof($argv)>1 && $argv[1]=="-q"){
 		$d="/";
 	}
 }
-print "hi!";
+//print "hi!";
 $CacheFile=$d.".dse-fss-cache-file";
 	
 if(file_exists($CacheFile)){
-	print " using cache file: $CacheFile\n";
+	if(!$Quiet) print " using cache file: $CacheFile\n";
 	$find_cmd="sudo grep -i \"$ss\" $CacheFile 2>/dev/null";
 }else{
-	print " cache file: $CacheFile not present. rebuild w/ --rebuild-cache\n";
+	if(!$Quiet) print " cache file: $CacheFile not present. rebuild w/ --rebuild-cache\n";
 	$find_cmd="sudo find $d -iname \"$ss\" 2>/dev/null";
 }
 if(!$Quiet) print "Searching for: $ss\n";
