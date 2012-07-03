@@ -190,11 +190,14 @@ if(str_contains($vars['DSE']['SERVICES'],"dwi")){
 			
 			//print "3hcecking fin etc/dse\n";
 	 		
-			if(!dse_file_exists("/usr/mime.types")){
+			if(!dse_file_exists("/etc/mime.types")){
 				print "no /usr/mime.types\n";
-				$Loc=dse_fss("mime.types");
+				$Loc=dse_fss("mime.types","/usr");
+				if(!$Loc) $Loc=dse_fss("mime.types","/etc");
+				if(!$Loc) $Loc=dse_fss("mime.types","/var");
+				if(!$Loc) $Loc=dse_fss("mime.types");
 				print "found at $Loc\n";
-				dse_file_link("/usr/mime.types",$Loc);
+				dse_file_link("/etc/mime.types",$Loc);
 			}
 			
 			print "No ".$vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE']."   using template.\n";
