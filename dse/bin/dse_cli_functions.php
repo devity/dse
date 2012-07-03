@@ -1910,6 +1910,7 @@ function unk_time($TimeAndDateString){
 		if($len) $TimeAndDateString=substr($TimeAndDateString,0,$len);
 		$vars['unk_time__CutTimeAndDateString']=$TimeAndDateString;
 		$dateTime=strptime($TimeAndDateString, $format);
+		print "$dateTime=strptime($TimeAndDateString, $format);\n";
 		if($dateTime){
 			dpv(5,colorize("strptime($TimeAndDateString, $format) dateTime=$dateTime\n","cyan"));
 		}else{
