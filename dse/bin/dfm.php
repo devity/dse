@@ -375,28 +375,32 @@ if($DoFileEdit){
 if($DoRemoveDuplicateLines){
 	$File=$argv[1];
 	$Message="dfi 2 removing duplicate lines from $File :\n";
-	print "sdfsadf34f3ca\n";
+	//print "sdfsadf34f3ca\n";
 	dpv(1,$Message);
-	print "sdfsadf34f3ca\n";
+	//print "sdfsadf34f3ca\n";
 	dse_log($Message);
-	print "sdfsadf34f3ca\n";
+	//print "sdfsadf34f3ca\n";
 	$Contents=dse_file_get_contents($File);
-	print "sdfsadf34f3ca\n";
+	//print "sdfsadf34f3ca\n";
 	$Contents=remove_duplicate_lines($Contents);
 	$sl=strlen($Contents);
-	print "sl=$sl\n";
+	//print "sl=$sl\n";
 	dse_file_put_contents($File,$Contents);
 //	exit(0);
 }
 
 if($DoRemoveBlankLines){
-		dpv(3,"doing DoRemoveBlankLines");
+	//	dpv(3,"doing DoRemoveBlankLines");
 	$File=$argv[1];
 	$Message="dfi removing blank lines from $File :\n";
 	dpv(1,$Message);
 	dse_log($Message);
 	$Contents=dse_file_get_contents($File);
+	$sl=strlen($Contents);
+	//print "sl=$sl\n";
 	$Contents=remove_blank_lines($Contents);
+	$sl=strlen($Contents);
+	//print "sl=$sl\n";
 	dse_file_put_contents($File,$Contents);
 //	exit(0);
 }
