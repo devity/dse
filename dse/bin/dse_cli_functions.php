@@ -1844,13 +1844,19 @@ function unk_time($TimeAndDateString){
 	elseif( preg_match ("/^[a-zA-Z]{3} [a-zA-Z]{0,9} [0-9]{1,2} [0-9]{2}:[0-9]{2}:[0-9]{2} [0-9]{4}/" , $TimeAndDateString, $matches) >0 ){
 		dpv(5,"preg_match 7\n");
 		$len=25; $format = '%a %B %d %H:%M:%S %Y';}//Fri Jun  8 03:52:48 2012 
-	
+	//
 	elseif( preg_match ("/^[a-zA-Z]{3} [a-zA-Z]{0,9} [0-9]{1,2}[a-z]{0,2}, [0-9]{4}, [0-9]{1,2}:[0-9]{2}.[0-9]{2} [a-zA-Z]{2} [a-zA-Z]{3}/" , $TimeAndDateString, $matches) >0 ){
 			dpv(5,"preg_match 8 \n");
 			$TimeAndDateString=str_replace("th, ",", ",$TimeAndDateString);
 		$TimeAndDateString=str_replace("st, ",", ",$TimeAndDateString);
 		$TimeAndDateString=str_replace("rd, ",", ",$TimeAndDateString);
-		$TimeAndDateString=strcut($TimeAndDateString,""," EDT");
+		if(str_contains($TimeAndDateString,"PDT")){
+			$TimeAndDateString=strcut($TimeAndDateString,""," PDT");
+		}elseif(str_contains($TimeAndDateString,"PDT")){
+			$TimeAndDateString=strcut($TimeAndDateString,""," PDT");
+		}else{
+			$TimeAndDateString=strcut($TimeAndDateString,"","DT");
+		}
 		 $len=52; $format = '%a %B %d, %Y, %l:%M.%S %P';
 	}//	Sun June 24th, 2012, 5:46.48 am EDT
 	elseif( preg_match ("/^[a-zA-Z]{3} [a-zA-Z]{0,9} [0-9]{1,2}, [0-9]{4}, [0-9]{1,2}:[0-9]{2}.[0-9]{2} [a-zA-Z]{2}/" , $TimeAndDateString, $matches) >0 ){
