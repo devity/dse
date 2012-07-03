@@ -304,6 +304,10 @@ $NotOSXPackageNamesArray[]="chkconfig";
 
 
 $PackageNamesArray[]="etckeeper";
+$PackageNamesArray[]="backintime-common";
+if(dse_is_ubuntu()) $PackageNamesArray[]="apt-btrfs-snapshot";
+
+  
 
 /* reddit
  * 
@@ -695,6 +699,8 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			$NotOSXPackageNamesArray[]="gnome-power-manage";
 			$NotOSXPackageNamesArray[]="modemmanager";
 			$NotOSXPackageNamesArray[]="powermgmt-base";
+			
+			$NotOSXPackageNamesArray[]="backintime-gnome";
 			
 		/*
 			$NotOSXPackageRemoveNamesArray[]="gnome-power-manage";
