@@ -310,15 +310,17 @@ if($DoLineWithString){
 	//$Message=" numbering lines in $File :\n";
 	//dpv(1,$Message);
 	//dse_log($Message);
-	$FileContents=dse_file_get_contents($File);
+//	$FileContents=dse_file_get_contents($File);
+	$Command="grep -n \"$String\" $File";
+	$r=dse_exec($Command);
 	$Line=0;
 	$tbr="";
-	foreach(split("\n",$FileContents) as $Line){
+	foreach(split("\n",$r) as $Line){
 		$i++;
-		if(str_contains($Line,$String)){
+		//if(str_contains($Line,$String)){
 			if($tbr)$tbr.=",";
-			$tbr.= "$i";
-		}
+			$tbr.= "$i $Line";
+		//}
 	}
 	print $tbr;
 	exit(0);
