@@ -1899,7 +1899,7 @@ function unk_time($TimeAndDateString){
 	dpv(5,colorize(" found format=$format\n","green"));
 	
 	
-	//print_r($matches);
+	print_r($matches);
 	//print "res=".$matches[0].", $format\n";
 	//if($format && $matches[0] ) return strptime($matches[0], $format);
 	if(!$TimeAndDateString){
