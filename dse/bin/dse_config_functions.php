@@ -1124,7 +1124,7 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 		}
 		$zone_file="/etc/bind/local/$domain";
 		print "Saving file $zone_file\n";
-		file_put_contents($zone_file, $zone);
+		dse_file_put_contents($zone_file, $zone);
 		dse_file_set_owner($zone_file,"root:bind");
 		dse_file_set_mode($zone_file,"644");
 	

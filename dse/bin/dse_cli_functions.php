@@ -80,6 +80,8 @@ function dse_shutdown(){
 		print $tbr;
 	}
 	
+	//global $argv;
+	//.".".basename($argv[0])
 	$DebugOutputFilename="/tmp/dse_trace__".basename($vars['DSE']['SCRIPT_FILENAME']).".".dse_date_format("NOW","FILE");
 	dse_file_put_contents($DebugOutputFilename,$tbr);
 	print "Debug info and trace saved in: $DebugOutputFilename\n";
@@ -2296,6 +2298,12 @@ function str_compare_count_matching_prefix_chars($a,$b){
 global $debug_tostring_output_txt; 	$debug_tostring_output_txt=TRUE;
 	
 function debug_tostring(&$var){
+	global $vars;
+	return d2s($var);
+}
+	
+	
+function d2s(&$var){
 	global $vars; dse_trace();
 	global $debug_tostring_indent;
 	global $debug_tostring_full_name;

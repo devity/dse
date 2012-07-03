@@ -4,7 +4,7 @@
 
 function dse_show_w_hover($Show,$Hide){
 	global $vars;
-	return "<span href=\"#\" class=\"showhim\">$Show<div class=\"showme\" style='border:2px solid orange;background:#FFF3C3;'>$Hide</div></span>";
+	return "<span href=\"#\" class=\"showhim\">$Show<div class=\"showme\" style='border:2px solid orange;background:#FFFaf0; color:black;'>$Hide</div></span>";
 }
 function dse_print_page_footer(){
 	global $vars;
@@ -398,7 +398,7 @@ function on_shutdown(){
 	
 	
 	
-	if($vars[dpd_Trace_Stack] && $vars['Debug']>=1){
+	if($vars[dpd_Trace_Stack] ){
 			
 	
 		print return_collapsible_min_area_start(FALSE);
@@ -641,7 +641,9 @@ function return_end_feature_box(){
 
 
 function text2html($text){
-	//this function is depricated
+	return ConvertTextToHTML($text);		
+}
+function t2h($text){
 	return ConvertTextToHTML($text);		
 }
 

@@ -20,7 +20,19 @@ function dse_dwi_overview(){
 	
 	<td valign=top><b class='f10pt'>Code Manager</b><br>
 	 <a href=/code_explorer/>Code Explorer</a>
-	</td>
+	Recent Traces:<br>";
+	
+	$dse_ls_out=dse_ls("/tmp/dse_trace__*");
+	//print d2s($dse_ls_out);
+	foreach($dse_ls_out as $dse_ls_out_row){
+		list($Type,$File)=$dse_ls_out_row;
+		$Script=strcut($File,"__.",".2012");
+		$RunTime=strcut($File,$Script.".");
+		$File_esc=urldecode($File);
+		print "$RunTime $Script  <a href=/code_explorer/index.php?ViewDebugOutput=TRUE&File=$File_esc target=_blank>view</a><br>";
+	}
+	
+	print " </td>
 	
 	</tr><tr class='f7pt'>
 	
@@ -44,9 +56,8 @@ function dse_dwi_overview(){
 	</td>
 	
 	
-	
-	</tr><tr class='f7pt'>
-	
+	</tr>
+	<tr class='f7pt'>
 	
 	
 	<td valign=top><b class='f10pt'>Monitoring</b><br>
@@ -55,12 +66,12 @@ function dse_dwi_overview(){
 	
 	
 	<td valign=top><b class='f10pt'></b><br>
+	". text2html(dse_exec("ps -aux")) ."
 	</td>
 	
 	
 	<td valign=top><b class='f10pt'>Services chkconfig</b><br>
 	".dse_dwi_overview_section_initd()."
-	
 	</td>
 	
 	
@@ -68,10 +79,36 @@ function dse_dwi_overview(){
 	".dse_dwi_overview_section_firewall()."
 	</td>
 	
+	</tr>
+	<tr class='f7pt'>
 	
 	
+	<td valign=top><b class='f10pt'>DNS</b><br>
+	status<br>
+	sites <br>
+	# requests<br>
+	</td>
 	
-	</tr></table>";
+	
+	<td valign=top><b class='f10pt'>Apache</b><br>
+	sites dos/roots<br>
+	processes<br>
+	log, error and access
+	</td>
+	
+	
+	<td valign=top><b class='f10pt'></b><br>
+	</td>
+	
+	
+	<td valign=top><b class='f10pt'></b><br>
+	
+	</td>
+	
+	
+	</tr>
+	
+	</table>";
 	//print text2html(`dse -s`);
 }
 
@@ -125,7 +162,6 @@ function dse_dwi_overview_section_sysstats(){
 	$tbr.=text2html(dse_exec("iostat"));
 	$tbr.=text2html(dse_exec("vmstat"));
 	$tbr.=text2html(dse_exec("who"));
-	$tbr.=text2html(dse_exec("ps -aux"));
 	return $tbr;
 }
 
@@ -203,7 +239,9 @@ function dse_dwi_overview_section_initd(){
 		$tbr.=text2html(`daemonic dump`);
 		//$tbr.=text2html(`sudo launchctl list`);
 	}else{
-		$tbr.=text2html(`chkconfig --list`);
+		$tbr.=text2html(dse_exec("chkconfig --list"));
+		$tbr=str_replace(":off",":<font color=red>OFF</font>",$tbr);
+		$tbr=str_replace(":on",":<font color=green>ON</font>",$tbr);
 	}
 	return $tbr;
 }

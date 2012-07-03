@@ -1,8 +1,27 @@
 <?php
 
+
+function dse_code_parse_save($CodeInfoArray,$CodeBaseDir="/dse/bin"){
+	global $vars;
+	file_put_contents('/tmp/dse_codemanager_parse.cache', serialize($CodeInfoArray)); 
+	return;
+}
+
+function dse_code_parse_load($CodeBaseDir="/dse/bin"){
+	global $vars;
+	if(dse_file_exists('/tmp/dse_codemanager_parse.cache')){	
+		$CodeInfoArray = unserialize(file_get_contents('/tmp/dse_codemanager_parse.cache')); 
+	}else{
+		$CodeInfoArray=dse_code_parse($CodeBaseDir);
+		dse_code_parse_save($CodeInfoArray,$CodeBaseDir);
+	}
+	return $CodeInfoArray;
+}
+
+
 function dse_code_parse($CodeBaseDir){
 	global $vars;
-	$skip=array("phpmyadmin");
+	$skip=array("phpmyadmin",".dab","/templates/");
 	$DirArray=dse_directory_to_array($CodeBaseDir);
 	$CodeInfoArray=dse_code_parse_dir_array_to_code_array($DirArray);
 	//print print_r($CodeInfoArray);
@@ -137,7 +156,12 @@ function dse_code_parse_PHP_contents_to_array($CodeInfoArray,$FileFullName){
 			//print "CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['Functions']['Def'][$FunctionName]=array($FileFullName,$LineNumber,$FunctionName,$FunctionParamaters,$FunctionDeclaration);<br>";
 			$CodeInfoArray['Functions']['Def']["$FunctionName"]=array($FileFullName,$LineNumber,$FunctionName,$FunctionParamaters,$FunctionDeclaration);
 			//print " set CodeInfoArray['Functions']['Def'][]=array($FileFullName,$LineNumber,$FunctionName,$FunctionParamaters,$FunctionDeclaration); \n";
-	
+			
+			$CodeInfoArray['Functions']['Code']["$LastFunctionName"]=$LastFunctionBody;
+			$LastFunctionBody="";
+			$LastFunctionName=$FunctionName;
+		}else{
+			$LastFunctionBody.=$Line."\n";
 		}
 	}
 	return $CodeInfoArray;
@@ -149,6 +173,7 @@ function dse_code_parse_PHP_contents_to_array_pass2($CodeInfoArray,$FileFullName
 	foreach($CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['Lines'] as $Line){
 		$LineNumber++;
 		$NewLine=$Line;
+		$NewLine=t2h($NewLine);
 		foreach ($CodeInfoArray['Functions']['Def'] as $FunctionName=>$FuncArray){
 			if(str_contains($Line,"$FunctionName(") || str_contains($Line,"$FunctionName (")){
 				$FunctionParamaters=strcut(strcut($Line,"$FunctionName"),"(",")");
@@ -186,11 +211,20 @@ function dse_code_parse_dir_array_to_code_array($DirArray,$CodeInfoArray=array()
 		$CodeInfoArray['Variables']=array("Def"=>array(),"Used"=>array());
 		$CodeInfoArray['Files']=array();
 	}
+	
+	$skip=array("phpmyadmin",".dab","/templates/");
+	
 	foreach($DirArray as $Entry){
 	//	print " Entry $Entry[2]\n";
-		if($Entry[0]=="DIR"){
-			$CodeInfoArray=dse_code_parse_dir_array_to_code_array($Entry[3],$CodeInfoArray);
-		}elseif($Entry[0]=="FILE"){
+		$Do=TRUE;
+		foreach($skip as $s){
+			if(str_contains($Entry[1],$s)) $Do=FALSE;	
+		}
+		if($Do){
+			if($Entry[0]=="DIR"){
+				$CodeInfoArray=dse_code_parse_dir_array_to_code_array($Entry[3],$CodeInfoArray);
+			}elseif($Entry[0]=="FILE"){
+			}
 		}
 		$CodeInfoArray['Files'][$Entry[2]]=array($Entry[0],$Entry[1],$Entry[2]);
 		//print "		CodeInfoArray['Files'][$Entry[2]]=array($Entry[0],$Entry[1],$Entry[2]);\n";
@@ -201,15 +235,21 @@ function dse_code_parse_dir_array_to_code_array($DirArray,$CodeInfoArray=array()
 function dse_code_return_function_info_html($CodeInfoArray,$FunctionName){
 	global $vars;
 	$FunctionArray=$CodeInfoArray['Functions']['Def'][$FunctionName];
+	$Code=$CodeInfoArray['Functions']['Code'][$FunctionName];
+			
 	$FileFullName=$FunctionArray[0];
 	$Line=$FunctionArray[1];
 	$FunctionName=$FunctionArray[2];
 	$FunctionParamaters=$FunctionArray[3];
 	$FileLink= "<a href=/code_explorer/?FileInfo&File=$FileFullName target=_blank>$FileFullName</a>";
-			
+		
+	$CodeEsc=t2h($Code);
 	return "File: $FileLink Line: $Line<br>
 <b>$FunctionName</b>($FunctionParamaters){<br>
-}";
+<br>
+$CodeEsc
+
+";
 }
 
 function dse_directory_to_array( $path = '.', $level = 0 ){

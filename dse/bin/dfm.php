@@ -276,7 +276,7 @@ if($DoLargeFileFind){
 	$BlockSize=1024*1024;
 	
 	//dse_passthru("find $RootDir -type f -size +1000000k -exec ls -l {} \; 2>/dev/null ",TRUE);
-	exit(0);
+	//exit(0);
 }
 		
 		
@@ -291,7 +291,7 @@ dpv(4,"file=$File");
 if($DoFileEmpty){
 	dpv(4,"in DoFileEmpty");
 	dse_file_put_contents($File,"");
-	exit(0);
+//	exit(0);
 }
 			
 if($DoNumber){
@@ -304,7 +304,7 @@ if($DoNumber){
 		$i++;
 		print "$i\t$Line\n";
 	}
-	exit(0);
+	//exit(0);
 }
 if($DoLineWithString){
 	$Command="fgrep -n \"$String\" $File";
@@ -319,7 +319,7 @@ if($DoLineWithString){
 		}
 	}
 	print $tbr;
-	exit(0);
+	//exit(0);
 }
 
 if($DoFileMid){
@@ -356,7 +356,7 @@ if($DoFileMid){
 		$HeadCount=$Count+1;
 		print dse_exec("tail -n $TailNumber \"$File\" | head  -n $HeadCount",$vars['Verbosity']>3);
 	}
-	exit(0);
+	//exit(0);
 }
 
 if($DoFileEdit){
@@ -364,7 +364,7 @@ if($DoFileEdit){
 	dpv(1,$Message);
 	dse_log($Message);
 	passthru("/dse/bin/vibk \"$File\" 2>&1");
-	exit(0);
+	//exit(0);
 }
 
 if($DoRemoveDuplicateLines){
@@ -374,7 +374,7 @@ if($DoRemoveDuplicateLines){
 	$Contents=dse_file_get_contents($File);
 	$Contents=remove_duplicate_lines($Contents);
 	dse_file_set_contents($File,$Contents);
-	exit(0);
+//	exit(0);
 }
 
 if($DoRemoveBlankLines){
@@ -384,13 +384,13 @@ if($DoRemoveBlankLines){
 	$Contents=dse_file_get_contents($File);
 	$Contents=remove_blank_lines($Contents);
 	dse_file_set_contents($File,$Contents);
-	exit(0);
+//	exit(0);
 }
 
 
 dse_shutdown();
 
-
+/*
 if($DidSomething){
 	if(!$Quiet && !$DoSetEnv){
 		dpv(1, getColoredString($vars['DSE']['SCRIPT_NAME']." Done. Exiting (0)","black","green"));
@@ -404,7 +404,7 @@ if($DidSomething){
 	}
 	if(!$NoExit) exit(-1);
 }
-
+*/
 
 exit(0);
 

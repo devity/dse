@@ -10,6 +10,14 @@ $MinutesBack=60;
 $NumberOfBytesSameLimit=13;
 $Intermingle=TRUE;
 
+// ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
+$vars['DSE']['SCRIPT_NAME']="Log Tail";
+$vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="tails, intermingles, and color codes system logs";
+$vars['DSE']['DSE_DSE_VERSION']="v0.01b";
+$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/06/23";
+$vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+// ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
+
 $shortopts  = "";
 $shortopts .= "n:";  // Required value
 $shortopts .= "m:";  // Required value
