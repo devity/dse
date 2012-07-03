@@ -169,7 +169,7 @@ dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_DROPLIST_F
 $TemplateFile="/usr/share/logwatch/default.conf/logwatch.conf";
 $DestinationFile="/etc/logwatch/conf/logwatch.conf";
 if(dse_file_exists($TemplateFile) && !dse_file_exists($DestinationFile)){
-dse_configure_file_install_from_template($DestinationFile,$TemplateFile,"664","root:root");
+	dse_configure_file_install_from_template($DestinationFile,$TemplateFile,"664","root:root");
 
 }
 

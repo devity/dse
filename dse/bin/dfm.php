@@ -311,15 +311,17 @@ if($DoLineWithString){
 	//dpv(1,$Message);
 	//dse_log($Message);
 //	$FileContents=dse_file_get_contents($File);
-	$Command="grep -n \"$String\" $File";
+	$Command="fgrep -n \"$String\" $File";
 	$r=dse_exec($Command);
 	$Line=0;
 	$tbr="";
 	foreach(split("\n",$r) as $Line){
 		$i++;
+		$LineNumber=strcut($Line,"",":");
+		
 		//if(str_contains($Line,$String)){
 			if($tbr)$tbr.=",";
-			$tbr.= "$i $Line";
+			$tbr.= $LineNumber." $i $Line";
 		//}
 	}
 	print $tbr;

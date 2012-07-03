@@ -1416,6 +1416,14 @@ function dse_file_is_link($File){
 	}
 	return FALSE;
 }
+function dse_file_mv($S,$D){
+	global $vars; dse_trace();
+	if(!dse_file_exists($S)) return FALSE;
+	if(dse_file_exists($D)) {
+		dse_file_delete($D);
+	}
+	dse_exec("mv -rf \"$S\" \"$D\" ");
+}
 
 function dse_file_link_get_destination($LinkFile){
 	global $vars; dse_trace();
@@ -1538,7 +1546,7 @@ function dse_file_append_contents($filename,$Str){
 	global $vars; dse_trace();
 	return dse_file_put_contents($filename,dse_file_get_contents($filename).$Str);
 }
-function dse_file_add_line_if_not($filename,$Str,$ShowCommand=FALSE){
+function dse_file_add_line_if_not($filename,$Str,$LineNumber=0,$ShowCommand=FALSE){
 	global $vars; dse_trace();
 	if($ShowCommand){
 		print colorize("dse_file_add_line_if_not(","yellow","black");
@@ -1552,6 +1560,22 @@ function dse_file_add_line_if_not($filename,$Str,$ShowCommand=FALSE){
 	if(!str_contains($Now,$Str)){
 		return dse_file_put_contents($filename,$Now."\n".$Str);
 	}
+}
+
+function dse_file_insert_line($filename,$Str,$LineNumber=0,$ShowCommand=FALSE){
+	global $vars; dse_trace();
+	$tmp=dse_exec("/dse/bin/dtmp");
+	$Lines=dse_exec("wc -l $filename");
+	if($LineNumber==0){
+		dse_exec("echo -n \"\" > $tmp");
+	}else{
+		$Head=$LineNumber-1;
+		dse_exec("head -n $Head $filename > $tmp");
+	}
+	dse_exec("echo \"$Str\" >> $tmp");
+	$Tail=$Lines-$LineNumber;
+	dse_exec("tail -n $Tail $filename >> $tmp");
+	dse_file_mv($tmp,$filename);
 }
 
 function dse_file_replace_str($File,$Needle,$Replacement){
