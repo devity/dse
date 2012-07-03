@@ -79,8 +79,8 @@ if($out){
 		$ra=split("\n",$out);
 		foreach($ra as $L) if($L) {
 			$Li++;
-			print colorize($Li,"cyan","black");
-			print colorize(": ","blue","black");
+			if(!$Quiet) print colorize($Li,"cyan","black");
+			if(!$Quiet) print colorize(": ","blue","black");
 			print $L;
 			break;
 		}
