@@ -31,8 +31,8 @@ $parameters_details = array(
   array('y','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('z:','status:',"shows status on all or arg1. options: [initd]"),
   array('x:','code-query:',"shows status of string arg1. grep is unknown string or more info if known as a file, function, of variable name"),
-  array('','reboot',"reboots the server"),
-  array('','halt',"halts the server (turns it off! use w/ caution. if you just need to disconnect it from the work because of an attack, run: ".
+  array('a','reboot',"reboots the server"),
+  array('b','halt',"halts the server (turns it off! use w/ caution. if you just need to disconnect it from the work because of an attack, run: ".
   	$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']."/panic   and answer the questions  )"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
