@@ -185,10 +185,10 @@ print colorize("hcecking for apache2 conf in etc/dse\n","yellow","cyan");
 if(str_contains($vars['DSE']['SERVICES'],"dwi")){
 	print "1hcecking fin etc/dse\n";
 	if(dse_is_package_installed("apache2") ){
-	print "2hcecking fin etc/dse\n";
+		print "2hcecking fin etc/dse\n";
 		if(!dse_file_exists($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'])){
 			
-	print "3hcecking fin etc/dse\n";
+			print "3hcecking fin etc/dse\n";
 	 		
 			dse_file_link("/usr/mime.types",dse_fss("mime.types"));
 			print "No ".$vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE']."   using template.\n";
@@ -325,7 +325,7 @@ if(!dse_file_exists($vars['DSE']['USER_BASH_PROFILE'])){
 			$A=dse_ask_yn(" Increase HISTFILESIZE to ".$vars['DSE']['SUGGESTED']['HISTFILESIZE']." ?");
 			if($A=='Y'){
 				$Command="/dse/bin/dreplace -v 2 -s -p ".$vars['DSE']['USER_BASH_PROFILE']." \"^HISTFILESIZE=[0-9]+$\" \"HISTFILESIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']."\"";
-				$r=dse_exec($Command;
+				$r=dse_exec($Command);
 				print "$OK\n";
 			}else{
 				print "$NotChanged\n";
