@@ -1845,7 +1845,7 @@ function unk_time($TimeAndDateString){
 		dpv(5,"preg_match 7\n");
 		$len=25; $format = '%a %B %d %H:%M:%S %Y';}//Fri Jun  8 03:52:48 2012 
 	//
-	elseif( preg_match ("/^[a-zA-Z]{3} a-zA-Z]{0,9} [0-9]{1,2}[a-z]{0,2}, [0-9]{4}, [0-9]{1,2}:[0-9]{2}.[0-9]{2} [a-zA-Z]{2} [a-zA-Z]{3}/" , $TimeAndDateString, $matches) >0 ){
+	elseif( preg_match ("/^[a-zA-Z]{3} [a-zA-Z]{0,9} [0-9]{1,2}[a-z]{0,2}, [0-9]{4}, [0-9]{1,2}:[0-9]{2}.[0-9]{2} [a-zA-Z]{2} [a-zA-Z]{3}/" , $TimeAndDateString, $matches) >0 ){
 			dpv(5,"preg_match 8 \n");
 			$TimeAndDateString=str_replace("th, ",", ",$TimeAndDateString);
 		$TimeAndDateString=str_replace("st, ",", ",$TimeAndDateString);
@@ -1857,12 +1857,7 @@ function unk_time($TimeAndDateString){
 		}else{
 			$TimeAndDateString=strcut($TimeAndDateString,"","DT");
 		}
-		$TimeAndDateString=trim($TimeAndDateString);
 		 $len=52; $format = '%a %B %d, %Y, %l:%M.%S %P';
-		 
-list($DayName,$MonthName,$Date,$Year,$Hour,$Minute,$Second,$AMPM) = sscanf($TimeAndDateString, "%s %s %d, %d, %d:%d.%d %s");
-print "d=$DayName,m=$MonthName,dt=$Date,y=$Year,h=$Hour,m=$Minute,s=$Second,ampm=$AMPM\n";
-
 	}//	Sun June 24th, 2012, 5:46.48 am EDT
 	elseif( preg_match ("/^[a-zA-Z]{3} [a-zA-Z]{0,9} [0-9]{1,2}, [0-9]{4}, [0-9]{1,2}:[0-9]{2}.[0-9]{2} [a-zA-Z]{2}/" , $TimeAndDateString, $matches) >0 ){
 		dpv(5,"preg_match 8b \n");
@@ -1910,8 +1905,6 @@ print "d=$DayName,m=$MonthName,dt=$Date,y=$Year,h=$Hour,m=$Minute,s=$Second,ampm
 	if(!$TimeAndDateString){
 		dpv(0,colorize("strptime($TimeAndDateString, $format) no final TimeAndDateString. empty!\n","red"));
 	}
-
-//	Sun June 24th, 2012, 5:46.48 am EDT
 
 	if($format &&  $TimeAndDateString){
 		if($len) $TimeAndDateString=substr($TimeAndDateString,0,$len);
