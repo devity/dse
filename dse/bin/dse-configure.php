@@ -183,14 +183,20 @@ if(dse_file_exists($TemplateFile) && !dse_file_exists($DestinationFile)){
 print colorize("hcecking for apache2 conf in etc/dse\n","yellow","cyan");
 
 if(str_contains($vars['DSE']['SERVICES'],"dwi")){
-	print "1hcecking fin etc/dse\n";
+	//print "1hcecking fin etc/dse\n";
 	if(dse_which("apache2") ){
-		print "2hcecking fin etc/dse\n";
+	//	print "2hcecking fin etc/dse\n";
 		if(!dse_file_exists($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'])){
 			
-			print "3hcecking fin etc/dse\n";
+			//print "3hcecking fin etc/dse\n";
 	 		
-			dse_file_link("/usr/mime.types",dse_fss("mime.types"));
+			if(!dse_file_exists("/usr/mime.types")){
+				print "no /usr/mime.types\n";
+				$Loc=dse_fss("mime.types");
+				print "found at $Loc\n";
+				dse_file_link("/usr/mime.types",$Loc);
+			}
+			
 			print "No ".$vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE']."   using template.\n";
 			$t=dse_fss("mod_headers.so","/usr/lib");
 			print "t=$t =dse_fss(\"mod_headers.so\")\n";
