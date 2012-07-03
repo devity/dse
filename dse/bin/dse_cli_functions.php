@@ -31,10 +31,10 @@ function dse_file_shrink($FileName){
 
 function dse_shutdown(){
 	global $vars; dse_trace();
-	//print "dse_shutdown()\n";
+	print "dse_shutdown()\n";
 	$tbr="";
 	if(is_array($vars[dse_Trace_Stack])){
-	//print "vars[dse_Trace_Stack]=TRUE\n";
+	print "vars[dse_Trace_Stack]=TRUE\n";
 		
 		$tn=0;
 		foreach ($vars[dse_Trace_Stack] as $t){
@@ -80,7 +80,7 @@ function dse_shutdown(){
 		print $tbr;
 	}
 	
-	$DebugOutputFilename="/tmp/dse_trace__".basename($vars['DSE']['SCRIPT_FILENAME']).".".dse_date_format("FILE");
+	$DebugOutputFilename="/tmp/dse_trace__".basename($vars['DSE']['SCRIPT_FILENAME']).".".dse_date_format("NOW","FILE");
 	dse_file_put_contents($DebugOutputFilename,$tbr);
 	print "Debug info and trace saved in: $DebugOutputFilename\n";
 }

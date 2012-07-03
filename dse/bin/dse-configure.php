@@ -297,9 +297,6 @@ if(!str_contains($PATH,$vars['DSE']['DSE_BIN_DIR'])){
 	print "$OK = $PATH\n";
 }
 
-dse_file_add_line_if_not($vars['DSE']['SYSTEM_YUM_CONF_FILE'],"tsflags=repackage");
-dse_file_add_line_if_not($vars['DSE']['SYSTEM_RPM_UP2DATE_FILE'],"%_repackage_all_erasures 1");
-
  
 //larger bash history
 print "Checking HISTFILESIZE: \n";
@@ -325,7 +322,7 @@ if(!dse_file_exists($vars['DSE']['USER_BASH_PROFILE'])){
 			$A=dse_ask_yn(" Increase HISTFILESIZE to ".$vars['DSE']['SUGGESTED']['HISTFILESIZE']." ?");
 			if($A=='Y'){
 				$Command="/dse/bin/dreplace -v 2 -s -p ".$vars['DSE']['USER_BASH_PROFILE']." \"^HISTFILESIZE=[0-9]+$\" \"HISTFILESIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']."\"";
-				$r=`$Command`;
+				$r=dse_exec($Command,TRUE);
 				print "$OK\n";
 			}else{
 				print "$NotChanged\n";

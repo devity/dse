@@ -193,5 +193,6 @@ print "\n";
 */
 
 
+dse_shutdown();
 
 ?>
