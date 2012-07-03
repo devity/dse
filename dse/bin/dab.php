@@ -221,12 +221,12 @@ if($DoBackup){
 	
 	$Msg="Files Checked: $FilesChecked   New: $FilesNew   Changed: $FilesChanged   Same: $FilesSame\n";
 	
-	$Msg.="\nFiles New: +++++++++++++++++++++\n";
+	$Msg.="\nFiles New: +++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
 	foreach ($FilesNewA as $File){
 		$Msg.="   $File\n";
 	}
-	$Msg.="\nFiles Changed: xxxxxxxxxxxxxxxxxxxx\n";
-	foreach ($FilesNewA as $File){
+	$Msg.="\nFiles Changed: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n";
+	foreach ($FilesChangedA as $File){
 		$Msg.="   $File\n";
 	}
 	
