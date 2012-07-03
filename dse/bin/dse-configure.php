@@ -184,7 +184,7 @@ print colorize("hcecking for apache2 conf in etc/dse\n","yellow","cyan");
 
 if(str_contains($vars['DSE']['SERVICES'],"dwi")){
 	print "1hcecking fin etc/dse\n";
-	if(dse_is_package_installed("apache2") ){
+	if(dse_which("apache2") ){
 		print "2hcecking fin etc/dse\n";
 		if(!dse_file_exists($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'])){
 			
