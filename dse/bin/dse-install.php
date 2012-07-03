@@ -680,8 +680,11 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			$NotOSXPackageNamesArray[]="lightdm"; //$NotOSXPackageNamesArray[]="gdm";
 			$NotOSXPackageNamesArray[]="x-window-system-core";
 			$NotOSXPackageNamesArray[]="xorg";
+			
+			$NotOSXPackageNamesArray[]="lubuntu-desktop";
 			$NotOSXPackageNamesArray[]="lxde";
 			$NotOSXPackageNamesArray[]="lxdm";
+			
 			$NotOSXPackageNamesArray[]="firefox";
 			$NotOSXPackageNamesArray[]="dillo";
 			$NotOSXPackageNamesArray[]="epiphany-webkit";
@@ -696,7 +699,7 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			$NotOSXPackageNamesArray[]="x11-xfs-utils";
 			$NotOSXPackageNamesArray[]="libfs6";
 			$NotOSXPackageNamesArray[]="x11-session-utils";
-			$NotOSXPackageNamesArray[]="gnome-power-manage";
+			//$NotOSXPackageNamesArray[]="gnome-power-manage";
 			$NotOSXPackageNamesArray[]="modemmanager";
 			$NotOSXPackageNamesArray[]="powermgmt-base";
 			
@@ -711,6 +714,10 @@ sudo update-rc.d -f modem-manager remove
 sudo update-rc.d -f bluetooth remove
 sudo update-rc.d -f ondemand remove
 */
+			if(dse_is_package_installed("lxde")){
+				$Command="sudo /usr/lib/lightdm/lightdm-set-defaults -s LXDE";
+				dse_exec($Command);
+			}		
 			
 		}
 	}
