@@ -716,7 +716,7 @@ sudo update-rc.d -f ondemand remove
 */
 			if(dse_is_package_installed("lxde")){
 				$Command="sudo /usr/lib/lightdm/lightdm-set-defaults -s LXDE";
-				dse_exec($Command);
+				dse_exec($Command,TRUE);
 			}		
 			
 		}
