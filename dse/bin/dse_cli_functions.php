@@ -1370,7 +1370,7 @@ function dse_file_backup($file){
 
 function dse_file_link($LinkFile,$DestinationFile){
 	global $vars; dse_trace();
-	print "DSE file link: $LinkFile ";
+	print "DSE file link: $LinkFile => $DestinationFile ";
 	if(!$LinkFile){
 		print getColoredString("Error: No LinkFile given.\n","red","black");
 		return -2;
@@ -1391,11 +1391,11 @@ function dse_file_link($LinkFile,$DestinationFile){
 			}
 		}
 	}else{
-		$DestinationFileCurrent=dse_file_link_get_destination($LinkFile);
+		/*$DestinationFileCurrent=dse_file_link_get_destination($LinkFile);
 		if($DestinationFileCurrent>=0){
 			print getColoredString(" link broken. ","orange","black");
 			dse_file_delete($LinkFile);
-		}
+		}*/
 	}
 	print "linking to: $DestinationFile ";
 	$Command="ln -s $DestinationFile $LinkFile";

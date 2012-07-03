@@ -71,7 +71,7 @@ if(!$Quiet) print "Command: $find_cmd\n";
 
 $out=trim(`$find_cmd`);
 $out=str_remove_blank_lines($out);
-$out=str_ireplace($ss,colorize($ss,"black","yellow"),$out);
+if(!$Quiet) $out=str_ireplace($ss,colorize($ss,"black","yellow"),$out);
 
 $Li=0;
 if($out){
