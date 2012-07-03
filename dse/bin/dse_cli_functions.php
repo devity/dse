@@ -1914,7 +1914,7 @@ function unk_time($TimeAndDateString){
 		}else{
 			dpv(0,colorize("strptime($TimeAndDateString, $format) dateTime=$dateTime\n","red"));
 		}
-	
+	print_r($dateTime);
 		if(!$dateTime['tm_year']) $dateTime['tm_year']=112;
 		$t=@mktime($dateTime['tm_hour'], $dateTime['tm_min'], $dateTime['tm_sec'], $dateTime['tm_mon']+1, $dateTime['tm_mday'], $dateTime['tm_year']+1900);
 	//	print "\nunk_time=$TimeAndDateString  fmt=$format   t=$t\n";
