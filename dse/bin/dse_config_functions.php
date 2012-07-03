@@ -97,24 +97,24 @@ function dse_initd_entry_get_info($ServiceName=""){
 function dse_server_set_hostname($NewHostName){
 	global $vars; dse_trace();
 	if(dse_is_ubuntu()){
-		$Hostname=trim(`hostname`);
-		print "[$Hostname]=>[$NewHostName]\n";
-		//$Command="sudo perl -p -i -e ‘s/$Hostname/$NewHostName/’ ".$vars['DSE']['SYSTEM_ETC_HOSTS'];
-		//$r=`$Command`;
-	
-		dse_replace_in_file($vars['DSE']['SYSTEM_ETC_HOSTS_FILE'],$Hostname,$NewHostName);
-
-		dse_replace_in_file($vars['DSE']['SYSTEM_HOSTNAME_FILE'],$Hostname,$NewHostName);
+		$Hostname=trim(dse_exec("hostname"));
+		if($NewHostName!=$Hostname){
+			print colorize("Setting hostname: ","cyan","black");
+			print colorize("[$Hostname]=>[$NewHostName]\n","yellow","black");
 		
-		$Command="sudo /bin/hostname $NewHostName";
-		$r=`$Command`;
-		print "Command: $Command = $r\n";
-	
-		$Command="/etc/init.d/hostname.sh start";
-		$r=`$Command`;
-		print "Command: $Command = $r\n";
+			dse_replace_in_file($vars['DSE']['SYSTEM_ETC_HOSTS_FILE'],$Hostname,$NewHostName);
+			dse_replace_in_file($vars['DSE']['SYSTEM_HOSTNAME_FILE'],$Hostname,$NewHostName);
+			
+			$Command="sudo /bin/hostname $NewHostName";
+			dse_exec($Command,TRUE);
+		
+			$Command="/etc/init.d/hostname.sh start";
+			dse_exec($Command,TRUE);
+			
+			//print bar("Server REBOOT required for effect!","-","blue","white","white","red")."n";
+			//$vars['DSE']['REBOOT_REQUIRED']=TURE;
+		}
 	}
-		//dse_replace_in_file($vars['DSE']['SYSTEM_ETC_HOSTS'],$Hostname,$NewHostName);
 }
 
 function dse_server_configure_file_load(){

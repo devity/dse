@@ -18,6 +18,7 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $parameters_details = array(
+  array('v','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('h','help',"this message"),
   array('p:','is-package-installed:',"tells what version of a package is installe ot nothing if not installed"),
   array('a','list-installed-packages',"lists installed packages"),
@@ -32,6 +33,13 @@ $vars['argv_origional']=$argv;
 dse_cli_script_start();
 		
 $BackupBeforeUpdate=TRUE;
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+  	case 'v':
+	case 'verbosity':
+		$vars['Verbosity']=$vars['options'][$opt];
+		if($vars['Verbosity']>=2) print "Verbosity set to ".$vars['Verbosity']."\n";
+		break;
+}
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'h':
   	case 'help':
@@ -766,13 +774,15 @@ foreach($PackageNamesArray as $PackageName){
 }
 
 if(!dse_is_osx()){
-	foreach($NotOSXPackageRemoveNamesArray as $PackageName){
-		$r=dse_package_remove($PackageName);
-		/*if($r<0){
-			print getColoredString("FATAL ERROR: removing package $PackageName\n","red","black");
-			print getColoredString($vars['DSE']['SCRIPT_FILENAME']."Exiting.\n","red","black");
-			exit(-1);
-		}*/
+	if(is_array($NotOSXPackageRemoveNamesArray)){
+		foreach($NotOSXPackageRemoveNamesArray as $PackageName){
+			$r=dse_package_remove($PackageName);
+			/*if($r<0){
+				print getColoredString("FATAL ERROR: removing package $PackageName\n","red","black");
+				print getColoredString($vars['DSE']['SCRIPT_FILENAME']."Exiting.\n","red","black");
+				exit(-1);
+			}*/
+		}
 	}
 }
 

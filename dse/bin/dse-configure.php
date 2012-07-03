@@ -18,6 +18,7 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 
 $parameters_details = array(
   array('h','help',"this message"),
+  array('y','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('v','listvars',"list configuration variables"),
   array('f','full',"full setup / configuration"),
 );
@@ -27,6 +28,13 @@ $vars['argv_origional']=$argv;
 dse_cli_script_start();
 		
 $BackupBeforeUpdate=TRUE;
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+  	case 'y':
+	case 'verbosity':
+		$vars['Verbosity']=$vars['options'][$opt];
+		if($vars['Verbosity']>=2) print "Verbosity set to ".$vars['Verbosity']."\n";
+		break;
+}
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'h':
   	case 'help':
@@ -66,8 +74,7 @@ if($wget){
 
 if($vars['DSE']['HOSTNAME']){
 	print pad("Setting hostname to: ".$vars['DSE']['HOSTNAME']."  ","90%",colorize("-","blue"))."\n";
-	print bar("Server REBOOT required for effect!","-","blue","white","white","red")."n";
-	$vars['DSE']['REBOOT_REQUIRED']=TURE;
+	
 	dse_server_set_hostname($vars['DSE']['HOSTNAME']);
 }
 
