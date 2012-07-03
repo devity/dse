@@ -6,7 +6,7 @@ include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
 include_once ("/dse/include/system_stat_functions.php");
 $vars['Verbosity']=1;
-ini_set("memory_limit","100GB");
+ini_set("memory_limit","-1");
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE File Manipulator";
