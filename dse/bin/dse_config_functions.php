@@ -1103,6 +1103,7 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 			)
 @               IN      NS      $NS1.
 @               IN      NS      $NS2.
+                IN      MX      10 smtp.devity.com.
 ";
 		/*if(array_key_exists("_blank",$vars['DSE']['SERVER_CONF']['Hosts'][$Domain])){
 			$IP=$vars['DSE']['SERVER_CONF']['Hosts'][$Domain]['_blank'];
