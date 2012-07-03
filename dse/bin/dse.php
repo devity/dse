@@ -154,13 +154,13 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		
 	case 'reboot':
 		$RebootCommand="sudo shutdown -r now";
-		print "afasfsadfqwe";
+		//print "afasfsadfqwe";
 		dse_passthru($RebootCommand,TRUE);
 		$t=time();
 		while(TRUE){
-			print "fsadfsadfdas";
+			//print "fsadfsadfdas";
 			$td=time()-$t;
-			$h=cbp_get_screen_height()-3;
+			$h=cbp_get_screen_height()-10;
 			print "REBOOT COMMAND ISSUED  $td seconds ago:     $RebootCommand\n";
 			dse_exec("ps -aux | head -n $h",TRUE,TRUE);
 			sleep(1);
