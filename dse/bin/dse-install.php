@@ -461,6 +461,38 @@ if(str_contains($vars['DSE']['SERVICES'],"dns")){
 if(str_contains($vars['DSE']['SERVICES'],"ssh")){
 	$PackageNamesArray[]="openssh-server";
 }
+if(str_contains($vars['DSE']['SERVICES'],"smtp")){
+	$PackageNamesArray[]="postfix";
+	$PackageNamesArray[]="postfix-mysql";
+	$PackageNamesArray[]="libsasl2-modules";
+	$PackageNamesArray[]="libsasl2-modules-sql";
+	$PackageNamesArray[]="libgsasl7";
+	$PackageNamesArray[]="libauthen-sasl-cyrus-perl";
+	$PackageNamesArray[]="sasl2-bin";
+	$PackageNamesArray[]="libpam-mysql";
+	$PackageNamesArray[]="clamav-base";
+	$PackageNamesArray[]="libclamav6";
+	$PackageNamesArray[]="clamav-daemon";
+	$PackageNamesArray[]="clamav-freshclam";
+	$PackageNamesArray[]="amavisd-new";
+	$PackageNamesArray[]="spamassassin";
+	$PackageNamesArray[]="spamc";
+	$PackageNamesArray[]="postgrey";
+	$PackageNamesArray[]="squirrelmail";
+	$PackageNamesArray[]="squirrelmail-locales";
+	$PackageNamesArray[]="php-pear";
+	$PackageNamesArray[]="php5-cli";
+	$PackageNamesArray[]="courier-base";
+	$PackageNamesArray[]="squirrelmail";
+	$PackageNamesArray[]="courier-authdaemon";
+	$PackageNamesArray[]="courier-authlib-mysql";
+	$PackageNamesArray[]="courier-imap";
+	$PackageNamesArray[]="courier-imap-ssl";
+	$PackageNamesArray[]="courier-ssl";
+}
+
+    	  
+ 
 
 
 if(str_contains($vars['DSE']['SERVICES'],"mysql")){
