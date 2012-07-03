@@ -77,7 +77,7 @@ function dse_shutdown(){
 		$tbr.= "\n";
 	}
 	if($vars[dse_enable_debug_code]) {
-		print $tbr;
+		//print $tbr;
 	}
 	
 	//global $argv;

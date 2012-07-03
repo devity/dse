@@ -295,6 +295,7 @@ if($DoFileEmpty){
 }
 			
 if($DoNumber){
+	$File=$argv[1];
 	$Message="dfi numbering lines in $File :\n";
 	dpv(1,$Message);
 	dse_log($Message);
@@ -307,6 +308,7 @@ if($DoNumber){
 	//exit(0);
 }
 if($DoLineWithString){
+	$File=$argv[1];
 	$Command="fgrep -n \"$String\" $File";
 	$r=dse_exec($Command);
 	$Line=0;
@@ -323,6 +325,7 @@ if($DoLineWithString){
 }
 
 if($DoFileMid){
+	$File=$argv[1];
 	dpv(4,"in DoFileMid");
 	if(str_contains($MidOptions,"-")){
 		list($Start,$End)=split("\\-",$MidOptions);
@@ -360,6 +363,7 @@ if($DoFileMid){
 }
 
 if($DoFileEdit){
+	$File=$argv[1];
 	$Message="dfi Backing up $File and launcing in vim:\n";
 	dpv(1,$Message);
 	dse_log($Message);
@@ -368,6 +372,7 @@ if($DoFileEdit){
 }
 
 if($DoRemoveDuplicateLines){
+	$File=$argv[1];
 	$Message="dfi removing duplicate lines from $File :\n";
 	dpv(1,$Message);
 	dse_log($Message);
@@ -378,6 +383,7 @@ if($DoRemoveDuplicateLines){
 }
 
 if($DoRemoveBlankLines){
+	$File=$argv[1];
 	$Message="dfi removing blank lines from $File :\n";
 	dpv(1,$Message);
 	dse_log($Message);
