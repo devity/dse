@@ -1850,8 +1850,8 @@ function unk_time($TimeAndDateString){
 			$TimeAndDateString=str_replace("th, ",", ",$TimeAndDateString);
 		$TimeAndDateString=str_replace("st, ",", ",$TimeAndDateString);
 		$TimeAndDateString=str_replace("rd, ",", ",$TimeAndDateString);
-		if(str_contains($TimeAndDateString,"PDT")){
-			$TimeAndDateString=strcut($TimeAndDateString,""," PDT");
+		if(str_contains($TimeAndDateString,"EDT")){
+			$TimeAndDateString=strcut($TimeAndDateString,""," EDT");
 		}elseif(str_contains($TimeAndDateString,"PDT")){
 			$TimeAndDateString=strcut($TimeAndDateString,""," PDT");
 		}else{
@@ -3498,10 +3498,10 @@ function colorize($string, $forground_color = null, $background_color = null, $R
 function getColoredString($string, $forground_color = null, $background_color = null, $ResetColorsAfter=TRUE, $type=null) {
 	global $vars; 
 	
-if($vars['Verbosity']>5) print "dse_cli_functions.php: getColoredString pre trace\n";
+//if($vars['Verbosity']>5) print "dse_cli_functions.php: getColoredString pre trace\n";
 dse_trace();
 
-if($vars['Verbosity']>5) print "dse_cli_functions.php: getColoredString post trace\n";
+//if($vars['Verbosity']>5) print "dse_cli_functions.php: getColoredString post trace\n";
 	//print "getColoredString(string, $forground_color, $background_color, $ResetColorsAfter, $type) {\n";
 	////print "\n\ngetColoredString($string, $forground_color = null, $background_color = null, $ResetColorsAfter=TRUE, $type=null) \n\n";
 	/*if($forground_color!=null && $forground_color!=""){
