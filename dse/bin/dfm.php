@@ -86,6 +86,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 	case 'b':
 	case 'remove-blank-lines':
+		dpv(3,"DoRemoveBlankLines=TRUE");
 		$DoRemoveBlankLines=TRUE;
 		$DidSomething=TRUE;
 		break;
@@ -383,6 +384,7 @@ if($DoRemoveDuplicateLines){
 }
 
 if($DoRemoveBlankLines){
+		dpv(3,"doing DoRemoveBlankLines");
 	$File=$argv[1];
 	$Message="dfi removing blank lines from $File :\n";
 	dpv(1,$Message);
