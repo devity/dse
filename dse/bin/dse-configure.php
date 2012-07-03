@@ -173,6 +173,15 @@ dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_WHITELIST_
 $TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "ips_droplist.txt";
 dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_DROPLIST_FILE'],$TemplateFile,"664","root:root");
 
+$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "dab.conf";
+dse_configure_file_install_from_template($vars['DSE']['DAB_CONFIG_FILE'],$TemplateFile,"664","root:root");
+
+
+
+
+
+
+
 $TemplateFile="/usr/share/logwatch/default.conf/logwatch.conf";
 $DestinationFile="/etc/logwatch/conf/logwatch.conf";
 if(dse_file_exists($TemplateFile) && !dse_file_exists($DestinationFile)){
