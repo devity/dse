@@ -26,10 +26,11 @@ function dse_dwi_overview(){
 	//print d2s($dse_ls_out);
 	foreach($dse_ls_out as $dse_ls_out_row){
 		list($Type,$File)=$dse_ls_out_row;
-		$Script=strcut($File,"__.",".2012");
+		$Script=strcut($File,"__",".2012");
 		$RunTime=strcut($File,$Script.".");
 		$File_esc=urldecode($File);
-		print "$RunTime $Script  <a href=/code_explorer/index.php?ViewDebugOutput=TRUE&File=$File_esc target=_blank>view</a><br>";
+		$Lines=dse_exec("wc -l $File");
+		print "$RunTime $Script  <a href=/code_explorer/index.php?ViewDebugOutput=TRUE&File=$File_esc target=_blank>view</a> ($Lines)<br>";
 	}
 	
 	print " </td>

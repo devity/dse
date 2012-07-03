@@ -110,7 +110,7 @@ if($DoFileInfo){
 	
 	$tbr=dse_file_get_contents($FileFullName);
 	$tbr=text2html($tbr);
-	$tbr=str_replace("[0;30;40m","</span></font><font color=black><span style='background:black;'>",$tbr);
+	$tbr=str_replace("[0;30;40m","</span></font><font color=white><span style='background:black;'>",$tbr);
 	$tbr=str_replace("[0;31;40m","</span></font><font color=red><span style='background:black;'>",$tbr);
 	$tbr=str_replace("[0;32;40m","</span></font><font color=lime><span style='background:black;'>",$tbr);
 	$tbr=str_replace("[0;33;40m","</span></font><font color=yellow><span style='background:black;'>",$tbr);
@@ -119,7 +119,7 @@ if($DoFileInfo){
 	$tbr=str_replace("[0;36;40m","</span></font><font color=cyan><span style='background:black;'>",$tbr);
 	$tbr=str_replace("[0;37;40m","</span></font><font color=white><span style='background:black;'>",$tbr);
 	
-	$tbr=str_replace("[0;;m","</span></font><font color=black><span style='background:black;'>",$tbr);
+	$tbr=str_replace("[0;;m","</span></font><font color=white><span style='background:black;'>",$tbr);
 	$tbr=str_replace("[0;34;43m","</span></font><font color=blue><span style='background:yellow;'>",$tbr);
 	
 	print "<div style='background:black;'>";

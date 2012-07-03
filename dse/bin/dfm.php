@@ -373,7 +373,7 @@ if($DoRemoveDuplicateLines){
 	dse_log($Message);
 	$Contents=dse_file_get_contents($File);
 	$Contents=remove_duplicate_lines($Contents);
-	dse_file_set_contents($File,$Contents);
+	dse_file_put_contents($File,$Contents);
 //	exit(0);
 }
 
@@ -383,7 +383,7 @@ if($DoRemoveBlankLines){
 	dse_log($Message);
 	$Contents=dse_file_get_contents($File);
 	$Contents=remove_blank_lines($Contents);
-	dse_file_set_contents($File,$Contents);
+	dse_file_put_contents($File,$Contents);
 //	exit(0);
 }
 

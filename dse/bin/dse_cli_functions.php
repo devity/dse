@@ -106,7 +106,7 @@ if($vars['DSE']['OUTPUT_FORMAT']=="HTML"){
 }
 $vars[dse_Trace_Indent_Current]=0;
 $vars[dse_Trace_Count]=0;
-$vars[dse_Trace_Count_Max]=1000;
+$vars[dse_Trace_Count_Max]=100000;
 function dse_trace(){
 	//$tbr=debug_tostring($bt);
 	global $vars,$dseTrace_Stack;
@@ -1860,7 +1860,7 @@ function unk_time($TimeAndDateString){
 		 $len=52; $format = '%a %B %d, %Y, %l:%M.%S %P';
 		 
 list($DayName,$MonthName,$Date,$Year,$Hour,$Minute,$Second,$AMPM) = sscanf($TimeAndDateString, "%s %s %d, %d, %d:%d.%d %s");
-print "d=$DayName,m=$MonthName,dt=$Date,y=$Year,h=$Hour,m=$Minute,s=$Second,ampm=$AMPM\n";
+//print "d=$DayName,m=$MonthName,dt=$Date,y=$Year,h=$Hour,m=$Minute,s=$Second,ampm=$AMPM\n";
 if($AMPM=="PM" || $AMPM=="pm") $Hour+=12;
 	if(stristr($MonthName,"Jan"))		$Month="1";
 	if(stristr($MonthName,"Feb"))		$Month="2";
@@ -1887,7 +1887,7 @@ if($AMPM=="PM" || $AMPM=="pm") $Hour+=12;
 	if(stristr($MonthName,"November"))		$Month="11";
 	if(stristr($MonthName,"December"))		$Month="12";
 $t=@mktime($Hour, $Minute, $Second, $Month, $Date, $Year);
-			print "\nunk_time=$TimeAndDateString  fmt=$format   t=$t\n";
+		//	print "\nunk_time=$TimeAndDateString  fmt=$format   t=$t\n";
 		return $t;
 	
 	
@@ -1932,7 +1932,7 @@ $t=@mktime($Hour, $Minute, $Second, $Month, $Date, $Year);
 	dpv(5,colorize(" found format=$format\n","green"));
 	
 	
-	print_r($matches);
+	//print_r($matches);
 	//print "res=".$matches[0].", $format\n";
 	//if($format && $matches[0] ) return strptime($matches[0], $format);
 	if(!$TimeAndDateString){
@@ -1943,13 +1943,13 @@ $t=@mktime($Hour, $Minute, $Second, $Month, $Date, $Year);
 		if($len) $TimeAndDateString=substr($TimeAndDateString,0,$len);
 		$vars['unk_time__CutTimeAndDateString']=$TimeAndDateString;
 		$dateTime=strptime($TimeAndDateString, $format);
-		print "$dateTime=strptime($TimeAndDateString, $format);\n";
+		// "$dateTime=strptime($TimeAndDateString, $format);\n";
 		if($dateTime){
 			dpv(5,colorize("strptime($TimeAndDateString, $format) dateTime=$dateTime\n","cyan"));
 		}else{
 			dpv(0,colorize("strptime($TimeAndDateString, $format) dateTime=$dateTime\n","red"));
 		}
-	print_r($dateTime);
+//	print_r($dateTime);
 		if(!$dateTime['tm_year']) $dateTime['tm_year']=112;
 		$t=@mktime($dateTime['tm_hour'], $dateTime['tm_min'], $dateTime['tm_sec'], $dateTime['tm_mon']+1, $dateTime['tm_mday'], $dateTime['tm_year']+1900);
 	//	print "\nunk_time=$TimeAndDateString  fmt=$format   t=$t\n";
@@ -3360,7 +3360,7 @@ function shell_colors_print_keys(){
 }
 
 function dse_bt_colorize($v,$t,$type="MAXIMUM",$v_str=""){
-	global $vars; dse_trace();
+	global $vars; //dse_trace();
 	if($v_str==""){
 		$v_str=$v;
 	}
@@ -3510,7 +3510,7 @@ $vars[shell_foreground_colors]['white'] = '37';
 	
 	
 function colorize_words($L) {
-	global $vars; dse_trace();
+	global $vars; //dse_trace();
 	foreach($vars['DSE']['RedWords'] as $RedWord) $L=str_ireplace($RedWord,colorize($RedWord,"red"),$L);
 	foreach($vars['DSE']['GreenWords'] as $GreenWord) $L=str_ireplace($GreenWord,colorize($GreenWord,"green"),$L);
 	foreach($vars['DSE']['BlueWords'] as $BlueWord) $L=str_ireplace($BlueWord,colorize($BlueWord,"blue"),$L);
@@ -3520,12 +3520,12 @@ function colorize_words($L) {
 	return $L;			
 }
 function color_pad($string, $forground_color, $background_color, $PadSize, $Align="left") {
-	global $vars; dse_trace();
+	global $vars; //dse_trace();
 	return getColoredString(pad($string,$PadSize," ",$Align), $forground_color, $background_color);
 }
 
 function colorize($string, $forground_color = null, $background_color = null, $ResetColorsAfter=TRUE, $type=null) {
-	global $vars; dse_trace();
+	global $vars; //dse_trace();
 	//print " colorize(string, $forground_color , $background_color , $ResetColorsAfter, $type) \n";
 	return getColoredString($string, $forground_color, $background_color, $ResetColorsAfter, $type);
 }
@@ -3534,7 +3534,7 @@ function getColoredString($string, $forground_color = null, $background_color = 
 	global $vars; 
 	
 //if($vars['Verbosity']>5) print "dse_cli_functions.php: getColoredString pre trace\n";
-dse_trace();
+//dse_trace();
 
 //if($vars['Verbosity']>5) print "dse_cli_functions.php: getColoredString post trace\n";
 	//print "getColoredString(string, $forground_color, $background_color, $ResetColorsAfter, $type) {\n";
