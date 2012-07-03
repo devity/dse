@@ -1,6 +1,6 @@
 <?
 function dse_sysstats_sdvcqwev(){
-	global $vars;
+	global $vars; dse_trace();
 	
 	return array($mysql_processes_array,$mysql_processes_raw,$mysql_processes_line_array,$mysql_processes);
 }	
@@ -8,7 +8,8 @@ function dse_sysstats_sdvcqwev(){
 
 
 function dse_color_ls($FileArg){
-	global $vars,$CFG_array;
+	global $vars; dse_trace();
+	global $CFG_array;
 	$W=cbp_get_screen_width()-1;
 	
 	if($W>100){
@@ -171,7 +172,8 @@ function dse_color_ls($FileArg){
 	
 
 function dse_print_df(){
-	global $vars,$CFG_array;
+	global $vars; dse_trace();
+	global $CFG_array;
 	$W=cbp_get_screen_width();
 	//if($W>100){
 		$Seperator=" | ";
@@ -246,7 +248,7 @@ function dse_print_df(){
 }
 	
 function dse_sysstats_power(){
-	global $vars;
+	global $vars; dse_trace();
 	$VarsToReturn="BatteryPercent,BatteryPercentStr,BatteryMaxCapacity,BatteryCurrentCapacity,BatteryVoltage,BatteryVoltageStr,BatteryCellVoltages,BatteryCycleCount"
 		.",BatteryTemperature,BatteryIsCharging,BatteryFullyCharged,BatteryVoltageStr,BatteryAmperageStr,BatteryTemperatureStr"
 		.",KeyboardBatteryPercentStr,KeyboardBatteryPercent,MouseBatteryPercentStr,MouseBatteryPercent,TrackpadBatteryPercentStr,TrackpadBatteryPercent"; 
@@ -301,7 +303,7 @@ $MouseBatteryRaw=strcut($ioregl,"<class BNBMouseDevice,","<class ");
 	
 	
 function dse_make_array_of_vars($var_stringCsvList_or_array){
-	global $vars;
+	global $vars; dse_trace();
 	if(!is_array($var_stringCsvList_or_array)){
 		$var_stringCsvList_or_array=split(",",$var_stringCsvList_or_array);
 	}
@@ -314,7 +316,7 @@ function dse_make_array_of_vars($var_stringCsvList_or_array){
 	
 	
 function dse_sysstats_net_listening(){
-	global $vars;
+	global $vars; dse_trace();
 	if(dse_is_osx() && dse_which("lsof")){
 		$str="";
 		$Command="sudo lsof -iTCP -sTCP:LISTEN -P -n";
@@ -388,7 +390,7 @@ function dse_sysstats_net_listening(){
 }	
 	
 function dse_sysstats_connected($Port){
-	global $vars;
+	global $vars; dse_trace();
 	/*if(FALSE && dse_which("lsof")){
 		$str="";
 		$Command="sudo lsof -iTCP -sTCP:LISTEN -P -n";
@@ -471,7 +473,7 @@ function dse_sysstats_connected($Port){
 	return NULL;
 }	
 function dse_sysstats_proc_interrupts(){
-	global $vars;
+	global $vars; dse_trace();
 	$section_procinterrupts="";
 	$raw=`cat /proc/interrupts`;
 	$time=time();
@@ -491,7 +493,7 @@ function dse_sysstats_proc_interrupts(){
 				
 					
 function dse_sysstats_proc_io(){
-	global $vars;
+	global $vars; dse_trace();
 	$section_procio="";
 	global $procIOs;
 	dse_proc_io_get();
@@ -511,7 +513,7 @@ function dse_sysstats_proc_io(){
 }	
 			
 function dse_sysstats_files_open(){
-	global $vars;
+	global $vars; dse_trace();
 	$section_files_open="";
 	$lsof_raw=`sudo lsof`;
 	$lsof_a=split("\n",$lsof_raw);
@@ -540,7 +542,7 @@ function dse_sysstats_files_open(){
 }
 
 function dse_sysstats_mysql_processlist(){
-	global $vars;
+	global $vars; dse_trace();
 
 	$mysql_processes="";
 	$sql_query="SHOW FULL PROCESSLIST";
@@ -578,7 +580,7 @@ function dse_sysstats_mysql_processlist(){
 
 
 function dse_sysstats_mysql_status(){
-	global $vars;
+	global $vars; dse_trace();
 
 	$mysql_status_array=array();
 	
@@ -647,7 +649,8 @@ function dse_sysstats_mysql_status(){
 
 
 function dse_proc_io(){
-	global $vars,$procIOs;
+	global $vars; dse_trace();
+	global $procIOs;
 	$ps=`ps aux`;
 	$time=time();
 	$start_time=$time;

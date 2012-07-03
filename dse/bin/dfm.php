@@ -29,6 +29,7 @@ $parameters_details = array(
   array('u','remove-duplicate-lines',"remove duplicate lines"),
   array('b','remove-blank-lines',"remove blank lines"),
   array('m:','mid:',"returns tail -1 arg1 | head -n arg2"),
+  array('q:','line-with-string:',"returns line number of line in file arg2 w string arg1"),
   array('n','number',"adds a incrementing line number to start of each line"),
   array('l','find-large-files',"finds larges files in arg1"),
   array('y','empty',"empties file arg1"),
@@ -56,7 +57,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 }
 
-if($vars['Verbosity']>3){
+if($vars['Verbosity']>4){
 	$vars[dse_enable_debug_code]=TRUE;
 }
 
@@ -96,6 +97,12 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'mid':
 		$MidOptions=$vars['options'][$opt];
 		$DoFileMid=TRUE;
+		$DidSomething=TRUE;
+		break;
+	case 'q':
+	case 'line-with-string':
+		$String=$vars['options'][$opt];
+		$DoLineWithString=TRUE;
 		$DidSomething=TRUE;
 		break;
 	case 'number':
@@ -290,15 +297,32 @@ if($DoNumber){
 	$Message="dfi numbering lines in $File :\n";
 	dpv(1,$Message);
 	dse_log($Message);
-	$String=dse_file_get_contents($File);
+	$FileContents=dse_file_get_contents($File);
 	$Line=0;
-	$out=array();
-	foreach(split("\n",$String) as $Line){
+	foreach(split("\n",$FileContents) as $Line){
 		$i++;
 		print "$i\t$Line\n";
 	}
 	exit(0);
 }
+if($DoLineWithString){
+	//$Message=" numbering lines in $File :\n";
+	//dpv(1,$Message);
+	//dse_log($Message);
+	$FileContents=dse_file_get_contents($File);
+	$Line=0;
+	$tbr="";
+	foreach(split("\n",$FileContents) as $Line){
+		$i++;
+		if(str_contains($Line,$String)){
+			if($tbr)$tbr.=",";
+			$tbr.= "$i";
+		}
+	}
+	print $tbr;
+	exit(0);
+}
+
 if($DoFileMid){
 	dpv(4,"in DoFileMid");
 	if(str_contains($MidOptions,"-")){

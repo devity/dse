@@ -79,6 +79,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
  //show owner package of file
 }
 
+if($vars['Verbosity']>4){
+	$vars[dse_enable_debug_code]=TRUE;
+}
 dse_cli_script_header();
 
 if($argv[1]=="help" || $ShowUsage){
@@ -789,6 +792,8 @@ if(in_array("desktop", $vars['DSE']['AddComponents'])){
 // ********* main script activity END ************
 
 print getColoredString($vars['DSE']['SCRIPT_FILENAME']." Done!\n","green","black","black","black");
+
+dse_shutdown();
 
 if($DidSomething){
 	$vars[shell_colors_reset_foreground]='';	print getColoredString("","white","black");

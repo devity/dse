@@ -4,7 +4,7 @@ ini_set('display_startup_errors','On');
 ini_set('log_errors','On');
 error_reporting( (E_ALL & ~E_NOTICE) ^ E_DEPRECATED);
 	
-	
+if($vars['Verbosity']>5) print "starting dse_cli_functions.php\n";
 	
 function dse_file_shrink($FileName){
 	global $vars; dse_trace();
@@ -32,9 +32,8 @@ function dse_file_shrink($FileName){
 function dse_shutdown(){
 	global $vars; dse_trace();
 	//print "dse_shutdown()\n";
+	$tbr="";
 	if(is_array($vars[dse_Trace_Stack])){
-			
-	
 	//print "vars[dse_Trace_Stack]=TRUE\n";
 		
 		$tn=0;
@@ -58,7 +57,7 @@ function dse_shutdown(){
 			}
 			$call=$last['function']."($args)";
 			$call=dse_debug_bt2html($t,$tn);
-			print $call;
+			$tbr.= $call;
 		}
 		//print " Trace &nbsp; ";
 	
@@ -75,8 +74,15 @@ function dse_shutdown(){
 		}
 		
 	*/
-		print "\n";
+		$tbr.= "\n";
 	}
+	if($vars[dse_enable_debug_code]) {
+		print $tbr;
+	}
+	
+	$DebugOutputFilename="/tmp/dse_trace__".basename($vars['DSE']['SCRIPT_FILENAME']).".".dse_date_format("FILE");
+	dse_file_put_contents($DebugOutputFilename,$tbr);
+	print "Debug info and trace saved in: $DebugOutputFilename\n";
 }
 
 function dse_firewall_internet_hide(){
@@ -102,11 +108,15 @@ $vars[dse_Trace_Count_Max]=1000;
 function dse_trace(){
 	//$tbr=debug_tostring($bt);
 	global $vars,$dseTrace_Stack;
-    if(!$vars[dse_enable_debug_code]) return;
+//if($vars['Verbosity']>5) print "dse_cli_functions.php: dse_trace() start\n";
+   // if(!$vars[dse_enable_debug_code]) return;
 	$vars[dse_Trace_Count]++;
     if( $vars[dse_Trace_Count]>$vars[dse_Trace_Count_Max] ) return;
 	
+//if($vars['Verbosity']>5) print "dse_cli_functions.php: dse_trace() calling  debug_backtrace()\n";
    	$bt=debug_backtrace();
+	
+//if($vars['Verbosity']>5) print "dse_cli_functions.php: dse_trace() did debug_backtrace()\n";
 	if($vars[dse_enable_debug_code_markpoints_in_html]){
 		$section=$vars[dse_Trace_Count];
 		print "<font class='f7pt'>[<A href=#section$section>t".$vars[dse_Trace_Count]."</a>]</font>";
@@ -140,12 +150,13 @@ function dse_trace(){
 		$vars[dse_Trace_phpfiles][$phpfile][$phpfunction][3]=0;
 	}
 	$vars[dse_Trace_Stack][]=$bt;
+//if($vars['Verbosity']>5) print "dse_cli_functions.php: dse_trace() returning\n";
 }
 
 
 
 function dse_whereami(){
-	global $vars;
+	global $vars; 
    	$bt=debug_backtrace();
    	
 	print "whereami: "; 
@@ -153,9 +164,12 @@ function dse_whereami(){
 	print "<br>";
 }
 
+//if($vars['Verbosity']>5) print "dse_cli_functions.php: past trace func's\n";
+
+
 $dse_debug_bt2html_lla=array();
 function dse_debug_bt2html($t,$tn){
-	global $vars;	dse_trace();
+	global $vars;	//dse_trace();
 	global $dse_debug_bt2html_lla;
 	$tbr="";
 	/*$LevelsDeep=sizeof($t);
@@ -203,7 +217,7 @@ function dse_debug_bt2html($t,$tn){
 	return $tbr;
 }		
 function dse_debug_bt2html_sub($last){
-	global $vars;	dse_trace();
+	global $vars;	//dse_trace();
     global $dpd_debug_bt2html_lla;
     if($last['function']=="dpd_trace"){
     	return "";
@@ -257,25 +271,26 @@ function dse_debug_bt2html_sub($last){
 	return $tbr;
 }	
 			
+if($vars['Verbosity']>5) print "dse_cli_functions.php: line 269\n";
 function dse_ide_file_open_url($URL,$LineNumber=0){
-	global $vars;
+	global $vars; dse_trace();
 	dpv(5, "dse_ide_file_open_url() unimplimented!");
 	return;
 }
 function dse_launch_url($URL){
-	global $vars;
+	global $vars; dse_trace();
 	$Command=$vars['DSE']['URL_LAUNCH_COMMAND'];
 	$Command=str_replace("<URL>", "\"$URL\"", $Command);
 	return dse_passthru($Command,TRUE);
 }
 function dse_launch_code_edit($File,$LineNumber=0){
-	global $vars;
+	global $vars; dse_trace();
 	$Command=$vars['DSE']['CODE_EDIT_LAUNCH_COMMAND'];
 	$Command=str_replace("<FILE>", "\"$File\"", $Command);
 	return dse_passthru($Command,TRUE);
 }
 function dse_launch_vibk_edit($File,$LineNumber=0){
-	global $vars;
+	global $vars; dse_trace();
 	if($vars['DSE']['VIBK_EDIT_LAUNCH_COMMAND']){
 		$Command=$vars['DSE']['VIBK_EDIT_LAUNCH_COMMAND'];
 		$Command=str_replace("<FILE>", "\"$File\"", $Command);
@@ -286,7 +301,7 @@ function dse_launch_vibk_edit($File,$LineNumber=0){
 }
 		
 function dse_get_stdin(){
-	global $vars;
+	global $vars; dse_trace();
 	$STDIN_Content="";
 	$fd = fopen("php://stdin", "r"); 
 	while (!feof($fd)) {
@@ -296,6 +311,7 @@ function dse_get_stdin(){
 }
  
 function str_remove_blank_lines($Contents){
+	global $vars; dse_trace();
 	$tbr="";
 	foreach(split("\n",$Contents) as $L){
 		if(trim($L)!=""){
@@ -306,8 +322,9 @@ function str_remove_blank_lines($Contents){
 	return $tbr;
 }
 
+if($vars['Verbosity']>5) print "dse_cli_functions.php: line 320\n";
 function dse_exec_esc($StringToEscape){
-	global $vars;
+	global $vars; dse_trace();
 	$StringToEscape=str_replace(" ", "\\ ", $StringToEscape);
 	$StringToEscape=str_replace(";", "\\;", $StringToEscape);
 	$StringToEscape=str_replace("&", "\\& ", $StringToEscape);
@@ -330,7 +347,7 @@ function dse_exec($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
    
 	
 function dse_passthru($Command,$ShowCommand=FALSE){
-	global $vars;
+	global $vars; dse_trace();
 	if($ShowCommand){
 		print colorize("Command: ","yellow","black");
 		print colorize($Command,"blue","white");
@@ -341,9 +358,10 @@ function dse_passthru($Command,$ShowCommand=FALSE){
 	return $r;
 }
 
+if($vars['Verbosity']>5) print "dse_cli_functions.php: line 356\n";
    
 function dse_detect_os_info(){
-	global $vars;
+	global $vars; dse_trace();
 	
 	$vars[dse_osinfo_release]=trim(dse_exec("cat /etc/*-release"));
 	$vars[dse_osinfo_uname]=trim(dse_exec("uname -a"));
@@ -357,7 +375,7 @@ function dse_detect_os_info(){
 
 
 function dse_fss($FileNameOrPartialString, $Dir=""){
-	global $vars;
+	global $vars; dse_trace();
 	$FileNameOrPartialString=trim($FileNameOrPartialString);
 	$FileNameOrPartialString=dse_exec_esc($FileNameOrPartialString);
 	$Dir=dse_exec_esc(trim($Dir));
@@ -366,6 +384,7 @@ function dse_fss($FileNameOrPartialString, $Dir=""){
 	return $r;
 }
 
+if($vars['Verbosity']>5) print "dse_cli_functions.php: line 383\n";
 $OK=getColoredString("OK","green","black");
 $Fixed=getColoredString("Fixed","green","black");
 $Added=getColoredString("Added","green","black");
@@ -375,14 +394,18 @@ $Missing=getColoredString("Missing","red","black");
 $NotChanged=getColoredString("Not Changed","orange","black");
 $NotFixed=getColoredString("Not Changed","orange","black");
 
+if($vars['Verbosity']>5) print "dse_cli_functions.php: line 392\n";
 if (!function_exists("readline")) { function readline( $prompt = '' ){
+	global $vars; dse_trace();
     echo $prompt;
     return rtrim( fgets( STDIN ), "\n" );
 }}
 
 	
+if($vars['Verbosity']>5) print "dse_cli_functions.php: line 395\n";
+
 function dse_replace_in_file($File,$Needle,$Replacement){
-	global $vars;
+	global $vars; dse_trace();
 	if(!dse_file_exists($File)) return FALSE;
 	$tmp=dse_exec("/dse/bin/dtmp");
 	$MD5=md5_of_file($File);
@@ -399,7 +422,8 @@ function dse_replace_in_file($File,$Needle,$Replacement){
 
 			
 function progress_bar($Percent,$Width=60){
-	global $vars,$Rainbow,$RainbowSize;;
+	global $vars; dse_trace();
+	global $Rainbow,$RainbowSize;
 		
 	if($RainbowSize<1){
 		$Rainbow[]=colorize(" ","red","red");
@@ -502,7 +526,7 @@ function progress_bar($Percent,$Width=60){
 	cbp_cursor_restore();
 }
 function dse_hostname(){
-	global $vars;
+	global $vars; dse_trace();
 	if($vars['DSE']['HOSTNAME']) return $vars['DSE']['HOSTNAME'];
 	$tbr=trim(`hostname`);
 	if(dse_is_osx()) $tbr=str_remove($tbr,".local");
@@ -510,7 +534,7 @@ function dse_hostname(){
 }
 
 function dse_pid_get_exe_tree($PID,$Reverse=FALSE){
-	global $vars;
+	global $vars; dse_trace();
 	$tbr="";
 	if($PID<0){
 		return "";
@@ -532,7 +556,7 @@ function dse_pid_get_exe_tree($PID,$Reverse=FALSE){
 }
 	
 function dpv($MinVerbosity,$Message){
-	global $vars;
+	global $vars; dse_trace();
 	if(str_icontains($Message,"error ") || str_icontains($Message,"error: ")){
 		dep($Message);
 	}else{
@@ -542,7 +566,7 @@ function dpv($MinVerbosity,$Message){
 	}
 }
 function dep($ErrorMessage,$Log=TRUE){
-	global $vars;
+	global $vars; dse_trace();
 	if($vars['Verbosity']>=0){
 		print colorize("ERROR:","white","red")
 			.colorize(" ".$ErrorMessage,"magenta","black")."\n";
@@ -552,7 +576,7 @@ function dep($ErrorMessage,$Log=TRUE){
 }
 
 function dse_log($Message,$File=""){
-	global $vars;
+	global $vars; dse_trace();
 	$Command="";
 	$Message=dse_date_format()."  ".str_replace("\"","\\\"",$Message);
 	if(!$File){
@@ -569,15 +593,17 @@ function dse_log($Message,$File=""){
 	if($File)	`echo "$Message" >> $File`;
 }
 
+if($vars['Verbosity']>5) print "dse_cli_functions.php: line 584
+\n";
 function dse_ip_port_is_open($Port){
-	global $vars;
+	global $vars; dse_trace();
 	$Command="/dse/bin/dnetstat -o -d\"\n\" | grep \":$Port \" ";
 	$r=trim(`$Command`);
 	//dse_log("c=$Command r=$r");
 	return($r!="");
 }
 function dse_ip_port_is_listening($IP,$Port){
-	global $vars;
+	global $vars; dse_trace();
 	$Command="nc -vz $IP $Port 2>&1";
 	$r=`$Command`;
 	//dse_log("c=$Command r=$r");
@@ -585,12 +611,15 @@ function dse_ip_port_is_listening($IP,$Port){
 }
 
 function dse_date_format($Time="NOW",$FormatName="FULLREADABLE"){
-	global $vars;
+	global $vars; dse_trace();
 	if($Time=="NOW") $Time=time();
 	if(str_contains($FormatName," ")){
 		return @date($FormatName,$Time);
 	}
 	switch($FormatName){
+		case 'FILE':
+			$FormatString="YmdGis";
+			break;
 		case 'SYSLOG':
 			$FormatString="D M j G:i:s T Y";
 			break;
@@ -620,7 +649,7 @@ function dse_date_format($Time="NOW",$FormatName="FULLREADABLE"){
 
 
 function seconds_to_text($Seconds){
-	global $vars;
+	global $vars; dse_trace();
 	if($Seconds<60*3){
 		if($vars['s2t_abvr'])return "$Seconds sec";
 		return "$Seconds seconds";
@@ -648,7 +677,7 @@ function seconds_to_text($Seconds){
 }
 	
 function dse_time_span_sting_to_seconds($Str){
-	global $vars;
+	global $vars; dse_trace();
 	$Str=strtolower($Str);
 	$StrParts=split(" ",$Str);
 	$tbr=0;
@@ -692,7 +721,7 @@ function dse_time_span_sting_to_seconds($Str){
 }
 
 function dse_popen($Command){
-	global $vars;
+	global $vars; dse_trace();
 	ob_end_flush(); 
 	$handle = popen($Command, 'r');
 	$tbr="";
@@ -708,7 +737,7 @@ function dse_popen($Command){
 		
 		
 function dse_ask_yn($Question=" Press Y or N ",$Default="",$Timeout=""){
-	global $vars;
+	global $vars; dse_trace();
 	print getColoredString("$Question ","red");
 	print getColoredString(" (","purple");
 	print getColoredString("Y","yellow");
@@ -730,7 +759,7 @@ function dse_ask_yn($Question=" Press Y or N ",$Default="",$Timeout=""){
 	}
 }
 function dse_ask_entry($Question="Enter Response:",$Default="",$Timeout=""){
-	global $vars;
+	global $vars; dse_trace();
 	print getColoredString("$Question\n","red");
 	return readline();
 /*	$tbr="";
@@ -742,7 +771,7 @@ function dse_ask_entry($Question="Enter Response:",$Default="",$Timeout=""){
 }
 	
 function dse_ask_choice($Options,$Question="Select an option:",$Default="",$Timeout=""){
-	global $vars;
+	global $vars; dse_trace();
 	print getColoredString("$Question\n","red");
 	$Keys="";
 	$Os=sizeof($Options);$Oi=0;
@@ -770,6 +799,7 @@ function dse_ask_choice($Options,$Question="Select an option:",$Default="",$Time
 	print getColoredString(" Invalid Option. You pressed '$key'. \n","red","black");
 	return dse_ask_choice($Question,$Options,$Default,$Timeout);
 }
+if($vars['Verbosity']>5) print "dse_cli_functions.php: line 788\n";
 	
 function dse_directory_strip_trail( $path ){ 
 	global $vars; dse_trace();
@@ -788,7 +818,7 @@ function dse_directory_strip_trail( $path ){
 
 
 function dse_directory_ls( $path = '.', $level = 0 ){ 
-	global $vars;
+	global $vars; dse_trace();
 	//print "function dse_directory_ls( $path \n";
 	$path.="/";  $path=dse_directory_strip_trail($path);
     $ignore = array( '.', '..' ); 
@@ -812,7 +842,7 @@ function dse_directory_ls( $path = '.', $level = 0 ){
 	return $tbr;
 } 
 function dse_ls( $search ){ 
-	global $vars;
+	global $vars; dse_trace();
 	$Command="ls -a -1 $search";
 	$r=`$Command`;
 	//print "Command: $Command\n$r\n";
@@ -832,14 +862,14 @@ function dse_ls( $search ){
 
 function dse_pid_is_running($PID){
 	//print " dse_pid_is_running($PID)\n";
-	global $vars;
+	global $vars; dse_trace();
 	$PIDInfo=dse_pid_get_info($PID);
 	//print_r($PIDInfo);
 	return ($PIDInfo['PPID']>0);
 }
 
 function dse_pid_get_info($PID){
-	global $vars;
+	global $vars; dse_trace();
 	if(!$PID){
 		return null;
 	}
@@ -864,7 +894,7 @@ function dse_pid_get_info($PID){
 	return $PIDInfo;
 }
 function dse_pid_get_info_str($PID,$Recursive=FALSE,$Reverse=FALSE){
-	global $vars;
+	global $vars; dse_trace();
 	$PIDInfo=dse_pid_get_info($PID);
 	$tbr="";
 	if($vars['DSE']['OUTPUT_FORMAT']=="HTML"){
@@ -889,7 +919,7 @@ function dse_pid_get_info_str($PID,$Recursive=FALSE,$Reverse=FALSE){
 }
 
 function dse_pid_get_ps_columns($PID,$o){
-	global $vars;
+	global $vars; dse_trace();
 	//print "dse_pid_get_ps_columns a dse_pid_get_ps_columns($PID,$o)\n";
 	$PID=intval($PID);
 	if(!$PID){
@@ -907,7 +937,7 @@ function dse_pid_get_ps_columns($PID,$o){
 
 
 function dse_which($prog){
-	global $vars;
+	global $vars; dse_trace();
 	$Command="which $prog 2>&1";
 	$r=`$Command`;
 	//print "Command=$Command r=$r\n";
@@ -919,7 +949,8 @@ function dse_which($prog){
 }
 
 function dse_cli_script_start(){
-	global $vars,$argv;
+	global $vars; dse_trace();
+	global $argv;
 	
 	if($vars['Verbosity']>2 || $vars['DSE']['SCRIPT_SETTINGS']['Verbosity']>2){
 		print "options=".debug_tostring($vars['options'])."\n";
@@ -944,7 +975,7 @@ function dse_cli_script_start(){
 
 
 function dse_cli_script_header(){
-	global $vars;
+	global $vars; dse_trace();
 	if($vars['ScriptHeaderShow'] || $vars['Verbosity']>1 || $vars['DSE']['SCRIPT_SETTINGS']['Verbosity']>1){
 		//print getColoredString("","black","black");
 		print getColoredString("    ########======-----________   ", 'light_blue', 'black');
@@ -967,7 +998,8 @@ function dse_cli_script_header(){
 
 
 function dse_require_root(){
-	global $vars,$argv;
+	global $vars; dse_trace();
+	global $argv;
 	$user=trim(`whoami`);
 	if($user!="root"){
 		print "$argv[0] must be run as root.\n";
@@ -989,7 +1021,7 @@ function dse_require_root(){
 }
 
 function md5_of_file($f){
-        global $vars;
+	global $vars; dse_trace();
         $sw_vers=dse_which("md5");
         if($sw_vers){
                 $m=`md5 -q $f`;
@@ -1007,7 +1039,7 @@ function md5_of_file($f){
 }
 
 function files_are_same($f1,$f2){
-	global $vars;
+	global $vars; dse_trace();
 	$m1=md5_of_file($f1);
 	$m2=md5_of_file($f2);
 	//print "files_are_same:md5: $m1==$m2<br>";
@@ -1020,7 +1052,7 @@ function dse_file_get_size($DestinationFile){
 }
 
 function dse_file_extension($File){
-	global $vars;
+	global $vars; dse_trace();
 	$File=basename($File);
 	$Extension=strcut($File,".");
 	if(str_contains($Extension,".")) return dse_file_extension($Extension);
@@ -1047,7 +1079,7 @@ function dse_file_get_stat_array($DestinationFile){
 }
 
 function dse_file_get_alt_stat_array($file) {
- 
+	global $vars; dse_trace();
  clearstatcache();
  $ss=@stat($file);
  if(!$ss) return false; //Couldnt stat file
@@ -1142,7 +1174,7 @@ function dse_file_get_alt_stat_array($file) {
 
 
 function dse_file_get_stat_field($DestinationFile,$field=""){
-	global $vars;
+	global $vars; dse_trace();
 	$stat_field_names=array('dev'=>0,'ino'=>1,'mode'=>2,'nlink'=>3,'uid'=>4,'gid'=>5,'rdev'=>6,'size'=>7,'atime'=>8,'mtime'=>9,'ctime'=>10,'blksize'=>11,'blocks'=>12);
 	if(!dse_file_exists($DestinationFile)){
 		dpv(4,  "Error in dse_file_get_mode($DestinationFile,$field) - file does not exist.");
@@ -1168,13 +1200,13 @@ function dse_file_exists($DestinationFile){
 }
 
 function dse_file_get_mode($DestinationFile){
-	global $vars;
+	global $vars; dse_trace();
 	$ModeInt=intval(substr(sprintf('%o', fileperms($DestinationFile)), -4));
 	return $ModeInt;
 }
 
 function dse_file_get_owner($DestinationFile,$ReturnGroupAlso=TRUE){
-	global $vars;
+	global $vars; dse_trace();
 	$Owner="";
 	$UserInt=fileowner($DestinationFile);
 	$UserArray=dse_posix_getpwuid($UserInt);
@@ -1190,7 +1222,7 @@ function dse_file_get_owner($DestinationFile,$ReturnGroupAlso=TRUE){
 }
 	
 function dse_gid_name($gid){ 
-	global $vars;
+	global $vars; dse_trace();
 	if($gid){
 		$a=dse_posix_getgrgid($gid);
 		if($a) return $a['name'];
@@ -1198,7 +1230,7 @@ function dse_gid_name($gid){
 	return $gid;
 }
 function dse_uid_name($uid){ 
-	global $vars;
+	global $vars; dse_trace();
 	if($uid){
 		$a=dse_posix_getpwuid($uid);
 		if($a) return $a['name'];
@@ -1208,7 +1240,7 @@ function dse_uid_name($uid){
 
 
 function dse_posix_getgrgid($gid){ 
-	global $vars;
+	global $vars; dse_trace();
   	if (function_exists('posix_getgrgid')) { 
     	$a = posix_getgrgid($gid); 
     	return $a; 
@@ -1224,7 +1256,7 @@ function dse_posix_getgrgid($gid){
 }
 
 function dse_posix_getpwuid($uid){ 
-	global $vars;
+	global $vars; dse_trace();
   	if (function_exists('posix_getpwuid')) { 
     	$a = posix_getpwuid($uid); 
     	return $a; 
@@ -1240,7 +1272,7 @@ function dse_posix_getpwuid($uid){
 } 
 
 function dse_file_delete($File){
-	global $vars;
+	global $vars; dse_trace();
 	if(!$File){
 		return -1;
 	}
@@ -1254,7 +1286,7 @@ function dse_file_delete($File){
 
 
 function dse_file_set_mode($DestinationFile,$Mode){
-	global $vars;
+	global $vars; dse_trace();
 	if($DestinationFile && $Mode){
 		$command="chmod -R $Mode $DestinationFile 2>&1";
 		print `$command`;
@@ -1268,7 +1300,7 @@ function dse_file_set_mode($DestinationFile,$Mode){
 }
 
 function dse_file_set_owner($DestinationFile,$Owner){
-	global $vars;
+	global $vars; dse_trace();
 	if($DestinationFile && $Owner){
 		$command="chown $Owner $DestinationFile";
 		`$command`;
@@ -1282,12 +1314,12 @@ function dse_file_set_owner($DestinationFile,$Owner){
 }
 
 function dse_mkdir($Destination,$Mode="",$Owner=""){
-	global $vars;
+	global $vars; dse_trace();
 	return dse_directory_create($Destination,$Mode,$Owner);
 }
 
 function dse_directory_create($Destination,$Mode="",$Owner=""){
-	global $vars;
+	global $vars; dse_trace();
 	print "DSE dir: $Destination ";
 	if(!file_exists($Destination)) {
 		$command="mkdir -p $Destination";
@@ -1337,7 +1369,7 @@ function dse_file_backup($file){
 
 
 function dse_file_link($LinkFile,$DestinationFile){
-	global $vars;
+	global $vars; dse_trace();
 	print "DSE file link: $LinkFile ";
 	if(!$LinkFile){
 		print getColoredString("Error: No LinkFile given.\n","red","black");
@@ -1377,7 +1409,7 @@ function dse_file_link($LinkFile,$DestinationFile){
 }
 
 function dse_file_is_link($File){
-	global $vars;
+	global $vars; dse_trace();
 	$DestinationFileCurrent=dse_exec("ls -la \"$File\"");
 	if(str_contains($DestinationFileCurrent,"->")){
 		return TRUE;
@@ -1386,7 +1418,7 @@ function dse_file_is_link($File){
 }
 
 function dse_file_link_get_destination($LinkFile){
-	global $vars;
+	global $vars; dse_trace();
 	
 	if(!file_exists($LinkFile)) {
 		//return -1;	
@@ -1403,7 +1435,7 @@ function dse_file_link_get_destination($LinkFile){
 }
  
 function is_already_running($exe="",$ExitOnTrue=TRUE,$MessageOnExit=TRUE){
-	global $vars;
+	global $vars; dse_trace();
 	if($exe==""){
 		global $argv;
 		$exe=$arvg[0];
@@ -1427,7 +1459,7 @@ function is_already_running($exe="",$ExitOnTrue=TRUE,$MessageOnExit=TRUE){
 }
 
 function dse_say($Text,$Volume="",$Voice="Victoria"){
-	global $vars;
+	global $vars; dse_trace();
 	$CurrentVolume=`/dmp/bin/volume_get`;
 	if($Volume){
 		//=$Volume;
@@ -1448,7 +1480,7 @@ function dse_say($Text,$Volume="",$Voice="Victoria"){
 }
 
 function dse_output_box($Title,$Body,$TitleColor="",$BorderColor="",$BodyColor="",$BGColor="",$BGBorderColor=""){
-	global $vars;
+	global $vars; dse_trace();
 	
 	if(!$BGColor)			$BGColor=$vars[shell_colors_reset_background];
 	if(!$BGBorderColor)		$BGBorderColor=$BGColor;
@@ -1479,7 +1511,7 @@ function dse_output_box($Title,$Body,$TitleColor="",$BorderColor="",$BodyColor="
 }
 
 function dse_file_get_size_readable($file){
-	global $vars;
+	global $vars; dse_trace();
 	return dse_file_size_to_readable(dse_file_get_size($file));
 }
 
@@ -1499,15 +1531,15 @@ function dse_file_size_to_readable($size){
 }
 
 function dse_file_get_contents($filename){
-	global $vars;
+	global $vars; dse_trace();
 	return `cat $filename`;
 }
 function dse_file_append_contents($filename,$Str){
-	global $vars;
+	global $vars; dse_trace();
 	return dse_file_put_contents($filename,dse_file_get_contents($filename).$Str);
 }
 function dse_file_add_line_if_not($filename,$Str,$ShowCommand=FALSE){
-	global $vars;	
+	global $vars; dse_trace();
 	if($ShowCommand){
 		print colorize("dse_file_add_line_if_not(","yellow","black");
 		print colorize($filename,"magenta","black");
@@ -1523,18 +1555,18 @@ function dse_file_add_line_if_not($filename,$Str,$ShowCommand=FALSE){
 }
 
 function dse_file_replace_str($File,$Needle,$Replacement){
-	global $vars;
+	global $vars; dse_trace();
 	dse_replace_in_file($File,$Needle,$Replacement);
 }
 
 function dse_file_put_contents($filename,$Str){
-	global $vars;
+	global $vars; dse_trace();
 	return file_put_contents($filename,$Str);
 }
 
 // returns array of Names=>Values
 function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
-	global $vars;
+	global $vars; dse_trace();
 	$CfgData=@dse_file_get_contents($filename);
 	if($CfgData==""){
 		print "ERROR opening config file: $filename\n";
@@ -1580,11 +1612,11 @@ function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 
 
 function str_icontains($str,$needle){
-	global $vars;
+	global $vars; dse_trace();
 	return str_contains($str,$needle,TRUE);;
 }
 function str_contains($str,$needle,$CaseInSensitive=FALSE){
-	global $vars;
+	global $vars; dse_trace();
 	if(is_array($needle)){
 		foreach($needle as $n){
 			if($CaseInSensitive){
@@ -1604,16 +1636,17 @@ function str_contains($str,$needle,$CaseInSensitive=FALSE){
 }
 
 function str_remove($String,$toRemove){
-	global $vars;// print "\n str_remove(tr=$toRemove\n";
+	global $vars; dse_trace();
 	return str_replace($toRemove,"",$String);
 }
 
 function str_head($String,$N){
-	global $vars;
+	global $vars; dse_trace();
 	return substr($String,0,$N);
 }
 
 function str_tail($String,$N){
+	global $vars; dse_trace();
 	dpv(6,"str_tail($String,$N)");
 	global $vars;
 	$sl=strlen($String);
@@ -1625,7 +1658,7 @@ function str_tail($String,$N){
 }
 
 function strcut($haystack,$pre,$post=""){
-	global $vars;
+	global $vars; dse_trace();
 	global $strcut_post_haystack;
 	$strcut_post_haystack="";
 	if($pre=="" || !(stristr($haystack,$pre)===FALSE)){
@@ -1660,7 +1693,7 @@ function strcut($haystack,$pre,$post=""){
 }
 	
 function bar($String,$Type,$fg,$bg,$bfg="",$bbg=""){
-	global $vars;
+	global $vars; dse_trace();
 	if($bfg==""){
 		$bfg=$fg;
 	}
@@ -1688,7 +1721,7 @@ function bar($String,$Type,$fg,$bg,$bfg="",$bbg=""){
 
 
 function pad($String,$Length,$PadChar=" ",$Justification="left"){
-	global $vars;
+	global $vars; dse_trace();
 	if($vars['Verbosity']>5)$inString=$String;
 	if(str_contains($Length,"%")){
 		$ScreenWidth=cbp_get_screen_width();
@@ -1753,7 +1786,7 @@ function pad($String,$Length,$PadChar=" ",$Justification="left"){
 }
 	
 function unk_time($TimeAndDateString){
-	global $vars;
+	global $vars; dse_trace();
 	$TimeAndDateString=trim($TimeAndDateString);
 	$TimeAndDateString=str_replace("  "," ",$TimeAndDateString);
 	dpv(5,substr("unk_time($TimeAndDateString)",0,cbp_get_screen_width()-2)."\n");
@@ -1863,9 +1896,10 @@ function unk_time($TimeAndDateString){
 	return -1;
 }
 
+if($vars['Verbosity']>5) print "dse_cli_functions.php: line 1885\n";
+
 function date_str_to_sql_date($str,$fmt=""){
-	global $vars;
-	
+	global $vars; dse_trace();
 	$str=str_replace("\\","-",$str);
 	$fmt=str_replace("\\","-",$fmt);
 	$stre=urlencode($str);
@@ -2131,6 +2165,7 @@ function date_str_to_sql_date($str,$fmt=""){
 
 
 function strpos_nonalnum($haystack, $offset=0){
+	global $vars; dse_trace();
 	$haystack=strtoupper($haystack);
 	$i=0;
 	while(1){
@@ -2153,6 +2188,7 @@ function strpos_nonalnum($haystack, $offset=0){
 
 
 function strpos_alnum($haystack, $offset=0){
+	global $vars; dse_trace();
 	$haystack=strtoupper($haystack);
 	$i=$offset;
 	while(1){
@@ -2172,15 +2208,17 @@ function strpos_alnum($haystack, $offset=0){
 
 
 function time_float(){
+	global $vars; //dse_trace();
 	return (time()+microtime());
 }
 
 function SQLDate2time($in){
+	global $vars; dse_trace();
 	return YYYYMMDD2time($in);
 }
 
 function YYYYMMDD2time($in){
-	
+	global $vars; dse_trace();
 	$t = split("/",$in);	
 	if (count($t)!=3) {
 		$t = split("-",$in);
@@ -2211,6 +2249,7 @@ function YYYYMMDD2time($in){
  
 	
 function str_compare_count_matching_prefix_chars($a,$b){
+	global $vars; dse_trace();
 	$al=strlen($a); $bl=strlen($b);
 	//print "a=$a b=$b\n\n";
 	$s=0;
@@ -2233,7 +2272,7 @@ function str_compare_count_matching_prefix_chars($a,$b){
 global $debug_tostring_output_txt; 	$debug_tostring_output_txt=TRUE;
 	
 function debug_tostring(&$var){
-	global $vars;
+	global $vars; dse_trace();
 	global $debug_tostring_indent;
 	global $debug_tostring_full_name;
 	global $debug_tostring_output_txt;
@@ -2380,6 +2419,7 @@ method_exists() - C
 	return $tbr;
 }	
 function variable_name( &$var, $scope=false, $prefix='UNIQUE', $suffix='VARIABLE' ){
+	global $vars; dse_trace();
     if($scope) {
         $vals = $scope;
     } else {
@@ -2399,6 +2439,7 @@ function variable_name( &$var, $scope=false, $prefix='UNIQUE', $suffix='VARIABLE
 
 
 function remove_duplicate_lines($String){
+	global $vars; dse_trace();
 	$out=array();
 	foreach(split("\n",$String) as $Line){
 		$Found=FALSE;
@@ -2424,6 +2465,7 @@ function remove_duplicate_lines($String){
 
 
 function remove_blank_lines($String){
+	global $vars; dse_trace();
 	$out=array();
 	foreach(split("\n",$String) as $Line){
 		if(trim($Line)!=""){
@@ -2442,11 +2484,12 @@ function remove_blank_lines($String){
 
 
 function file_count_lines($File){
-	global $vars;
+	global $vars; dse_trace();
 	return (trim(dse_exec("wc -l $File",$vars['Verbosity']>4)));
 }
 
 function combine_sameprefixed_lines($LogsCombined){
+	global $vars; dse_trace();
 	global $NumberOfBytesSameLimit;
 	$Out="";
 	$c=0;
@@ -2491,6 +2534,7 @@ function combine_sameprefixed_lines($LogsCombined){
 * Returns true, if this value was in the array, otherwise false (in this case the array is same as before)
 */
 function deleteFromArray(&$array, $deleteIt, $useOldKeys = FALSE, $useDeleteItAsIndex=FALSE ){
+	global $vars; dse_trace();
     $tmpArray = array();
     $found = FALSE;
    // print "array="; print_r($array); print "\n";
@@ -2519,7 +2563,7 @@ function deleteFromArray(&$array, $deleteIt, $useOldKeys = FALSE, $useDeleteItAs
 
 
 function dse_is_redhat(){
-	global $vars;
+	global $vars; dse_trace();
 	if(isset($vars['DSE']['IS_REDHAT'])) return $vars['DSE']['IS_REDHAT'];
 	if(!file_exists("/etc/issue")){
 		$vars['DSE']['IS_REDHAT']=FALSE;
@@ -2534,7 +2578,7 @@ function dse_is_redhat(){
 	return $vars['DSE']['IS_REDHAT'];
 }
 function dse_is_osx(){
-	global $vars;
+	global $vars; dse_trace();
 	if(isset($vars['DSE']['IS_OSX'])) return $vars['DSE']['IS_OSX'];
 	$sw_vers=dse_which("sw_vers");
 	if(!$sw_vers){
@@ -2550,7 +2594,7 @@ function dse_is_osx(){
 	return $vars['DSE']['IS_OSX'];
 }
 function dse_is_ubuntu(){
-	global $vars;
+	global $vars; dse_trace();
 	if(isset($vars['DSE']['IS_UBUNTU'])) return $vars['DSE']['IS_UBUNTU'];
 	if(!file_exists("/etc/issue")){
 		$vars['DSE']['IS_UBUNTU']=FALSE;
@@ -2565,7 +2609,7 @@ function dse_is_ubuntu(){
 	return $vars['DSE']['IS_UBUNTU'];
 }
 function dse_ubuntu_release(){
-	global $vars;
+	global $vars; dse_trace();
 	if(isset($vars['DSE']['UBUNTU_RELEASE'])) return $vars['DSE']['UBUNTU_RELEASE'];
 	if(!file_exists("/etc/issue")){
 		$vars['DSE']['IS_UBUNTU']=FALSE;
@@ -2586,7 +2630,7 @@ function dse_ubuntu_release(){
 	return $vars['DSE']['UBUNTU_RELEASE'];
 }
 function dse_is_centos(){
-	global $vars;
+	global $vars; dse_trace();
 	if(isset($vars['DSE']['IS_CENTOS'])) return $vars['DSE']['IS_CENTOS'];
 	if(!file_exists("/etc/issue")){
 		$vars['DSE']['IS_CENTOS']=FALSE;
@@ -2603,7 +2647,7 @@ function dse_is_centos(){
 
 
 function get_load(){
-	global $vars;
+	global $vars; dse_trace();
 	if(dse_is_osx()){
 		$this_loadavg=`uptime 2>&1`;
 		$this_loadavg=strcut($this_loadavg,"oad averages: ","\n");
@@ -2674,7 +2718,7 @@ while (!feof($fd)) {
 
 
 function dse_cli_get_paramaters_array($parameters_details){
-	global $vars;
+	global $vars; dse_trace();
 	$parameters=array();
 	foreach($parameters_details as $p){
 		$parameters[$p[0]]=$p[1];
@@ -2683,7 +2727,7 @@ function dse_cli_get_paramaters_array($parameters_details){
 }
 
 function dse_cli_get_parameters_readable_brief($parameters_details){
-	global $vars;
+	global $vars; dse_trace();
 	$tbr="";
 	foreach($parameters_details as $p){
 		if($tbr)$tbr.=" ";
@@ -2696,7 +2740,7 @@ function dse_cli_get_parameters_readable_brief($parameters_details){
 
 
 function dse_cli_get_usage($parameters_details){
-	global $vars;
+	global $vars; dse_trace();
 
 	if($vars['DSE']['SCRIPT_COMMAND_FORMAT']){
 		$CommandFormat=$vars['DSE']['SCRIPT_COMMAND_FORMAT'];
@@ -2736,6 +2780,7 @@ function dse_cli_get_usage($parameters_details){
 //////////////////////////////////////////////////////////////////////////////////////////
 
 function _getopt ( ) {
+	global $vars; dse_trace();
 
 /* _getopt(): Ver. 1.3      2009/05/30
    My page: http://www.ntu.beautifulworldco.com/weblog/?p=526
@@ -2962,6 +3007,7 @@ So there are four ways to work with _getopt(),
 }
 
 function split_para ( $pattern ) {
+	global $vars; dse_trace();
 
 /* split_para() version 1.0      2008/08/19
    My page: http://www.ntu.beautifulworldco.com/weblog/?p=526
@@ -3102,7 +3148,7 @@ var_dump( $result );
 
 
 function dse_log_parse_apache_La_set_Time($La){
-	global $vars;
+	global $vars; dse_trace();
 	$TimeStr=substr($La[3],1);
 	$dp=split(":",$TimeStr);
 	$format = '%d/%m/%Y %H:%M:%S';
@@ -3121,7 +3167,7 @@ function dse_log_parse_apache_La_set_Time($La){
 // ************* COLOR / TERMINAL  *** COLOR / TERMINAL  *** COLOR / TERMINAL  *** COLOR / TERMINAL  *** COLOR / TERMINAL  
 	 
 function test_all_shell_colors(){
-	global $vars;
+	global $vars; dse_trace();
 	print "\n\nAnsi Color Codes: ";
 	//$background_color="black";
 	/*foreach($vars[shell_foreground_colors] as $ColorName=>$foreground_color){
@@ -3224,8 +3270,7 @@ Sets multiple display attribute settings. The following lists standard attribute
 }
 
 function shell_colors_print_keys(){
-	global $vars;
-
+	global $vars; dse_trace();
 	print "\n\nForground Names: ";
 	$background_color="40";//"black";
 	foreach($vars[shell_foreground_colors] as $ColorName=>$forground_color){
@@ -3242,7 +3287,7 @@ function shell_colors_print_keys(){
 }
 
 function dse_bt_colorize($v,$t,$type="MAXIMUM",$v_str=""){
-	global $vars;
+	global $vars; dse_trace();
 	if($v_str==""){
 		$v_str=$v;
 	}
@@ -3392,7 +3437,7 @@ $vars[shell_foreground_colors]['white'] = '37';
 	
 	
 function colorize_words($L) {
-	global $vars;
+	global $vars; dse_trace();
 	foreach($vars['DSE']['RedWords'] as $RedWord) $L=str_ireplace($RedWord,colorize($RedWord,"red"),$L);
 	foreach($vars['DSE']['GreenWords'] as $GreenWord) $L=str_ireplace($GreenWord,colorize($GreenWord,"green"),$L);
 	foreach($vars['DSE']['BlueWords'] as $BlueWord) $L=str_ireplace($BlueWord,colorize($BlueWord,"blue"),$L);
@@ -3413,7 +3458,12 @@ function colorize($string, $forground_color = null, $background_color = null, $R
 }
 
 function getColoredString($string, $forground_color = null, $background_color = null, $ResetColorsAfter=TRUE, $type=null) {
-	global $vars;
+	global $vars; 
+	
+if($vars['Verbosity']>5) print "dse_cli_functions.php: getColoredString pre trace\n";
+dse_trace();
+
+if($vars['Verbosity']>5) print "dse_cli_functions.php: getColoredString post trace\n";
 	//print "getColoredString(string, $forground_color, $background_color, $ResetColorsAfter, $type) {\n";
 	////print "\n\ngetColoredString($string, $forground_color = null, $background_color = null, $ResetColorsAfter=TRUE, $type=null) \n\n";
 	/*if($forground_color!=null && $forground_color!=""){
@@ -3510,62 +3560,69 @@ function getColoredString($string, $forground_color = null, $background_color = 
 }
 
 function setBackgroundColor($background_color) {
-	global $vars;
+	global $vars; dse_trace();
 	return getColoredString("", null, $background_color, FALSE);
 }
 function setForgroundColor($forground_color) {
-	global $vars;
+	global $vars; dse_trace();
 	return getColoredString("", $forground_color, null, FALSE);
 }
 	
 	
 	
 function getForegroundColors() {
-	global $vars;
+	global $vars; dse_trace();
 	return array_keys($vars[shell_foreground_colors]);
 }
  
 function getBackgroundColors() {
-	global $vars;
+	global $vars; dse_trace();
 	return array_keys($vars[shell_background_colors]);
 }
 	
  
  
 function cbp_get_screen_width(){
-    global $vars;
+	global $vars; dse_trace();
 	$Command="stty size | cut -d\" \" -f2";
 	return trim(dse_exec($Command));
 }
 function cbp_get_screen_height(){
-    global $vars;
+	global $vars; dse_trace();
 	$Command="stty size | cut -d\" \" -f1";
 	return trim(dse_exec($Command));
 }
  
 
 function sbp_cursor_postion($L=0,$C=0){
+	global $vars; dse_trace();
         print "\033[${L};${C}H";
 }
 //function sbp_cursor_column($C=0){
   //      print "\033[;${C}H";
 //}
 function cbp_cursor_save(){
+	global $vars; dse_trace();
         print "\0337";
 }
 function cbp_cursor_restore(){
+	global $vars; dse_trace();
         print "\0337";
 }
 function cbp_screen_clear(){
+	global $vars; dse_trace();
         print "\033[2J";
 }
 function cbp_cursor_left($N=1){
+	global $vars; dse_trace();
         print "\033[${N}D";
 }
 function cbp_cursor_up($N=1){
+	global $vars; dse_trace();
         print "\033[${N}A";
 }
 function cbp_characters_clear($N=1){
+	global $vars; dse_trace();
 		print "\033[${N}D";
 		for($i=0;$i<$n;$i++) print " ";
         print "\033[${N}D";
@@ -3602,7 +3659,8 @@ Erase Screen		<ESC>[2J
 // ************ System Stats    ** System Stats    ** System Stats    ** System Stats    ** System Stats    
 
 function dse_proc_io_get($Reset=FALSE){
-	global $vars,$procIOs;
+	global $vars; dse_trace();
+	global $procIOs;
 	//print "dse_proc_io_get_start_time=$vars[dse_proc_io_get_start_time] \n";
 	//print "sizeof($procIOs)=".sizeof($procIOs)." \n";
 	
@@ -3701,6 +3759,7 @@ function dse_proc_io_get($Reset=FALSE){
 
 
 function rrmdir($dir) {
+	global $vars; dse_trace();
 	global $rrmdir_test_only;
    	if (is_dir($dir)) {
      $objects = scandir($dir);
@@ -3730,11 +3789,12 @@ function rrmdir($dir) {
 
 
 function http_get($URL,$PostData=""){
-	global $vars;
+	global $vars; dse_trace();
 	return http_lynx_get($URL);
 }
  
 function http_lynx_get($URL){
+	global $vars; dse_trace();
 	$URL=str_replace("\"","%34",$URL);
 	$URL=str_replace("\n","",$URL);
 	//return `/usr/bin/lynx -connect_timeout=10 -source "$URL"`;	
@@ -3752,5 +3812,6 @@ function http_lynx_get($URL){
 }
  
 
+if($vars['Verbosity']>5) print "dse_cli_functions.php: Done!\n";
 
 ?>

@@ -21,7 +21,7 @@ $ cat package_list | xargs sudo apt-get install
 */
 
 function dse_initd_entry_add($Script,$ServiceName,$Rank=99){
-	global $vars;
+	global $vars; dse_trace();
 	if(dse_is_osx()){
 		$Command="sudo launchctl remove $ServiceName";
 		$r=`$Command`;
@@ -48,7 +48,7 @@ function dse_initd_entry_add($Script,$ServiceName,$Rank=99){
 	}
 }
 function dse_initd_entry_get_info($ServiceName=""){
-	global $vars;
+	global $vars; dse_trace();
 	if(dse_is_osx()){
 		$tbr="";
 		//foreach(array("RUNNING","NOT_RUNNING") as $Running){
@@ -95,7 +95,7 @@ function dse_initd_entry_get_info($ServiceName=""){
 
 
 function dse_server_set_hostname($NewHostName){
-	global $vars;
+	global $vars; dse_trace();
 	if(dse_is_ubuntu()){
 		$Hostname=trim(`hostname`);
 		print "[$Hostname]=>[$NewHostName]\n";
@@ -118,7 +118,8 @@ function dse_server_set_hostname($NewHostName){
 }
 
 function dse_server_configure_file_load(){
-	global $vars,$strcut_post_haystack;
+	global $vars; dse_trace();
+	global $strcut_post_haystack;
 	dpv(0,"dse_server_configure_file_load");
 	$ConfigDirectory=$vars['DSE']['DSE_CONFIG_DIR'];
 	$ConfigFileContents=file_get_contents($vars['DSE']['SERVER_CONFIG_FILE']);
@@ -269,6 +270,7 @@ function dse_server_configure_file_load(){
 
 
 function dse_spread_config_to_all_servers(){
+	global $vars; dse_trace();
        /* $WebServerHostName=str_replace("\r\n","",`hostname`);
         $WebServerHostName=strtoupper(substr($WebServerHostName,0,strpos($WebServerHostName,".")));
         $WebServerNumber=str_replace("WS","",$WebServerHostName);
@@ -288,7 +290,7 @@ function dse_spread_config_to_all_servers(){
 
 
 function dse_configure_file_link($LinkFile,$DestinationFile){
-	global $vars;
+	global $vars; dse_trace();
 	print "DSE file link: $LinkFile =>  ";
 	if(file_exists($LinkFile)){
 		print getColoredString(" Exists! \n","green","black");
@@ -317,7 +319,7 @@ function dse_configure_file_link($LinkFile,$DestinationFile){
 
 
 function dse_configure_file_install_from_template($DestinationFile,$TemplateFile,$Mode,$Owner){
-	global $vars;
+	global $vars; dse_trace();
 	//if(strlen($Mode)==4){
 	//	$ExpectedMode=substr($Mode,1,3);
 	//}else{
@@ -376,7 +378,7 @@ function dse_configure_file_install_from_template($DestinationFile,$TemplateFile
 
 
 function dse_file_install($Template,$Destination,$Mode="",$Owner=""){
-	global $vars;
+	global $vars; dse_trace();
 	print "DSE installing file: ";
 	print colorize("$Template ","cyan");
 	
@@ -413,7 +415,7 @@ function dse_file_install($Template,$Destination,$Mode="",$Owner=""){
 
 
 function dse_install_yum(){
-	global $vars;
+	global $vars; dse_trace();
 	if($vars['DSE']['YUM_INSTALL__FAILED']==TRUE) return -1;
 	print getColoredString(" Installing yum... ","blue","black");
 	
@@ -461,14 +463,14 @@ function dse_install_yum(){
 //sudo port -v selfupdate
 
 function dse_apt_uu(){
-	global $vars;
+	global $vars; dse_trace();
 	$Installer=dse_get_installer_name();
 	passthru("sudo $Installer update");
 	passthru("sudo $Installer upgrade");
 }
 				
 function dse_get_installer_name(){
-	global $vars;
+	global $vars; dse_trace();
 	$Installer="";
 	
 	if(dse_is_osx()){
@@ -520,13 +522,13 @@ function dse_get_installer_name(){
 }
 				
 function dse_file_get_extension($filename){
-	global $vars;
+	global $vars; dse_trace();
 	$ext = end(explode('.', $filename));
 	return $ext;
 }	
 		
 function dse_is_package_installed($Package){
-	global $vars;
+	global $vars; dse_trace();
 	//if(dse_is_ubuntu()){
 		$Command="dpkg --get-selections 2>/dev/null";
 		//print colorize("downloading file..\n","red");
@@ -548,7 +550,7 @@ function dse_is_package_installed($Package){
 
 
 function dse_install_file_from_url($URL){
-	global $vars;
+	global $vars; dse_trace();
 	$DownloadsLocation="/backup/installs";
 	$ar=parse_url($URL);
 	//print_r($ar);
@@ -685,7 +687,7 @@ print `tar xvf /tmp/bootinfoscript-061.tar`;
 				
 					
 function dse_package_install($PackageName,$Remove=FALSE){
-	global $vars;
+	global $vars; dse_trace();
 	if(!$PackageName){
 		return;
 	}
@@ -880,7 +882,7 @@ function dse_package_install($PackageName,$Remove=FALSE){
 }
 
 function dse_package_run_upgrade(){
-	global $vars;
+	global $vars; dse_trace();
 	print pad("Updating Packages: ...   ","90%",colorize("-","blue"))."\n";
 	
 	//$Installer=dse_get_installer_name();
@@ -1058,12 +1060,12 @@ function dse_package_run_upgrade(){
 
 
 function dse_configure_iptables_init(){
-	global $vars;
+	global $vars; dse_trace();
 	
 }
 
 function dse_configure_create_named_conf(){
-	global $vars;
+	global $vars; dse_trace();
 	
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		if($Domain) {
@@ -1138,7 +1140,7 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 }
 
 function dse_configure_create_httpd_conf(){
-	global $vars;
+	global $vars; dse_trace();
 	
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		print "Domain: $Domain\n";	
@@ -1226,7 +1228,7 @@ function dse_configure_create_httpd_conf(){
 
 
 function dse_configure_install_packages(){
-	global $vars;
+	global $vars; dse_trace();
 
 //"iftop",,"git","gnome","ubuntu-desktop"
 	$PackageNamesArray=array("vim","memstat","sysstat","yum","chkconfig","lynx-cur","perl-tk","cron-apt","dnsutils","update-inetd",
@@ -1295,7 +1297,7 @@ function dse_configure_install_packages(){
 
 
 function dse_configure_services_init(){
-	global $vars;
+	global $vars; dse_trace();
 	
 	if(str_contains($vars['DSE']['SERVICES'],"http") ){
 		print `sudo chkconfig httpd on`;	
@@ -1318,7 +1320,7 @@ function dse_configure_services_init(){
 
 
 function dse_configure_directories_create(){
-	global $vars;
+	global $vars; dse_trace();
 	
 	if(str_contains($vars['DSE']['SERVICES'],"http") ){
  		if($vars['DSE']['HTTP_USER']){
@@ -1357,19 +1359,19 @@ function dse_configure_directories_create(){
 }
 
 function dse_service_name_from_common_name($service){
-	global $vars;
+	global $vars; dse_trace();
 	if(@key_exists($service, $vars['DSE']['SERVICE_NICKNAMES'])){
 		return $vars['DSE']['SERVICE_NICKNAMES'][$service];
 	}
 	return $service;
 }
 function dse_service_restart($service){
-	global $vars;
+	global $vars; dse_trace();
 	dse_service_stop($service);
 	dse_service_start($service);
 }
 function dse_service_stop($service){
-	global $vars;
+	global $vars; dse_trace();
 	$service=dse_service_name_from_common_name($service);
 	print "Stopping service $service: ";
 	$c="/sbin/service $service stop";
@@ -1377,7 +1379,7 @@ function dse_service_stop($service){
 	print "Stopped.\n";
 }
 function dse_service_start($service){
-	global $vars;
+	global $vars; dse_trace();
 	$service=dse_service_name_from_common_name($service);
 	print "Starting service $service: ";
 	$c="/sbin/service $service start";
@@ -1387,7 +1389,7 @@ function dse_service_start($service){
 	
 	
 function dse_configure_http_setup(){
-	global $vars;
+	global $vars; dse_trace();
 	print "dse_configure_http_setup():\n";
 	if($vars['DSE']['INSTALL_SOURCE_DIR']){	
 		$http_source=$vars['DSE']['INSTALL_SOURCE_DIR'];//."/http";
@@ -1401,13 +1403,13 @@ function dse_configure_http_setup(){
 }
 
 function dse_configure_mysql_setup(){
-	global $vars;
+	global $vars; dse_trace();
 	print "dse_configure_mysql_setup():\n";
 }
 
 
 function dse_get_cfg_file_value($File,$VarName){
-	global $vars;
+	global $vars; dse_trace();
 	$CacheName="dse_get_cfg_file_value($File,$VarName)";
 	if($vars[$CacheName]) return $vars[$CacheName][$VarName];
 	if(is_array($vars[$CacheName])) return NULL;
@@ -1429,7 +1431,7 @@ function dse_get_cfg_file_value($File,$VarName){
 
 
 function dse_write_daemon_script($INITD_SCRIPT_ARRAY){
-	global $vars;
+	global $vars; dse_trace();
 	$InitdFile=$vars['DSE']['SYSTEM_SCRIPTS_DIR']."/".$INITD_SCRIPT_ARRAY['ServiceName']."d";
 	
 	$tbr="#!/bin/bash
@@ -1501,7 +1503,7 @@ exit 0
 
 
 function dse_backup_mysqld() {
-	global $vars;
+	global $vars; dse_trace();
 	dse_detect_os_info();
 	
 	print "MySQL Backup Directory: ".$vars['DSE']['BACKUP_DIR_MYSQL']." ";
@@ -1536,7 +1538,7 @@ function dse_backup_mysqld() {
 
 
 function dse_backup_httpd() {
-	global $vars; 
+	global $vars; dse_trace();
 	dse_detect_os_info();
 
 	print "httpd Backup Directory: ".$vars['DSE']['BACKUP_DIR_HTTP']." ";
@@ -1594,7 +1596,7 @@ function dse_backup_httpd() {
 
 
 function dse_backup_server_environment() {
-	global $vars;
+	global $vars; dse_trace();
 	dse_detect_os_info();
 	//if(!$dir){
 		$dse_server_environment_backup_directory=$vars['DSE']['DSE_BACKUP_DIR']."/server_environment";
@@ -1646,7 +1648,7 @@ function dse_backup_server_environment() {
    
 	
 function dse_build_clone_server_script(){
-	global $vars;
+	global $vars; dse_trace();
 	$clone_directory=$vars['DSE']['DSE_BACKUP_DIR']."/clone";
 	
 	print bar("Starting to build clone generation script in: $clone_directory","-","blue","white","blue","white")."\n";
@@ -1803,7 +1805,7 @@ $clone_directory=$vars['DSE']['DSE_BACKUP_DIR']."/clone";
 
 
 function dse_rpms_extract(){
-	global $vars;
+	global $vars; dse_trace();
 	print "Rebuilding rpms in: ".$vars['DSE']['DSE_BACKUP_DIR']."/rpms/\n";
 	$rpms=`rpm -qa`;
 	foreach(split("\n",$rpms) as $rpm){

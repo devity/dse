@@ -2,9 +2,10 @@
 <?php
 error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
+$vars[dse_enable_debug_code]=TRUE; $vars['Verbosity']=6;
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
-$vars['Verbosity']=1;
+//$vars['Verbosity']=1;
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE";
@@ -178,6 +179,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		
 }
 
+if($vars['Verbosity']>4){
+	$vars[dse_enable_debug_code]=TRUE;
+}
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'u':
   	case 'update':
