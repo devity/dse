@@ -379,6 +379,8 @@ if($DoRemoveDuplicateLines){
 	dse_log($Message);
 	$Contents=dse_file_get_contents($File);
 	$Contents=remove_duplicate_lines($Contents);
+	$sl=strlen($Contents);
+	print "sl=$sl\n";
 	dse_file_put_contents($File,$Contents);
 //	exit(0);
 }
