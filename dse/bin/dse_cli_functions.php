@@ -1896,7 +1896,7 @@ function unk_time($TimeAndDateString){
 		$format = '%d/%b/%Y:%H:%M:%S';
 	}
 		
-	//dpv(5,colorize(" found format=$format\n","green"));
+	dpv(5,colorize(" found format=$format\n","green"));
 	
 	
 	//print_r($matches);
@@ -1905,6 +1905,7 @@ function unk_time($TimeAndDateString){
 	if(!$TimeAndDateString){
 		dpv(0,colorize("strptime($TimeAndDateString, $format) no final TimeAndDateString. empty!\n","red"));
 	}
+
 	if($format &&  $TimeAndDateString){
 		if($len) $TimeAndDateString=substr($TimeAndDateString,0,$len);
 		$vars['unk_time__CutTimeAndDateString']=$TimeAndDateString;
