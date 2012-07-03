@@ -182,26 +182,29 @@ if(dse_file_exists($TemplateFile) && !dse_file_exists($DestinationFile)){
 
 print colorize("hcecking for apache2 conf in etc/dse\n","yellow","cyan");
 
-if(str_contains($vars['DSE']['SERVICES'],"dwi") && dse_is_package_installed("apache2") ){
-print "2hcecking fin etc/dse\n";
-	if(!dse_file_exists($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'])){
-		
-print "3hcecking fin etc/dse\n";
- 		
-		dse_file_link("/usr/mime.types",dse_fss("mime.types"));
-		print "No ".$vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE']."   using template.\n";
-		$t=dse_fss("mod_headers.so","/usr/lib");
-		print "t=$t =dse_fss(\"mod_headers.so\")\n";
-		$Apache2ModuleDirectory=dirname($t);
-		$Apache2ModuleDirectory=str_remove($Apache2ModuleDirectory,"/mod_headers.so");
-		$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "apache2.conf";
-		dse_configure_file_install_from_template($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],$TemplateFile,"664","root:root");
-		if($Apache2ModuleDirectory){
-			print  "found Apache2ModuleDirectory=$Apache2ModuleDirectory   replacing.\n";
-			dse_file_replace_str($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],"libexec/apache2",$Apache2ModuleDirectory);
+if(str_contains($vars['DSE']['SERVICES'],"dwi")){
+	print "1hcecking fin etc/dse\n";
+	if(dse_is_package_installed("apache2") ){
+	print "2hcecking fin etc/dse\n";
+		if(!dse_file_exists($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'])){
+			
+	print "3hcecking fin etc/dse\n";
+	 		
+			dse_file_link("/usr/mime.types",dse_fss("mime.types"));
+			print "No ".$vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE']."   using template.\n";
+			$t=dse_fss("mod_headers.so","/usr/lib");
+			print "t=$t =dse_fss(\"mod_headers.so\")\n";
+			$Apache2ModuleDirectory=dirname($t);
+			$Apache2ModuleDirectory=str_remove($Apache2ModuleDirectory,"/mod_headers.so");
+			$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "apache2.conf";
+			dse_configure_file_install_from_template($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],$TemplateFile,"664","root:root");
+			if($Apache2ModuleDirectory){
+				print  "found Apache2ModuleDirectory=$Apache2ModuleDirectory   replacing.\n";
+				dse_file_replace_str($vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE'],"libexec/apache2",$Apache2ModuleDirectory);
+			}
+		}else{
+			print $vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE']." exists!\n";
 		}
-	}else{
-		print $vars['DSE']['DSE_WEB_INTERFACE_APACHE2_FILE']." exists!\n";
 	}
 }
 
@@ -322,7 +325,7 @@ if(!dse_file_exists($vars['DSE']['USER_BASH_PROFILE'])){
 			$A=dse_ask_yn(" Increase HISTFILESIZE to ".$vars['DSE']['SUGGESTED']['HISTFILESIZE']." ?");
 			if($A=='Y'){
 				$Command="/dse/bin/dreplace -v 2 -s -p ".$vars['DSE']['USER_BASH_PROFILE']." \"^HISTFILESIZE=[0-9]+$\" \"HISTFILESIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']."\"";
-				$r=dse_exec($Command,TRUE);
+				$r=dse_exec($Command;
 				print "$OK\n";
 			}else{
 				print "$NotChanged\n";

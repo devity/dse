@@ -171,6 +171,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		dse_passthru($RebootCommand,TRUE);
 		$t=time();
 		while(TRUE){
+			cbp_screen_clear();
 			$td=time()-$t;
 			$h=cbp_get_screen_height()-3;
 			print "SHUTDOWN COMMAND ISSUED  $td seconds ago:     $RebootCommand\n";
