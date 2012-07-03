@@ -1861,7 +1861,36 @@ function unk_time($TimeAndDateString){
 		 
 list($DayName,$MonthName,$Date,$Year,$Hour,$Minute,$Second,$AMPM) = sscanf($TimeAndDateString, "%s %s %d, %d, %d:%d.%d %s");
 print "d=$DayName,m=$MonthName,dt=$Date,y=$Year,h=$Hour,m=$Minute,s=$Second,ampm=$AMPM\n";
-
+if($AMPM=="PM" || $AMPM=="pm") $Hour+=12;
+	if(stristr($MonthName,"Jan"))		$Month="1";
+	if(stristr($MonthName,"Feb"))		$Month="2";
+	if(stristr($MonthName,"Mar"))		$Month="3";
+	if(stristr($MonthName,"Apr"))		$Month="4";
+	if(stristr($MonthName,"May"))		$Month="5";
+	if(stristr($MonthName,"Jun"))		$Month="6";
+	if(stristr($MonthName,"Jul"))		$Month="7";
+	if(stristr($MonthName,"Aug"))		$Month="8";
+	if(stristr($MonthName,"Sep"))		$Month="9";
+	if(stristr($MonthName,"Oct"))		$Month="10";
+	if(stristr($MonthName,"Nov"))		$Month="11";
+	if(stristr($MonthName,"Dec"))		$Month="12";
+	if(stristr($MonthName,"January"))		$Month="1";
+	if(stristr($MonthName,"Febuary"))		$Month="2";
+	if(stristr($MonthName,"March"))		$Month="3";
+	if(stristr($MonthName,"April"))		$Month="4";
+	if(stristr($MonthName,"May"))		$Month="5";
+	if(stristr($MonthName,"June"))		$Month="6";
+	if(stristr($MonthName,"July"))		$Month="7";
+	if(stristr($MonthName,"August"))		$Month="8";
+	if(stristr($MonthName,"September"))		$Month="9";
+	if(stristr($MonthName,"October"))		$Month="10";
+	if(stristr($MonthName,"November"))		$Month="11";
+	if(stristr($MonthName,"December"))		$Month="12";
+$t=@mktime($Hour, $Minute, $Second, $Month, $Date, $Year);
+			print "\nunk_time=$TimeAndDateString  fmt=$format   t=$t\n";
+		return $t;
+	
+	
 	}//	Sun June 24th, 2012, 5:46.48 am EDT
 	elseif( preg_match ("/^[a-zA-Z]{3} [a-zA-Z]{0,9} [0-9]{1,2}, [0-9]{4}, [0-9]{1,2}:[0-9]{2}.[0-9]{2} [a-zA-Z]{2}/" , $TimeAndDateString, $matches) >0 ){
 		dpv(5,"preg_match 8b \n");
