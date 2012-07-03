@@ -375,8 +375,11 @@ if($DoFileEdit){
 if($DoRemoveDuplicateLines){
 	$File=$argv[1];
 	$Message="dfi 2 removing duplicate lines from $File :\n";
+	print "sdfsadf34f3ca\n";
 	dpv(1,$Message);
+	print "sdfsadf34f3ca\n";
 	dse_log($Message);
+	print "sdfsadf34f3ca\n";
 	$Contents=dse_file_get_contents($File);
 	print "sdfsadf34f3ca\n";
 	$Contents=remove_duplicate_lines($Contents);
