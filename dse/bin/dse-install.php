@@ -247,7 +247,7 @@ $OSXPackageNamesArray[]="lynx";
 $NotOSXPackageNamesArray[]="lynx-cur";
 
 $PackageNamesArray[]="rsync";
-$PackageNamesArray[]="bnz";
+//$PackageNamesArray[]="bnz";
 $PackageNamesArray[]="bzr";
 
 $PackageNamesArray[]="install";
