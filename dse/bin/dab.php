@@ -178,6 +178,8 @@ print "\n";
 
 
 if($DoBackup){
+	global $FilesChecked,$FilesNew,$FilesChanged,$FilesSame;
+	
 	dse_print_df();
 	$DidSomething=TRUE;
 	$BytesNeededTotal=0;
@@ -215,6 +217,10 @@ if($DoBackup){
 	if($BytesNeededTotal>0){
 		ddab_log("Total Size: $BytesNeededTotal_str Bytes\n");
 	}
+	
+	$Msg="Files Checked: $FilesChecked   New: $FilesNew   Changed: $FilesChanged   Same: $FilesSame\n";
+	
+	ddab_log($Msg); print $Msg;
 	
 	if($StatusFile){
 		$LastRun_str=@date("Y/m/d H:i.s");
@@ -264,6 +270,7 @@ function ddab_recursive_do_dir($Dir){
 	global $BackupLocationRoot;
 	global $DoClean,$BytesCleanedTotal;
 	global $BackupLocationsCleanedArray;
+	global $FilesChecked,$FilesNew,$FilesChanged,$FilesSame;
 	$warn_size_limit=1000*1000;
 	dpv(3,"ddab_recursive_do_dir($Dir)");
 	//if(!str_contains($vars['Verbosity'],"0")){	print "v=".$vars['Verbosity']."\n";exit();}
@@ -351,11 +358,13 @@ function ddab_recursive_do_dir($Dir){
 							
 						}
 					}else{
+						$FilesChecked++;
 						if(!file_exists($BackupLocation)){
 							//print "%%%%%% $BackupLocation \n";
 							mkdir($BackupLocation,0777,TRUE);
 						}
 						if(!file_exists($BackupFile)){
+							$FilesNew++;
 							$Command="cp -fp \"$full_filename\" \"$BackupFile\"";
 							print colorize($Command,"white","red")."\n";
 							dse_exec($Command,$vars['Verbosity']>2);
@@ -370,6 +379,7 @@ function ddab_recursive_do_dir($Dir){
 							if(filesize($full_filename)!=filesize($BackupFile) 
 							
 							){
+								$FilesChanged++;
 							//|| filemtime($full_filename)!=filemtime($BackupFile)
 								$BytesNeededTotal+=filesize($full_filename);
 								$mtime=filemtime($BackupFile);
@@ -385,6 +395,7 @@ function ddab_recursive_do_dir($Dir){
 								ddab_log("UPDATED FILE: $full_filename");
 								dpv(0," ****** ".colorize(" UPDATED FILE ","yellow").": $full_filename");
 							}else{
+								$FilesSame++;
 								dpv(0,colorize(" OK == ","green").$full_filename);
 							}	
 						}
