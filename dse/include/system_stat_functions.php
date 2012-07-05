@@ -871,6 +871,7 @@ function dse_sysstats_httpd_fullstatus(){
 		if($Lpa[0]=="Srv") break;
 	}
 	
+	$RequestInfo="";
 	$httpd_request_print_limit=10;
 	$p=0;
 	for( $l=$l;$l<$num_lines;$l++){
@@ -893,7 +894,8 @@ function dse_sysstats_httpd_fullstatus(){
 				if($Mode!="_"){
 			//print_r($Lpa);	
 					$URL=pad($URL,70);
-					print "$IP   $URL   PID: $PID   $CPU s / $SS s / $Req ms   $Con kb \n";
+					$IP=pad(16,70);
+					$RequestInfo.= "$IP  $URL   PID: $PID   $CPU s / $SS s / $Req ms   $Con kb \n";
 					$p++;
 				}
 			}
@@ -953,9 +955,12 @@ function dse_sysstats_httpd_fullstatus(){
 	}else{
 		print "Mac Clients: $MaxClients   ";
 	}
+	
+	print "$RequestInfo";
+	
 	//print debug_tostring($Requests);
 //	if(!$vars['dpd_httpd_fullstatus__embeded'])	print "<hr>";
-	if($Requests){
+/*	if($Requests){
 		//print "<table><tr class='f10pt'><td>Request</td><td>Client</td><td>SS</td><td>CPU</td><td>PID</td><td>M</td></tr>";
 		$n=0;
 		 foreach($Requests as $l){
@@ -998,7 +1003,7 @@ function dse_sysstats_httpd_fullstatus(){
 		}
 		
 		//print "</table>";
-		}
+		}*/
 	//if(!$vars['dpd_httpd_fullstatus__embeded'])	end_feature_box();
 	//print "<br>";	
 }
