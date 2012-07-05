@@ -882,14 +882,14 @@ function dse_sysstats_httpd_fullstatus(){
 		
 			$LastLine=str_replace("  ", " ", $LastLine);
 			$Lpa=split(" ",$LastLine);
-			if($Lpa[14]!="NULL" && intval($Lpa[2])>0 && $Lpa[14]!="server_status"){
+			if($Lpa[15] && $Lpa[15]!="" && $Lpa[14]!="NULL" && intval($Lpa[2])>0 && $Lpa[14]!="server_status"){
 				$URL=strcut($Lpa[15],"","/")."://".colorize($Lpa[12],"red","black").colorize($Lpa[14],"yellow","black");
-				$PID=$Lpa[2];
+				$PID=colorize($Lpa[2],"blue","black");
 				$Mode=$Lpa[4];
-				$CPU=$Lpa[5];
-				$SS=$Lpa[6];
-				$Req=$Lpa[7];
-				$Con=$Lpa[8];
+				$CPU=colorize($Lpa[5],"blue","black");
+				$SS=colorize($Lpa[6],"blue","black");
+				$Req=colorize($Lpa[7],"blue","black");
+				$Con=colorize($Lpa[8],"blue","black");
 				$IP=$Lpa[11];
 				if($Mode!="_"){
 					if($vars['Verbosity']>4) print_r($Lpa);	
