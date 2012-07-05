@@ -524,7 +524,7 @@ function update_display($keys=""){
 		$PRpm_str=dse_bt_colorize($PRpm,150);
 		$PRps=$PRpm*60;
 		$PRps_str=dse_bt_colorize($PRps,150*60);
-		$section_httpd.=colorize("HTTPD:  ","cyan","black"). "Requests:  $PRpm_str/min   $PRps_str/s    Avg: ${AvgGenTime_str}s  \n\n";//TotalGenTime:$TotalGenTime";
+		$section_httpd.=colorize("HTTPD:  ","cyan","black"). "Requests:  $PRpm_str/min   $PRps_str/s    Avg: ${AvgGenTime_str}s  \n";//TotalGenTime:$TotalGenTime";
 		//Span:${SpanSeconds}s 
 
 		

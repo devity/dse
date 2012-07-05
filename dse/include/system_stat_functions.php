@@ -891,7 +891,7 @@ function dse_sysstats_httpd_fullstatus(){
 		
 			$LastLine=str_replace("  ", " ", $LastLine);
 			$Lpa=split(" ",$LastLine);
-			if($Lpa[15] && $Lpa[15]!="" && $Lpa[14]!="NULL" && intval($Lpa[2])>0 && $Lpa[14]!="server_status"){
+			if($Lpa[15] && $Lpa[15]!="" && $Lpa[14]!="NULL" && intval($Lpa[2])>0 && $Lpa[14]!="server-status"){
 				$URL=strcut($Lpa[15],"","/")."://".colorize($Lpa[12],"red","black").colorize($Lpa[14],"yellow","black");
 				$PID=colorize($Lpa[2],"green","black");
 				$Mode=$Lpa[4];
@@ -902,10 +902,10 @@ function dse_sysstats_httpd_fullstatus(){
 				$IP=$Lpa[11];
 				if($Mode!="_"){
 					if($vars['Verbosity']>4) print_r($Lpa);	
-					$URL=pad($URL,70);
-					$IP=pad($IP,16);
+					$URL=pad($URL,120);
+					$IP=pad($IP,15);
 					$IP=colorize($IP,"magenta","black");
-					$RequestInfo.= "$IP  $URL   $CPU s/ $SS s/ $Req ms   $Con kb    PID: $PID\n";
+					$RequestInfo.= "$IP $URL   $CPU s/ $SS s/ $Req ms   $Con kb    PID: $PID\n";
 					$p++;
 				}
 			}
@@ -950,8 +950,8 @@ function dse_sysstats_httpd_fullstatus(){
 	}
 	
 	
-	$Workers=str_replace("W",colorize("W","cyan","black"),$Workers);
-	$Workers=str_replace("K",colorize("K","cyan","black"),$Workers);
+	$Workers=str_replace("W",colorize("W","yellow","black"),$Workers);
+	$Workers=str_replace("K",colorize("K","yellow","black"),$Workers);
 	$Workers=str_replace("_",colorize("_","green","black"),$Workers);
 	$Workers=str_replace(".",colorize(".","green","black"),$Workers);
 	//if(!$vars['dpd_httpd_fullstatus__embeded'])	print "<hr>";
@@ -962,7 +962,7 @@ function dse_sysstats_httpd_fullstatus(){
 	print "$HitMiss   ";
 	if($CPU) print "CPU: $CPU   ";
 	if($TotalTraffic) print " TotalTraffic: $TotalTraffic  ";
-	print "Workers: $Workers   ";
+	print "Workers: $Workers\n";
 	if($Requests) {
 		print "Clients: $tl/$MaxClients   ";
 	}else{
