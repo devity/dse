@@ -611,6 +611,9 @@ function update_display($keys=""){
 	
 	print $section_httpd;
 	
+	dse_sysstats_httpd_fullstatus();
+	print "\n";
+	
 	print $section_mysql_stats;
 	print "\n";
 	//print "Slow_queries:$Slow_queries ";

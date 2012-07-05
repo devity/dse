@@ -792,5 +792,191 @@ function dse_sysstats_disks(){
 }	
 
 
+function dse_sysstats_httpd_fullstatus(){
+	global $vars;
+		
+	
+	global $whitelist_ips_array;
+	global $ips_attack_active_array; 	
+	global $ips_attack_recent_array;	
+	global $ips_attack_ever_array;
+	global $ips_banned_array;
+	global $HighlightIP;
+	if(sizeof($whitelist_ips_array)==0) dam_ip_throttle_load_ip_lists();
+	
+	if(!$vars['dpd_httpd_fullstatus__embeded'])	start_feature_box("dpd_httpd_fullstatus()","100%");
+
+	//`/dse/aliases/dse_httpd_fullstatus_on`;
+	
+	if(dse_which("apachectl")){
+		$Command="apachectl fullstatus";
+	}elseif(dse_which("/etc/init.d/httpd")){
+		$Command="/etc/init.d/httpd fullstatus";
+	}
+	$Results=dse_exec($Command);
+	if(!$vars['dpd_httpd_fullstatus__embeded'])	print "<b>Command:</b> <i>".$Command ."</i><br><br>";
+	$Lines=split("\n",$Results);
+	$num_lines=sizeof($Lines);
+	
+	$RequestsSection=FALSE;
+	for( $l=15;$l<$num_lines;$l++){
+		$Line=trim($Lines[$l]);
+		
+		$i++;  
+		//print "<hr>$l: $Line";
+		//$pt=split("    ",$Line);
+		//print "$pr[1]<br>";
+		
+		if(!(strstr($Line,"-----------------")===FALSE)){
+			$RequestsSection=FALSE;
+			$EndSection=TRUE;
+		}
+		if($RequestsSection){
+			$Requests[]=$Line;	
+		}
+		
+		$lt=trim($Line);
+		if(!(strstr($Line,"Total accesses:")===FALSE)){
+			$Accesses=strcut($Line,"Total accesses: "," ");
+		}
+		if(!(strstr($Line,"Total Traffic:")===FALSE)){
+			$TotalTraffic=strcut($Line,"Total Traffic: "," ");
+		}
+		if(!(strstr($Line,"Server uptime: ")===FALSE)){
+			$UptimeStr=strcut($Line,"Server uptime: ");
+		}
+		if(!(strstr($Line,"CPU Usage: ")===FALSE)){
+			$CPU=strcut($Line,"CPU Usage: "," CLU Load");
+		}
+		if(!(strstr($Line,"requests/sec")===FALSE)){
+			$rps=strcut($Line,""," requests/sec");
+		}
+		if(!(strstr($Line,"requests currentl")===FALSE)){
+			$Processing=strcut($Line,""," requests currentl");
+		} 
+		if(!(strstr($Line,".....")===FALSE)){
+			if(!$Workers){
+				$Workers=$Line;
+			}
+		}
+		if(!(strstr($Line,"VHost")===FALSE)){
+			$RequestsSection=TRUE;
+		}
+		if(!(strstr($Line,"al retrieves since starting: ")===FALSE)){
+			$HitMiss=strcut($Line,"etrieves since starting: "," requests currentl");
+		}
+		
+		
+		$Lpa=split(" ",$Line);
+		if($Lpa[0]=="Srv") break;
+	}
+	
+	for( $l=$l;$l<$num_lines;$l++){
+		$Line=trim($Lines[$l]);
+		$Lpa=split(" ",$Line);
+		$PID=$Lpa[1];
+		print "PID: $PID \n";
+	}
+	
+	$lc=sizeof($Requests);
+	$tl=$lc;
+	for($l=0;$l<$lc;$l++){
+		$lt=$Requests[$l];
+		$n=trim(strcut($lt,"","-"));
+		if(intval($n)==0&&$n!="0"){
+			$Requests[$l-1].=$Requests[$l];
+			$Requests[$l]="";
+			$tl--;
+		}
+	//	print "l=$l n=$n <br>";
+	}
+	
+	// /prefork.c
+	$httpd_conf_file="/etc/httpd/conf/httpd.conf";
+	$wmsraw=`cat $httpd_conf_file`;
+	if(dpd_httpd_is_prefork_or_worker()=="worker"){
+		$wmsa=strcut($wmsraw,"<IfModule worker.c>","</IfModule>");
+	}elseif(dpd_httpd_is_prefork_or_worker()=="prefork"){
+		$wmsa=strcut($wmsraw,"<IfModule prefork.c>","</IfModule>");
+	}else{
+		$wmsa="";
+	}
+	
+	if($wmsa==""){
+		$MaxClients="unknown";
+	}else{
+		foreach(split("\n",$wmsa) as $s){
+			$p=split("[ ]+",$s);
+			if($p[0]=="MaxClients"){
+				$MaxClients=$p[1];
+			}
+		}
+	}
+	
+	
+	
+	//if(!$vars['dpd_httpd_fullstatus__embeded'])	print "<hr>";
+	if($Accesses) print "Accesses: $Accesses   ";
+	print "Up:$UptimeStr   ";
+	if($rps) print "rps:$rps    ";
+	print "Processing:$Processing    ";
+	print "$HitMiss  &nbsp;&nbsp; ";
+	if($CPU) print "CPU: $CPU   ";
+	if($TotalTraffic) print " TotalTraffic: $TotalTraffic  ";
+	print "Workers: $Workers  &nbsp;&nbsp; ";
+	if($Requests) {
+		print "Clients: $tl/$MaxClients   ";
+	}else{
+		print "Mac Clients: $MaxClients   ";
+	}
+	//print debug_tostring($Requests);
+//	if(!$vars['dpd_httpd_fullstatus__embeded'])	print "<hr>";
+	if($Requests){
+		print "<table><tr class='f10pt'><td>Request</td><td>Client</td><td>SS</td><td>CPU</td><td>PID</td><td>M</td></tr>";
+		$n=0;
+		 foreach($Requests as $l){
+		
+			if($l){
+				$n++;
+				$lpa=split("[ ]+",$l);
+				$Srv=$lpa[0];
+				$PID=$lpa[1];
+				$Acc=$lpa[2];
+				$M=$lpa[3];
+				$CPU=$lpa[4];
+				$SS=$lpa[5];
+				$Req=$lpa[6];
+				$Conn=$lpa[7];
+				$Child=$lpa[8];
+				$Slot=$lpa[9];
+				$Client=$lpa[10];
+				$VHost=$lpa[11];
+				$RequestMethod=$lpa[12];
+				$Request=$lpa[13];
+				     
+				//print "S=$Srv M=$M CPU=$CPU Cl=$Client VH=$VHost RM=$RequestMethod  R=$Request <br>";
+				if((stristr($VHost,"development")===FALSE)){
+					$VHost="www.".$VHost;
+				}                                                                
+				        
+				$BanURL="/dse_admin/utils/debug.php?PageType=IPTablesAddBannedIP&IPToBan=$Client";
+				$IpInfoLink=bd_dam_get_ip_link($Client);
+				print "<tr class='f7pt'><td class='f10pt'>$n: <a href=https://$VHost$Request target=_blank>$Request</a></td>
+				<td>
+							$IpInfoLink
+					 &nbsp;<a href=$BanURL target=_blank><font color=red><b>Ban</b></font></a>
+					 	</td>
+				<td>$SS</td><td>$CPU - $Acc - $Srv</td><td>$PID</td>
+				<td>$M</td></tr>";
+				
+			}
+		}
+		
+		print "</table>";
+		}
+	if(!$vars['dpd_httpd_fullstatus__embeded'])	end_feature_box();
+	print "<br>";	
+}
+		
 
 ?>
