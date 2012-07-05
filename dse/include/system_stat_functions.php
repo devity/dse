@@ -892,7 +892,7 @@ function dse_sysstats_httpd_fullstatus(){
 			$LastLine=str_replace("  ", " ", $LastLine);
 			$Lpa=split(" ",$LastLine);
 			if($Lpa[15] && $Lpa[15]!="" && $Lpa[14]!="NULL" && intval($Lpa[2])>0 && $Lpa[14]!="server-status"){
-				$URL=strcut($Lpa[15],"","/")."://".colorize($Lpa[12],"red","black").colorize($Lpa[14],"yellow","black");
+				$URL=strcut($Lpa[15],"","/")."://".colorize($Lpa[12],"red","black",1).colorize($Lpa[14],"yellow","black");
 				$PID=colorize($Lpa[2],"green","black");
 				$Mode=$Lpa[4];
 				$CPU=colorize($Lpa[5],"green","black");
