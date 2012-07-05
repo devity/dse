@@ -282,7 +282,7 @@ function update_display($keys=""){
 	
 		print "dse_sysstats_mysql_processlist()\n";
 		$dse_sysstats_mysql_processlist_array=dse_sysstats_mysql_processlist();
-		$section_mysql_processes=colorize("MYSQL Processes: ","cyan","black") . $dse_sysstats_mysql_processlist_array[3];
+		$section_mysql_processes=colorize("MYSQL Processes: \n","cyan","black") . $dse_sysstats_mysql_processlist_array[3];
 		
 	
 		print "dse_sysstats_mysql_status()\n";
@@ -297,13 +297,13 @@ function update_display($keys=""){
 			$section_files_open=$dse_sysstats_files_open_array[2];
 		}*/
 		
-		
+		/*
 		global $section_procio;
 		if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) && ($Loops%5)==0 ){
 			print "dse_sysstats_proc_io()\n";
 			$dse_sysstats_proc_io_array=dse_sysstats_proc_io();
 			$section_procio=$dse_sysstats_proc_io_array[1];
-		}
+		}*/
 			
 		global $section_net_listening;
 		if(($Loops%5)==0 ){
@@ -318,7 +318,7 @@ function update_display($keys=""){
 		// *********************************************** MEMORY MEMORY MEMORY MEMORY *************************************
 		// *****************************************************************************************************************
 	
-	
+	/*
 		print "section_memory()\n";
 		$section_memory="";
 		$section_cpu="";
@@ -412,6 +412,7 @@ function update_display($keys=""){
 		
 		//."	MInactive=$MInactive MActive=$MActive MFree=$MFree MBuff=$MBuff MCache=$MCache MSwap=$MSwap \n
 		//free_BC_Used=$free_BC_Used free_BC_Free=$free_BC_Free
+		*/
 		
 		//print $section_memory."\n";
 		//exit;
@@ -462,7 +463,7 @@ function update_display($keys=""){
 		
 	*/	
 		$section_processes="";
-		$section_processes.=`ps aux | sort -nr -k 3 | grep -v COMMAND | head -20`;		
+		$section_processes.=colorize("System Processes: \n","cyan","black") . `ps aux | sort -nr -k 3 | grep -v COMMAND | head -20`;		
 	
 	/*
 		$Start
