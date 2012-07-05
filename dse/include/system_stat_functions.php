@@ -546,7 +546,8 @@ function dse_sysstats_mysql_processlist(){
 
 	$mysql_processes="";
 	$sql_query="SHOW FULL PROCESSLIST";
-	$mysql_processes_raw=`echo "$sql_query" | mysql -u localroot | grep -v PROCESSLIST | grep -v Sleep`;
+	$Command="echo \"$sql_query\" | mysql -u ".$vars['DSE']['MYSQL_USER']." | grep -v PROCESSLIST | grep -v Sleep";
+	$mysql_processes_raw=dse_exec($Command);
 	$mysql_processes_line_array=split("\n",$mysql_processes_raw);
 	$mysql_processes_array=array();
 	foreach($mysql_processes_line_array as $k=>$mysql_processes_line){
