@@ -15,6 +15,7 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $vars['DSE']['SCRIPT_SETTINGS']['Verbosity']=0;
+$vars['Verbosity']=$vars['DSE']['SCRIPT_SETTINGS']['Verbosity'];
 $vars['DSE']['SCRIPT_SETTINGS']['ForceHighLoadRun']=FALSE;
 $vars['DSE']['SCRIPT_SETTINGS']['MaxLoadBeforeExit']=5;
 $vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']=FALSE;
@@ -46,6 +47,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'v':
 	case 'verbosity':
 		$vars['DSE']['SCRIPT_SETTINGS']['Verbosity']=$vars['options'][$opt];
+		$vars['Verbosity']=$vars['DSE']['SCRIPT_SETTINGS']['Verbosity'];
 		if($vars['DSE']['SCRIPT_SETTINGS']['Verbosity']>=2) print "Verbosity set to ".$vars['DSE']['SCRIPT_SETTINGS']['Verbosity']."\n";
 		break;
 	case 'h':
@@ -280,12 +282,12 @@ function update_display($keys=""){
 		 	
 	}
 	
-		print "dse_sysstats_mysql_processlist()\n";
+		if($vars['Verbosity']>3) print "dse_sysstats_mysql_processlist()\n";
 		$dse_sysstats_mysql_processlist_array=dse_sysstats_mysql_processlist();
 		$section_mysql_processes=colorize("MYSQL Processes: \n","cyan","black") . $dse_sysstats_mysql_processlist_array[3];
 		
 	
-		print "dse_sysstats_mysql_status()\n";
+		if($vars['Verbosity']>3) print "dse_sysstats_mysql_status()\n";
 		$dse_sysstats_mysql_status_array=dse_sysstats_mysql_status();
 		$section_mysql_stats=$dse_sysstats_mysql_status_array[3];
 		
@@ -307,7 +309,7 @@ function update_display($keys=""){
 			
 		global $section_net_listening;
 		if(($Loops%5)==0 ){
-			print "dse_sysstats_net_listening()\n";
+			if($vars['Verbosity']>3) print "dse_sysstats_net_listening()\n";
 			//$dse_sysstats_net_listening_array=dse_sysstats_net_listening();
 			//$section_net_listening="Ports Listening: ".$dse_sysstats_net_listening_array[3];
 			$section_net_listening="Ports Listening: ".dse_exec("/dse/bin/dsc -oc");
@@ -319,7 +321,7 @@ function update_display($keys=""){
 		// *****************************************************************************************************************
 	
 	/*
-		print "section_memory()\n";
+		if($vars['Verbosity']>3) print "section_memory()\n";
 		$section_memory="";
 		$section_cpu="";
 		$unit_size=1024*1024;
@@ -421,7 +423,7 @@ function update_display($keys=""){
 		// *****************************************************************************************************************
 	/*	
 
-		print "section_cpu()\n";
+		if($vars['Verbosity']>3) print "section_cpu()\n";
 		$CpuIdle=$oa[15];
 		$CpuUser=$oa[13];
 		$CpuSys=$oa[14];
@@ -474,7 +476,7 @@ function update_display($keys=""){
 		`grep $DateStr $LogFileName > $TmpFileName`;
 		*/
 	if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly'])  ){//&& ($Loops%5)==0
-		print "section_httpd_log()\n";
+		if($vars['Verbosity']>3) print "section_httpd_log()\n";
 		
 		$LogFileName=$vars['DSE']['HTTP_LOG_FILE'];
 		$TmpFileName=dse_exec("/dse/bin/dtmp");
@@ -528,7 +530,7 @@ function update_display($keys=""){
 
 	global $section_disk;
 	if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) &&  ($Loops<=2 || ($Loops%5)==0 ) ){
-		print "section_disk()\n";
+		if($vars['Verbosity']>3) print "section_disk()\n";
 		
 		
 		global $sda1_last,$sda2_last,$diskstats_lasttime;
