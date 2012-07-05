@@ -607,7 +607,8 @@ function dse_sysstats_mysql_status(){
 	//}
 	$section_mysql_stats="";
 	$sql_query="SHOW STATUS ";
-	$mysql_status_raw=`echo "$sql_query" | mysql -u localroot`;
+	$Command="echo \"$sql_query\" | mysql -u ".$vars['DSE']['MYSQL_USER'];
+	$mysql_status_raw=dse_exec($Command);
 	$mysql_status_line_array=split("\n",$mysql_status_raw);
 	foreach($mysql_status_line_array as $k=>$mysql_status_line){
 		$tsa=split("\t",$mysql_status_line);
