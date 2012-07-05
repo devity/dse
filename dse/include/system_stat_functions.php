@@ -887,8 +887,8 @@ function dse_sysstats_httpd_fullstatus(){
 				$SS=$Lpa[6];
 				$Req=$Lpa[7];
 				$Con=$Lpa[8];
-				print_r($Lpa);
-				print "\n PID: $PID  cpu:$CPU s   ss:$SS s  m:$Mode req:$Req ms   con:$Con kb   $URL \n";
+				//print_r($Lpa);
+				print " PID: $PID  cpu:$CPU s   ss:$SS s  m:$Mode   req:$Req ms   con:$Con kb   $URL \n";
 			}
 			$LastLine="";
 		}
@@ -934,13 +934,13 @@ function dse_sysstats_httpd_fullstatus(){
 	
 	//if(!$vars['dpd_httpd_fullstatus__embeded'])	print "<hr>";
 	if($Accesses) print "Accesses: $Accesses   ";
-	print "Up:$UptimeStr   ";
+	print "Up:$UptimeStr     ";
 	if($rps) print "rps:$rps    ";
 	print "Processing:$Processing    ";
-	print "$HitMiss  &nbsp;&nbsp; ";
+	print "$HitMiss   ";
 	if($CPU) print "CPU: $CPU   ";
 	if($TotalTraffic) print " TotalTraffic: $TotalTraffic  ";
-	print "Workers: $Workers  &nbsp;&nbsp; ";
+	print "Workers: $Workers   ";
 	if($Requests) {
 		print "Clients: $tl/$MaxClients   ";
 	}else{
