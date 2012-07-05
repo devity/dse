@@ -64,11 +64,9 @@ $vars['DSE']['BACKUP_DIR_MYSQL']=$vars['DSE']['DSE_BACKUP_DIR']."/mysql";
 
 
 $vars['DSE']['NAMED_CONF_FILE']="/etc/bind/named.conf.local";
-$vars['DSE']['MYSQL_CONF_FILE']="/etc/my.cnf";
-$vars['DSE']['MYSQL_LOG_FILE']="/tmp/mysql_query.log";
 $vars['DSE']['HTTP_CONF_FILE']="/etc/httpd/conf/httpd.conf";
-$vars['DSE']['HTTP_ERROR_LOG_FILE']="/var/log/httpd/error_log";
-$vars['DSE']['HTTP_REQUEST_LOG_FILE']="/var/log/httpd/access_log";
+$vars['DSE']['HTTP_ERROR_LOG_FILE']="/var/log/apache2/error_log";
+$vars['DSE']['HTTP_REQUEST_LOG_FILE']="/var/log/apache2/access_log";
 
 $vars['DSE']['USER_HOME_DIR']="~";
 if(dse_is_osx()){
@@ -201,6 +199,15 @@ $vars['DSE']=dse_read_config_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],$vars['
 
 
 
+if(str_contains($vars['DSE']['SERVICES'],"mysql")){
+	if(!$vars['DSE']['MYSQL_CONF_FILE']) $vars['DSE']['MYSQL_CONF_FILE']="/etc/my.cnf";
+	if(!$vars['DSE']['MYSQL_LOG_FILE']) $vars['DSE']['MYSQL_LOG_FILE']="/tmp/mysql_query.log";
+	if(!$vars['DSE']['MYSQL_USER']) $vars['DSE']['MYSQL_USER']="root";
+}
+		
+		
+		
+	
 $vars['DSE']['SERVICE_NICKNAMES']=array();
 if(str_contains($vars['DSE']['SERVICES'],"http")){
 	if(dse_which("apache2")) $httpd="apache2";
