@@ -894,8 +894,8 @@ function dse_sysstats_httpd_fullstatus(){
 				if($Mode!="_"){
 					if($vars['Verbosity']>4) print_r($Lpa);	
 					$URL=pad($URL,70);
-					$IP=pad(16,70);
-					$RequestInfo.= "$IP  $URL   PID: $PID   $CPU s / $SS s / $Req ms   $Con kb \n";
+					$IP=pad($IP,16);
+					$RequestInfo.= "$IP  $URL   $CPU s/ $SS s/ $Req ms   $Con kb    PID: $PID\n";
 					$p++;
 				}
 			}
