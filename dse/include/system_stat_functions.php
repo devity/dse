@@ -879,8 +879,14 @@ function dse_sysstats_httpd_fullstatus(){
 		
 			$LastLine=str_replace("  ", " ", $LastLine);
 			$Lpa=split(" ",$LastLine);
-			print_r($Lpa);
-			print "\n".$LastLine."\n";
+			if($Lpa[14]!="NULL"){
+				$URL=$Lpa[13]."/".$Lpa[15];
+				$Mode=$Lpa[3];
+				$CPU=$Lpa[4];
+				$SS=$Lpa[5];
+				print_r($Lpa);
+				print "\n cpu:$CPU cc:$SS m:$Mode ".$LastLine."\n";
+			}
 			$LastLine="";
 			$LastLine="PID: $PID ";
 		}
