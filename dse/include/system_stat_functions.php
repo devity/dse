@@ -950,7 +950,15 @@ function dse_sysstats_httpd_fullstatus(){
 	}
 	
 	
-	$Workers=str_replace("W",colorize("W","yellow","black",TRUE,1),$Workers);
+	$Workers=str_replace("S",colorize("S","yellow","black",TRUE,1),$Workers);
+	$Workers=str_replace("R",colorize("R","yellow","black",TRUE,1),$Workers);
+	$Workers=str_replace("C",colorize("C","yellow","black",TRUE,1),$Workers);
+	$Workers=str_replace("D",colorize("D","yellow","black",TRUE,1),$Workers);
+	$Workers=str_replace("W",colorize("W","green","black",TRUE,1),$Workers);
+	$Workers=str_replace("C",colorize("C","green","black",TRUE,1),$Workers);
+	$Workers=str_replace("G",colorize("G","green","black",TRUE,1),$Workers);
+	$Workers=str_replace("I",colorize("I","magenta","black",TRUE,1),$Workers);
+	$Workers=str_replace("L",colorize("L","red","black",TRUE,1),$Workers);
 	$Workers=str_replace("K",colorize("K","yellow","black",TRUE,1),$Workers);
 	$Workers=str_replace("_",colorize("_","green","black",TRUE,1),$Workers);
 	$Workers=str_replace(".",colorize(".","green","black",TRUE,1),$Workers);
