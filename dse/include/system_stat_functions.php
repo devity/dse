@@ -891,8 +891,8 @@ function dse_sysstats_httpd_fullstatus(){
 		
 			$LastLine=str_replace("  ", " ", $LastLine);
 			$Lpa=split(" ",$LastLine);
-			if($Lpa[15] && $Lpa[15]!="" && $Lpa[14]!="NULL" && intval($Lpa[2])>0 && $Lpa[14]!="server-status"){
-				$URL=strcut($Lpa[15],"","/")."://".colorize($Lpa[12],"red","black",TRUE,1).colorize($Lpa[14],"yellow","black");
+			if($Lpa[15] && $Lpa[15]!="" && $Lpa[14]!="NULL" && intval($Lpa[2])>0 && $Lpa[14]!="/server-status"){
+				$URL=colorize(strcut($Lpa[15],"","/")."://","yellow","black").colorize($Lpa[12],"red","black",TRUE,1).colorize($Lpa[14],"yellow","black");
 				$PID=colorize($Lpa[2],"green","black");
 				$Mode=$Lpa[4];
 				$CPU=colorize($Lpa[5],"green","black");
@@ -950,10 +950,10 @@ function dse_sysstats_httpd_fullstatus(){
 	}
 	
 	
-	$Workers=str_replace("W",colorize("W","yellow","black"),$Workers);
-	$Workers=str_replace("K",colorize("K","yellow","black"),$Workers);
-	$Workers=str_replace("_",colorize("_","green","black"),$Workers);
-	$Workers=str_replace(".",colorize(".","green","black"),$Workers);
+	$Workers=str_replace("W",colorize("W","yellow","black",TRUE,1),$Workers);
+	$Workers=str_replace("K",colorize("K","yellow","black",TRUE,1),$Workers);
+	$Workers=str_replace("_",colorize("_","green","black",TRUE,1),$Workers);
+	$Workers=str_replace(".",colorize(".","green","black",TRUE,1),$Workers);
 	//if(!$vars['dpd_httpd_fullstatus__embeded'])	print "<hr>";
 	if($Accesses) print "Accesses: $Accesses   ";
 //	print "Up:$UptimeStr     ";
