@@ -290,12 +290,12 @@ function update_display($keys=""){
 		$section_mysql_stats=$dse_sysstats_mysql_status_array[3];
 		
 	
-		global $section_files_open;
+		/*global $section_files_open;
 		if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) && ($Loops%5)==0 ){
 			print "dse_sysstats_files_open()\n";
 			$dse_sysstats_files_open_array=dse_sysstats_files_open();
 			$section_files_open=$dse_sysstats_files_open_array[2];
-		}
+		}*/
 		
 		
 		global $section_procio;
