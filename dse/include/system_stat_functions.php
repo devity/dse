@@ -892,7 +892,7 @@ function dse_sysstats_httpd_fullstatus(){
 				$IP=$Lpa[11];
 				if($Mode!="_"){
 			//print_r($Lpa);	
-					$URL=pad($URL," ",70);
+					$URL=pad($URL,70);
 					print "$IP   $URL   PID: $PID   $CPU s / $SS s / $Req ms   $Con kb \n";
 					$p++;
 				}
