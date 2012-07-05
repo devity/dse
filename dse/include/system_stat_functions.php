@@ -875,7 +875,12 @@ function dse_sysstats_httpd_fullstatus(){
 		$Line=trim($Lines[$l]);
 		$Lpa=split(" ",$Line);
 		$PID=$Lpa[1];
-		print "PID: $PID \n";
+		if(intval($PID)>0){
+			print $LastLine."\n";
+			$LastLine="";
+			$LastLine="PID: $PID ";
+		}
+		$LastLine.=$Line;
 	}
 	
 	$lc=sizeof($Requests);
