@@ -522,8 +522,10 @@ function update_display($keys=""){
 		$AvgGenTime=number_format(($TotalGenTime/1000/1000)/$Requests,2);
 		$AvgGenTime_str=dse_bt_colorize($AvgGenTime,1.5);
 		$PRpm_str=dse_bt_colorize($PRpm,150);
-		$section_httpd.=colorize("HTTPD ","cyan","black"). "Requests/Minute:$PRpm_str   Avg: ${AvgGenTime_str}s  Span:${SpanSeconds}s \n\n";//TotalGenTime:$TotalGenTime";
-		
+		$PRps=$PRpm*60;
+		$PRps_str=dse_bt_colorize($PRps,150*60);
+		$section_httpd.=colorize("HTTPD:  ","cyan","black"). "Requests:  $PRpm_str/min   $PRps_str/s    Avg: ${AvgGenTime_str}s  \n\n";//TotalGenTime:$TotalGenTime";
+		//Span:${SpanSeconds}s 
 
 		
 	}

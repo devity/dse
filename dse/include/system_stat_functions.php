@@ -633,7 +633,16 @@ function dse_sysstats_mysql_status(){
 	//$Qcache_total_blocks_str=dse_bt_colorize($Qcache_total_blocks,20000);
 	$mysql_status_array[Qcache_free_memory_str]=dse_bt_colorize(number_format($Qcache_free_memory/(1024*1024),1),150001000/(1024*1024),"MINIMUM");
 
-	$section_mysql_stats.="Qps:$mysql_status_array[Qps_str]  Slow:$mysql_status_array[Slow_queries] %$mysql_status_array[Slow_percent] ";// LastCost:$Last_query_cost \n";
+	
+	$section_mysql_stats.="Qps:$mysql_status_array[Qps_str]  ";
+	global $PRps;
+	if($PRps){
+		$QpPR=number_format($mysql_status_array[Qps]/$PRps,2);
+		$section_mysql_stats.="QpPR:$QpPR  ";
+	
+	}
+	
+	$section_mysql_stats.="Slow:$mysql_status_array[Slow_queries] %$mysql_status_array[Slow_percent] ";// LastCost:$Last_query_cost \n";
 	$section_mysql_stats.="Updates: $Handler_update  Delete: $Handler_delete  Write: $Handler_write\n";
 //	$section_mysql_stats.="Innodb bppf:$Innodb_buffer_pool_pages_free \n";
 	$section_mysql_stats.="Qcache free_blocks:$mysql_status_array[Qcache_free_blocks]  total_blocks:$mysql_status_array[Qcache_total_blocks] free_memory:$mysql_status_array[Qcache_free_memory_str]MB\n";
@@ -884,12 +893,12 @@ function dse_sysstats_httpd_fullstatus(){
 			$Lpa=split(" ",$LastLine);
 			if($Lpa[15] && $Lpa[15]!="" && $Lpa[14]!="NULL" && intval($Lpa[2])>0 && $Lpa[14]!="server_status"){
 				$URL=strcut($Lpa[15],"","/")."://".colorize($Lpa[12],"red","black").colorize($Lpa[14],"yellow","black");
-				$PID=colorize($Lpa[2],"blue","black");
+				$PID=colorize($Lpa[2],"green","black");
 				$Mode=$Lpa[4];
-				$CPU=colorize($Lpa[5],"blue","black");
-				$SS=colorize($Lpa[6],"blue","black");
-				$Req=colorize($Lpa[7],"blue","black");
-				$Con=colorize($Lpa[8],"blue","black");
+				$CPU=colorize($Lpa[5],"green","black");
+				$SS=colorize($Lpa[6],"green","black");
+				$Req=colorize($Lpa[7],"green","black");
+				$Con=colorize($Lpa[8],"green","black");
 				$IP=$Lpa[11];
 				if($Mode!="_"){
 					if($vars['Verbosity']>4) print_r($Lpa);	
@@ -941,12 +950,13 @@ function dse_sysstats_httpd_fullstatus(){
 	}
 	
 	
-	$Workers=str_replace("W",colorize("W","green","black"),$Workers);
-	$Workers=str_replace("K",colorize("K","green","yellow"),$Workers);
-	$Workers=str_replace("_",colorize("_","green","cyan"),$Workers);
+	$Workers=str_replace("W",colorize("W","cyan","black"),$Workers);
+	$Workers=str_replace("K",colorize("K","cyan","black"),$Workers);
+	$Workers=str_replace("_",colorize("_","green","black"),$Workers);
+	$Workers=str_replace(".",colorize(".","green","black"),$Workers);
 	//if(!$vars['dpd_httpd_fullstatus__embeded'])	print "<hr>";
 	if($Accesses) print "Accesses: $Accesses   ";
-	print "Up:$UptimeStr     ";
+//	print "Up:$UptimeStr     ";
 	if($rps) print "rps:$rps    ";
 	print "Processing:$Processing    ";
 	print "$HitMiss   ";
