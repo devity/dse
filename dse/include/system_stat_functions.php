@@ -882,13 +882,13 @@ function dse_sysstats_httpd_fullstatus(){
 			if($Lpa[14]!="NULL"){
 				$URL=$Lpa[13]."/".$Lpa[15];
 				$PID=$Lpa[1];
-				$Mode=$Lpa[4];
-				$CPU=$Lpa[5];
-				$SS=$Lpa[6];
-				$Req=$Lpa[7];
-				$Con=$Lpa[8];
-				print_r($Lpa);
-				print "\n cpu:$CPU ss:$SS m:$Mode req:$Req con:$Con ".$LastLine."\n";
+				$Mode=$Lpa[5];
+				$CPU=$Lpa[6];
+				$SS=$Lpa[7];
+				$Req=$Lpa[8];
+				$Con=$Lpa[9];
+				//print_r($Lpa);
+				print "cpu:$CPU ss:$SS m:$Mode req:$Req con:$Con ".$LastLine."\n";
 			}
 			$LastLine="";
 			$LastLine="PID: $PID ";
