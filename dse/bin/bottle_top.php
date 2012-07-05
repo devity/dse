@@ -284,7 +284,7 @@ function update_display($keys=""){
 	
 		if($vars['Verbosity']>3) print "dse_sysstats_mysql_processlist()\n";
 		$dse_sysstats_mysql_processlist_array=dse_sysstats_mysql_processlist();
-		$section_mysql_processes=colorize("MYSQL Processes: \n","cyan","black") . $dse_sysstats_mysql_processlist_array[3];
+		$section_mysql_processes= $dse_sysstats_mysql_processlist_array[3];
 		
 	
 		if($vars['Verbosity']>3) print "dse_sysstats_mysql_status()\n";
@@ -614,6 +614,7 @@ function update_display($keys=""){
 	dse_sysstats_httpd_fullstatus();
 	print "\n";
 	
+	print colorize("MYSQL: ","cyan","black") 
 	print $section_mysql_stats;
 	print "\n";
 	//print "Slow_queries:$Slow_queries ";

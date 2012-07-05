@@ -882,8 +882,8 @@ function dse_sysstats_httpd_fullstatus(){
 		
 			$LastLine=str_replace("  ", " ", $LastLine);
 			$Lpa=split(" ",$LastLine);
-			if($Lpa[14]!="NULL" && intval($Lpa[2])>0){
-				$URL=strcut($Lpa[15],"","/")."://".$Lpa[12].$Lpa[14];
+			if($Lpa[14]!="NULL" && intval($Lpa[2])>0 && $Lpa[14]!="server_status"){
+				$URL=strcut($Lpa[15],"","/")."://".colorize($Lpa[12],"red","black").colorize($Lpa[14],"yellow","black");
 				$PID=$Lpa[2];
 				$Mode=$Lpa[4];
 				$CPU=$Lpa[5];
@@ -895,6 +895,7 @@ function dse_sysstats_httpd_fullstatus(){
 					if($vars['Verbosity']>4) print_r($Lpa);	
 					$URL=pad($URL,70);
 					$IP=pad($IP,16);
+					$IP=colorize($IP,"magenta","black");
 					$RequestInfo.= "$IP  $URL   $CPU s/ $SS s/ $Req ms   $Con kb    PID: $PID\n";
 					$p++;
 				}
@@ -940,7 +941,9 @@ function dse_sysstats_httpd_fullstatus(){
 	}
 	
 	
-	
+	$Workers=str_replace("W",colorize("W","green","black"),$Workers);
+	$Workers=str_replace("K",colorize("K","green","yellow"),$Workers);
+	$Workers=str_replace("_",colorize("_","green","cyan"),$Workers);
 	//if(!$vars['dpd_httpd_fullstatus__embeded'])	print "<hr>";
 	if($Accesses) print "Accesses: $Accesses   ";
 	print "Up:$UptimeStr     ";
