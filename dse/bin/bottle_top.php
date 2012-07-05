@@ -480,6 +480,7 @@ function update_display($keys=""){
 		
 		$section_httpd="";
 		dse_exec("tail -n 500 $LogFileName > $TmpFileName",TRUE);
+		exit();
 		$log_file_handle = fopen($TmpFileName, "r");
 		$vars[dse_lpa_log_line_full_array]=array();
 		$LinesProcessed=0;
