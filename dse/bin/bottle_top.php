@@ -471,7 +471,7 @@ function update_display($keys=""){
 		print "grep \"$DateStr\" $LogFileName > $TmpFileName\n";
 		`grep $DateStr $LogFileName > $TmpFileName`;
 		*/
-	if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) && ($Loops%5)==0 ){
+	if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly'])  ){//&& ($Loops%5)==0
 		print "section_httpd_log()\n";
 		
 		$LogFileName="/home/httpd/batteriesdirect.com/stats/batteriesdirect.com-custom_log";
@@ -517,7 +517,7 @@ function update_display($keys=""){
 		$AvgGenTime=number_format(($TotalGenTime/1000/1000)/$Requests,2);
 		$AvgGenTime_str=dse_bt_colorize($AvgGenTime,1.5);
 		$PRpm_str=dse_bt_colorize($PRpm,90);
-		$section_httpd.="HTTPD Requests/Minute:$PRpm_str   Avg: ${AvgGenTime_str}s  Span:${SpanSeconds}s \n";//TotalGenTime:$TotalGenTime";
+		$section_httpd.=colorize("HTTPD ","cyan","black"). "Requests/Minute:$PRpm_str   Avg: ${AvgGenTime_str}s  Span:${SpanSeconds}s \n";//TotalGenTime:$TotalGenTime";
 		
 
 		
