@@ -66,7 +66,7 @@ $vars['DSE']['BACKUP_DIR_MYSQL']=$vars['DSE']['DSE_BACKUP_DIR']."/mysql";
 $vars['DSE']['NAMED_CONF_FILE']="/etc/bind/named.conf.local";
 $vars['DSE']['HTTP_CONF_FILE']="/etc/httpd/conf/httpd.conf";
 $vars['DSE']['HTTP_ERROR_LOG_FILE']="/var/log/apache2/error_log";
-$vars['DSE']['HTTP_REQUEST_LOG_FILE']="/var/log/apache2/access_log";
+$vars['DSE']['HTTP_LOG_FILE']="/var/log/apache2/access_log";
 
 $vars['DSE']['USER_HOME_DIR']="~";
 if(dse_is_osx()){

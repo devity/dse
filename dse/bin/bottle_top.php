@@ -474,8 +474,8 @@ function update_display($keys=""){
 	if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly'])  ){//&& ($Loops%5)==0
 		print "section_httpd_log()\n";
 		
-		$LogFileName="/home/httpd/batteriesdirect.com/stats/batteriesdirect.com-custom_log";
-		$TmpFileName="/tmp/dse_log.tmp.".rand(1111111,99999999);
+		$LogFileName=$vars['DSE']['HTTP_LOG_FILE'];
+		$TmpFileName=dse_exec("/dse/bin/dtmp");
 	
 		
 		$section_httpd="";
@@ -494,7 +494,7 @@ function update_display($keys=""){
 			}
 	    }
 	    fclose($log_file_handle);
-		`rm -f $TmpFileName`;
+		dse_exec("rm -f $TmpFileName");
 		
 		
 		//$section_httpd.= "Got Log Data. $LinesProcessed Lines. Processing.\n";
