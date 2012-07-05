@@ -887,8 +887,10 @@ function dse_sysstats_httpd_fullstatus(){
 				$SS=$Lpa[6];
 				$Req=$Lpa[7];
 				$Con=$Lpa[8];
-				//print_r($Lpa);
-				print " PID: $PID  cpu:$CPU s   ss:$SS s  m:$Mode   req:$Req ms   con:$Con kb   $URL \n";
+				if($Mode!="_"){
+			print_r($Lpa);
+					print " PID: $PID  cpu:$CPU s   ss:$SS s  m:$Mode   req:$Req ms   con:$Con kb   $URL \n";
+				}
 			}
 			$LastLine="";
 		}
