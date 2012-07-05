@@ -950,13 +950,13 @@ function dse_sysstats_httpd_fullstatus(){
 	}
 	
 	
-	$Workers=str_replace("S",colorize("S","yellow","black",TRUE,1),$Workers);
+	$Workers=str_replace("S",colorize("S","white","black",TRUE,1),$Workers);
 	$Workers=str_replace("R",colorize("R","yellow","black",TRUE,1),$Workers);
-	$Workers=str_replace("C",colorize("C","yellow","black",TRUE,1),$Workers);
-	$Workers=str_replace("D",colorize("D","yellow","black",TRUE,1),$Workers);
-	$Workers=str_replace("W",colorize("W","green","black",TRUE,1),$Workers);
 	$Workers=str_replace("C",colorize("C","green","black",TRUE,1),$Workers);
-	$Workers=str_replace("G",colorize("G","green","black",TRUE,1),$Workers);
+	$Workers=str_replace("D",colorize("D","yellow","black",TRUE,1),$Workers);
+	$Workers=str_replace("W",colorize("W","blue","black",TRUE,1),$Workers);
+	$Workers=str_replace("C",colorize("C","cyan","black",TRUE,1),$Workers);
+	$Workers=str_replace("G",colorize("G","red","black",TRUE,1),$Workers);
 	$Workers=str_replace("I",colorize("I","magenta","black",TRUE,1),$Workers);
 	$Workers=str_replace("L",colorize("L","red","black",TRUE,1),$Workers);
 	$Workers=str_replace("K",colorize("K","yellow","black",TRUE,1),$Workers);
@@ -966,6 +966,7 @@ function dse_sysstats_httpd_fullstatus(){
 	if($Accesses) print "Accesses: $Accesses   ";
 //	print "Up:$UptimeStr     ";
 	if($rps) print "rps:$rps    ";
+	$Processing=colorize($Processing,"green","black");
 	print "Processing:$Processing    ";
 	print "$HitMiss   ";
 	if($CPU) print "CPU: $CPU   ";
