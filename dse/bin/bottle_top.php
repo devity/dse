@@ -282,7 +282,7 @@ function update_display($keys=""){
 	
 		print "dse_sysstats_mysql_processlist()\n";
 		$dse_sysstats_mysql_processlist_array=dse_sysstats_mysql_processlist();
-		$section_mysql_processes=$dse_sysstats_mysql_processlist_array[3];
+		$section_mysql_processes=colorize("MYSQL Processes: ","cyan","black") . $dse_sysstats_mysql_processlist_array[3];
 		
 	
 		print "dse_sysstats_mysql_status()\n";
@@ -518,8 +518,8 @@ function update_display($keys=""){
 		$PRpm=intval($Requests/($SpanSeconds/60));
 		$AvgGenTime=number_format(($TotalGenTime/1000/1000)/$Requests,2);
 		$AvgGenTime_str=dse_bt_colorize($AvgGenTime,1.5);
-		$PRpm_str=dse_bt_colorize($PRpm,90);
-		$section_httpd.=colorize("HTTPD ","cyan","black"). "Requests/Minute:$PRpm_str   Avg: ${AvgGenTime_str}s  Span:${SpanSeconds}s \n";//TotalGenTime:$TotalGenTime";
+		$PRpm_str=dse_bt_colorize($PRpm,150);
+		$section_httpd.=colorize("HTTPD ","cyan","black"). "Requests/Minute:$PRpm_str   Avg: ${AvgGenTime_str}s  Span:${SpanSeconds}s \n\n";//TotalGenTime:$TotalGenTime";
 		
 
 		
