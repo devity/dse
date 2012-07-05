@@ -802,7 +802,7 @@ function dse_sysstats_httpd_fullstatus(){
 	global $ips_attack_ever_array;
 	global $ips_banned_array;
 	global $HighlightIP;
-	if(sizeof($whitelist_ips_array)==0) dam_ip_throttle_load_ip_lists();
+	//if(sizeof($whitelist_ips_array)==0) dam_ip_throttle_load_ip_lists();
 	
 	if(!$vars['dpd_httpd_fullstatus__embeded'])	start_feature_box("dpd_httpd_fullstatus()","100%");
 
@@ -960,7 +960,8 @@ function dse_sysstats_httpd_fullstatus(){
 				}                                                                
 				        
 				$BanURL="/dse_admin/utils/debug.php?PageType=IPTablesAddBannedIP&IPToBan=$Client";
-				$IpInfoLink=bd_dam_get_ip_link($Client);
+				//$IpInfoLink=bd_dam_get_ip_link($Client);
+				$IpInfoLink=$Client;
 				print "<tr class='f7pt'><td class='f10pt'>$n: <a href=https://$VHost$Request target=_blank>$Request</a></td>
 				<td>
 							$IpInfoLink
