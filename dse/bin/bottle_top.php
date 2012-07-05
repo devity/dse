@@ -308,8 +308,9 @@ function update_display($keys=""){
 		global $section_net_listening;
 		if(($Loops%5)==0 ){
 			print "dse_sysstats_net_listening()\n";
-			$dse_sysstats_net_listening_array=dse_sysstats_net_listening();
-			$section_net_listening="Ports Listening: ".$dse_sysstats_net_listening_array[3];
+			//$dse_sysstats_net_listening_array=dse_sysstats_net_listening();
+			//$section_net_listening="Ports Listening: ".$dse_sysstats_net_listening_array[3];
+			$section_net_listening="Ports Listening: ".dse_exec("/dse/bin/dsc -oc");
 		}	
 			
 			
