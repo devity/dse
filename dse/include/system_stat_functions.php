@@ -804,7 +804,7 @@ function dse_sysstats_httpd_fullstatus(){
 	global $HighlightIP;
 	//if(sizeof($whitelist_ips_array)==0) dam_ip_throttle_load_ip_lists();
 	
-	if(!$vars['dpd_httpd_fullstatus__embeded'])	start_feature_box("dpd_httpd_fullstatus()","100%");
+//	if(!$vars['dpd_httpd_fullstatus__embeded'])	start_feature_box("dpd_httpd_fullstatus()","100%");
 
 	//`/dse/aliases/dse_httpd_fullstatus_on`;
 	
@@ -892,7 +892,7 @@ function dse_sysstats_httpd_fullstatus(){
 	}
 	
 	// /prefork.c
-	$httpd_conf_file="/etc/httpd/conf/httpd.conf";
+	/*$httpd_conf_file="/etc/httpd/conf/httpd.conf";
 	$wmsraw=`cat $httpd_conf_file`;
 	if(dpd_httpd_is_prefork_or_worker()=="worker"){
 		$wmsa=strcut($wmsraw,"<IfModule worker.c>","</IfModule>");
@@ -901,7 +901,7 @@ function dse_sysstats_httpd_fullstatus(){
 	}else{
 		$wmsa="";
 	}
-	
+	*/
 	if($wmsa==""){
 		$MaxClients="unknown";
 	}else{
@@ -932,7 +932,7 @@ function dse_sysstats_httpd_fullstatus(){
 	//print debug_tostring($Requests);
 //	if(!$vars['dpd_httpd_fullstatus__embeded'])	print "<hr>";
 	if($Requests){
-		print "<table><tr class='f10pt'><td>Request</td><td>Client</td><td>SS</td><td>CPU</td><td>PID</td><td>M</td></tr>";
+		//print "<table><tr class='f10pt'><td>Request</td><td>Client</td><td>SS</td><td>CPU</td><td>PID</td><td>M</td></tr>";
 		$n=0;
 		 foreach($Requests as $l){
 		
@@ -973,10 +973,10 @@ function dse_sysstats_httpd_fullstatus(){
 			}
 		}
 		
-		print "</table>";
+		//print "</table>";
 		}
-	if(!$vars['dpd_httpd_fullstatus__embeded'])	end_feature_box();
-	print "<br>";	
+	//if(!$vars['dpd_httpd_fullstatus__embeded'])	end_feature_box();
+	//print "<br>";	
 }
 		
 
