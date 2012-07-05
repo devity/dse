@@ -814,7 +814,7 @@ function dse_sysstats_httpd_fullstatus(){
 		$Command="/etc/init.d/httpd fullstatus";
 	}
 	$Results=dse_exec($Command);
-	if(!$vars['dpd_httpd_fullstatus__embeded'])	print "<b>Command:</b> <i>".$Command ."</i><br><br>";
+	//if(!$vars['dpd_httpd_fullstatus__embeded'])	print "<b>Command:</b> <i>".$Command ."</i><br><br>";
 	$Lines=split("\n",$Results);
 	$num_lines=sizeof($Lines);
 	
@@ -889,9 +889,10 @@ function dse_sysstats_httpd_fullstatus(){
 				$SS=$Lpa[6];
 				$Req=$Lpa[7];
 				$Con=$Lpa[8];
+				$IP=$Lpa[1];
 				if($Mode!="_"){
 			//print_r($Lpa);
-					print " PID: $PID   cpu:$CPU s   ss:$SS s   m:$Mode   req:$Req ms   con:$Con kb   $URL \n";
+					print "$IP   PID: $PID   cpu:$CPU s   ss:$SS s   req:$Req ms   con:$Con kb   $URL \n";
 					$p++;
 				}
 			}
