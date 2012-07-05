@@ -894,7 +894,7 @@ function dse_sysstats_httpd_fullstatus(){
 			if($Lpa[15] && $Lpa[15]!="" && $Lpa[14]!="NULL" && intval($Lpa[2])>0 && $Lpa[14]!="/server-status"){
 				$PadNeeded=80-(strlen($Lpa[15])+strlen($Lpa[12]));
 				$URL=colorize(strcut($Lpa[15],"","/")."://","yellow","black").colorize($Lpa[12],"red","black",TRUE,1)
-					.colorize(pad($Lpa[14],$PadNeeded),"yellow","black");
+					.colorize(pad($Lpa[14],$PadNeeded),"yellow","black",TRUE,1);
 				$PID=colorize($Lpa[2],"green","black");
 				$Mode=$Lpa[4];
 				$CPU=colorize(pad($Lpa[5],5,' ',"right"),"green","black");
@@ -903,11 +903,26 @@ function dse_sysstats_httpd_fullstatus(){
 				$Con=colorize(pad($Lpa[8],5,' ',"right"),"green","black");
 				$IP=$Lpa[11];
 				if($Mode!="_"){
+									
+					$Mode=str_replace("S",colorize("S","white","black",TRUE,1),$Mode);
+					$Mode=str_replace("R",colorize("R","yellow","black",TRUE,1),$Mode);
+					$Mode=str_replace("C",colorize("C","green","black",TRUE,1),$Mode);
+					$Mode=str_replace("D",colorize("D","yellow","black",TRUE,1),$Mode);
+					$Mode=str_replace("W",colorize("W","blue","black",TRUE,1),$Mode);
+					$Mode=str_replace("C",colorize("C","cyan","black",TRUE,1),$Mode);
+					$Mode=str_replace("G",colorize("G","red","black",TRUE,1),$Mode);
+					$Mode=str_replace("I",colorize("I","magenta","black",TRUE,1),$Mode);
+					$Mode=str_replace("L",colorize("L","red","black",TRUE,1),$Mode);
+					$Mode=str_replace("K",colorize("K","yellow","black",TRUE,1),$Mode);
+					$Mode=str_replace("_",colorize("_","green","black",TRUE,1),$Mode);
+					$Mode=str_replace(".",colorize(".","green","black",TRUE,1),$Mode);
+					//if(!$vars['dpd_httpd_fullstatus__embeded'])	print "<hr>";
+	
 					if($vars['Verbosity']>4) print_r($Lpa);	
 					//$URL=pad($URL,120);
 					$IP=pad($IP,15);
 					$IP=colorize($IP,"magenta","black",TRUE,1);
-					$RequestInfo.= "$IP $URL     $CPU s/ $SS s/ $Req ms   $Con kb    PID: $PID\n";
+					$RequestInfo.= "$IP $Mode $URL     $CPU s/ $SS s/ $Req ms   $Con kb    PID: $PID\n";
 					$p++;
 				}
 			}
