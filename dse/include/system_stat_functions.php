@@ -892,7 +892,7 @@ function dse_sysstats_httpd_fullstatus(){
 				$Con=$Lpa[8];
 				$IP=$Lpa[11];
 				if($Mode!="_"){
-			//print_r($Lpa);	
+					if($vars['Verbosity']>4) print_r($Lpa);	
 					$URL=pad($URL,70);
 					$IP=pad(16,70);
 					$RequestInfo.= "$IP  $URL   PID: $PID   $CPU s / $SS s / $Req ms   $Con kb \n";
@@ -956,7 +956,7 @@ function dse_sysstats_httpd_fullstatus(){
 		print "Mac Clients: $MaxClients   ";
 	}
 	
-	print "$RequestInfo";
+	print "\n$RequestInfo";
 	
 	//print debug_tostring($Requests);
 //	if(!$vars['dpd_httpd_fullstatus__embeded'])	print "<hr>";
