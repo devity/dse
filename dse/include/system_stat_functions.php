@@ -871,16 +871,18 @@ function dse_sysstats_httpd_fullstatus(){
 		if($Lpa[0]=="Srv") break;
 	}
 	
+	$httpd_request_print_limit=10;
+	$p=0;
 	for( $l=$l;$l<$num_lines;$l++){
 		$Line=trim($Lines[$l]);
 		$Lpa=split(" ",$Line);
 		$PID=$Lpa[1];
-		if(intval($PID)>0){
+		if(intval($PID)>0 && $p<$httpd_request_print_limit){
 		
 			$LastLine=str_replace("  ", " ", $LastLine);
 			$Lpa=split(" ",$LastLine);
-			if($Lpa[14]!="NULL"){
-				$URL=$Lpa[13]."/".$Lpa[15];
+			if($Lpa[14]!="NULL" && intval($Lpa[2])>0){
+				$URL=$Lpa[12]."/".$Lpa[14];
 				$PID=$Lpa[2];
 				$Mode=$Lpa[4];
 				$CPU=$Lpa[5];
@@ -890,6 +892,7 @@ function dse_sysstats_httpd_fullstatus(){
 				if($Mode!="_"){
 			print_r($Lpa);
 					print " PID: $PID  cpu:$CPU s   ss:$SS s  m:$Mode   req:$Req ms   con:$Con kb   $URL \n";
+					$p++;
 				}
 			}
 			$LastLine="";
