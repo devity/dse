@@ -417,7 +417,7 @@ function update_display($keys=""){
 		// *****************************************************************************************************************
 		// *********************************************** CPU CPU CPU CPU CPU**********************************************
 		// *****************************************************************************************************************
-		
+	/*	
 
 		print "section_cpu()\n";
 		$CpuIdle=$oa[15];
@@ -459,7 +459,7 @@ function update_display($keys=""){
 		   "  SwapUsed: $Mem[Swap]MB".
 		   "\n";
 		
-		
+	*/	
 		$section_processes="";
 		$section_processes.=`ps aux | sort -nr -k 3 | grep -v COMMAND | head -20`;		
 	
@@ -480,7 +480,7 @@ function update_display($keys=""){
 		
 		$section_httpd="";
 		dse_exec("tail -n 500 $LogFileName > $TmpFileName",TRUE);
-		exit();
+	//	exit();
 		$log_file_handle = fopen($TmpFileName, "r");
 		$vars[dse_lpa_log_line_full_array]=array();
 		$LinesProcessed=0;
