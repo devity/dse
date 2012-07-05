@@ -922,7 +922,7 @@ function dse_sysstats_httpd_fullstatus(){
 					//$URL=pad($URL,120);
 					$IP=pad($IP,15);
 					$IP=colorize($IP,"magenta","black",TRUE,1);
-					$RequestInfo.= "$IP $Mode $URL     $CPU s/ $SS s/ $Req ms   $Con kb    PID: $PID\n";
+					$RequestInfo.= "$IP  $Mode  $URL     $CPU s/ $SS s/ $Req ms   $Con kb    PID: $PID\n";
 					$p++;
 				}
 			}
@@ -995,7 +995,7 @@ function dse_sysstats_httpd_fullstatus(){
 		print "Max Clients: $MaxClients   ";
 	}
 	*/
-	print "\n$RequestInfo";
+	print "$RequestInfo";
 	
 	//print debug_tostring($Requests);
 //	if(!$vars['dpd_httpd_fullstatus__embeded'])	print "<hr>";

@@ -580,7 +580,7 @@ function dep($ErrorMessage,$Log=TRUE){
 function dse_log($Message,$File=""){
 	global $vars; dse_trace();
 	$Command="";
-	$Message=dse_date_format()."  ".str_replace("\"","\\\"",$Message);
+	$Message=dse_date_format("NOW","SYSLOG")."  ".str_replace("\"","\\\"",$Message);
 	if(!$File){
 		if($vars['DSE']['SCRIPT_LOG_FILE']) {
 			if($vars['DSE']['SCRIPT_LOG_FILE']=="NO") {
@@ -624,6 +624,7 @@ function dse_date_format($Time="NOW",$FormatName="FULLREADABLE"){
 			break;
 		case 'SYSLOG':
 			$FormatString="D M j G:i:s T Y";
+			$FormatString="M j G:i:s";
 			break;
 		case 'FULL':
 		case 'FULLREADABLE':
@@ -1857,36 +1858,36 @@ function unk_time($TimeAndDateString){
 		}else{
 			$TimeAndDateString=strcut($TimeAndDateString,"","DT");
 		}
-		 $len=52; $format = '%a %B %d, %Y, %l:%M.%S %P';
-		 
-list($DayName,$MonthName,$Date,$Year,$Hour,$Minute,$Second,$AMPM) = sscanf($TimeAndDateString, "%s %s %d, %d, %d:%d.%d %s");
-//print "d=$DayName,m=$MonthName,dt=$Date,y=$Year,h=$Hour,m=$Minute,s=$Second,ampm=$AMPM\n";
-if($AMPM=="PM" || $AMPM=="pm") $Hour+=12;
-	if(stristr($MonthName,"Jan"))		$Month="1";
-	if(stristr($MonthName,"Feb"))		$Month="2";
-	if(stristr($MonthName,"Mar"))		$Month="3";
-	if(stristr($MonthName,"Apr"))		$Month="4";
-	if(stristr($MonthName,"May"))		$Month="5";
-	if(stristr($MonthName,"Jun"))		$Month="6";
-	if(stristr($MonthName,"Jul"))		$Month="7";
-	if(stristr($MonthName,"Aug"))		$Month="8";
-	if(stristr($MonthName,"Sep"))		$Month="9";
-	if(stristr($MonthName,"Oct"))		$Month="10";
-	if(stristr($MonthName,"Nov"))		$Month="11";
-	if(stristr($MonthName,"Dec"))		$Month="12";
-	if(stristr($MonthName,"January"))		$Month="1";
-	if(stristr($MonthName,"Febuary"))		$Month="2";
-	if(stristr($MonthName,"March"))		$Month="3";
-	if(stristr($MonthName,"April"))		$Month="4";
-	if(stristr($MonthName,"May"))		$Month="5";
-	if(stristr($MonthName,"June"))		$Month="6";
-	if(stristr($MonthName,"July"))		$Month="7";
-	if(stristr($MonthName,"August"))		$Month="8";
-	if(stristr($MonthName,"September"))		$Month="9";
-	if(stristr($MonthName,"October"))		$Month="10";
-	if(stristr($MonthName,"November"))		$Month="11";
-	if(stristr($MonthName,"December"))		$Month="12";
-$t=@mktime($Hour, $Minute, $Second, $Month, $Date, $Year);
+		$len=52; $format = '%a %B %d, %Y, %l:%M.%S %P';
+				 
+		list($DayName,$MonthName,$Date,$Year,$Hour,$Minute,$Second,$AMPM) = sscanf($TimeAndDateString, "%s %s %d, %d, %d:%d.%d %s");
+		//print "d=$DayName,m=$MonthName,dt=$Date,y=$Year,h=$Hour,m=$Minute,s=$Second,ampm=$AMPM\n";
+		if($AMPM=="PM" || $AMPM=="pm") $Hour+=12;
+			if(stristr($MonthName,"Jan"))		$Month="1";
+			if(stristr($MonthName,"Feb"))		$Month="2";
+			if(stristr($MonthName,"Mar"))		$Month="3";
+			if(stristr($MonthName,"Apr"))		$Month="4";
+			if(stristr($MonthName,"May"))		$Month="5";
+			if(stristr($MonthName,"Jun"))		$Month="6";
+			if(stristr($MonthName,"Jul"))		$Month="7";
+			if(stristr($MonthName,"Aug"))		$Month="8";
+			if(stristr($MonthName,"Sep"))		$Month="9";
+			if(stristr($MonthName,"Oct"))		$Month="10";
+			if(stristr($MonthName,"Nov"))		$Month="11";
+			if(stristr($MonthName,"Dec"))		$Month="12";
+			if(stristr($MonthName,"January"))		$Month="1";
+			if(stristr($MonthName,"Febuary"))		$Month="2";
+			if(stristr($MonthName,"March"))		$Month="3";
+			if(stristr($MonthName,"April"))		$Month="4";
+			if(stristr($MonthName,"May"))		$Month="5";
+			if(stristr($MonthName,"June"))		$Month="6";
+			if(stristr($MonthName,"July"))		$Month="7";
+			if(stristr($MonthName,"August"))		$Month="8";
+			if(stristr($MonthName,"September"))		$Month="9";
+			if(stristr($MonthName,"October"))		$Month="10";
+			if(stristr($MonthName,"November"))		$Month="11";
+			if(stristr($MonthName,"December"))		$Month="12";
+		$t=@mktime($Hour, $Minute, $Second, $Month, $Date, $Year);
 		//	print "\nunk_time=$TimeAndDateString  fmt=$format   t=$t\n";
 		return $t;
 	

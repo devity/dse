@@ -66,7 +66,7 @@ $LogsCombined="";
 
 dpv(2,"Using Log Files: ".$vars['DSE']['LGT_LOG_FILES']."\n");
 foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
-	dpv(3,"Doing Log Files: $LogFile\n");
+	dpv(2,"Doing Log File: $LogFile\n");
 		
 	
 	$LogFile=trim($LogFile);
@@ -116,7 +116,8 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 	}
 }
 //print "printing\n";
-if($Intermingle && is_array($Intermingle)){
+//print_r($Intermingled);
+if($Intermingle && is_array($Intermingled)){
 	ksort($Intermingled); foreach($Intermingled as $L) print $L;
 }else{
 	
