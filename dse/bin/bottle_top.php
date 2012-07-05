@@ -614,7 +614,7 @@ function update_display($keys=""){
 	dse_sysstats_httpd_fullstatus();
 	print "\n";
 	
-	print colorize("MYSQL: ","cyan","black") 
+	print colorize("MYSQL: ","cyan","black");
 	print $section_mysql_stats;
 	print "\n";
 	//print "Slow_queries:$Slow_queries ";
