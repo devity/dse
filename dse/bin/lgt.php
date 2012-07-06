@@ -100,8 +100,8 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 						}
 						if($Intermingle){
 							if($Time){
-								$Rand=rand(0,999);
-								$Intermingled[$Time*1000+$Rand]="$LogFileNameColorized $Ago  $L\n";
+								$Rand=rand(100,999);
+								$Intermingled[$Time."0".$Rand]="$LogFileNameColorized $Ago  $L\n";
 							}else{
 								print "$LogFileNameColorized $Ago  $L\n";;
 							}

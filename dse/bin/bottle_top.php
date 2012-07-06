@@ -168,6 +168,18 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 			$str= "   Loop: $Loops_str / ".$vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']."  Next: ${SleepLeft_str}s      $Load_str   \n";
 			print $str;
 		
+			$GraphWidth=50;
+			$CPUInfoArray=dse_sysstats_cpu();
+			foreach($CPUInfoArray[1] as $CPUCoreInfoArray){
+				$Used=100-$CPUCoreInfoArray['Idle'];
+				$RedWidth=intval(($Used/100)*$GraphWidth);
+				$GreenWidth=intval(($CPUCoreInfoArray['Idle']/100)*$GraphWidth);
+				print colorize(pad("",$RedWidth,"#"),"red","black",TRUE,1);
+				print colorize(pad("",$GreenWidth,"#"),"green","black",TRUE,1);
+				print "\n";
+			}
+		
+		
 			//sleep(1);
 			$SleepLeft--;
 			$keys=readline_timeout(1, '');
@@ -595,6 +607,10 @@ function update_display($keys=""){
 	//print getColoredString("", 'grey', 'black');
 	//$vars[shell_colors_skip_reset]=FALSE;
 	
+	print "\n";
+	print "\n";
+	print "\n";
+	print "\n";
 	print "\n";
 
 	

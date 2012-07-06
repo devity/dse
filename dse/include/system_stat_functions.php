@@ -5,8 +5,44 @@ function dse_sysstats_sdvcqwev(){
 	return array($mysql_processes_array,$mysql_processes_raw,$mysql_processes_line_array,$mysql_processes);
 }	
 	
+/*
+Linux 3.0.0-22-generic-pae (VULD) 	07/05/2012 	_i686_	(4 CPU)
 
-
+11:13:31 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest   %idle
+11:13:31 PM  all   18.22    2.19    5.08    0.66    0.00    0.57    0.00    0.00   73.28
+11:13:31 PM    0   17.53    2.66    5.02    0.73    0.00    1.69    0.00    0.00   72.36
+11:13:31 PM    1   18.14    1.62    5.04    0.65    0.00    0.11    0.00    0.00   74.44
+11:13:31 PM    2   17.74    2.42    5.20    0.65    0.00    0.25    0.00    0.00   73.73
+11:13:31 PM    3   19.45    2.06    5.07    0.61    0.00    0.23    0.00    0.00   72.57
+*/
+function dse_sysstats_cpu(){
+	global $vars; dse_trace();
+	$r=dse_exec("mpstat -P ALL");
+	$ra=split("\n",$r);
+	$SysInfo=split("[ \t]+",$ra[0]);
+	$OSType=$SysInfo[0];
+	$KernelVersion=$SysInfo[1];
+	$CPUGeneration=$SysInfo[4];
+	$Hostname=strcut($SysInfo[2],"(",")");
+	$CPUCores=strcut($SysInfo[5],"("," ");
+	$CPUs=array();
+	for($c=0;$c<$CPUcores;$c++){
+		$CoreInfoArray=split("[ \t]+",$ra[4+$c]);
+		$Usr=$CoreInfoArray[3];
+		$Nice=$CoreInfoArray[4];
+		$Sys=$CoreInfoArray[5];
+		$IOWait=$CoreInfoArray[6];
+		$IRQ=$CoreInfoArray[7];
+		$Soft=$CoreInfoArray[8];
+		$Steal=$CoreInfoArray[9];
+		$Guest=$CoreInfoArray[10];
+		$Idle=$CoreInfoArray[11];
+		$Sys+=$Nice+$IOWait+$IRQ+$Soft+$Steal+$Guest;
+		$CPUs[]=array("User"=>$Usr,"Sys"=>$Sys,"Idle"=>$Idle);
+	}
+	return array($CPUCores,$CPUs);
+}	
+	
 function dse_color_ls($FileArg){
 	global $vars; dse_trace();
 	global $CFG_array;
