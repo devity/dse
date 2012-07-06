@@ -2529,8 +2529,23 @@ function variable_name( &$var, $scope=false, $prefix='UNIQUE', $suffix='VARIABLE
 
 function remove_duplicate_lines($String){
 	global $vars; dse_trace();
+	$StringArray=split("\n",$String);
+	$out=remove_duplicate_array_lines($StringArray);
+	$Out2="";
+	foreach($out as $Line){
+		if($Out2){
+			$Out2.="\n";
+		}
+		$Out2.=$Line;
+	}
+	return $Out2;
+}
+
+
+function remove_duplicate_array_lines($StringArray){
+	global $vars; dse_trace();
 	$out=array();
-	foreach(split("\n",$String) as $Line){
+	foreach($StringArray as $Line){
 		$Found=FALSE;
 		for($i=0;$i<sizeof($out);$i++){
 			if($out[$i]==$Line){
@@ -2541,14 +2556,7 @@ function remove_duplicate_lines($String){
 			$out[]=$Line;
 		}
 	}
-	$Out2="";
-	foreach($out as $Line){
-		if($Out2){
-			$Out2.="\n";
-		}
-		$Out2.=$Line;
-	}
-	return $Out2;
+	return $out;
 }
 
 

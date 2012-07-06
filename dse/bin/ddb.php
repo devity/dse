@@ -98,7 +98,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'repair-all':
 		dse_database_repair_all();
 		exit(0);
-	case 'r':
+	case 'c':
   	case 'check-all':
 		dse_database_check_all();
 		exit(0);
