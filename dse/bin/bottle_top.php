@@ -615,6 +615,7 @@ function update_display($keys=""){
 		
 		$sda2_last=$sda2;
 	
+		
 		$diskstats_lasttime=microtime(true);
 	//}
 

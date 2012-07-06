@@ -208,7 +208,9 @@ function dse_panic_offer_interactive(){
 	print getColoredString(pad("  Automatic Run Done !  ",cbp_get_screen_width(),"*","center"),'bold_green');
 	print getColoredString(pad("However, this skips things you need to be asked about.",cbp_get_screen_width()," ","center"),'cyan');
 	
-	$A=dse_ask_yn(pad("Do a more thourough, interactive run now?",cbp_get_screen_width()," ","center"),'N',68*10);	
+	$A=dse_ask_yn(
+		colorize(pad("Do a more thourough, interactive run now?",cbp_get_screen_width()," ","center"),"white","red",TRUE,5)
+		,'N',68*10);	
 	if($A=='Y'){
 		dse_panic(TRUE);
 	}
@@ -271,90 +273,99 @@ function dse_panic_hd($Interactive=FALSE){
 	
 	
 	if($Interactive){
-		//print "aaaa";
-		`rm /tmp/ls.out`;
-		$c="find / -type f -size +100000k -exec ls -l {} >>/tmp/ls.out \; 2>/dev/null &";
-		print `$c`;
-		//print "bbbb";
-		$FindPID=`/dse/bin/grep2pid "find"`;
-		print "PID=$FindPID\n";
-		$t=time();		
-		progress_bar("reset");
-		while(dse_pid_is_running($FindPID)>0){
-			//print "t$asf"; $asf++;
-			//cbp_screen_clear();
+		
+		$A=dse_ask_yn(
+		colorize("Search for large files?","white","red",TRUE,5),'N',60);	
+		if($A=='Y'){
 			
-			if(time()%10==1){
-				$ls=dse_file_get_contents("/tmp/ls.out");
-				$lsa=split("\n",$ls);
-				$lss=sizeof($lsa);
-				if($lss>$lss_last){
-					for($i=$lss_last;$i<$lss;$i++){
-						//print $lsa[$i]."\n";
+			
+			print bar("Searching for LARGE files... ","-","blue","white","white","blue");
+		
+			//print "aaaa";
+			`rm /tmp/ls.out`;
+			$c="find / -type f -size +100000k -exec ls -l {} >>/tmp/ls.out \; 2>/dev/null &";
+			print `$c`;
+			//print "bbbb";
+			$FindPID=`/dse/bin/grep2pid "find"`;
+			print "PID=$FindPID\n";
+			$t=time();		
+			progress_bar("reset");
+			while(dse_pid_is_running($FindPID)>0){
+				//print "t$asf"; $asf++;
+				//cbp_screen_clear();
+				
+				if(time()%10==1){
+					$ls=dse_file_get_contents("/tmp/ls.out");
+					$lsa=split("\n",$ls);
+					$lss=sizeof($lsa);
+					if($lss>$lss_last){
+						for($i=$lss_last;$i<$lss;$i++){
+							//print $lsa[$i]."\n";
+						}
 					}
+					
+					cbp_cursor_save();
+					sbp_cursor_postion(3,cbp_get_screen_width()-60);
+					print colorize(pad(" + Found $lss large files",60,"-"),"black","green");
+					cbp_cursor_restore();
 				}
 				
-				cbp_cursor_save();
-				sbp_cursor_postion(3,cbp_get_screen_width()-60);
-				print colorize(pad(" + Found $lss large files",60,"-"),"black","green");
-				cbp_cursor_restore();
+				//print pad(" current: PID=$FindPID ",cbp_get_screen_width(),"-","center");
+				//print "\n$ls";
+				$lsa_last=$lsa; $lss_last=$lss;
+				
+				progress_bar("time");
 			}
 			
-			//print pad(" current: PID=$FindPID ",cbp_get_screen_width(),"-","center");
-			//print "\n$ls";
-			$lsa_last=$lsa; $lss_last=$lss;
 			
-			progress_bar("time");
-		}
-		
-		
-		$LargeFileRootDir="/";
-		//look for largest fiels
-		$LargeFileCommands=array(
-			//"find ROOT_DIR -type f -size +1000000k -exec ls -l {} \; 2>/dev/null ",
-			"du -a ROOT_DIR 2>/dev/null | sort -n -r", //du -am / 2>/dev/null | sort -n -r | head -n 200
-			//"for i in G M K; do du -a / 2>/dev/null | grep [0-9]$i | sort -nr -k 1; done | head -n 11",
-			//"find ROOT_DIR -type f -print0| xargs -0 ls -s | sort -rn | awk ‘{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}’ | head -200",
-			//"sudo find / -type f -print0 2>/dev/null | xargs -0 ls -s | sort -rn | awk '{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}' | head",
+			$LargeFileRootDir="/";
+			//look for largest fiels
+			$LargeFileCommands=array(
+				//"find ROOT_DIR -type f -size +1000000k -exec ls -l {} \; 2>/dev/null ",
+				"du -a ROOT_DIR 2>/dev/null | sort -n -r", //du -am / 2>/dev/null | sort -n -r | head -n 200
+				//"for i in G M K; do du -a / 2>/dev/null | grep [0-9]$i | sort -nr -k 1; done | head -n 11",
+				//"find ROOT_DIR -type f -print0| xargs -0 ls -s | sort -rn | awk ‘{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}’ | head -200",
+				//"sudo find / -type f -print0 2>/dev/null | xargs -0 ls -s | sort -rn | awk '{size=$1/1024; printf(\"%dMb %s\n\", size,$2);}' | head",
+				
+			);
 			
-		);
-		
-		$Command="/dse/bin/dfm --empty ".$CFG_array['OutFile'];
-		dse_exec($Command,TRUE,TRUE);
-		foreach($LargeFileCommands as $Command){
-			$CommandReal=str_replace("ROOT_DIR",$LargeFileRootDir,$Command);
-			$A=dse_ask_choice(array(
-				"Y"=>"Yes",
-				"N"=>"No",
-				"C"=>"Change Root Directory for start of large file search",
-				"Q"=>"Quit / Exit",
-			),"Run $CommandReal ?");
-			if($A=='Y'){
-				$StartTime=time()+microtime();
-				print getColoredString("Running File Large Files Command:  $CommandReal \n","cyan");
-				$r=dse_exec("$CommandReal");  $EndTime=time()+microtime(); $RunTime=number_format($EndTime-$StartTime,2);
-				print getColoredString("File Large Files:  $CommandReal (runtime $RunTime s)\n","cyan");
-				$r_show=substr($r,0,2000);
-				print getColoredString($r_show,"yellow");
-				dse_file_append_contents($CFG_array['OutFile'],"File Large Files:  $CommandReal (runtime $RunTime s)\n");
-				dse_file_append_contents($CFG_array['OutFile'],$r);
-			}elseif($A=='Q'){
-				exit(0);
-			}elseif($A=='C'){
-				$LargeFileRootDir=dse_ask_entry("Enter New Root Directory:");
-				if($LargeFileRootDir){
-					
-					$CommandReal=str_replace("ROOT_DIR",$LargeFileRootDir,$Command);
-					print getColoredString("Running File Large Files Command:  $CommandReal \n","cyan");
+			$Command="/dse/bin/dfm --empty ".$CFG_array['OutFile'];
+			dse_exec($Command,TRUE,TRUE);
+			foreach($LargeFileCommands as $Command){
+				$CommandReal=str_replace("ROOT_DIR",$LargeFileRootDir,$Command);
+				$A=dse_ask_choice(array(
+					"Y"=>"Yes",
+					"N"=>"No",
+					"C"=>"Change Root Directory for start of large file search",
+					"Q"=>"Quit / Exit",
+				),"Run $CommandReal ?");
+				if($A=='Y'){
 					$StartTime=time()+microtime();
-					$r=dse_exec("$CommandReal"); $EndTime=time()+microtime(); $RunTime=number_format($EndTime-$StartTime,2);
-					print getColoredString("Command Done:  $CommandReal (runtime: $RunTime s)\n","cyan");
+					print getColoredString("Running File Large Files Command:  $CommandReal \n","cyan");
+					$r=dse_exec("$CommandReal");  $EndTime=time()+microtime(); $RunTime=number_format($EndTime-$StartTime,2);
+					print getColoredString("File Large Files:  $CommandReal (runtime $RunTime s)\n","cyan");
 					$r_show=substr($r,0,2000);
 					print getColoredString($r_show,"yellow");
 					dse_file_append_contents($CFG_array['OutFile'],"File Large Files:  $CommandReal (runtime $RunTime s)\n");
 					dse_file_append_contents($CFG_array['OutFile'],$r);
-				}else{
-					$LargeFileRootDir="/";
+				}elseif($A=='Q'){
+					exit(0);
+				}elseif($A=='C'){
+					$LargeFileRootDir=dse_ask_entry("Enter New Root Directory:");
+					if($LargeFileRootDir){
+						
+						$CommandReal=str_replace("ROOT_DIR",$LargeFileRootDir,$Command);
+						print getColoredString("Running File Large Files Command:  $CommandReal \n","cyan");
+						$StartTime=time()+microtime();
+						$r=dse_exec("$CommandReal"); $EndTime=time()+microtime(); $RunTime=number_format($EndTime-$StartTime,2);
+						print getColoredString("Command Done:  $CommandReal (runtime: $RunTime s)\n","cyan");
+						$r_show=substr($r,0,2000);
+						print getColoredString($r_show,"yellow");
+						dse_file_append_contents($CFG_array['OutFile'],"File Large Files:  $CommandReal (runtime $RunTime s)\n");
+						dse_file_append_contents($CFG_array['OutFile'],$r);
+					}else{
+						$LargeFileRootDir="/";
+					}
 				}
 			}
 		}
@@ -366,10 +377,10 @@ function dse_panic_hd($Interactive=FALSE){
 
 function dse_panic_services($Interactive=FALSE){
 	global $vars,$CFG_array;
-	print getColoredString("Section:  Services / Daemons\n","green");
-	
-	print getColoredString("Verifying Expected Ports are Listening..\n","cyan");
-	//print `df -h`;
+	print bar("Section:  Services / Daemons... ","-","blue","white","white","blue");
+		
+	print bar("Verifying Expected Ports are Listening.... ","-","blue","white","white","blue");
+		//print `df -h`;
 
 	if($Interactive){
 		
