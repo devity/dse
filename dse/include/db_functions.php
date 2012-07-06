@@ -32,8 +32,14 @@ function dse_table_check($Database,$Table){
 	//print colorize("CHECK Table $T:\n","green","black");
 	$r=dse_exec("echo \"USE $Database;\n CHECK TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
 	list($HeaderLine,$DataLine)=split("\n",$r);
-	$Da=split("[ \t]+",$DataLine);
-	list($DdT,$Op,$MsgType,$MsgText)=$Da;
+	$DataLine=whitespace_minimize($DataLine);
+	$DdT=strcut($DataLine,""," ");
+	$DataLine=strcut($DataLine," ");
+	$Op=strcut($DataLine,""," ");
+	$DataLine=strcut($DataLine," ");
+	$MsgType=strcut($DataLine,""," ");
+	$DataLine=strcut($DataLine," ");
+	$MsgText=$DataLine;
 	return(array("DdT"=>$DdT,"Op"=>$Op,"MsgType"=>$MsgType,"MsgText"=>$MsgText));		
 }
 
@@ -41,26 +47,15 @@ function dse_table_analyze($Database,$Table){
 	global $vars; dse_trace();
 	//print colorize("CHECK Table $T:\n","green","black");
 	$r=dse_exec("echo \"USE $Database;\n ANALYZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
-	/*$r=strcut($r,"\n");
-	$tbr=array();
-	$ra=split("\n",$r);
-	foreach($ra as $re){
-		list($DdT,$Op,$MsgType,$MsgText)=$De;
-	}
-	*/
-	
 	list($HeaderLine,$DataLine)=split("\n",$r);
 	$DataLine=whitespace_minimize($DataLine);
-	//$Da=split("[ \t]+",$DataLine);
-	$Da=$DataLine;
-	$DdT=strcut($Da,""," ");
-	$Da=strcut($Da," ");
-	$Op=strcut($Da,""," ");
-	$Da=strcut($Da," ");
-	$MsgType=strcut($Da,""," ");
-	$Da=strcut($Da," ");
-	$MsgText=$Da;
-	//list($DdT,$Op,$MsgType,$MsgText)=$Da;
+	$DdT=strcut($DataLine,""," ");
+	$DataLine=strcut($DataLine," ");
+	$Op=strcut($DataLine,""," ");
+	$DataLine=strcut($DataLine," ");
+	$MsgType=strcut($DataLine,""," ");
+	$DataLine=strcut($DataLine," ");
+	$MsgText=$DataLine;
 	return(array("DdT"=>$DdT,"Op"=>$Op,"MsgType"=>$MsgType,"MsgText"=>$MsgText));		
 }
 
