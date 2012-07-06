@@ -1575,7 +1575,7 @@ function dse_backup_mysqld() {
 	}*/
 	
 	//--all-databases
-	$Command="mysqldump --database=4thWayInfo --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys "
+	$Command="mysqldump --all-databases --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys "
 		."--dump-date --force --quick --routines --verbose | gzip -1 --stdout > $file";
 	$pid=dse_exec_bg($Command,TRUE);
 	while(dse_pid_is_running($pid)){
