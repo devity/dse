@@ -1629,7 +1629,7 @@ function dse_backup_httpd() {
 		`$Command`;
 	}
 	//foreach($web_data_dirs as $web_data_dir){
-		$Command="cp -rf $web_data_dir ${dir}/.";
+		$Command="rsync -r $web_data_dir ${dir}/.";
 		print "Command: $Command\n";
 		`$Command`;
 	//}

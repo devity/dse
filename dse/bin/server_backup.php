@@ -108,7 +108,7 @@ print "\n";
 
 dse_backup_server_environment();
 dse_backup_mysqld();
-dse_backup_httpd();
+//dse_backup_httpd();
 
 
 print "Done.\n";
