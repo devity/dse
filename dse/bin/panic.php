@@ -283,7 +283,7 @@ function dse_panic_hd($Interactive=FALSE){
 		
 			//print "aaaa";
 			`rm /tmp/ls.out`;
-			$c="find / -type f -size +100000k -exec ls -l {} >>/tmp/ls.out \; 2>/dev/null &";
+			$c="find / -type f -size +30000k -exec ls -l {} >>/tmp/ls.out \; 2>/dev/null &";
 			print `$c`;
 			//print "bbbb";
 			$FindPID=`/dse/bin/grep2pid "find"`;
@@ -298,7 +298,7 @@ function dse_panic_hd($Interactive=FALSE){
 					$ls=dse_file_get_contents("/tmp/ls.out");
 					$lsa=split("\n",$ls);
 					$lss=sizeof($lsa);
-					if($lss>$lss_last){
+					if($lss>0 && $lss>$lss_last){
 						for($i=$lss_last;$i<$lss;$i++){
 							$SizeStr=dse_exec("/dse/bin/dsizeof ".$lsa[$i]);
 							$SizeStr=intval($SizeStr/1000000);
