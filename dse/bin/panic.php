@@ -309,7 +309,7 @@ function dse_panic_hd($Interactive=FALSE){
 								print colorize(pad($SizeStr,8," ","right"),"red","black",TRUE,1);
 								print colorize(" MB\n","green","black",TRUE,1);
 							//}
-							$lss_last=$lss;
+							$lss_last=$i;
 						}
 					}
 					
