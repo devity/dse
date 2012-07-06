@@ -64,7 +64,7 @@ function dse_database_check_all(){
 	global $vars; dse_trace();
 	$DBa=dse_database_list_array();
 	foreach($DBa as $DB){
-		if($DB){
+		if($DB && $DB!="information_schema"){
 			print colorize("Checking Database ","green","black");
 			print colorize($DB,"red","black",TRUE,1);
 			print colorize("...\n","green","black");
