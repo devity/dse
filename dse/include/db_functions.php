@@ -39,6 +39,20 @@ function dse_table_status_array($Database,$Table){
 
 
 
+function dse_table_repair($Database,$Table){
+	global $vars; dse_trace();
+	$r=dse_exec("echo \"USE $Database;\n REPAIR TABLE '$Table' EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],TRUE,TRUE);
+	return;
+}
+
+
+function dse_table_optimize($Database,$Table){
+	global $vars; dse_trace();
+	$r=dse_exec("echo \"USE $Database;\n OPTIMIZE TABLE '$Table';\" | mysql -u ".$vars['DSE']['MYSQL_USER'],TRUE,TRUE);
+	return;
+}
+
+
 function dse_database_repair_all(){
 	global $vars; dse_trace();
 	
@@ -80,7 +94,7 @@ function dse_table_analyze($Database,$Table){
 }
 
 
-function dse_database_check_all(){
+function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 	global $vars; dse_trace();
 	$DBa=dse_database_list_array();
 	foreach($DBa as $DB){
@@ -133,7 +147,7 @@ function dse_database_check_all(){
 					$Engine=pad($Engine,10," ","center");
 					$Engine=colorize($Engine,"green","black");
 					
-					$Rows=pad($Rows,11," ","right");
+					$Rows=pad($Rows,10," ","right");
 					if($TSa['Rows']>1500000){
 						$Rows=colorize($Rows,"red","black",TRUE,1);
 					}elseif($TSa['Rows']>700000){
@@ -144,7 +158,7 @@ function dse_database_check_all(){
 						$Rows=colorize($Rows,"blue","black",TRUE,1);
 					}
 					
-					$Size=pad(intval($Size_int/1000000),15," ","right");
+					$Size=pad(intval($Size_int/1000000),8," ","right");
 					$Size=colorize($Size,"green","black");
 					if($Size_int>100000000){
 						$Size=colorize($Size,"red","black",TRUE,1);
@@ -157,9 +171,16 @@ function dse_database_check_all(){
 					}
 					
 					
-					print "  $Engine   Rows: $Rows   Size: $Size Mb  \n";
+					print "   $Engine    Rows: $Rows    Size: $Size Mb  \n";
 					if($ErrorMsg){
 						print $ErrorMsg."\n";
+					}
+					
+					if(!$IsOK && $DoRepair){
+						dse_table_repair($DB,$T);
+					}
+					if($DoOptimize){
+						dse_table_optimize($DB,$T);
 					}
 				}
 			}
