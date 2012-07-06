@@ -325,7 +325,7 @@ function dse_panic_system_stats(){
 	
 	print colorize("Net: ");
 	$r=http_get("http://www.yahoo.com/");
-	if(strlen($r)>50){
+	if(strlen($r)>10000){
 		print colorize(" Appears OK! ","white","green",TRUE,1). " http://www.Yahoo.com loaded. ".strlen($r)." Bytes ";
 	}else{
 		print colorize(" Cant Load http://www.Yahoo.com ","white","red",TRUE,5);
