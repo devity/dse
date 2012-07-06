@@ -345,6 +345,32 @@ function dse_panic_hd($Interactive=FALSE){
 				
 				progress_bar("time",80," Found $lss files ");
 			}
+			$A=dse_ask_yn(colorize("Offer to DELETE found large files?","white","red",TRUE,5),'N',60);	
+			if($A=='Y'){
+				for($i=0;$i<$lss  ;$i++){
+					if($CachedFileSizes[$lsa[$i]]){
+						$SizeStr=$CachedFileSizes[$lsa[$i]];
+					}else{
+						$SizeStr=dse_exec("/dse/bin/dsizeof ".$lsa[$i]);
+						$CachedFileSizes[$lsa[$i]]=$SizeStr;
+					}
+					$SizeStr=intval($SizeStr/1000000);
+					if($lsa[$i] && $SizeStr>0){
+						$ProcessingFile++;
+						print pad("$ProcessingFile of $BigFiles",15);
+						
+						print colorize(pad($lsa[$i],$FNW),"yellow","black")."   ";
+						print colorize(pad($SizeStr,8," ","right"),"red","black",TRUE,1);
+						print colorize(" MB   ","green","black",TRUE,1);
+						$A=dse_ask_yn(colorize("DELETE?","white","red",TRUE,5),'N',60);	
+						if($A=='Y'){
+							dse_file_delete($lsa[$i]);
+						}
+					
+					}
+					//$lss_last=$i;
+				}
+			}
 			
 			
 			$LargeFileRootDir="/";
