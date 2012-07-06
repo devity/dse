@@ -148,10 +148,10 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 					}
 				}
 			}
-			
+			/*
 			if(!$LaunchNumber) print bar("code_explorer Defined Functions Results: $DoDir","-","blue","white","green","white");
-			$CodeBaseDir="";
-			$CodeInfoArray=dse_code_parse($CodeBaseDir);
+			$CodeBaseDir="/dse/bin";
+			$CodeInfoArray=dse_code_parse_load($CodeBaseDir);
 			foreach($CodeInfoArray['Functions']['Def'] as $k=>$fde){
 				if(str_icontains($fde[2],$String)){
 					$f=$fde[0];
@@ -164,7 +164,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				}
 			}
 			//$CodeInfoArray['Files'][$FileFullName]
-			
+			*/
 		}
 		
 		$DidSomething=TRUE;
