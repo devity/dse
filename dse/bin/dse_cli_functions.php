@@ -442,7 +442,7 @@ function dse_replace_in_file($File,$Needle,$Replacement){
 function progress_bar($Percent="time",$Width=60){
 	global $vars; dse_trace();
 	global $Rainbow,$RainbowSize;
-		
+	print "progress_bar()\n";
 	if($RainbowSize<1){
 		$Rainbow[]=colorize(" ","red","red");
 		$Rainbow[]=colorize(" ","red","red");
