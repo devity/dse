@@ -2579,6 +2579,17 @@ function remove_blank_lines($String){
 	return $Out2;
 }
 
+function whitespace_minimize($String){
+	global $vars; dse_trace();
+	$String=trim(str_replace("\t"," ",$String));
+	while(str_contains($String,"  ")){
+		$String=trim(str_replace("  "," ",$String));
+	}
+	return $String;
+}
+
+
+
 
 function file_count_lines($File){
 	global $vars; dse_trace();
