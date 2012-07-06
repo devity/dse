@@ -169,12 +169,12 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					
 					if($TSa['Engine']!="CSV"){
 						progress_bar(" $TablesChecked checked");
-						$TCa=dse_table_check($DB,$T);
+						/*$TCa=dse_table_check($DB,$T);
 						if($TCa['MsgText']!="OK"){
 							$IsOK=FALSE;
 							$ErrorMsg.= colorize("CHECK $DB.$T => ".$TCa['MsgText'],"white","red",TRUE,1);
 						} 
-						/*	
+						
 						
 						progress_bar(" $TablesChecked checked");
 						$TAa=dse_table_analyze($DB,$T);
