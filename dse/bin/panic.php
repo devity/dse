@@ -273,12 +273,16 @@ function dse_panic_hd($Interactive=FALSE){
 	
 	//look for large files recently
 	
-	
+	$DiskIsLow=dse_is_disk_low();
+	if($DiskIsLow){
+		print colorize("Disk space is LOW on at least one drive!\n","white","red",TRUE,5);
+	}else{
+		print colorize("Disk space is OK on all drives!\n","white","green",TRUE,1);
+	}
 	
 	if($Interactive){
 		
-		$A=dse_ask_yn(
-		colorize("Search for large files?","white","red",TRUE,5),'N',60);	
+		$A=dse_ask_yn(colorize("Search for large files?","white","red",TRUE,5),'N',60);	
 		if($A=='Y'){
 			
 			

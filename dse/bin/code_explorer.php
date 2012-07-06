@@ -26,6 +26,7 @@ $parameters_details = array(
   array('f:','function-declarations:',"shows functions declared in code-base at argv[1]"),
   array('u:','file-info:',"code-base at argv[1] file-info on file = argv[2]"),
   array('o:','overview:',"overview of code-base at argv[1]"),
+  array('c:','check-for-errors:',"does a syntax check, etc of code-base at argv[1]"),
   
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
@@ -60,6 +61,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'f':
   	case 'function-declarations':
 		print dse_code_return_function_declarations($vars['options'][$opt]);
+		$DidSomething=TRUE;
+		break;
+  	case 'c':
+  	case 'check-for-errors':
+		dse_code_check($vars['options'][$opt]);
 		$DidSomething=TRUE;
 		break;
 	

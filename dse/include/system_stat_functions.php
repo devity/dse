@@ -815,8 +815,22 @@ function dse_get_proc_io_as_array($PID){
 	return $tbr;
 }
 
+
+
 	
-function dse_sysstats_disks(){
+function dse_is_disk_low($Limit=15){
+	global $vars;
+	list($disks_array,$disks_detailed_array)=dse_sysstats_disks();
+	foreach($disks_array as $Name=>$Free){
+		if($Free<$Limit){
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+	
+function dse_sysstats_disks($OnlyReal=TRUE){
 	global $vars;
 	$disks_array=array();
 	$disks_detailed_array=array();
@@ -834,11 +848,13 @@ function dse_sysstats_disks(){
 				}else{
 					$Total=$fields[1]*1024;
 				}
-				$fields[4]=100-str_replace("%","",$fields[4]);	
-				$disks_array[$fields[5]]=$fields[4];	
-				$FileSystem=trim($fields[0]);
-				$disks_detailed_array[$fields[5]]=array("Name"=>$fields[5],"PercentFree"=>$fields[4],"FileSystem"=>$FileSystem,"Total"=>$Total,
-					"Free"=>$fields[3]*1024,"Used"=>$fields[2]*1024);
+				if($OnlyReal && $Total=="remote" && !str_contains($line,"map->")){
+					$fields[4]=100-str_replace("%","",$fields[4]);	
+					$disks_array[$fields[5]]=$fields[4];	
+					$FileSystem=trim($fields[0]);
+					$disks_detailed_array[$fields[5]]=array("Name"=>$fields[5],"PercentFree"=>$fields[4],"FileSystem"=>$FileSystem,"Total"=>$Total,
+						"Free"=>$fields[3]*1024,"Used"=>$fields[2]*1024);
+				}
 			}
 		}
 	}
