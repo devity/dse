@@ -1756,8 +1756,6 @@ function strcut($haystack,$pre,$post=""){
 				$r=$haystack;
 				$strcut_post_haystack="";
 			}else{
-			
-			
 				$r=substr($haystack,0,strpos($haystack,$post));
 				if($haystack && $post){
 					$strcut_post_haystack=substr($haystack,stripos($haystack,$post)+strlen($post));
@@ -1784,18 +1782,14 @@ function bar($String,$Type,$fg,$bg,$bfg="",$bbg=""){
 	$HeaderColorCodeCount=substr_count ($String , "[");
 	$HeaderText=$String;
 	if(strlen($HeaderText)*2<cbp_get_screen_width()*(2/3)){
-	//	$HeaderText.="  ".$Type.$Type.$Type."  ".$String;
-	
 		$BarWidth=cbp_get_screen_width()-strlen($HeaderText)*2-($HeaderColorCodeCount*5)*2-7;
-		//print "HeaderColorCodeCount=$HeaderColorCodeCount BarWidth=$BarWidth\n";
-		print colorize($HeaderText."  ",$fg,$bg);
-		print colorize(pad("",$BarWidth,$Type),$bfg,$bbg);
-		print colorize("  ".$HeaderText,$fg,$bg);
+		print colorize($HeaderText."  ",$fg,$bg,TRUE,1);
+		print colorize(pad("",$BarWidth,$Type),$bfg,$bbg,TRUE,1);
+		print colorize("  ".$HeaderText,$fg,$bg,TRUE,1);
 	}else{
 		$BarWidth=cbp_get_screen_width()-strlen($HeaderText)-($HeaderColorCodeCount*5)-7;
-		//print "HeaderColorCodeCount=$HeaderColorCodeCount BarWidth=$BarWidth\n";
-		print colorize($HeaderText."  ",$fg,$bg);
-		print colorize(pad("",$BarWidth,$Type),$bfg,$bbg);
+		print colorize($HeaderText."  ",$fg,$bg,TRUE,1);
+		print colorize(pad("",$BarWidth,$Type),$bfg,$bbg,TRUE,1);
 	}
 	print "\n";
 }
@@ -1809,8 +1803,6 @@ function pad($String,$Length,$PadChar=" ",$Justification="left"){
 		$Length=str_remove($Length,"%");
 		$Length=intval($ScreenWidth*($Length/100));
 	}
-	
-	
 	$tbr="";
 	$tbr_len=0;
 	while($tbr_len<$Length && strlen($String)>0){

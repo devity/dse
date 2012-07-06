@@ -188,7 +188,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 						
 					}
 					
-					print " $Engine {$Rows}k rows ${Size} Mb    "; 
+					print " $Engine {$Rows}k rows ${Size} MB    "; 
 					
 					if($TSa['Engine']=="CSV"){
 						print colorize("  ???  ","red","yellow",TRUE,1);
