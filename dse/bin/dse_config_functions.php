@@ -1576,8 +1576,8 @@ function dse_backup_mysqld() {
 	
 	
 	$Command="mysqldump --all-databases --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys "
-		."--dump-date --force --quick --routines --verbose | gzip --stdout > $file";
-	dse_exec_bg($Command,TRUE);
+		."--dump-date --force --quick --routines --verbose | gzip -9 --stdout > $file";
+	$pid=dse_exec_bg($Command,TRUE);
 	while(dse_pid_is_running($pid)){
 		$Size=dse_exec("/dse/bin/dsizeof $file");
 		progress_bar("time",60," $Size B ");
@@ -1676,31 +1676,65 @@ function dse_backup_server_environment() {
 	 
 	//}
 
-    dse_exec("mount 2>&1 > ${dir}/mount.out",TRUE);
-    dse_exec("ps aux 2>&1 > ${dir}/ps-aux.out",TRUE);
-   	dse_exec("ps axjf 2>&1 > ${dir}/ps-axjf.out",TRUE);
-   //	dse_exec("ps AFl &> ${dir}/ps-AFl.out",TRUE);
-   	dse_exec("netstat -pn -l -A inet 2>&1 > ${dir}/netstat-pn-l-Ainet.out",TRUE);
-   	dse_exec("lsof -i | grep LISTEN 2>&1 > ${dir}/lsof-i.out",TRUE);
-   	dse_exec("nmap -v -sS localhost 2>&1 > ${dir}/nmap-v-sSlocalhost.out",TRUE,TRUE);
-    dse_exec("/dse/bin/dnetstat -o 2>&1 > ${dir}/dnetstat-o.out",TRUE,TRUE);
-    dse_exec("/dse/bin/dnetstat -a 2>&1 > ${dir}/dnetstat-a.out",TRUE,TRUE);
-    dse_exec("iptables -nvL 2>&1 > ${dir}/iptables-nvl.out",TRUE);
+    $pid=dse_exec_bg("mount 2>&1 > ${dir}/mount.out",TRUE);
+	while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
 	
-   	dse_exec("printenv 2>&1 > ${dir}/printenv.out",TRUE,TRUE);
-   	dse_exec("df 2>&1 > ${dir}/df.out",TRUE,TRUE);
+    $pid=dse_exec_bg("ps aux 2>&1 > ${dir}/ps-aux.out",TRUE);
+	while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
+   	$pid=dse_exec_bg("ps axjf 2>&1 > ${dir}/ps-axjf.out",TRUE);
+	while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
+   //	$pid=dse_exec_bg("ps AFl &> ${dir}/ps-AFl.out",TRUE);
+//	while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
+   	$pid=dse_exec_bg("netstat -pn -l -A inet 2>&1 > ${dir}/netstat-pn-l-Ainet.out",TRUE);
+	while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
+   	$pid=dse_exec_bg("lsof -i | grep LISTEN 2>&1 > ${dir}/lsof-i.out",TRUE);
+	while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
+   	$pid=dse_exec_bg("nmap -v -sS localhost 2>&1 > ${dir}/nmap-v-sSlocalhost.out",TRUE);
+	while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
+    $pid=dse_exec_bg("/dse/bin/dnetstat -o 2>&1 > ${dir}/dnetstat-o.out",TRUE);
+	while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
+    $pid=dse_exec_bg("/dse/bin/dnetstat -a 2>&1 > ${dir}/dnetstat-a.out",TRUE);
+	while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
+    $pid=dse_exec_bg("iptables -nvL 2>&1 > ${dir}/iptables-nvl.out",TRUE);
+	while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
+	
+   	$pid=dse_exec_bg("printenv 2>&1 > ${dir}/printenv.out",TRUE);
+	while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
+   	$pid=dse_exec_bg("df 2>&1 > ${dir}/df.out",TRUE);
+	while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
   // 	dse_exec("memstat &> ${dir}/memstat.out");
   
    	if(dse_is_osx() || dse_is_ubuntu()){
-   		dse_exec("dpkg --get-selections 2>&1 > ${dir}/dpkg--get-selections.out",TRUE);
+   		$pid=dse_exec_bg("dpkg --get-selections 2>&1 > ${dir}/dpkg--get-selections.out",TRUE);
+		while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
    	}
    	if(dse_is_centos()){
-   		dse_exec("rpm -qa 2>&1 > ${dir}/rpm-qa.out",TRUE);
+   		$pid=dse_exec_bg("rpm -qa 2>&1 > ${dir}/rpm-qa.out",TRUE);
+		while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
 	}
 	if(!dse_is_osx()){
-		dse_exec("cat /etc/*-release 2>&1 > ${dir}/cat-etc-release.out",TRUE);
-		dse_exec("cat /etc/issue 2>&1 > ${dir}/cat-etc-issue.out",TRUE,TRUE);
-		dse_exec("uname -a 2>&1 > ${dir}/uname-a.out",TRUE,TRUE);
+		$pid=dse_exec_bg("cat /etc/*-release 2>&1 > ${dir}/cat-etc-release.out",TRUE);
+		while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
+		$pid=dse_exec_bg("cat /etc/issue 2>&1 > ${dir}/cat-etc-issue.out",TRUE);
+		while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
+		$pid=dse_exec_bg("uname -a 2>&1 > ${dir}/uname-a.out",TRUE);
+		while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
+	
 	}
 	
 	print "$_OK  saved in  ${dir}\n";
