@@ -350,7 +350,7 @@ function dse_exec_bg($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
 		print bar("Command: ".colorize($Command,"white","red"),"=","yellow","black","red","black");
 	}
 	$TmpFile=dse_tmp_file();
-	exec("$Command 2>&1 > $TmpFile" ,$op); 
+	exec("$Command  > $TmpFile 2>&1 & echo $!" ,$op); 
 	print_r($op);
     $pid = (int)$op[0]; 
     $vars[dse_exec_bg_pid2tmp][$pid]=$TmpFile;
