@@ -26,6 +26,7 @@ $parameters_details = array(
   array('q','quiet',"same as --verbosity 0"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('s','status',"prints security status/overview "),
+  array('d:','port-scan-detect-versions:',"does an nmap -A -T4 on arg1 "),
 );
 
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
@@ -51,9 +52,30 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'status':
 		dse_dsec_overview();
 		exit(0);
-	
 }
 
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+  	case 'd':
+	case 'port-scan-detect-versions':
+		$Host=$vars['options'][$opt];
+		if(!$Host){
+			print "No host arg1 supplied, using localhost\n";
+			$Host="localhost";
+		}
+		//dpv(2,"Verbosity set to ".$vars['Verbosity']."\n");
+		
+		
+		$Command="nmap -A -T4 $Host | grep open | grep tcp";
+		$r=dse_exec($Command,TRUE,TRUE);
+		
+		
+		$Command="nmap -sS -O $Host | grep open | grep tcp";
+		$r=dse_exec($Command,TRUE,TRUE);
+		
+	
+		
+		break;
+}
 
 dse_cli_script_header();
 
