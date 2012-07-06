@@ -18,6 +18,19 @@ function dse_table_list_array($Database){
 	return $tbr;
 }
 
+function dse_table_status_array($Database,$Table){
+	global $vars; dse_trace();
+	$r=dse_exec("echo \"USE $Database;\n SHOW TABLE STATUS WHERE Name='$Table' ;\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
+	//$r=strcut($r,"\n");
+	$tbr=split("\n",$r);
+	print_r($tbr);
+	print "\n";
+	//$tbr=remove_duplicate_array_lines($tbr);
+	//return $tbr;
+}
+
+
+
 
 function dse_database_repair_all(){
 	global $vars; dse_trace();
@@ -87,14 +100,16 @@ function dse_database_check_all(){
 					
 					
 					$TAa=dse_table_analyze($DB,$T);
-					$IsOK=FALSE;
 					if($TAa['MsgText']!="Table is already up to date"){
+						$IsOK=FALSE;
 						print colorize("ANALYZE $DB.$T => ".$TAa['MsgText']."\n","red","black",TRUE,1);
 					}
 				
 					if($IsOK){
 						print colorize("OK\n","green","black",TRUE,1);
 					}
+					
+					dse_table_status_array($DB,$T);
 				}
 			}
 		}
