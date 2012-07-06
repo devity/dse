@@ -1933,6 +1933,12 @@ function unk_time($TimeAndDateString){
 		$len=52; $format = '%b %d %H:%M:%S';
 	}//Jun 26 02:08:54
 	
+	elseif( preg_match ("/^[0-9]{6} [0-9]{1,2}:[0-9]{2}:[0-9]{2} /" , $TimeAndDateString, $matches) >0 ){
+		dpv(5,"preg_match 10c \n");
+		$TimeAndDateString=strcut($TimeAndDateString,"",": ");
+		$len=15; $format = '%y%D%B %H:%M:%S';
+	}//120705 21:14:43
+	
 	elseif( str_contains ( $TimeAndDateString, " - - [") >0 ){
 		$len=0;
 		dpv(5,"preg_match 11 - $TimeAndDateString\n");

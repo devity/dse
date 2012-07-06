@@ -105,7 +105,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 	foreach($DBa as $DB){
 		if($DB && $DB!="information_schema"){
 			
-			print bar("Checking Database $DB: ","V","white","blue","cyan","blue");
+			print bar("Checking Database $DB: ","v","white","blue","cyan","blue");
 			$Ta=dse_table_list_array($DB);
 			foreach($Ta as $T){
 				if($T){
@@ -172,9 +172,9 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					print " $Engine {$Rows}k rows ${Size} Mb    "; 
 					
 					if($IsOK){
-						print colorize(" OK","green","black",TRUE,1);
+						print colorize(" OK","white","green",TRUE,1);
 					}else{
-						print colorize("BAD","red","black",TRUE,1);
+						print colorize("BAD","white","red",TRUE,1);
 					}
 					print "\n";
 					
