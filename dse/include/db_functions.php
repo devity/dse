@@ -30,8 +30,8 @@ function dse_table_status_array($Database,$Table){
 		$V=$ValuesA[$i];
 		$tbra[$N]=$V;
 	}
-	print_r($tbra);
-	print "\n";
+	//print_r($tbra);
+	//print "\n";
 	//$tbr=remove_duplicate_array_lines($tbr);
 	return $tbra;
 }
@@ -102,18 +102,18 @@ function dse_database_check_all(){
 					$TCa=dse_table_check($DB,$T);
 					if($TCa['MsgText']!="OK"){
 						$IsOK=FALSE;
-						print colorize("CHECK $DB.$T => ".$TCa['MsgText']."\n","red","black",TRUE,1);
+						print colorize("CHECK $DB.$T => ".$TCa['MsgText'],"white","red",TRUE,1);
 					} 
 					
 					
 					$TAa=dse_table_analyze($DB,$T);
 					if($TAa['MsgText']!="Table is already up to date"){
 						$IsOK=FALSE;
-						print colorize("ANALYZE $DB.$T => ".$TAa['MsgText']."\n","red","black",TRUE,1);
+						print colorize("ANALYZE $DB.$T => ".$TAa['MsgText'],"white","red",TRUE,1);
 					}
 				
 					if($IsOK){
-						print colorize("OK\n","green","black",TRUE,1);
+						print colorize("OK","green","black",TRUE,1);
 					}
 					
 					$TSa=dse_table_status_array($DB,$T);
@@ -121,7 +121,7 @@ function dse_database_check_all(){
 					$Engine=$TSa['Engine'];
 					$Avg_row_length=$TSa['Avg_row_length'];
 					$Size=$Avg_row_length*$Rows;
-					print " *  $Engine   Rows: $Rows   Size: $Size b  \n";
+					print "  $Engine   Rows: $Rows   Size: $Size b  \n";
 				}
 			}
 		}
