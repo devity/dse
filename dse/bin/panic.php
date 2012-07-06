@@ -231,6 +231,7 @@ function dse_panic($Interactive=FALSE){
 function dse_panic_hd($Interactive=FALSE){
 	global $vars,$CFG_array;
 	$H=cbp_get_screen_height();
+	$W=cbp_get_screen_width();
 	print getColoredString(pad(" Section:  Hard Drive / Disk Space ",cbp_get_screen_width(),"-","center"),"green");
 
 	print getColoredString("Starting Disk Stats:\n","cyan");
@@ -309,7 +310,7 @@ function dse_panic_hd($Interactive=FALSE){
 							$SizeStr=intval($SizeStr/1000000);
 							//if($SizeStr>0){
 								//print "lss=$lss  ";
-								print colorize(pad($lsa[$i],40),"yellow","black")."   ";
+								print colorize(pad($lsa[$i],$W-20),"yellow","black")."   ";
 								print colorize(pad($SizeStr,8," ","right"),"red","black",TRUE,1);
 								print colorize(" MB\n","green","black",TRUE,1);
 							//}
