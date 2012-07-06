@@ -110,7 +110,8 @@ function dse_database_check_all(){
 					
 					
 					$TAa=dse_table_analyze($DB,$T);
-					if($TAa['MsgText']!="Table is already up to date" || $TAa['MsgText']!="OK"){
+					if($TAa['MsgText']=="Table is already up to date" || $TAa['MsgText']=="OK"){
+					}else{
 						$IsOK=FALSE;
 						print colorize("ANALYZE $DB.$T => ".$TAa['MsgText'],"white","red",TRUE,1);
 					}
