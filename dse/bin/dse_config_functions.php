@@ -1090,7 +1090,7 @@ COMMIT*/
 	$TemplateContents.="\n";
 	
 	$SaveFile="/etc/iptables_rules";
-	$SaveFile="/tmp/iptables_rules";
+	//$SaveFile="/tmp/iptables_rules";
 	dse_file_put_contents($SaveFile,$TemplateContents);
 	
 	print colorize("iptables rules:  saved to $SaveFile \n","blue","yellow");
