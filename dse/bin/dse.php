@@ -278,23 +278,58 @@ $vars['Usage'].= "\n  ________ ___ __ _  _    _
 |     These scripts exist as their native language extension e.g. 'bottle_top.php' and as a soft link with no extension, in this case both 'bottle_top' and 'btop'
 +------ ---- --- -- - - -  -   -     -
 |  atime          - return unix time int of arg1's access time
-|  backup_etc     - backs up /etc
+   backup_etc     - backs up /etc
    bh             - bash history grepper for arg1
    btop           - bottle top - system bottle-neck analyzer
-|  dsizeof        - returns size in bytes of arg1
-   dse            - script that sets dse variables, get's status, provieds help, etc
-|  fss            - find string
+   chom           - chmod + chown
+   code_explorer  - code manager
+   dab            - deity automatic backup program
+   detestr        - returns system time in a few common formats
+   dbp            - backup and patch
+   ddb            - database manager
+   dfm            - file modifier / manager
+   dlb            - load balancer / service status monitor
+   dmd5           - file md5 checksum generator
+   dnetstat       - network info
+   dreplace       - replaces arg2 with arg3 in file arg1
+   dsc            - service/daemon controler
+   dsizeof        - returns size in bytes of arg1
+   dse            - script that sets dse variables, get's status, provides 
+                     help, etc
+   dse-install    - installs dse on server
+   dse-configure  - runs setup of config and variables and environment
+   dse_daemon     - answers select DSE commands/requests from remotely
+   dse_set-env    - sets dse vars for shell. use: . /dse/bin/dse_set-env
+   dsm            - devity server monitor - watches load, processes, hd, etc.
+   dss            - system stats
+   dst            - shell text utilities: color, cursor
+   dtmp           - returns a valid, unique full /tmp/ filename
+   fss            - find string
+   fstat          - file info
    grep2exe       - returns script name for a string on ps output lines
    grep2pid       - returns PID for a string on ps output lines
-|  http_stress    - multi-threaded web-site stress tester
+   gss            - grep for string
+   http_stress    - multi-threaded web-site stress tester
+   img2txt        - almost any format img to ansi or html converter
+   ip_throttle    - sort-of load balancer, ip banner
+   lgt            - returns the intermingled tails of a few /var/log/(s)
    memcache-top   - top for memcache
-   mysqltuner     - mysqld config analyzer based on http://github.com/rackerhacker/MySQLTuner-perl
+   mysqltuner     - mysqld config analyzer based on:
+                     http://github.com/rackerhacker/MySQLTuner-perl
+   panic          - automated emergency script. free's disk, restarts daemons,
+                     restore old config's, reboot.
    pid2exe        - returns the script name for a PID
-   rpms_extract   - rebuilds as near as possible a .rpm file for an installed package
-|  server_backup  - backup all server config and data
-   server_log_status - saves a copy of the output of over a dozen commands like ps, lsof, vmtstat, nmap, iostat, printenv, etc
-   server_monitor - server health monitor that takes actions (run scripts, send emails, etc) at various configurable thresholds
+   pidinfo        - various info on a PID
+   publish        - dev->prd publisher
+   rpms_extract   - rebuilds as near as possible a .rpm file for an 
+                     installed package
+   server_backup  - backup all server config and data
+   server_log_status - saves a copy of the output of over a dozen commands 
+                        like ps, lsof, vmtstat, nmap, iostat, printenv, etc
+   server_monitor - server health monitor that takes actions (run scripts, 
+                     send emails, etc) at various configurable thresholds
    vibk           - backup arg1 then edit with vi
+|
  
 ";
 	

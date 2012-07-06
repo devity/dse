@@ -978,79 +978,20 @@ function dse_package_run_upgrade(){
 	$vars['DSE']['dse_package_install__use_passthru']=TRUE;
   	
 	if($Installer=='yum'){
-		$Command="sudo yum upgrade 2>&1";
-		print " Running: $Command\n";
-		if($vars['DSE']['dse_package_install__use_passthru']){
-			dse_passthru($Command,TRUE);
-		}else{
-			$r=`$Command`;
-		//	 print "cmd: $Command   r=".$r."\n";
-			if(str_contains($r,"already installed")){
-				print getColoredString(" Already Installed.\n","green","black");
-				return 0;
-		  	}elseif(str_contains($r,"Installed:")){
-				print getColoredString(" Installed!\n","green","black");
-				return 0;
-		  	}else{
-			    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
-				return -1;
-			}
-		}
+		$Command="sudo yum update 2>&1";
+		dse_passthru($Command,TRUE);
+		$Command="sudo yum -y upgrade 2>&1";
+		dse_passthru($Command,TRUE);
 	}elseif($Installer=='apt-get'){
+		$Command="sudo $aptget update 2>&1";
+		dse_passthru($Command,TRUE);
 		$Command="sudo $aptget -y upgrade 2>&1";
-		print " Running: $Command\n";
-		if($vars['DSE']['dse_package_install__use_passthru']){
-			dse_passthru($Command,TRUE);
-			//dse_popen($Command);
-		}else{
-			//$r=`$Command`;
-			$r=dse_popen($Command);
-			 print "cmd: $Command   r=".$r."\n";
-			if(str_contains($r,"will be installed")){
-				print getColoredString(" Installed.\n","green","black");
-				return 0;
-		  	}elseif(str_contains($r,"is already ")){
-				print getColoredString(" Already Installed.\n","green","black");
-				return 0;
-		  	}elseif(str_contains($r,"ldn't find pack")){
-		  		print getColoredString(" Unknown Package Name: $PackageName!\n","red","black");
-				return 1;
-		  	}else{
-			    print getColoredString(" ERROR w/ cmd: $Command\n$r\n","red","black");
-				return -1;
-			}
-		}
+		dse_passthru($Command,TRUE);
 	}elseif($Installer=='fink'){
-		
-		$Command="dpkg upgrade 2>&1";
-		print " Running: $Command\n";
-		if($vars['DSE']['dse_package_install__use_passthru']){
-			dse_passthru($Command,TRUE);
-		}else{
-			$r=`$Command`;
-			if(!str_contains($r,"s not installed") ){
-				print getColoredString(" Already Installed.\n","green","black");
-				return 0;
-			}
-			
-			$Command="sudo fink -yv $Action $PackageName 2>&1";
-			$r=passthru($Command);
-			return (0);
-			// print "cmd: $Command   r=".$r."\n";
-			if(str_contains($r,"Failed")){
-				print getColoredString(" Install Failed!\n","red","black");
-				return -1;
-		  	}elseif(str_contains($r,"Installed:")){
-				print getColoredString(" Installed!\n","green","black");
-				return 0;
-		  	}elseif(str_contains($r,"o package found fo")){
-				print getColoredString(" Unkown Package Name: $PackageName!\n","red","black");
-				return -1;
-		  	}else{
-			    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
-				return -1;
-			}
-		}
+		$Command="dpkg update 2>&1";
+		dse_passthru($Command,TRUE);
+		$Command="dpkg -y upgrade 2>&1";
+		dse_passthru($Command,TRUE);
 	}else{
 		print getColoredString(" ERROR: no supported package installer found \n","red","black");
 		   

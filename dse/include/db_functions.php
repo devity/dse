@@ -41,14 +41,14 @@ function dse_table_status_array($Database,$Table){
 
 function dse_table_repair($Database,$Table){
 	global $vars; dse_trace();
-	$r=dse_exec("echo \"USE $Database;\n REPAIR TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],TRUE,TRUE);
+	$r=dse_exec("echo \"USE $Database;\n REPAIR TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,TRUE);
 	return;
 }
 
 
 function dse_table_optimize($Database,$Table){
 	global $vars; dse_trace();
-	$r=dse_exec("echo \"USE $Database;\n OPTIMIZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],TRUE,TRUE);
+	$r=dse_exec("echo \"USE $Database;\n OPTIMIZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
 	return;
 }
 
@@ -100,7 +100,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 	foreach($DBa as $DB){
 		if($DB && $DB!="information_schema"){
 			
-			print bar("Checking Database $DB: ","green","black","cyan","black");
+			print bar("Checking Database $DB: ","+","black","cyan","black");
 			$Ta=dse_table_list_array($DB);
 			foreach($Ta as $T){
 				if($T){
@@ -144,7 +144,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					$Size_int=$Avg_row_length*$Rows;
 					
 					$Engine=pad($Engine,10," ","center");
-					$Engine=colorize($Engine,"green","black");
+					$Engine=colorize($Engine,"green","black",TRUE,1);
 					
 					$Rows=pad(intval($Rows/1000)."k",6," ","right");
 					if($TSa['Rows']>1500000){
@@ -158,7 +158,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					}
 					
 					$Size=pad(intval($Size_int/1000000),6," ","right");
-					$Size=colorize($Size,"green","black");
+					$Size=colorize($Size,"green","black",TRUE,1);
 					if($Size_int>100000000){
 						$Size=colorize($Size,"red","black",TRUE,1);
 					}elseif($TSa['Rows']>10000000){
@@ -170,7 +170,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					}
 					
 					
-					print "   $Engine    Rows: $Rows    Size: $Size Mb  \n";
+					print "   $Engine    $Rows rows   ${Size}Mb  \n";
 					if($ErrorMsg){
 						print $ErrorMsg."\n";
 					}

@@ -336,10 +336,7 @@ function dse_exec_esc($StringToEscape){
 function dse_exec($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
 	global $vars; dse_trace();
 	if($ShowCommand){
-		print colorize("Command: ","yellow","black");
-		print colorize($Command,"white","red");
-		print colorize("     --------","yellow","black");
-		print "\n";	
+		print bar("Command: ".colorize($Command,"white","red"),"=","yellow","black","red","black");
 	}
 	$r=`$Command`;
 	if($ShowOutput) print $r;
