@@ -343,7 +343,7 @@ if(!dse_file_exists($vars['DSE']['USER_BASH_PROFILE'])){
 			$A=dse_ask_yn(" Increase HISTFILESIZE to ".$vars['DSE']['SUGGESTED']['HISTFILESIZE']." ?");
 			if($A=='Y'){
 				$Command="/dse/bin/dreplace -v 2 -s -p ".$vars['DSE']['USER_BASH_PROFILE']." \"^HISTFILESIZE=[0-9]+$\" \"HISTFILESIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']."\"";
-				$r=dse_exec($Command);
+				dse_exec($Command,TRUE,TRUE);
 				print "$OK\n";
 			}else{
 				print "$NotChanged\n";
