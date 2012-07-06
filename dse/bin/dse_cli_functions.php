@@ -3900,6 +3900,13 @@ function dse_port_number($port_name){
 	}
 	return $port_name;
 }
+function dse_port_name($port_number){
+	global $vars; dse_trace();
+	foreach($vars['DSE']['SERVICE_PORTS'] as $Port=>$Name){
+		if($Port==$port_number) return $Name;
+	}
+	return $port_number;
+}
 
 function dse_ports_open($Colorize=FALSE){
 	global $vars; dse_trace();
