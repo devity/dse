@@ -82,14 +82,14 @@ function dse_database_check_all(){
 					$TCa=dse_table_check($DB,$T);
 					if($TCa['MsgText']!="OK"){
 						$IsOK=FALSE;
-						print "CHECK $DB.$T => ".$TCa['MsgText']."\n";
+						print colorize("CHECK $DB.$T => ".$TCa['MsgText']."\n","red","black",TRUE,1);
 					} 
 					
 					
 					$TAa=dse_table_analyze($DB,$T);
 					$IsOK=FALSE;
 					if($TAa['MsgText']!="Table is already up to date"){
-						print "ANALYZE $DB.$T => ".$TAa['MsgText']."\n";
+						print colorize("ANALYZE $DB.$T => ".$TAa['MsgText']."\n","red","black",TRUE,1);
 					}
 				
 					if($IsOK){
