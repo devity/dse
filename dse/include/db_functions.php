@@ -48,7 +48,17 @@ function dse_table_repair($Database,$Table){
 
 function dse_table_optimize($Database,$Table){
 	global $vars; dse_trace();
-	$r=dse_exec("echo \"USE $Database;\n OPTIMIZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
+	$pid=dse_exec_bg("echo \"USE $Database;\n OPTIMIZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
+	while(($r=dse_exec_bg_results($pid))===FALSE){
+		progress_bar();
+		sleep(1);
+		progress_bar();
+		sleep(1);
+		progress_bar();
+		sleep(1);
+	}
+	
+	
 	return;
 }
 

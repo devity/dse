@@ -343,6 +343,25 @@ function dse_exec($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
 	return $r;
 }
 
+   	
+function dse_exec_bg($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
+	global $vars; dse_trace();
+	if($ShowCommand){
+		print bar("Command: ".colorize($Command,"white","red"),"=","yellow","black","red","black");
+	}
+	$TmpFile=dse_tmp_file();
+	exec("$Command 2>&1 > $TmpFile" ,$op); 
+    $pid = (int)$op[0]; 
+    $vars[dse_exec_bg_pid2tmp][$pid]=$TmpFile;
+	return $pid;
+}
+function dse_exec_bg_results($pid){
+	global $vars; dse_trace();
+	if(dse_pid_is_running($pid)) return FALSE;
+	$TmpFile=$vars[dse_exec_bg_pid2tmp][$pid];
+	$TmpFileContents=dse_file_get_contents($TmpFile);
+	return $TmpFileContents;
+}
    
 	
 function dse_passthru($Command,$ShowCommand=FALSE){
