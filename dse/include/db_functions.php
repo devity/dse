@@ -144,7 +144,7 @@ function dse_database_check_all(){
 						$Rows=colorize($Rows,"blue","black",TRUE,1);
 					}
 					
-					$Size=pad($Size_int,15," ","right");
+					$Size=pad(intval($Size_int/1000000),15," ","right");
 					$Size=colorize($Size,"green","black");
 					if($Size_int>100000000){
 						$Size=colorize($Size,"red","black",TRUE,1);
@@ -157,7 +157,7 @@ function dse_database_check_all(){
 					}
 					
 					
-					print "  $Engine   Rows: $Rows   Size: $Size b  \n";
+					print "  $Engine   Rows: $Rows   Size: $Size Mb  \n";
 					if($ErrorMsg){
 						print $ErrorMsg."\n";
 					}
