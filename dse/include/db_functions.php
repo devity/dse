@@ -131,7 +131,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					
 					$IsOK=TRUE;
 					$ErrorMsg="";
-					
+				/*	
 					$TCa=dse_table_check($DB,$T);
 					if($TCa['MsgText']!="OK"){
 						$IsOK=FALSE;
@@ -147,7 +147,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 						$ErrorMsg.= colorize("ANALYZE $DB.$T => ".$TAa['MsgText'],"white","red",TRUE,1);
 					}
 				
-					
+					*/
 					
 					$TSa=dse_table_status_array($DB,$T);
 					$Rows=$TSa['Rows'];
@@ -200,7 +200,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 						dse_table_repair($DB,$T);
 					}
 					if($DoOptimize){
-						dse_table_optimize($DB,$T);
+					//	dse_table_optimize($DB,$T);
 					}
 				}
 			}
