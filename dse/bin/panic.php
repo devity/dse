@@ -230,6 +230,7 @@ function dse_panic($Interactive=FALSE){
 
 function dse_panic_hd($Interactive=FALSE){
 	global $vars,$CFG_array;
+	$H=cbp_get_screen_height();
 	print getColoredString(pad(" Section:  Hard Drive / Disk Space ",cbp_get_screen_width(),"-","center"),"green");
 
 	print getColoredString("Starting Disk Stats:\n","cyan");
@@ -293,23 +294,25 @@ function dse_panic_hd($Interactive=FALSE){
 			$lss_last=0;
 			while(dse_pid_is_running($FindPID)>0){
 				//print "t$asf"; $asf++;
-				//cbp_screen_clear();
+				sleep(1);
+				 
 				
 				if(time()%10==1){
+					cbp_screen_clear();
 					$ls=dse_file_get_contents("/tmp/ls.out");
 					$lsa=split("\n",$ls);
 					$lss=sizeof($lsa);
-					if($lss>0 && $lss>$lss_last){
-						for($i=$lss_last;$i<$lss;$i++){
+					if($lss>0 ){
+						for($i=0;$i<$lss && $i<$H-3;$i++){
 							$SizeStr=dse_exec("/dse/bin/dsizeof ".$lsa[$i]);
 							$SizeStr=intval($SizeStr/1000000);
 							//if($SizeStr>0){
-								print "lss=$lss  ";
+								//print "lss=$lss  ";
 								print colorize(pad($lsa[$i],40),"yellow","black")."   ";
 								print colorize(pad($SizeStr,8," ","right"),"red","black",TRUE,1);
 								print colorize(" MB\n","green","black",TRUE,1);
 							//}
-							$lss_last=$i;
+							//$lss_last=$i;
 						}
 					}
 					
