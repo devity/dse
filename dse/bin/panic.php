@@ -284,7 +284,7 @@ function dse_panic_system_stats(){
 			}
 		}
 		if($IdlePossible){
-			$IdleAverage=intval($Idle/$IdlePossible);
+			$IdleAverage=100-intval($Idle/$IdlePossible);
 		}else{
 			$IdleAverage=0;
 		}
@@ -312,9 +312,9 @@ function dse_panic_system_stats(){
 	
 	print colorize("Processes: ");
 	$r=trim(dse_exec("ps aux | wc -l"));
-	if($r>200){
+	if($r>250){
 		print colorize(" Very High - $r ","white","red",TRUE,5);
-	}elseif($r>160){
+	}elseif($r>200){
 		print colorize(" High - $r ","white","red",TRUE,1);
 	}else{
 		print colorize(" Low - $r ","white","green",TRUE,1);
