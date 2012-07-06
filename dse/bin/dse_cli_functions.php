@@ -351,6 +351,7 @@ function dse_exec_bg($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
 	}
 	$TmpFile=dse_tmp_file();
 	exec("$Command 2>&1 > $TmpFile" ,$op); 
+	print_r($op);
     $pid = (int)$op[0]; 
     $vars[dse_exec_bg_pid2tmp][$pid]=$TmpFile;
 	return $pid;
