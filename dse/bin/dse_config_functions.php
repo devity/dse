@@ -1099,6 +1099,7 @@ COMMIT*/
 	//$Str="/sbin/iptables-restore < /etc/iptables_rules";
 	//dse_file_add_line_if_not("/etc/rc.local",$Str,2);
 	
+	//dse_exec("/sbin/iptables -F 2>&1");
 	//dse_exec("/sbin/iptables-restore < /etc/iptables_rules 2>&1");
 	//dse_exec("/sbin/iptables -nvL 2>&1",FALSE,TRUE);
 

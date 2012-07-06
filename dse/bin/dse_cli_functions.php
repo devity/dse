@@ -4024,13 +4024,31 @@ function dse_port_name($port_number){
 	return $port_number;
 }
 
+
+function dse_get_gateway(){
+	global $vars; dse_trace();
+	$Gateway="";
+	if(dse_is_osx()){
+		$r=dse_exec("netstat -nr | grep default");
+		$ra=split("[ \t]+",$r);
+		$Gateway=$ra[1];
+	}else{
+		$r=dse_exec("netstat -nr | grep 0.0.0.0");
+		$ra=split("[ \t]+",$r);
+		if($ra[0]=="0.0.0.0"){
+			$Gateway=$ra[1];
+		}
+	}
+	return $Gateway;
+}
+
 function dse_ports_open($Colorize=FALSE){
 	global $vars; dse_trace();
 	$tbr="";
 	$r=dse_exec("/dse/bin/dnetstat -o");
 	foreach(split(" ",$r) as $ep){
 		list($exe,$p)=split(":",$ep);
-		if($exe){
+		if(trim($exe) && trim($p)){
 			if($tbr) $tbr.=" ";
 			$PortName=dse_port_name($p);
 			if($Colorize){

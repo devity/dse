@@ -26,6 +26,7 @@ $parameters_details = array(
   array('q','quiet',"same as --verbosity 0"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('s','status',"prints security status/overview "),
+  array('p:','port-scan',"does an basic portscan on arg1 "),
   array('d:','port-scan-detect-versions:',"does an nmap -A -T4 on arg1 "),
 );
 
@@ -57,6 +58,24 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 }
 
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+  	case 'p':
+	case 'port-scan':
+		$DidSomething=TRUE;
+		$Host=$vars['options'][$opt];
+		if(!$Host){
+			print "No host arg1 supplied, using localhost\n";
+			$Host="localhost";
+		}
+		//dpv(2,"Verbosity set to ".$vars['Verbosity']."\n");
+		
+		
+		
+		
+		$Command="nmap -sS -O $Host  2>&1 | grep open | grep tcp";
+		$r=dse_exec($Command,FALSE,TRUE);
+		
+		break;
+		
   	case 'd':
 	case 'port-scan-detect-versions':
 		$DidSomething=TRUE;
@@ -68,14 +87,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		//dpv(2,"Verbosity set to ".$vars['Verbosity']."\n");
 		
 		
-		$Command="nmap -A -T4 $Host | grep open | grep tcp";
-		$r=dse_exec($Command,TRUE,TRUE);
+		$Command="nmap -A -T4 $Host 2>&1 | grep open | grep tcp";
+		$r=dse_exec($Command,FALSE,TRUE);
 		
-		
-		$Command="nmap -sS -O $Host | grep open | grep tcp";
-		$r=dse_exec($Command,TRUE,TRUE);
-		
-	
 		
 		break;
 }

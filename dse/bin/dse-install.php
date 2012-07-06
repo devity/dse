@@ -285,6 +285,7 @@ if(dse_is_centos()){
 $NotOSXPackageNamesArray[]="dnsutils";
 $NotOSXPackageNamesArray[]="arp-scan";
 $NotOSXPackageNamesArray[]="nmap";
+$NotOSXPackageNamesArray[]="traceroute";
 $NotOSXPackageNamesArray[]="ifupdown-extra";
 
 if(dse_is_ubuntu()){

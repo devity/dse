@@ -218,11 +218,165 @@ function dse_panic_offer_interactive(){
 
 function dse_panic($Interactive=FALSE){
 	global $vars,$CFG_array;
+	dse_panic_system_stats();
 	
-	print "CFG_array="; print_r($CFG_array); print "\n";
+	//print "CFG_array="; print_r($CFG_array); print "\n";
 	dse_panic_hd($Interactive);
 	dse_panic_services($Interactive);
 	dse_panic_processes($Interactive);
+	return;
+}
+
+function dse_panic_system_stats(){
+	global $vars,$CFG_array;
+	
+	print bar("System Status / Overview: ","-","blue","white","white","blue");
+		
+		
+	print colorize("Disk: ");
+	$DiskIsLow=dse_is_disk_low();
+	if($DiskIsLow){
+		print colorize(" Disk space LOW! ","white","red",TRUE,5);
+	}else{
+		print colorize(" OK! ","white","green",TRUE,1);
+	}
+	print "\n";
+	
+	print colorize("Ram: ");
+	print "\n";
+	
+	print colorize("CPU: ");
+	
+	if(dse_which("mpstat")){
+		$CPUInfoArray=dse_sysstats_cpu();
+		$Idle=0; $IdlePossible=0;
+		$CPUBars="";
+		//print_r($CPUInfoArray);
+		foreach($CPUInfoArray[1] as $i=>$CPUCoreInfoArray){
+			$Idle+=$CPUCoreInfoArray['Idle'];
+			$IdlePossible+=100;
+			$User=intval($CPUCoreInfoArray['User']);
+			$Sys=100-($Free+$User);
+			$Used=100-$Free;
+			$RedWidth=intval(($Sys/100)*$GraphWidth);
+			$MagentaWidth=intval(($User/100)*$GraphWidth);
+			$GreenWidth=$GraphWidth-($RedWidth+$MagentaWidth);
+			$CPUBars.= colorize("CPU$i: ","cyan","black",TRUE,0);
+			if($Used>60){
+				$CPUBars.= colorize("$Used% ","red","black",TRUE,1);
+			}elseif($Used>30){
+				$CPUBars.= colorize("$Used% ","yellow","black",TRUE,1);
+			}elseif($Used>10){
+				$CPUBars.= colorize("$Used% ","green","black",TRUE,1);
+			}else{
+				$CPUBars.= colorize("$Used% ","cyan","black",TRUE,1);
+			}
+			$CPUBars.= pad("",3-strlen($Used));
+			$CPUBars.= colorize(pad("SYS",$RedWidth,"#","left"),"red","black",TRUE,0);
+			$CPUBars.= colorize(pad("USER",$MagentaWidth,"#","center"),"magenta","black",TRUE,0);
+			$CPUBars.= colorize(pad("IDLE",$GreenWidth,"#","right"),"green","black",TRUE,0);
+			//print "r=$RedWidth g=$GreenWidth ";
+			if($i%2==1) {
+				$CPUBars.= "\n";
+			}else{
+				$CPUBars.= "  ";
+			}
+		}
+		if($IdlePossible){
+			$IdleAverage=intval($Idle/$IdlePossible);
+		}else{
+			$IdleAverage=0;
+		}
+		if($IdleAverage>80){
+			print colorize(" CPU use HIGH ","white","red",TRUE,5);
+		}else{
+			print colorize(" OK! ","white","green",TRUE,1);
+		}
+		print "\n$CPUBars\n";
+	}else{
+		$Load=get_load();
+		if($Load>5){
+			print colorize(" Load HIGH ( $Load ) ","white","red",TRUE,5);
+		}else{
+			print colorize(" Load OK! ($Load ) ","white","green",TRUE,1);
+		} 
+	}
+	print "\n";
+	
+	
+	
+	print colorize("Processes: ");
+	$r=trim(dse_exec("ps aux | wc -l"));
+	if($r>200){
+		print colorize(" Very High - $r ","white","red",TRUE,5);
+	}elseif($r>160){
+		print colorize(" High - $r ","white","red",TRUE,1);
+	}else{
+		print colorize(" Low - $r ","white","green",TRUE,1);
+	}
+	print "\n";
+	
+	
+	print colorize("Net: ");
+	$r=dse_exec("traceroute google.com 2>&1");
+	if(str_contains($r,"unknown host")){
+		print colorize(" DNS Down ","white","red",TRUE,5);
+	}elseif(str_contains($r,"!H")){
+		print colorize(" google.com Unreachable ","white","red",TRUE,5);
+	}else{
+		
+		
+		$Gateway=dse_get_gateway();
+		if(!$Gateway){
+			print colorize(" No Gateway Found ","white","red",TRUE,5);
+		}else{
+			/*$r=dse_exec("traceroute $Gateway 2>&1",TRUE);
+			if(str_contains($r,"unknown host")){
+				print colorize(" Gateway ($Gateway) Unreachable ","white","red",TRUE,5);
+			}elseif(str_contains($r,"!H")){
+				print colorize(" Gateway ($Gateway) Unreachable ","white","red",TRUE,5);
+			}else{
+				print colorize(" Appears OK! ","white","green",TRUE,1);
+			}
+			 */
+			$r=dse_exec("ping -c1 $Gateway 2>&1");
+			if(str_contains($r,", 0.0% packet loss")){
+				print colorize(" Appears OK! ","white","green",TRUE,1);
+			}elseif(str_contains($r," 100.0% packet loss")){
+				print colorize(" Gateway ($Gateway) No PING reply ","white","red",TRUE,5);
+			}else{
+				print colorize(" Appears OK! ","white","green",TRUE,1);
+			}
+		}
+	}
+	print "\n";
+	
+	
+	
+	print colorize("Services: ");
+	print "\n";
+	
+	
+	print colorize("Ports: ");
+	print dse_ports_open(TRUE);
+	print "\n";
+	
+	
+	
+	print colorize("Hacked: ");
+	print "\n";
+	
+	print colorize("Attacks: ");
+	print "\n";
+	
+	
+	
+	$A=dse_ask_yn(colorize("Continue?","white","red",TRUE,5),'Y',20);	
+	if($A=='N'){
+		print "\nExiting.\n";
+		exit();
+	}
+	
 	return;
 }
 
