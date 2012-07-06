@@ -70,7 +70,7 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 		
 	
 	$LogFile=trim($LogFile);
-	$LogFileNameColorized=colorize(pad(basename($LogFile),10),"cyan");
+	$LogFileNameColorized=colorize(pad(basename($LogFile),10),"black","cyan",TRUE,1);
 	if($LogFile && dse_file_exists($LogFile)){
 		$LogContents=`tail -n $TailLines $LogFile`;
 		if($LogContents){
