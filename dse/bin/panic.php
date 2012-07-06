@@ -299,6 +299,7 @@ function dse_panic_hd($Interactive=FALSE){
 				
 				if(time()%10==1){
 					cbp_screen_clear();
+					sbp_cursor_postion(0,0);
 					$ls=dse_file_get_contents("/tmp/ls.out");
 					$lsa=split("\n",$ls);
 					$lss=sizeof($lsa);
