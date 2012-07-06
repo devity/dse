@@ -37,44 +37,32 @@ function dse_table_status_array($Database,$Table){
 }
 
 
-
-
 function dse_table_repair($Database,$Table){
 	global $vars; dse_trace();
 	$r=dse_exec("echo \"USE $Database;\n REPAIR TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,TRUE);
 	return;
 }
 
-
 function dse_table_optimize($Database,$Table){
 	global $vars; dse_trace();
 	$pid=dse_exec_bg("echo \"USE $Database;\n OPTIMIZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
 	while((dse_exec_bg_results($pid))===FALSE){
 		progress_bar();
-		sleep(1);
-		progress_bar();
-		sleep(1);
-		progress_bar();
-		sleep(1);
+		sleep(2);
 	}
-	
-	
 	return;
 }
-
-
-function dse_database_repair_all(){
-	global $vars; dse_trace();
-	
-}
-
-
 
 
 function dse_table_check($Database,$Table){
 	global $vars; dse_trace();
 	//print colorize("CHECK Table $T:\n","green","black");
-	$r=dse_exec("echo \"USE $Database;\n CHECK TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
+	$pid=dse_exec_bg("echo \"USE $Database;\n CHECK TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
+	while((dse_exec_bg_results($pid))===FALSE){
+		progress_bar();
+		sleep(2);
+	}
+	$r=dse_exec_bg_results($pid);
 	list($HeaderLine,$DataLine)=split("\n",$r);
 	$DataLine=whitespace_minimize($DataLine);
 	$DdT=strcut($DataLine,""," ");
@@ -90,7 +78,12 @@ function dse_table_check($Database,$Table){
 function dse_table_analyze($Database,$Table){
 	global $vars; dse_trace();
 	//print colorize("CHECK Table $T:\n","green","black");
-	$r=dse_exec("echo \"USE $Database;\n ANALYZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
+	$pid=dse_exec_bg("echo \"USE $Database;\n ANALYZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
+	while((dse_exec_bg_results($pid))===FALSE){
+		progress_bar();
+		sleep(2);
+	}
+	$r=dse_exec_bg_results($pid);
 	list($HeaderLine,$DataLine)=split("\n",$r);
 	$DataLine=whitespace_minimize($DataLine);
 	$DdT=strcut($DataLine,""," ");
