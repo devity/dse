@@ -354,11 +354,48 @@ if(!dse_file_exists($vars['DSE']['USER_BASH_PROFILE'])){
 	}
 }
 
+print "Checking HISTSIZE: \n";
+if(!dse_file_exists($vars['DSE']['USER_BASH_PROFILE'])){
+	print "$Failed to verify. No ".$vars['DSE']['USER_BASH_PROFILE']."\n";
+}else{
+	$Command="grep HISTSIZE ".$vars['DSE']['USER_BASH_PROFILE'];
+	$HISTFILESIZE=strcut(trim(`$Command`),"=");
+	if($HISTFILESIZE==""){
+		print "Cant find HISTSIZE in ".$vars['DSE']['USER_BASH_PROFILE']."\n";
+		$A=dse_ask_yn(" Add HISTSIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']." ?");
+		if($A=='Y'){
+			$Command="echo \"\HISTSIZE=".$vars['DSE']['SUGGESTED']['HISTSIZE']."\" >> ".$vars['DSE']['USER_BASH_PROFILE'];
+			$r=`$Command`;
+			print "$Added\n";
+		}else{
+			print "$NotChanged\n";
+		}
+			
+	}else{
+		if($HISTFILESIZE<$vars['DSE']['SUGGESTED']['HISTSIZE']){
+			print "HISTSIZE $NotOK. Smaller ( = $HISTFILESIZE ) than recommended ( ".$vars['DSE']['SUGGESTED']['HISTSIZE']." ). \n";
+			$A=dse_ask_yn(" Increase HISTSIZE to ".$vars['DSE']['SUGGESTED']['HISTSIZE']." ?");
+			if($A=='Y'){
+				$Command="/dse/bin/dreplace -v 2 -s -p ".$vars['DSE']['USER_BASH_PROFILE']." \"^HISTSIZE=[0-9]+$\" \"HISTSIZE=".$vars['DSE']['SUGGESTED']['HISTSIZE']."\"";
+				dse_exec($Command,TRUE,TRUE);
+				print "$OK\n";
+			}else{
+				print "$NotChanged\n";
+			}
+		}else{
+			print "HISTSIZE size $OK = $HISTFILESIZE\n";
+		}
+	}
+}
+
+
+
 //multi-terminal real-time bash history
 $code="
 #start http://stackoverflow.com/questions/103944/real-time-history-export-amongst-bash-terminal-windows
 
-	export HISTSIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']."
+	export HISTSIZE=".$vars['DSE']['SUGGESTED']['HISTSIZE']."
+	export HISTFILESIZE=".$vars['DSE']['SUGGESTED']['HISTFILESIZE']."
 	history() {
 	  _bash_history_sync
 	  builtin history \"$@\"

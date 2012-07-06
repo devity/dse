@@ -118,7 +118,8 @@ $vars['DSE']['LGT_LOG_FILES'].=",/var/log/vibk.log,/var/log/dse_publisher.log,/v
 //,/var/log/iptable_drops.log
 // *********************************************************************************
 $vars['DSE']['SUGGESTED']=array();
-$vars['DSE']['SUGGESTED']['HISTFILESIZE']=100000;
+$vars['DSE']['SUGGESTED']['HISTSIZE']=100000;
+$vars['DSE']['SUGGESTED']['HISTFILESIZE']=10000000;
 
 // *********************************************************************************
 // ********* Set colors and such
