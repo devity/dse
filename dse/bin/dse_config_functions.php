@@ -1556,14 +1556,27 @@ function dse_backup_mysqld() {
 	print " Saving Copy of mysqld Data: ";
 	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
  	$file=$vars['DSE']['BACKUP_DIR_MYSQL']."/mysqldump".$DATE_TIME_NOW.".sql";
-	$Command="mysqldump --all-databases --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys --dump-date --force --quick --routines --verbose --result-file=$file";
-	print " Command: $Command\n";
-	`$Command`;
-	`gzip $file`;
+	
+	$Command="mysqldump --all-databases --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys "
+		."--dump-date --force --quick --routines --verbose --result-file=$file";
+	$pid=dse_exec_bg($Command,TRUE);
+	while(dse_pid_is_running($pid)){
+		progress_bar();
+		sleep(1);
+	}
+	
+	$pid=dse_exec_bg("gzip $file",TRUE);
+	while(dse_pid_is_running($pid)){
+		progress_bar();
+		sleep(1);
+	}
+	
 	//`mysqlhotcopy-all-databases`;
 
 
 	print " $_OK MySQL backup saved in  ${dir}\n";
+	
+	dse_exec("/dse/aliases/cdf",FALSE,TRUE);
 }
    
    
@@ -1588,12 +1601,12 @@ function dse_backup_httpd() {
 	}
 	print "\n";
 	
-	$web_data_dir=$vars['DSE']['BACKUP_HTTP_ROOT'];
+	$web_data_dir=$vars['DSE']['HTTP_ROOT_DIR'];
 	$dse_server_httpd_backup_directory=$vars['DSE']['BACKUP_DIR_HTTP'];
 	
 	print " Saving Copy of httpd Data: ";
 	
-   	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
+   	$DATE_TIME_NOW=dse_dat_format("NOW","FILE");
    	if(!file_exists($dse_server_httpd_backup_directory)){
    		print "Backup directory $dse_server_httpd_backup_directory missing - fatal error. exiting.\n";
    		exit(1);

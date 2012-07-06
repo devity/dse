@@ -125,7 +125,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			}
 			
 			if(!$LaunchNumber) print bar("STRING GREP Results: $DoDir","-","blue","white","green","white");
-			$Command=$vars['DSE']['DSE_BIN_DIR']."/gss \"$String\" ".$DoDir." | grep -v .dab  ";
+			$Command=$vars['DSE']['DSE_BIN_DIR']."/gss \"$String\" ".$DoDir." | grep .php | grep -v .dab  ";
 	  		$r=dse_exec($Command,$vars['Verbosity']>3);
 			foreach(split("\n",$r) as $L){
 				$L=trim($L);
@@ -185,13 +185,14 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			foreach($CodeInfoArray['Functions']['Code'] as $FunctionName=>$Code){
 				if(str_icontains($Code,$String)){
 					
-					print colorize("$Li","yellow","black");
-					print colorize(": ","blue","black");
+					
 					$Code=str_igrep($Code,$String);
 					$Code=str_replace($String,colorize($String,"black","yellow"),$Code);
 					$FunctionName=colorize($FunctionName,"cyan","black");
 					print "used in function: $FunctionName \n$Code\n";
 					/*$Li++;
+					 print colorize("$Li","yellow","black");
+					print colorize(": ","blue","black");
 					 if($LaunchNumber==$Li){
 						dse_launch_code_edit($f,$LineNumber);
 						exit(0);
