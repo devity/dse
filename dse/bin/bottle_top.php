@@ -134,7 +134,7 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 		
 		
 			sbp_cursor_postion(0,0);
-			cbp_screen_clear();
+		//	cbp_screen_clear();
 			print getColoredString("*", 'yellow', 'black')." ".getColoredString(trim(`hostname`)."            ".trim(`date`),'cyan','black');	
 			$SleepLeft_str=getColoredString($SleepLeft,"yellow","black");
 			
@@ -173,12 +173,13 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 			$GraphWidth=50;
 			$CPUInfoArray=dse_sysstats_cpu();
 			foreach($CPUInfoArray[1] as $i=>$CPUCoreInfoArray){
-				$Used=100-$CPUCoreInfoArray['Idle'];
+				$Free=intval($CPUCoreInfoArray['Idle']);
+				$Used=100-$Free;
 				$RedWidth=intval(($Used/100)*$GraphWidth);
 				$GreenWidth=intval(($CPUCoreInfoArray['Idle']/100)*$GraphWidth);
-				print colorize("$i: $Used% ","cyan","black");
-				print colorize(pad("",$RedWidth,"#"),"red","black",TRUE,1);
-				print colorize(pad("",$GreenWidth,"#"),"green","black",TRUE,1);
+				print colorize("$i: ","cyan","black");
+				print colorize(pad("$Used%\{",$RedWidth,"#","left"),"red","black",TRUE,1);
+				print colorize(pad("\{$Free%",$GreenWidth,"#","right"),"green","black",TRUE,1);
 				print "\n";
 			}
 			exit();

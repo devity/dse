@@ -19,16 +19,16 @@ function dse_sysstats_cpu(){
 	global $vars; dse_trace();
 	$r=dse_exec("mpstat -P ALL",TRUE,TRUE);
 	$ra=split("\n",$r);
-	print "ra[]="; print_r($ra); print "\n";
+	//print "ra[]="; print_r($ra); print "\n";
 	$SysInfo=split("[ \t]+",$ra[0]);
 	
-	print "SysInfo[]="; print_r($SysInfo); print "\n";
+	//print "SysInfo[]="; print_r($SysInfo); print "\n";
 	$OSType=$SysInfo[0];
 	$KernelVersion=$SysInfo[1];
 	$CPUGeneration=$SysInfo[4];
 	$Hostname=strcut($SysInfo[2],"(",")");
 	$CPUCores=strcut($SysInfo[5],"(");
-	print "cores=$CPUCores\n";
+	//print "cores=$CPUCores\n";
 	$CPUs=array();
 	for($c=0;$c<$CPUCores;$c++){
 		print "c=$c ==ra[4+$c] \n";
@@ -43,7 +43,7 @@ function dse_sysstats_cpu(){
 		$Guest=$CoreInfoArray[10];
 		$Idle=$CoreInfoArray[11];
 		$Sys+=$Nice+$IOWait+$IRQ+$Soft+$Steal+$Guest;
-		print "adding core user=$User \n";
+		//print "adding core user=$User \n";
 		$CPUs[]=array("User"=>$Usr,"Sys"=>$Sys,"Idle"=>$Idle);
 	}
 	return array($CPUCores,$CPUs);
