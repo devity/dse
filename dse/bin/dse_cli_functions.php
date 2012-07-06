@@ -1575,7 +1575,7 @@ function dse_file_add_line_if_not($filename,$Str,$LineNumber=0,$ShowCommand=FALS
 			if(!$Added){
 				$tbr.="$Str\n";
 			}
-			return $tbr;
+			return dse_file_put_contents($filename,$tbr);
 		}
 	}
 }
