@@ -3744,7 +3744,8 @@ function cbp_get_screen_height(){
 
 function sbp_cursor_postion($L=0,$C=0){
 	global $vars; dse_trace();
-        print "\033[${L};${C}H";
+    print "\033[${L};${C}H";
+	print "sbp_cursor_postion($L=0,$C=0)\n";
 }
 //function sbp_cursor_column($C=0){
   //      print "\033[;${C}H";
@@ -3753,6 +3754,7 @@ function cbp_cursor_save(){
 	global $vars; dse_trace();
     //print "\0337";
     $vars[cbp_cursor_save__position]=dse_exec("/dse/aliases/cursor-get-position",FALSE,FALSE);
+	print "\ncursor pos= $vars[cbp_cursor_save__position]\n";
 }
 function cbp_cursor_restore(){
 	global $vars; dse_trace();
