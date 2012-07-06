@@ -284,7 +284,7 @@ function dse_panic_system_stats(){
 			}
 		}
 		if($IdlePossible>0){
-			$IdleAverage=100-intval(($Idle/$IdlePossible)*100);
+			$IdleAverage=intval(($Idle/$IdlePossible)*100);
 		}else{
 			$IdleAverage=0;
 		}
@@ -293,6 +293,7 @@ function dse_panic_system_stats(){
 		}elseif($IdleAverage<30){
 			print colorize(" CPU use HIGH ","white","red",TRUE,1);
 		}else{
+			
 			print colorize(" OK! ","white","green",TRUE,1);
 		}
 		print "\n$CPUBars";
