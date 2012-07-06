@@ -84,13 +84,7 @@ if($DidSomething){
 	exit(0);
 }
 
-$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
-	
-$TmpDir="/tmp/";
-$TmpFile=$TmpDir."dse_tmp_file_${DATE_TIME_NOW}_0".rand(10000,99999);
-while(file_exists($TmpFile)){
-	$TmpFile=$TmpDir."dse_tmp_file_${DATE_TIME_NOW}_0".rand(10000,99999);
-}
+$TmpFile=dse_tmp_file();
 print $TmpFile;
 
 if($Verbosity>=2) print getColoredString("Done. Exiting ".$vars['DSE']['SCRIPT_FILENAME'].". \n\n", 'black', 'green');

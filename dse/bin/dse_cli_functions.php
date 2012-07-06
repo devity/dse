@@ -439,7 +439,7 @@ function dse_replace_in_file($File,$Needle,$Replacement){
 }
 
 			
-function progress_bar($Percent,$Width=60){
+function progress_bar($Percent="time",$Width=60){
 	global $vars; dse_trace();
 	global $Rainbow,$RainbowSize;
 		
@@ -1668,6 +1668,18 @@ function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 	return $tbra;
 }
 
+
+function dse_tmp_file(){
+	global $vars; dse_trace();
+	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
+		
+	$TmpDir="/tmp/";
+	$TmpFile=$TmpDir."dse_tmp_file_${DATE_TIME_NOW}_0".rand(10000,99999);
+	while(file_exists($TmpFile)){
+		$TmpFile=$TmpDir."dse_tmp_file_${DATE_TIME_NOW}_0".rand(10000,99999);
+	}
+	return $TmpFile;
+}
 
 function str_icontains($str,$needle){
 	global $vars; dse_trace();
