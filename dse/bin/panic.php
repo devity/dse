@@ -298,7 +298,7 @@ function dse_panic_hd($Interactive=FALSE){
 				//print "t$asf"; $asf++;
 				sleep(1);
 				 
-				
+				$BigFound=0;
 				if(time()%4==1){
 					cbp_screen_clear();
 					sbp_cursor_postion(0,0);
@@ -307,30 +307,33 @@ function dse_panic_hd($Interactive=FALSE){
 					$lss=sizeof($lsa);
 					if($lss>0 ){
 						$lss--;
-						for($i=0;$i<$lss && $i<$H-3;$i++){
+						for($i=0;$i<$lss  ;$i++){
 							$SizeStr=dse_exec("/dse/bin/dsizeof ".$lsa[$i]);
 							$SizeStr=intval($SizeStr/1000000);
-							//if($SizeStr>0){
+							if($SizeStr>0){
 								//print "lss=$lss  ";
-								print colorize(pad($lsa[$i],$FNW),"yellow","black")."   ";
-								print colorize(pad($SizeStr,8," ","right"),"red","black",TRUE,1);
-								print colorize(" MB\n","green","black",TRUE,1);
-							//}
+								if($i<$H-3){
+									print colorize(pad($lsa[$i],$FNW),"yellow","black")."   ";
+									print colorize(pad($SizeStr,8," ","right"),"red","black",TRUE,1);
+									print colorize(" MB\n","green","black",TRUE,1);
+								}
+								$BigFound++;
+							}
 							//$lss_last=$i;
 						}
 					}
 					
-					cbp_cursor_save();
+					/*cbp_cursor_save();
 					sbp_cursor_postion(3,cbp_get_screen_width()-80);
-					print colorize(pad(" + Found $lss large files",80,"-"),"black","green");
-					cbp_cursor_restore();
+					print colorize(pad(" + Found $BigFound large files",80,"-"),"black","green");
+					cbp_cursor_restore();*/
 				}
 				
 				//print pad(" current: PID=$FindPID ",cbp_get_screen_width(),"-","center");
 				//print "\n$ls";
 				//$lsa_last=$lsa; $lss_last=$lss;
 				
-				progress_bar("time",80,"Found $lss files");
+				progress_bar("time",80," Found $lss files ");
 			}
 			
 			
