@@ -516,7 +516,8 @@ function progress_bar($Percent="time",$Width=60){
 		if($vars[pr_bar__start_time]){
 			$tt=time()-$vars[pr_bar__start_time];
 		}else{
-			$ff=0;
+			$tt=0;
+			$vars[pr_bar__start_time]=time();
 		}
 		$RunTimeStr=" ".seconds_to_text($tt)." of Unkown Time ";
 		$Percent=50;

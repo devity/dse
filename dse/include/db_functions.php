@@ -39,7 +39,11 @@ function dse_table_status_array($Database,$Table){
 
 function dse_table_repair($Database,$Table){
 	global $vars; dse_trace();
-	$r=dse_exec("echo \"USE $Database;\n REPAIR TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,TRUE);
+	$pid=dse_exec_bg("echo \"USE $Database;\n REPAIR TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,TRUE);
+	while(dse_pid_is_running($pid)){
+		progress_bar();
+		sleep(1);
+	}
 	return;
 }
 
@@ -48,7 +52,7 @@ function dse_table_optimize($Database,$Table){
 	$pid=dse_exec_bg("echo \"USE $Database;\n OPTIMIZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
 	while(dse_pid_is_running($pid)){
 		progress_bar();
-		sleep(2);
+		sleep(1);
 	}
 	return;
 }
@@ -62,7 +66,7 @@ function dse_table_check($Database,$Table){
 	while(dse_pid_is_running($pid)){
 		//print " pid=$pid running\n";
 		progress_bar();
-		sleep(2);
+		sleep(1);
 	}
 	$r=dse_exec_bg_results($pid);
 	list($HeaderLine,$DataLine)=split("\n",$r);
@@ -85,7 +89,7 @@ function dse_table_analyze($Database,$Table){
 	while(dse_pid_is_running($pid)){
 		//print " A pid=$pid running\n";
 		progress_bar();
-		sleep(2);
+		sleep(1);
 	}
 	$r=dse_exec_bg_results($pid);
 	list($HeaderLine,$DataLine)=split("\n",$r);
@@ -116,6 +120,8 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 			$Ta=dse_table_list_array($DB);
 			foreach($Ta as $T){
 				if($T){
+					
+					progress_bar();
 					print colorize(" $DB","red","black",TRUE,1);
 					print colorize(".","green","black");
 					print colorize($T,"magenta","black",TRUE,1);
