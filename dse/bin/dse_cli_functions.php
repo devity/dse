@@ -1895,7 +1895,12 @@ function unk_time($TimeAndDateString){
 	elseif( preg_match ("/^[a-zA-Z]{3} [a-zA-Z]{0,9} [0-9]{1,2} [0-9]{2}:[0-9]{2}:[0-9]{2} [0-9]{4}/" , $TimeAndDateString, $matches) >0 ){
 		dpv(5,"preg_match 7\n");
 		$len=25; $format = '%a %B %d %H:%M:%S %Y';}//Fri Jun  8 03:52:48 2012 
-	//
+	
+	elseif( preg_match ("/^\\[[a-zA-Z]{3} [a-zA-Z]{0,9} [0-9]{1,2} [0-9]{2}:[0-9]{2}:[0-9]{2} [0-9]{4}/" , $TimeAndDateString, $matches) >0 ){
+		dpv(5,"preg_match 7b\n");
+		$TimeAndDateString=substr($TimeAndDateString,1);
+		$len=25; $format = '%a %B %d %H:%M:%S %Y';}//[Thu Jul 05 22:49:49 2012] 
+		
 	elseif( preg_match ("/^[a-zA-Z]{3} [a-zA-Z]{0,9} [0-9]{1,2}[a-z]{0,2}, [0-9]{4}, [0-9]{1,2}:[0-9]{2}.[0-9]{2} [a-zA-Z]{2} [a-zA-Z]{3}/" , $TimeAndDateString, $matches) >0 ){
 			dpv(5,"preg_match 8 \n");
 			$TimeAndDateString=str_replace("th, ",", ",$TimeAndDateString);
