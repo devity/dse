@@ -85,7 +85,7 @@ function dse_database_check_all(){
 	$DBa=dse_database_list_array();
 	foreach($DBa as $DB){
 		if($DB && $DB!="information_schema"){
-			print colorize("Checking Database ","green","black");
+			print colorize("Checking Database ","cyan","black");
 			print colorize($DB,"red","black",TRUE,1);
 			print colorize("...\n","green","black");
 			$Ta=dse_table_list_array($DB);
@@ -96,6 +96,9 @@ function dse_database_check_all(){
 					print colorize(".","green","black");
 					print colorize($T,"magenta","black",TRUE,1);
 					print colorize(":  ","green","black");
+					
+					$PadSize=90-(strlen($DB)+strlen($T)+3);
+					print pad("",$PadSize);
 					
 					$IsOK=TRUE;
 					
@@ -121,6 +124,10 @@ function dse_database_check_all(){
 					$Engine=$TSa['Engine'];
 					$Avg_row_length=$TSa['Avg_row_length'];
 					$Size=$Avg_row_length*$Rows;
+					
+					$Engine=pad($Engine,10);
+					$Rows=pad($Rows,11);
+					$Size=pad($Size,15);
 					print "  $Engine   Rows: $Rows   Size: $Size b  \n";
 				}
 			}
