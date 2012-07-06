@@ -269,7 +269,7 @@ function dse_panic_hd($Interactive=FALSE){
 	
 	
 	$FNW=$W-20;
-	if$FNW>120) $FNW=120;
+	if($FNW>120) $FNW=120;
 	
 	//look for large files recently
 	
