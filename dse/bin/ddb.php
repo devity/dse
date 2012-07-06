@@ -31,6 +31,8 @@ $parameters_details = array(
   array('s','status',"prints status file".$CFG_array['StatusFile']),
   array('d','list-databases',"prints list of databases: SHOW DATABASES; command"),
   array('t:','list-tables:',"prints list of tables in database arg1: USE arg1; SHOW TABLES; command"),
+  array('r','repair-all',"repairs all tables in all db's"),
+  array('c','check-all',"check all tables in all db's"),
  // array('e','edit',"backs up and launches a vim of ".$vars['DSE']['DLB_CONFIG_FILE']),
 //  array('c','config-show',"prints contents of ".$vars['DSE']['DLB_CONFIG_FILE']),
  // array('d:','daemon:',"manages the checking daemon. options: [start|stop|restart|status]"),
@@ -91,6 +93,14 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		foreach($a as $t){
 			if($t) print "$t\n";
 		}
+		exit(0);
+	case 'r':
+  	case 'repair-all':
+		dse_database_repair_all();
+		exit(0);
+	case 'r':
+  	case 'check-all':
+		dse_database_check_all();
 		exit(0);
 		
 		
