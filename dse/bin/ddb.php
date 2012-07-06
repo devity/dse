@@ -30,7 +30,7 @@ $parameters_details = array(
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('s','status',"prints status file".$CFG_array['StatusFile']),
   array('d','list-databases',"prints list of databases: SHOW DATABASES; command"),
-  array('t','list-tables',"prints list of tables in database arg1: USE arg1; SHOW TABLES; command"),
+  array('t:','list-tables:',"prints list of tables in database arg1: USE arg1; SHOW TABLES; command"),
  // array('e','edit',"backs up and launches a vim of ".$vars['DSE']['DLB_CONFIG_FILE']),
 //  array('c','config-show',"prints contents of ".$vars['DSE']['DLB_CONFIG_FILE']),
  // array('d:','daemon:',"manages the checking daemon. options: [start|stop|restart|status]"),
@@ -82,6 +82,10 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		exit(0);
 	case 't':
   	case 'list-tables':
+		if(!$vars['options'][$opt]){
+			print "no arg1\n";
+			exit(1);
+		}
 		$Database=$vars['options'][$opt];
 		$a=dse_table_list_array($Database);
 		foreach($a as $t){
