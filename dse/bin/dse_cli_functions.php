@@ -1862,7 +1862,7 @@ function pad($String,$Length,$PadChar=" ",$Justification="left"){
 		}
 	}
 	while(strlen($String)<$Length){
-		$String.=$PadChar;
+		$String.=$PadChar; 
 	}
 	//print "Added=$Added \n";
 	dpv(6," pad($inString,$Length,$PadChar,$Justification) = [$String] ");
