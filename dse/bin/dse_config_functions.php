@@ -196,6 +196,37 @@ function dse_server_configure_file_load(){
 	
 	}
 	
+	
+		
+	$DefineCommand="FIREWALL ";
+	$Loops=0;
+	while( (!( strstr($ProcessedFileContents,$DefineCommand)=== FALSE)) && ($Loops<100)){
+	        $Loops++;
+	        $DefineCommandAction=strcut($ProcessedFileContents,$DefineCommand,"\n");
+	        $Pre=strcut($ProcessedFileContents,"",$DefineCommand);
+	        $Post=substr($strcut_post_haystack,strlen($DefineCommandAction)+1);
+	        $ProcessedFileContents=$Pre."".$Post;
+	        $FirewallCommand=strcut($DefineCommandAction,""," ");
+	        $FirewallCommandParamaters=strcut($DefineCommandAction," ");
+			//$Defines[$Holder]=$HolderValue;
+	       	if($FirewallCommand=="OPEN"){
+	       		foreach(split(",",$FirewallCommandParamaters) as $Port){
+	       			if($Port){
+	       				$FirewallOpen[]=$Port;
+	       			}
+	       		}
+	       	}elseif($FirewallCommand=="ALLOW"){
+	       		foreach(split(",",$FirewallCommandParamaters) as $IP){
+	       			if($IP){
+	       				$FirewallAllow[]=$IP;
+	       			}
+	       		}
+	       	}		
+	
+	}
+	
+	
+	
 	dpv(0,"looking for domains");
 	//print "Defines="; print_r($Defines); print "\n";
 	//print "Sets="; print_r($Sets); print "\n";
@@ -205,6 +236,8 @@ function dse_server_configure_file_load(){
 	$Command="DOMAIN";
 
 	$vars['DSE']['SERVER_CONF']=array();
+	$vars['DSE']['SERVER_CONF']['FirewallPortsOpen']=$FirewallOpen;
+	$vars['DSE']['SERVER_CONF']['FirewallAllowIPs']=$FirewallAllow;
 	$vars['DSE']['SERVER_CONF']['Domains']=array();
 	$vars['DSE']['SERVER_CONF']['Webroots']=array();
 	$vars['DSE']['SERVER_CONF']['Hosts']=array();
@@ -1062,6 +1095,53 @@ function dse_package_run_upgrade(){
 function dse_configure_iptables_init(){
 	global $vars; dse_trace();
 	
+	/*:INPUT ACCEPT [9019:1653587]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [6900:1127927]
+:fail2ban-ssh - [0:0]
+-A INPUT -p tcp -m multiport --dports 22 -j fail2ban-ssh 
+-A fail2ban-ssh -j RETURN 
+COMMIT*/
+		
+	$TemplateContents="
+	
+:INPUT DROP [364:28396]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+
+-A INPUT -i lo -j ACCEPT 
+-A INPUT -p tcp -m state --state RELATED,ESTABLISHED -j ACCEPT 
+-A INPUT -p udp -m udp --sport 53 --dport 1024:65535 -j ACCEPT
+-A OUTPUT -p tcp -m state --state NEW,RELATED,ESTABLISHED -j ACCEPT 
+-A OUTPUT -p udp -m udp --sport 1024:65535 --dport 53 -j ACCEPT 
+
+";
+//-A OUTPUT -o eth0 -p udp -m udp --sport 1024:65535 --dport 25 -j ACCEPT 
+
+	foreach($vars['DSE']['SERVER_CONF']['FirewallAllowIPs'] as $IP){
+		$TemplateContents.="-A INPUT -s $IP -p tcp -m tcp -j ACCEPT\n";
+	}
+	
+	$TemplateContents.="\n";
+	foreach($vars['DSE']['SERVER_CONF']['FirewallPortsOpen'] as $Port){
+		if(intval($Port)<=0){
+			$Port=dse_port_number($Port);
+		}
+		$TemplateContents.="-A INPUT -p tcp -m tcp --dport $Port -m state --state NEW,ESTABLISHED -j ACCEPT \n";
+		$TemplateContents.="-A OUTPUT -p tcp -m tcp --sport $Port -m state --state ESTABLISHED -j ACCEPT \n\n";
+	}
+	
+	$TemplateContents.="\n";
+	
+	
+	
+	$TemplateContents.="\COMMITn";
+	
+	$TemplateContents.="\n";
+	
+	print colorize("iptables rules: \n","blue","yellow");
+	print $TemplateContents;
+	
 }
 
 function dse_configure_create_named_conf(){
@@ -1365,6 +1445,13 @@ function dse_service_name_from_common_name($service){
 		return $vars['DSE']['SERVICE_NICKNAMES'][$service];
 	}
 	return $service;
+}
+function dse_port_number($port_name){
+	global $vars; dse_trace();
+	foreach($vars['DSE']['SERVICE_PORTS'] as $Port=>$Name){
+		if($Name==$port_name) return $Port;
+	}
+	return $port_name;
 }
 function dse_service_restart($service){
 	global $vars; dse_trace();

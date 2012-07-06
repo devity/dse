@@ -246,13 +246,24 @@ if(str_contains($vars['DSE']['SERVICES'],"dns")){
 //$vars['DSE']['SERVICE_PORTS'][1]="dns";
 
 $vars['DSE']['SERVICE_PORTS'][22]="ssh";
+$vars['DSE']['SERVICE_PORTS'][25]="smtp";
+$vars['DSE']['SERVICE_PORTS'][53]="dns";
 $vars['DSE']['SERVICE_PORTS'][80]="http";
+$vars['DSE']['SERVICE_PORTS'][143]="imap";
 $vars['DSE']['SERVICE_PORTS'][443]="https";
+$vars['DSE']['SERVICE_PORTS'][465]="smtpssl";
+$vars['DSE']['SERVICE_PORTS'][587]="smtpstarttls";
+$vars['DSE']['SERVICE_PORTS'][783]="spamassassin";
+$vars['DSE']['SERVICE_PORTS'][993]="imapssl";
+$vars['DSE']['SERVICE_PORTS'][995]="pop3ssl";
+$vars['DSE']['SERVICE_PORTS'][3000]="ntop";
 $vars['DSE']['SERVICE_PORTS'][5900]="vnc";
 $vars['DSE']['SERVICE_PORTS'][6000]="vnc_2";
 $vars['DSE']['SERVICE_PORTS'][7907]="dwi";
 $vars['DSE']['SERVICE_PORTS'][9980]="aptana";
 $vars['DSE']['SERVICE_PORTS'][10000]="crowbar";
+
+
 //polipo
 //tor
 
