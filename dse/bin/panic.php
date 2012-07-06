@@ -324,34 +324,41 @@ function dse_panic_system_stats(){
 	
 	
 	print colorize("Net: ");
-	$r=dse_exec("traceroute yahoo.com 2>&1",TRUE);
-	if(str_contains($r,"unknown host")){
-		print colorize(" DNS Down ","white","red",TRUE,5);
-	}elseif(str_contains($r,"!H")){
-		print colorize(" yahoo.com Unreachable ","white","red",TRUE,5);
+	$r=http_get("http://www.yahoo.com/");
+	if(strlen($r)>50){
+		print colorize(" Appears OK! ","white","green",TRUE,1). " http://www.Yahoo.com loaded. ".strlen($r)." Bytes ";
 	}else{
-		
-		
-		$Gateway=dse_get_gateway();
-		if(!$Gateway){
-			print colorize(" No Gateway Found ","white","red",TRUE,5);
+		print colorize(" Cant Load http://www.Yahoo.com ","white","red",TRUE,5);
+	
+		$r=dse_exec("traceroute yahoo.com 2>&1",TRUE);
+		if(str_contains($r,"unknown host")){
+			print colorize(" DNS Down ","white","red",TRUE,5);
+		}elseif(str_contains($r,"!H")){
+			print colorize(" yahoo.com Unreachable ","white","red",TRUE,5);
 		}else{
-			/*$r=dse_exec("traceroute $Gateway 2>&1",TRUE);
-			if(str_contains($r,"unknown host")){
-				print colorize(" Gateway ($Gateway) Unreachable ","white","red",TRUE,5);
-			}elseif(str_contains($r,"!H")){
-				print colorize(" Gateway ($Gateway) Unreachable ","white","red",TRUE,5);
+			
+			
+			$Gateway=dse_get_gateway();
+			if(!$Gateway){
+				print colorize(" No Gateway Found ","white","red",TRUE,5);
 			}else{
-				print colorize(" Appears OK! ","white","green",TRUE,1);
-			}
-			 */
-			$r=dse_exec("ping -c1 $Gateway 2>&1",TRUE);
-			if(str_contains($r,", 0.0% packet loss")){
-				print colorize(" Appears OK! ","white","green",TRUE,1);
-			}elseif(str_contains($r," 100.0% packet loss")){
-				print colorize(" Gateway ($Gateway) No PING reply ","white","red",TRUE,5);
-			}else{
-				print colorize(" Appears OK! ","white","green",TRUE,1);
+				/*$r=dse_exec("traceroute $Gateway 2>&1",TRUE);
+				if(str_contains($r,"unknown host")){
+					print colorize(" Gateway ($Gateway) Unreachable ","white","red",TRUE,5);
+				}elseif(str_contains($r,"!H")){
+					print colorize(" Gateway ($Gateway) Unreachable ","white","red",TRUE,5);
+				}else{
+					print colorize(" Appears OK! ","white","green",TRUE,1);
+				}
+				 */
+				$r=dse_exec("ping -c1 $Gateway 2>&1",TRUE);
+				if(str_contains($r,", 0.0% packet loss")){
+					print colorize(" Appears OK! ","white","green",TRUE,1);
+				}elseif(str_contains($r," 100.0% packet loss")){
+					print colorize(" Gateway ($Gateway) No PING reply ","white","red",TRUE,5);
+				}else{
+					print colorize(" Appears OK! ","white","green",TRUE,1);
+				}
 			}
 		}
 	}
