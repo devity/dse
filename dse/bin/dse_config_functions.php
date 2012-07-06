@@ -1106,14 +1106,16 @@ COMMIT*/
 	$TemplateContents="
 *filter
 	
-:INPUT DROP [364:28396]
+:INPUT DROP [0:0]
 :FORWARD DROP [0:0]
 :OUTPUT ACCEPT [0:0]
 
 -A INPUT -i lo -j ACCEPT 
+
 -A INPUT -p tcp -m state --state RELATED,ESTABLISHED -j ACCEPT 
--A INPUT -p udp -m udp --sport 53 --dport 1024:65535 -j ACCEPT
 -A OUTPUT -p tcp -m state --state NEW,RELATED,ESTABLISHED -j ACCEPT 
+
+-A INPUT -p udp -m udp --sport 53 --dport 1024:65535 -j ACCEPT
 -A OUTPUT -p udp -m udp --sport 1024:65535 --dport 53 -j ACCEPT 
 
 ";
@@ -1129,22 +1131,34 @@ COMMIT*/
 			$Port=dse_port_number($Port);
 			$PortName=dse_port_name($Port);
 		}
-		$TemplateContents.="# allow service $PortName\n";
-		$TemplateContents.="-A INPUT -p tcp -m tcp --dport $Port -m state --state NEW,ESTABLISHED -j ACCEPT \n";
-		$TemplateContents.="-A OUTPUT -p tcp -m tcp --sport $Port -m state --state ESTABLISHED -j ACCEPT \n\n";
+		if($Port!=53){
+			$TemplateContents.="# allow service $PortName\n";
+			$TemplateContents.="-A INPUT -p tcp -m tcp --dport $Port -m state --state NEW,ESTABLISHED -j ACCEPT \n";
+			$TemplateContents.="-A OUTPUT -p tcp -m tcp --sport $Port -m state --state ESTABLISHED -j ACCEPT \n\n";
+		}
 	}
 	
 	$TemplateContents.="\n";
 	
 	
+	$TemplateContents.="-A INPUT -j DROP\n";
+	$TemplateContents.="-A OUTPUT -j DROP\n";
 	
+	$TemplateContents.="\n";
 	$TemplateContents.="COMMIT\n";
 	
 	$TemplateContents.="\n";
 	
-	print colorize("iptables rules: \n","blue","yellow");
+	dse_file_put_contents("/etc/iptables_rules",$TemplateContents);
+	
+	print colorize("iptables rules:  saved to /etc/iptables_rules \n","blue","yellow");
 	print $TemplateContents;
 	
+	$Str="/sbin/iptables-restore < /etc/iptables_rules";
+	dse_file_add_line_if_not("/etc/rc.local",$Str,TRUE);
+	
+	dse_exec("/sbin/iptables-restore < /etc/iptables_rules 2>&1",TRUE,TRUE);
+
 }
 
 function dse_configure_create_named_conf(){
