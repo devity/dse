@@ -1105,7 +1105,6 @@ COMMIT*/
 		
 	$TemplateContents="
 *filter
-	
 :INPUT DROP [0:0]
 :FORWARD DROP [0:0]
 :OUTPUT ACCEPT [0:0]
