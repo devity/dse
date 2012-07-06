@@ -254,6 +254,7 @@ function dse_panic_system_stats(){
 		//print_r($CPUInfoArray);
 		foreach($CPUInfoArray[1] as $i=>$CPUCoreInfoArray){
 			$Idle+=$CPUCoreInfoArray['Idle'];
+			$Free=intval($CPUCoreInfoArray['Idle']);
 			$IdlePossible+=100;
 			$User=intval($CPUCoreInfoArray['User']);
 			$Sys=100-($Free+$User);
