@@ -30,7 +30,7 @@ function dse_sysstats_cpu(){
 	$CPUCores=strcut($SysInfo[5],"(");
 	print "cores=$CPUCores\n";
 	$CPUs=array();
-	for($c=0;$c<$CPUcores;$c++){
+	for($c=0;$c<$CPUCores;$c++){
 		print "c=$c ==ra[4+$c] \n";
 		$CoreInfoArray=split("[ \t]+",$ra[4+$c]);
 		$Usr=$CoreInfoArray[3];
