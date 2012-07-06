@@ -132,8 +132,8 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 		$SleepLeft=$vars['DSE']['SCRIPT_SETTINGS']['ReloadSeconds'];
 		while($SleepLeft>0){
 		
-			sbp_cursor_postion(0,0);
-			sbp_screen_clear();
+			cbp_cursor_postion(0,0);
+			cbp_screen_clear();
 			print getColoredString("*", 'yellow', 'black')." ".getColoredString(trim(`hostname`)."            ".trim(`date`),'cyan','black');	
 			$SleepLeft_str=getColoredString($SleepLeft,"yellow","black");
 			

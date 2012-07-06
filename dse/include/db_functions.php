@@ -169,7 +169,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					
 					if($TSa['Engine']!="CSV"){
 						progress_bar(" $TablesChecked checked");
-						/*$TCa=dse_table_check($DB,$T);
+						$TCa=dse_table_check($DB,$T);
 						if($TCa['MsgText']!="OK"){
 							$IsOK=FALSE;
 							$ErrorMsg.= colorize("CHECK $DB.$T => ".$TCa['MsgText'],"white","red",TRUE,1);
@@ -185,7 +185,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 							$ErrorMsg.= colorize("ANALYZE $DB.$T => ".$TAa['MsgText'],"white","red",TRUE,1);
 						}
 					
-						*/
+						
 					}
 					
 					print " $Engine {$Rows}k rows ${Size} Mb    "; 
@@ -212,7 +212,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 						dse_table_repair($DB,$T);
 					}
 					if($DoOptimize){
-					//	dse_table_optimize($DB,$T);
+						dse_table_optimize($DB,$T);
 					}
 				}
 			}
