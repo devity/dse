@@ -178,9 +178,9 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 				$RedWidth=intval(($Used/100)*$GraphWidth);
 				$GreenWidth=intval(($CPUCoreInfoArray['Idle']/100)*$GraphWidth);
 				print colorize("$i: ","cyan","black");
-				print colorize(pad("$Used%\{",$RedWidth,"#","left"),"red","black",TRUE,1);
-				print colorize(pad("\{$Free%",$GreenWidth,"#","right"),"green","black",TRUE,1);
-				print "\n";
+				print colorize(pad("$Used%-",$RedWidth,"#","left"),"red","black",TRUE,1);
+				print colorize(pad("-$Free%",$GreenWidth,"#","right"),"green","black",TRUE,1);
+				if($i%2==1) print "\n";
 			}
 			exit();
 		
@@ -612,7 +612,6 @@ function update_display($keys=""){
 	//print getColoredString("", 'grey', 'black');
 	//$vars[shell_colors_skip_reset]=FALSE;
 	
-	print "\n";
 	print "\n";
 	print "\n";
 	print "\n";
