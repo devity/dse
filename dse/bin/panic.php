@@ -324,7 +324,7 @@ function dse_panic_system_stats(){
 	
 	
 	print colorize("Net: ");
-	$r=dse_exec("traceroute yahoo.com 2>&1");
+	$r=dse_exec("traceroute yahoo.com 2>&1",TRUE);
 	if(str_contains($r,"unknown host")){
 		print colorize(" DNS Down ","white","red",TRUE,5);
 	}elseif(str_contains($r,"!H")){
@@ -345,7 +345,7 @@ function dse_panic_system_stats(){
 				print colorize(" Appears OK! ","white","green",TRUE,1);
 			}
 			 */
-			$r=dse_exec("ping -c1 $Gateway 2>&1");
+			$r=dse_exec("ping -c1 $Gateway 2>&1",TRUE);
 			if(str_contains($r,", 0.0% packet loss")){
 				print colorize(" Appears OK! ","white","green",TRUE,1);
 			}elseif(str_contains($r," 100.0% packet loss")){
