@@ -302,7 +302,11 @@ function dse_panic_hd($Interactive=FALSE){
 						for($i=$lss_last;$i<$lss;$i++){
 							$SizeStr=dse_exec("/dse/bin/dsizeof ".$lsa[$i]);
 							$SizeStr=intval($SizeStr/1000000);
-							print $lsa[$i]."   ".pad($SizeStr,8," ","right")." MB\n";
+							if($SizeStr>0){
+								print colorize($lsa[$i],"yellow","black")."   ";
+								print colorize(pad($SizeStr,8," ","right"),"red","black",TRUE,1);
+								print colorize(" MB\n","cyan","black",TRUE,1);
+							}
 						}
 					}
 					

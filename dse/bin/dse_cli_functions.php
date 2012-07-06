@@ -483,7 +483,7 @@ function progress_bar($Percent="time",$Width=60,$Note=""){
 		$Rainbow[]=colorize("M","white","yellow");
 		$Rainbow[]=colorize("M","yellow","yellow");
 		$Rainbow[]=colorize("%","white","yellow");
-		/*
+		
 		$Rainbow[]=colorize("M","yellow","yellow");
 		$Rainbow[]=colorize("N","green","yellow");
 		$Rainbow[]=colorize("=","green","yellow");
@@ -496,7 +496,7 @@ function progress_bar($Percent="time",$Width=60,$Note=""){
 		$Rainbow[]=colorize("M","blue","white");
 		$Rainbow[]=colorize("+","white","white");
 		$Rainbow[]=colorize("+","magenta","magenta");
-		*/
+		
 		$Rainbow[]=colorize("&","white","red");
 		$Rainbow[]=colorize("%","white","red");
 		$Rainbow[]=colorize("=","white","red");
@@ -505,8 +505,8 @@ function progress_bar($Percent="time",$Width=60,$Note=""){
 		$Rainbow[]=colorize(" ","red","red");
 		$RainbowSize=sizeof($Rainbow);
 	}
-	
-	$ri=$vars[pr_bar__rainbow]++%$RainbowSize;
+	$vars[pr_bar__rainbow]+=2;
+	$ri=$vars[pr_bar__rainbow]%$RainbowSize;
 	$Needed=$Width;
 	$RainbowBar="";
 	for($i=0;$i<$Needed;$i++){
