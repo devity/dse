@@ -27,6 +27,7 @@ function dse_sysstats_cpu(){
 	$CPUCores=strcut($SysInfo[5],"("," ");
 	$CPUs=array();
 	for($c=0;$c<$CPUcores;$c++){
+		print "c=$c ==ra[4+$c] \n";
 		$CoreInfoArray=split("[ \t]+",$ra[4+$c]);
 		$Usr=$CoreInfoArray[3];
 		$Nice=$CoreInfoArray[4];
@@ -38,6 +39,7 @@ function dse_sysstats_cpu(){
 		$Guest=$CoreInfoArray[10];
 		$Idle=$CoreInfoArray[11];
 		$Sys+=$Nice+$IOWait+$IRQ+$Soft+$Steal+$Guest;
+		print "adding core user=$User \n";
 		$CPUs[]=array("User"=>$Usr,"Sys"=>$Sys,"Idle"=>$Idle);
 	}
 	return array($CPUCores,$CPUs);
