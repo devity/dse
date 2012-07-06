@@ -608,11 +608,12 @@ xulrunner /root/crowbar/trunk/xulapp/application.ini &
 	}
 
 	
+	dse_configure_iptables_init();
+	
 	exit();
 
 	//harden
 	
-	dse_configure_iptables_init();
 	
 	dse_configure_install_packages();
 	
