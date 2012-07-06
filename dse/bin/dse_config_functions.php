@@ -1538,6 +1538,9 @@ function dse_backup_mysqld() {
 	global $vars; dse_trace();
 	dse_detect_os_info();
 	
+	print bar("Backing up MYSQL ","-","blue","white","white","blue")."n";
+	
+	dse_exec("/dse/aliases/cdf",FALSE,TRUE);
 	print "MySQL Backup Directory: ".$vars['DSE']['BACKUP_DIR_MYSQL']." ";
 	if(!is_dir($vars['DSE']['BACKUP_DIR_MYSQL'])){
 		print " $Missing. Create? ";
@@ -1557,7 +1560,7 @@ function dse_backup_mysqld() {
 	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
  	$file=$vars['DSE']['BACKUP_DIR_MYSQL']."/mysqldump".$DATE_TIME_NOW.".sql";
 	
-	$Command="mysqldump --all-databases --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys "
+	/*$Command="mysqldump --all-databases --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys "
 		."--dump-date --force --quick --routines --verbose --result-file=$file";
 	$pid=dse_exec_bg($Command,TRUE);
 	while(dse_pid_is_running($pid)){
@@ -1569,7 +1572,21 @@ function dse_backup_mysqld() {
 	while(dse_pid_is_running($pid)){
 		progress_bar();
 		sleep(1);
+	}*/
+	
+	
+	$Command="mysqldump --all-databases --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys "
+		."--dump-date --force --quick --routines --verbose | gzip --stdout > $file";
+	dse_exec_bg($Command,TRUE);
+	while(dse_pid_is_running($pid)){
+		$Size=dse_exec("/dse/bin/dsizeof $file");
+		progress_bar("time",60," $Size B ");
+		sleep(1);
 	}
+	
+	
+	
+	
 	
 	//`mysqlhotcopy-all-databases`;
 
@@ -1585,7 +1602,8 @@ function dse_backup_mysqld() {
 function dse_backup_httpd() {
 	global $vars; dse_trace();
 	dse_detect_os_info();
-
+	print bar("Backing up HTTP ","-","blue","white","white","blue")."n";
+	
 	print "httpd Backup Directory: ".$vars['DSE']['BACKUP_DIR_HTTP']." ";
 	if(!is_dir($vars['DSE']['BACKUP_DIR_HTTP'])){
 		print " $Missing. Create? ";
