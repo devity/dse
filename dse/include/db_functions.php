@@ -58,9 +58,9 @@ function dse_table_check($Database,$Table){
 	global $vars; dse_trace();
 	//print colorize("CHECK Table $T:\n","green","black");
 	$pid=dse_exec_bg("echo \"USE $Database;\n CHECK TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
-	print "pid=$pid\n";
+	//print "pid=$pid\n";
 	while(dse_pid_is_running($pid)){
-		print " pid=$pid running\n";
+		//print " pid=$pid running\n";
 		progress_bar();
 		sleep(2);
 	}
@@ -81,9 +81,9 @@ function dse_table_analyze($Database,$Table){
 	global $vars; dse_trace();
 	//print colorize("CHECK Table $T:\n","green","black");
 	$pid=dse_exec_bg("echo \"USE $Database;\n ANALYZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
-	print "A pid=$pid\n";
+	//print "A pid=$pid\n";
 	while(dse_pid_is_running($pid)){
-		print " A pid=$pid running\n";
+		//print " A pid=$pid running\n";
 		progress_bar();
 		sleep(2);
 	}
