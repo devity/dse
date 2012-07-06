@@ -97,7 +97,7 @@ function dse_database_check_all(){
 					print colorize($T,"magenta","black",TRUE,1);
 					print colorize(":  ","green","black");
 					
-					$PadSize=60-(strlen($DB)+strlen($T)+3);
+					$PadSize=45-(strlen($DB)+strlen($T)+3);
 					print pad("",$PadSize);
 					
 					$IsOK=TRUE;
