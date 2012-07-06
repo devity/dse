@@ -1046,8 +1046,8 @@ COMMIT*/
 		
 	$TemplateContents="
 *filter
-:INPUT DROP [0:0]
-:FORWARD DROP [0:0]
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
 
 -A INPUT -i lo -j ACCEPT 
@@ -1089,16 +1089,18 @@ COMMIT*/
 	
 	$TemplateContents.="\n";
 	
-	dse_file_put_contents("/etc/iptables_rules",$TemplateContents);
+	$SaveFile="/etc/iptables_rules";
+	$SaveFile="/tmp/iptables_rules";
+	dse_file_put_contents($SaveFile,$TemplateContents);
 	
-	print colorize("iptables rules:  saved to /etc/iptables_rules \n","blue","yellow");
-	//print $TemplateContents;
+	print colorize("iptables rules:  saved to $SaveFile \n","blue","yellow");
+	print $TemplateContents;
 	
-	$Str="/sbin/iptables-restore < /etc/iptables_rules";
-	dse_file_add_line_if_not("/etc/rc.local",$Str,2);
+	//$Str="/sbin/iptables-restore < /etc/iptables_rules";
+	//dse_file_add_line_if_not("/etc/rc.local",$Str,2);
 	
-	dse_exec("/sbin/iptables-restore < /etc/iptables_rules 2>&1");
-	dse_exec("/sbin/iptables -nvL 2>&1",FALSE,TRUE);
+	//dse_exec("/sbin/iptables-restore < /etc/iptables_rules 2>&1");
+	//dse_exec("/sbin/iptables -nvL 2>&1",FALSE,TRUE);
 
 }
 
@@ -1558,7 +1560,7 @@ function dse_backup_mysqld() {
 	
 	print " Saving Copy of mysqld Data: ";
 	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
- 	$file=$vars['DSE']['BACKUP_DIR_MYSQL']."/mysqldump".$DATE_TIME_NOW.".sql.gz";
+ 	$file=$vars['DSE']['BACKUP_DIR_MYSQL']."/mysqldump".$DATE_TIME_NOW.".sql";
 	
 	/*$Command="mysqldump --all-databases --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys "
 		."--dump-date --force --quick --routines --verbose --result-file=$file";
@@ -1576,7 +1578,7 @@ function dse_backup_mysqld() {
 	
 	//--all-databases
 	$Command="mysqldump --all-databases --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys "
-		."--dump-date --force --quick --routines --verbose | gzip -1 --stdout > $file";
+		."--dump-date --force --quick --routines --verbose  > $file"; //| gzip -1 --stdout
 	$pid=dse_exec_bg($Command,TRUE);
 	while(dse_pid_is_running($pid)){
 		$Size=dse_exec("/dse/bin/dsizeof $file");
