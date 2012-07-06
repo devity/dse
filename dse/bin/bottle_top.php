@@ -569,7 +569,7 @@ function update_display($keys=""){
 	}
 
 	global $section_disk;
-	if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) &&  ($Loops<=2 || ($Loops%5)==0 ) ){
+	//if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) &&  ($Loops<=2 || ($Loops%5)==0 ) ){
 		if($vars['Verbosity']>3) print "section_disk()\n";
 		
 		
@@ -616,7 +616,7 @@ function update_display($keys=""){
 		$sda2_last=$sda2;
 	
 		$diskstats_lasttime=microtime(true);
-	}
+	//}
 
 ////////////// *****************************************************************************************************
 ////////////// *****************************************************************************************************
