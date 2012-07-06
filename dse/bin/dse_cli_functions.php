@@ -1561,7 +1561,22 @@ function dse_file_add_line_if_not($filename,$Str,$LineNumber=0,$ShowCommand=FALS
 	}
 	$Now=dse_file_get_contents($filename);
 	if(!str_contains($Now,$Str)){
-		return dse_file_put_contents($filename,$Now."\n".$Str);
+		if($LineNumber==0){
+			return dse_file_put_contents($filename,$Now."\n".$Str);
+		}else{
+			$tbr="";
+			foreach(split("\n",$Now) as $Li=>$L){
+				if($Li==$LineNumber){
+					$Added=TRUE;
+					$tbr.="$Str\n";
+				}
+				$tbr.="$L\n";
+			}
+			if(!$Added){
+				$tbr.="$Str\n";
+			}
+			return $tbr;
+		}
 	}
 }
 
