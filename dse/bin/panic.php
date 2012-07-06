@@ -288,13 +288,13 @@ function dse_panic_system_stats(){
 		}else{
 			$IdleAverage=0;
 		}
-		if($IdleAverage<10){
-			print colorize(" CPU use VERY HIGH ","white","red",TRUE,5);
-		}elseif($IdleAverage<30){
-			print colorize(" CPU use HIGH ","white","red",TRUE,1);
+		if($IdleAverage<20){
+			print colorize(" CPU use VERY HIGH Avg:$IdleAverage% Idle ","white","red",TRUE,5);
+		}elseif($IdleAverage<40){
+			print colorize(" CPU use HIGH Avg:$IdleAverage% Idle ","white","red",TRUE,1);
 		}else{
 			
-			print colorize(" OK! ","white","green",TRUE,1);
+			print colorize(" OK! Avg:$IdleAverage% Idle ","white","green",TRUE,1);
 		}
 		print "\n$CPUBars";
 	}
