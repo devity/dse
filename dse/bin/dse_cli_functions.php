@@ -1974,7 +1974,7 @@ function unk_time($TimeAndDateString){
 	elseif( preg_match ("/^[0-9]{6} [0-9]{1,2}:[0-9]{2}:[0-9]{2} /" , $TimeAndDateString, $matches) >0 ){
 		dpv(5,"preg_match 10c \n");
 		$TimeAndDateString=strcut($TimeAndDateString,"",": ");
-		$len=15; $format = '%y%D%B %H:%M:%S';
+		$len=15; $format = '%y%m%d %H:%M:%S';
 	}//120705 21:14:43
 	
 	elseif( str_contains ( $TimeAndDateString, " - - [") >0 ){

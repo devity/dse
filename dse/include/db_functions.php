@@ -132,22 +132,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					$IsOK=TRUE;
 					$ErrorMsg="";
 				
-					$TCa=dse_table_check($DB,$T);
-					if($TCa['MsgText']!="OK"){
-						$IsOK=FALSE;
-						$ErrorMsg.= colorize("CHECK $DB.$T => ".$TCa['MsgText'],"white","red",TRUE,1);
-					} 
-					/*	
 					
-					$TAa=dse_table_analyze($DB,$T);
-					if($TAa['MsgText']=="Table is already up to date" || $TAa['MsgText']=="OK"){
-					}else{
-						$IsOK=FALSE;
-						if($ErrorMsg) $ErrorMsg.="\n";
-						$ErrorMsg.= colorize("ANALYZE $DB.$T => ".$TAa['MsgText'],"white","red",TRUE,1);
-					}
-				
-					*/
 					
 					$TSa=dse_table_status_array($DB,$T);
 					$Rows=$TSa['Rows'];
@@ -182,13 +167,37 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					}
 					
 					
+					if($TSa['Engine']!="CSV"){
+						$TCa=dse_table_check($DB,$T);
+						if($TCa['MsgText']!="OK"){
+							$IsOK=FALSE;
+							$ErrorMsg.= colorize("CHECK $DB.$T => ".$TCa['MsgText'],"white","red",TRUE,1);
+						} 
+						/*	
+						
+						$TAa=dse_table_analyze($DB,$T);
+						if($TAa['MsgText']=="Table is already up to date" || $TAa['MsgText']=="OK"){
+						}else{
+							$IsOK=FALSE;
+							if($ErrorMsg) $ErrorMsg.="\n";
+							$ErrorMsg.= colorize("ANALYZE $DB.$T => ".$TAa['MsgText'],"white","red",TRUE,1);
+						}
+					
+						*/
+					}
+					
 					print " $Engine {$Rows}k rows ${Size} Mb    "; 
 					
-					if($IsOK){
-						print colorize("  OK!  ","white","green",TRUE,1);
+					if($TSa['Engine']!="CSV"){
+						print colorize("  ???  ","red","yellow",TRUE,1);
 					}else{
-						print colorize("  BAD  ","white","red",TRUE,1);
-					}
+						if($IsOK){
+							print colorize("  OK!  ","white","green",TRUE,1);
+						}else{
+							print colorize("  BAD  ","white","red",TRUE,1);
+						}
+					}	
+					
 					print "\n";
 					
 					
