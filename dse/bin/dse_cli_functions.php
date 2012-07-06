@@ -3918,7 +3918,11 @@ function dse_ports_open($Colorize=FALSE){
 			if($tbr) $tbr.=" ";
 			$PortName=dse_port_name($p);
 			if($Colorize){
-				$tbr.= colorize($exe,"cyan").colorize(":","yellow").colorize($PortName,"green");
+				if($exe!=$PortName){
+					$tbr.= colorize($exe,"cyan").colorize(":","yellow").colorize($PortName,"green");
+				}else{
+					$tbr.= colorize($PortName,"green");
+				}
 			}else{
 				$tbr.= "$exe:$PortName";
 			}

@@ -252,16 +252,25 @@ $vars['DSE']['SERVICE_PORTS'][80]="http";
 $vars['DSE']['SERVICE_PORTS'][143]="imap";
 $vars['DSE']['SERVICE_PORTS'][443]="https";
 $vars['DSE']['SERVICE_PORTS'][465]="smtpssl";
+$vars['DSE']['SERVICE_PORTS'][548]="afp";
 $vars['DSE']['SERVICE_PORTS'][587]="smtpstarttls";
+$vars['DSE']['SERVICE_PORTS'][631]="cups";
 $vars['DSE']['SERVICE_PORTS'][783]="spamassassin";
+$vars['DSE']['SERVICE_PORTS'][953]="rndc";
 $vars['DSE']['SERVICE_PORTS'][993]="imapssl";
 $vars['DSE']['SERVICE_PORTS'][995]="pop3ssl";
 $vars['DSE']['SERVICE_PORTS'][3000]="ntop";
+$vars['DSE']['SERVICE_PORTS'][3306]="mysql";
+$vars['DSE']['SERVICE_PORTS'][4700]="netxms";
 $vars['DSE']['SERVICE_PORTS'][5900]="vnc";
 $vars['DSE']['SERVICE_PORTS'][6000]="vnc_2";
 $vars['DSE']['SERVICE_PORTS'][7907]="dwi";
+$vars['DSE']['SERVICE_PORTS'][8123]="polipo";
+$vars['DSE']['SERVICE_PORTS'][9050]="tor";
 $vars['DSE']['SERVICE_PORTS'][9980]="aptana";
 $vars['DSE']['SERVICE_PORTS'][10000]="crowbar";
+$vars['DSE']['SERVICE_PORTS'][11211]="memcached";
+$vars['DSE']['SERVICE_PORTS'][12865]="netserver";
 
 
 //polipo
