@@ -101,11 +101,12 @@ function dse_database_check_all(){
 					print pad("",$PadSize);
 					
 					$IsOK=TRUE;
+					$ErrorMsg="";
 					
 					$TCa=dse_table_check($DB,$T);
 					if($TCa['MsgText']!="OK"){
 						$IsOK=FALSE;
-						print colorize("CHECK $DB.$T => ".$TCa['MsgText'],"white","red",TRUE,1);
+						$ErrorMsg.= colorize("CHECK $DB.$T => ".$TCa['MsgText'],"white","red",TRUE,1);
 					} 
 					
 					
@@ -113,7 +114,8 @@ function dse_database_check_all(){
 					if($TAa['MsgText']=="Table is already up to date" || $TAa['MsgText']=="OK"){
 					}else{
 						$IsOK=FALSE;
-						print colorize("ANALYZE $DB.$T => ".$TAa['MsgText'],"white","red",TRUE,1);
+						if($ErrorMsg) $ErrorMsg.="\n";
+						$ErrorMsg.= colorize("ANALYZE $DB.$T => ".$TAa['MsgText'],"white","red",TRUE,1);
 					}
 				
 					if($IsOK){
@@ -130,6 +132,9 @@ function dse_database_check_all(){
 					$Rows=pad($Rows,11);
 					$Size=pad($Size,15);
 					print "  $Engine   Rows: $Rows   Size: $Size b  \n";
+					if($ErrorMsg){
+						print $ErrorMsg."\n";
+					}
 				}
 			}
 		}
