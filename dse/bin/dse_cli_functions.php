@@ -440,7 +440,7 @@ function dse_replace_in_file($File,$Needle,$Replacement){
 }
 
 			
-function progress_bar($Percent="time",$Width=60){
+function progress_bar($Percent="time",$Width=60,$Note=""){
 	global $vars; dse_trace();
 	global $Rainbow,$RainbowSize;
 	//print "progress_bar()\n";
@@ -519,9 +519,10 @@ function progress_bar($Percent="time",$Width=60){
 			$tt=0;
 			$vars[pr_bar__start_time]=time();
 		}
-		$RunTimeStr=" ".seconds_to_text($tt)." of Unkown Time ";
+		$RunTimeStr=" ".seconds_to_text($tt)."  ";
 		$Percent=50;
 	}
+	if($Note) $RunTimeStr.=" | ".$Note;
 	$GreenPortion=pad($RunTimeStr,intval($Width*($Percent/100))," ");
 	$GreenPortion2=$RainbowBar;//pad("",intval($Width*($Percent/100)),"*");
 	$RedPortion=pad("",intval($Width*((100-$Percent)/100)),"*");

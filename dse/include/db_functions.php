@@ -120,8 +120,8 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 			$Ta=dse_table_list_array($DB);
 			foreach($Ta as $T){
 				if($T){
-					
-					progress_bar();
+					$TablesChecked++;
+					progress_bar(" $TablesChecked checked");
 					print colorize(" $DB","red","black",TRUE,1);
 					print colorize(".","green","black");
 					print colorize($T,"magenta","black",TRUE,1);
@@ -168,6 +168,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					
 					
 					if($TSa['Engine']!="CSV"){
+						progress_bar(" $TablesChecked checked");
 						$TCa=dse_table_check($DB,$T);
 						if($TCa['MsgText']!="OK"){
 							$IsOK=FALSE;
@@ -175,6 +176,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 						} 
 						/*	
 						
+						progress_bar(" $TablesChecked checked");
 						$TAa=dse_table_analyze($DB,$T);
 						if($TAa['MsgText']=="Table is already up to date" || $TAa['MsgText']=="OK"){
 						}else{
@@ -206,6 +208,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					}
 					
 					if(!$IsOK && $DoRepair){
+						progress_bar(" $TablesChecked checked");
 						dse_table_repair($DB,$T);
 					}
 					if($DoOptimize){
