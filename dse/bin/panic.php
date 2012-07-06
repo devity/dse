@@ -300,7 +300,9 @@ function dse_panic_hd($Interactive=FALSE){
 					$lss=sizeof($lsa);
 					if($lss>$lss_last){
 						for($i=$lss_last;$i<$lss;$i++){
-							//print $lsa[$i]."\n";
+							$SizeStr=dse_exec("/dse/bin/dsizeof ".$lsa[$i]);
+							$SizeStr=intval($SizeStr/1000000);
+							print $lsa[$i]."   ".pad($SizeStr,8," ","right")." MB\n";
 						}
 					}
 					
@@ -314,7 +316,7 @@ function dse_panic_hd($Interactive=FALSE){
 				//print "\n$ls";
 				$lsa_last=$lsa; $lss_last=$lss;
 				
-				progress_bar("time");
+				progress_bar("time",60,"Found $lss files");
 			}
 			
 			
