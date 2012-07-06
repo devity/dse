@@ -72,32 +72,34 @@ function dse_database_check_all(){
 		if($DB){
 			print colorize("Checking Database ","green","black");
 			print colorize($DB,"red","black",TRUE,1);
-			print colorize(":\n","green","black");
+			print colorize("...\n","green","black");
 			$Ta=dse_table_list_array($DB);
 			foreach($Ta as $T){
 				if($T){
-					print colorize("Checking Table ","green","black");
-					print colorize($T,"red","black",TRUE,1);
-					print colorize(":\n","green","black");
+					print colorize(" Checking Table ","green","black");
+					print colorize($DB,"red","black",TRUE,1);
+					print colorize(".","green","black");
+					print colorize($T,"magenta","black",TRUE,1);
+					print colorize(":  ","green","black");
 					
-					/*print colorize("CHECK Table $T:\n","green","black");
-					$r=dse_exec("echo \"USE $DB;\n CHECK TABLE $T EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
-					print colorize($r,"yellow","black");
+					$IsOK=TRUE;
 					
-					print colorize("ANALYZE Table $T:\n","green","black");
-					$r=dse_exec("echo \"USE $DB;\n ANALYZE TABLE $T;\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
-					print colorize($r,"yellow","black");*/
 					$TCa=dse_table_check($DB,$T);
 					if($TCa['MsgText']!="OK"){
+						$IsOK=FALSE;
 						print "CHECK $DB.$T => ".$TCa['MsgText']."\n";
 					} 
 					
 					
 					$TAa=dse_table_analyze($DB,$T);
+					$IsOK=FALSE;
 					if($TAa['MsgText']!="Table is already up to date"){
 						print "ANALYZE $DB.$T => ".$TAa['MsgText']."\n";
 					}
 				
+					if($IsOK){
+						print colorize("OK\n","green","black",TRUE,1);
+					}
 				}
 			}
 		}
