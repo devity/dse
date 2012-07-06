@@ -40,7 +40,7 @@ function dse_table_check($Database,$Table){
 function dse_table_analyze($Database,$Table){
 	global $vars; dse_trace();
 	//print colorize("CHECK Table $T:\n","green","black");
-	$r=dse_exec("echo \"USE $Database;\n CHECK ANALYZE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
+	$r=dse_exec("echo \"USE $Database;\n ANALYZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
 	/*$r=strcut($r,"\n");
 	$tbr=array();
 	$ra=split("\n",$r);
