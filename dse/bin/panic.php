@@ -283,7 +283,7 @@ function dse_panic_hd($Interactive=FALSE){
 		
 			//print "aaaa";
 			`rm /tmp/ls.out`;
-			$c="find / -type f -size +30000k -exec ls -l {} >>/tmp/ls.out \; 2>/dev/null &";
+			$c="find / -type f -size +30000k -exec echo {} >>/tmp/ls.out \; 2>/dev/null &";
 			print `$c`;
 			//print "bbbb";
 			$FindPID=`/dse/bin/grep2pid "find"`;
