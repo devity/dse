@@ -89,15 +89,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 	case 'o':
   	case 'open-ports':
-		$r=`/dse/bin/dnetstat -o`;
-		foreach(split(" ",$r) as $ep){
-			list($exe,$p)=split(":",$ep);
-			if($exe){
-				$service=$vars['DSE']['SERVICE_PORTS'][$p];
-				print colorize($service,"cyan").colorize(":","yellow").colorize($p,"green")." "; //$exe
-			}
-		}
-		print "\n";
+		print dse_ports_open($Colorize);
 		exit(0);
 	case 's':
   	case 'services-set':

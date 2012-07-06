@@ -3886,6 +3886,39 @@ function http_lynx_get($URL){
 }
  
 
+function dse_service_name_from_common_name($service){
+	global $vars; dse_trace();
+	if(@key_exists($service, $vars['DSE']['SERVICE_NICKNAMES'])){
+		return $vars['DSE']['SERVICE_NICKNAMES'][$service];
+	}
+	return $service;
+}
+function dse_port_number($port_name){
+	global $vars; dse_trace();
+	foreach($vars['DSE']['SERVICE_PORTS'] as $Port=>$Name){
+		if($Name==$port_name) return $Port;
+	}
+	return $port_name;
+}
+
+function dse_ports_open($Colorize=FALSE){
+	global $vars; dse_trace();
+	$tbr="";
+	$r=dse_exec("/dse/bin/dnetstat -o");
+	foreach(split(" ",$r) as $ep){
+		list($exe,$p)=split(":",$ep);
+		if($exe){
+			if($tbr) $tbr.=" ";
+			$PortName=dse_port_name($p);
+			if($Colorize){
+				$tbr.= colorize($exe,"cyan").colorize(":","yellow").colorize($PortName,"green");
+			}else{
+				$tbr.= "$exe:$PortName";
+			}
+		}
+	}
+	return $tbr;
+}
 if($vars['Verbosity']>5) print "dse_cli_functions.php: Done!\n";
 
 ?>

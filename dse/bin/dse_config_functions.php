@@ -1439,20 +1439,6 @@ function dse_configure_directories_create(){
 	}
 }
 
-function dse_service_name_from_common_name($service){
-	global $vars; dse_trace();
-	if(@key_exists($service, $vars['DSE']['SERVICE_NICKNAMES'])){
-		return $vars['DSE']['SERVICE_NICKNAMES'][$service];
-	}
-	return $service;
-}
-function dse_port_number($port_name){
-	global $vars; dse_trace();
-	foreach($vars['DSE']['SERVICE_PORTS'] as $Port=>$Name){
-		if($Name==$port_name) return $Port;
-	}
-	return $port_name;
-}
 function dse_service_restart($service){
 	global $vars; dse_trace();
 	dse_service_stop($service);
