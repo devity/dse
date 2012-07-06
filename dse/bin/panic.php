@@ -291,12 +291,12 @@ function dse_panic_system_stats(){
 		if($IdleAverage<10){
 			print colorize(" CPU use VERY HIGH ia=$IdleAverage ","white","red",TRUE,5);
 		}elseif($IdleAverage<30){
-			print colorize(" CPU use HIGH ","white","red",TRUE,1);
+			print colorize(" CPU use HIGH ia=$IdleAverage  ","white","red",TRUE,1);
 		}else{
-			print colorize(" OK! ","white","green",TRUE,1);
+			print colorize(" OK! ia=$IdleAverage  ","white","green",TRUE,1);
 		}
-		print "\n$CPUBars\n";
-	}else{
+		print "\n$CPUBars";
+	}
 		$Load=get_load();
 		if($Load>10){
 			print colorize(" Load VERY HIGH ( $Load ) ","white","red",TRUE,5);
@@ -305,7 +305,7 @@ function dse_panic_system_stats(){
 		}else{
 			print colorize(" Load OK! ($Load ) ","white","green",TRUE,1);
 		} 
-	}
+	
 	print "\n";
 	
 	
