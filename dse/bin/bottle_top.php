@@ -303,6 +303,7 @@ function update_display($keys=""){
 	//global $c,$t,$tt,$st,$Key,$FoundKeys,$file_scan_last,$file_keys_found,$i1,$i2,$i3,$i4,$ScanContinue,$NoDiplayYet;
 	global $vars,$Loops;
 	global $diskstats_lasttime,$section_httpd;
+	$H=cbp_get_screen_height();
 	
 	if($keys){
 		 print "keys=$keys\n"; 
@@ -317,191 +318,193 @@ function update_display($keys=""){
 		 	
 	}
 	
-		if($vars['Verbosity']>3) print "dse_sysstats_mysql_processlist()\n";
-		$dse_sysstats_mysql_processlist_array=dse_sysstats_mysql_processlist();
-		$section_mysql_processes= $dse_sysstats_mysql_processlist_array[3];
-		
+	$vars[dse_sysstats_mysql_processlist__limit]=intval($H/4);
+
+	if($vars['Verbosity']>3) print "dse_sysstats_mysql_processlist()\n";
+	$dse_sysstats_mysql_processlist_array=dse_sysstats_mysql_processlist();
+	$section_mysql_processes= $dse_sysstats_mysql_processlist_array[3];
 	
-		if($vars['Verbosity']>3) print "dse_sysstats_mysql_status()\n";
-		$dse_sysstats_mysql_status_array=dse_sysstats_mysql_status();
-		$section_mysql_stats=$dse_sysstats_mysql_status_array[3];
-		
+
+	if($vars['Verbosity']>3) print "dse_sysstats_mysql_status()\n";
+	$dse_sysstats_mysql_status_array=dse_sysstats_mysql_status();
+	$section_mysql_stats=$dse_sysstats_mysql_status_array[3];
 	
-		/*global $section_files_open;
-		if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) && ($Loops%5)==0 ){
-			print "dse_sysstats_files_open()\n";
-			$dse_sysstats_files_open_array=dse_sysstats_files_open();
-			$section_files_open=$dse_sysstats_files_open_array[2];
-		}*/
-		
-		/*
-		global $section_procio;
-		if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) && ($Loops%5)==0 ){
-			print "dse_sysstats_proc_io()\n";
-			$dse_sysstats_proc_io_array=dse_sysstats_proc_io();
-			$section_procio=$dse_sysstats_proc_io_array[1];
-		}*/
-			
-		global $section_net_listening;
-		if(($Loops%5)==0 ){
-			if($vars['Verbosity']>3) print "dse_sysstats_net_listening()\n";
-			//$dse_sysstats_net_listening_array=dse_sysstats_net_listening();
-			//$section_net_listening="Ports Listening: ".$dse_sysstats_net_listening_array[3];
-			$section_net_listening=colorize("Ports: ","cyan","black").dse_exec("/dse/bin/dsc -oc");
-		}	
-			
-			
-		// *****************************************************************************************************************
-		// *********************************************** MEMORY MEMORY MEMORY MEMORY *************************************
-		// *****************************************************************************************************************
+
+	/*global $section_files_open;
+	if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) && ($Loops%5)==0 ){
+		print "dse_sysstats_files_open()\n";
+		$dse_sysstats_files_open_array=dse_sysstats_files_open();
+		$section_files_open=$dse_sysstats_files_open_array[2];
+	}*/
 	
 	/*
-		if($vars['Verbosity']>3) print "section_memory()\n";
-		$section_memory="";
-		$section_cpu="";
-		$unit_size=1024*1024;
-		$o=`vmstat -a -S M 1 2`;
-		$o=str_replace("  ", " ", $o);
-		$o=str_replace("  ", " ", $o);
-		$o=str_replace("  ", " ", $o);
-		$oda=str_replace("  ", " ", $o);
-		$odaa=split("\n",$oda);
-		$oda=$odaa[3];
-		$odaa=split(" ",$oda);
+	global $section_procio;
+	if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) && ($Loops%5)==0 ){
+		print "dse_sysstats_proc_io()\n";
+		$dse_sysstats_proc_io_array=dse_sysstats_proc_io();
+		$section_procio=$dse_sysstats_proc_io_array[1];
+	}*/
+		
+	global $section_net_listening;
+	if(($Loops%5)==0 ){
+		if($vars['Verbosity']>3) print "dse_sysstats_net_listening()\n";
+		//$dse_sysstats_net_listening_array=dse_sysstats_net_listening();
+		//$section_net_listening="Ports Listening: ".$dse_sysstats_net_listening_array[3];
+		$section_net_listening=colorize("Ports: ","cyan","black").dse_exec("/dse/bin/dsc -oc");
+	}	
 		
 		
-		$o=`vmstat -S M 1 2`;
-		$o=str_replace("  ", " ", $o);
-		$o=str_replace("  ", " ", $o);
-		$o=str_replace("  ", " ", $o);
-		$o=str_replace("  ", " ", $o);
-		$oa=split("\n",$o);
-		$o=$oa[3];
-		$oa=split(" ",$o);
-		
-		$fo=`free -m`;
-		$fo=str_replace("  ", " ", $fo);
-		$fo=str_replace("  ", " ", $fo);
-		$fo=str_replace("  ", " ", $fo);
-		$fo=str_replace("  ", " ", $fo);
-		$foa=split("\n",$fo);
-		$fo=$foa[1];
-		$fo1a=split(" ",$fo);
-		$fo=$foa[2];
-		$fo2a=split(" ",$fo);
-		$fo=$foa[3];
-		$fo3a=split(" ",$fo);
-		
-		$free_Mem_Total=$fo1a[1];
-		$free_Mem_Used=$fo1a[2];
-		$free_Mem_Free=$fo1a[3];
-		$free_Mem_Shared=$fo1a[4];
-		$free_Mem_Buffers=$fo1a[5];
-		$free_Mem_Cached=$fo1a[6];
-		$free_BC_Total=$fo2a[1];
-		$free_BC_Used=$fo2a[2];
-		$free_BC_Free=$fo2a[3];
-		$free_Swap_Total=$fo3a[1];
-		$free_Swap_Used=$fo3a[2];
-		$free_Swap_Free=$fo3a[3];
-		
-		$Mem=array();
-		$Mem[TotalPhysical]=$free_Mem_Total;
-		$Mem[TotalAvailable]=$free_BC_Free;
-		$Mem[TotalFeee]=$free_Mem_Free;
-		$Mem[TotalUsed]=$Mem[TotalPhysical]-$Mem[TotalAvailable];
-		$Mem[Swap]=$free_Swap_Used;
-		
-	//	print debug_tostring($odaa );
-		//print "<br>odaa[5]=".$odaa[5]."\n";
-		$Mr=$oa[1];
-		$Mb=$oa[2];
-		$MSwap=$oa[3];
-		$MFree=$oa[4];
-		$MBuff=$oa[5];
-		$MCache=$oa[6];
-		$MInactive=$odaa[5];
-		$MActive=$odaa[6];
-		$Ssi=$oa[7];
-		$Sso=$oa[8];
-		$IObi=$oa[9];
-		$IObo=$oa[10];
-		$SYin=$oa[11];
-		$SYcs=$oa[12];
-		$MTotal=4096;
-		$MUsed=$MTotal-$MFree;
-		
-		
-		
-		$MAvailablePercent=number_format(($Mem[TotalAvailable]/$Mem[TotalPhysical])*100,2);
-		$MAvailablePercent_str=dse_bt_colorize($MAvailablePercent,60);
-		
-		$MUsedPercent=number_format(($Mem[TotalUsed]/$Mem[TotalPhysical])*100,2);
-		$MUsedPercent_str=dse_bt_colorize($MUsedPercent,50);
-		
-		$MFreePercent=number_format(($Mem[TotalFeee]/$Mem[TotalPhysical])*100,2);
-		$MFreePercent_str=dse_bt_colorize($MFreePercent,20,"MINIMUM");
-		
-		$Mr_str=dse_bt_colorize($Mr,2);
-		$Mb_str=dse_bt_colorize($Mb,2);
-		$Mem[Swap]=dse_bt_colorize($Mem[Swap],257);
-		
-		
-		//."	MInactive=$MInactive MActive=$MActive MFree=$MFree MBuff=$MBuff MCache=$MCache MSwap=$MSwap \n
-		//free_BC_Used=$free_BC_Used free_BC_Free=$free_BC_Free
-		*/
-		
-		//print $section_memory."\n";
-		//exit;
-		// *****************************************************************************************************************
-		// *********************************************** CPU CPU CPU CPU CPU**********************************************
-		// *****************************************************************************************************************
-	/*	
+	// *****************************************************************************************************************
+	// *********************************************** MEMORY MEMORY MEMORY MEMORY *************************************
+	// *****************************************************************************************************************
 
-		if($vars['Verbosity']>3) print "section_cpu()\n";
-		$CpuIdle=$oa[15];
-		$CpuUser=$oa[13];
-		$CpuSys=$oa[14];
-		$CpuUsePercent=$CpuSys+$CpuUser;
-		
-		$CpuUser_str=dse_bt_colorize($CpuUser,40);
-		$CpuSys_str=dse_bt_colorize($CpuSys,40);
-		$CpuIdle_str=dse_bt_colorize($CpuIdle,40,"MINIMUM");
-		
-		
-		$this_loadavg=`cat /proc/loadavg`;
-		if($this_loadavg!=""){
-			$this_loadavg=str_replace("  ", " ", $this_loadavg); 
-			$this_loadavg=str_replace("  ", " ", $this_loadavg); 
-			$this_loadavg=str_replace("  ", " ", $this_loadavg); 
-			$loadaggA=split(" ",$this_loadavg);
-			$load_1=number_format($loadaggA[0],2);
-			$load_2=number_format($loadaggA[1],2);
-			$load_3=number_format($loadaggA[2],2);
-			$threads=$loadaggA[3];
-			$threadsa=split("/",$threads);
-			$threads_running=$threadsa[0];
-			$threads_total=$threadsa[1];
-			$threads_running=dse_bt_colorize($threads_running,2.001);
-			$threads_str="$threads_running/$threads_total";
-			$last_pid=$loadaggA[4];
-		}
-		//Load: $load_1_str:$load_2:$load_3    Threads:$threads_str  
-		//$load_1_str=dse_bt_colorize($load_1,2.001);
-
-		$section_cpu.= " Sys:$CpuSys_str%  User:$CpuSys_str%  Idle:$CpuIdle_str%  r:$Mr_str b:$Mb_str  ";
-		
-		
-		$section_cpu.= "Used: $Mem[TotalUsed]MB ($MUsedPercent_str%)".
-		   "  Avail: $Mem[TotalAvailable]MB".
-		   "  Free: $Mem[TotalFeee]MB ($MFreePercent_str%)".
-		   "  SwapUsed: $Mem[Swap]MB".
-		   "\n";
-		
-	*/	
-		$section_processes="";
-		$section_processes.=colorize("System Processes: \n","cyan","black") . `ps aux | sort -nr -k 3 | grep -v COMMAND | head -20`;		
+/*
+	if($vars['Verbosity']>3) print "section_memory()\n";
+	$section_memory="";
+	$section_cpu="";
+	$unit_size=1024*1024;
+	$o=`vmstat -a -S M 1 2`;
+	$o=str_replace("  ", " ", $o);
+	$o=str_replace("  ", " ", $o);
+	$o=str_replace("  ", " ", $o);
+	$oda=str_replace("  ", " ", $o);
+	$odaa=split("\n",$oda);
+	$oda=$odaa[3];
+	$odaa=split(" ",$oda);
 	
+	
+	$o=`vmstat -S M 1 2`;
+	$o=str_replace("  ", " ", $o);
+	$o=str_replace("  ", " ", $o);
+	$o=str_replace("  ", " ", $o);
+	$o=str_replace("  ", " ", $o);
+	$oa=split("\n",$o);
+	$o=$oa[3];
+	$oa=split(" ",$o);
+	
+	$fo=`free -m`;
+	$fo=str_replace("  ", " ", $fo);
+	$fo=str_replace("  ", " ", $fo);
+	$fo=str_replace("  ", " ", $fo);
+	$fo=str_replace("  ", " ", $fo);
+	$foa=split("\n",$fo);
+	$fo=$foa[1];
+	$fo1a=split(" ",$fo);
+	$fo=$foa[2];
+	$fo2a=split(" ",$fo);
+	$fo=$foa[3];
+	$fo3a=split(" ",$fo);
+	
+	$free_Mem_Total=$fo1a[1];
+	$free_Mem_Used=$fo1a[2];
+	$free_Mem_Free=$fo1a[3];
+	$free_Mem_Shared=$fo1a[4];
+	$free_Mem_Buffers=$fo1a[5];
+	$free_Mem_Cached=$fo1a[6];
+	$free_BC_Total=$fo2a[1];
+	$free_BC_Used=$fo2a[2];
+	$free_BC_Free=$fo2a[3];
+	$free_Swap_Total=$fo3a[1];
+	$free_Swap_Used=$fo3a[2];
+	$free_Swap_Free=$fo3a[3];
+	
+	$Mem=array();
+	$Mem[TotalPhysical]=$free_Mem_Total;
+	$Mem[TotalAvailable]=$free_BC_Free;
+	$Mem[TotalFeee]=$free_Mem_Free;
+	$Mem[TotalUsed]=$Mem[TotalPhysical]-$Mem[TotalAvailable];
+	$Mem[Swap]=$free_Swap_Used;
+	
+//	print debug_tostring($odaa );
+	//print "<br>odaa[5]=".$odaa[5]."\n";
+	$Mr=$oa[1];
+	$Mb=$oa[2];
+	$MSwap=$oa[3];
+	$MFree=$oa[4];
+	$MBuff=$oa[5];
+	$MCache=$oa[6];
+	$MInactive=$odaa[5];
+	$MActive=$odaa[6];
+	$Ssi=$oa[7];
+	$Sso=$oa[8];
+	$IObi=$oa[9];
+	$IObo=$oa[10];
+	$SYin=$oa[11];
+	$SYcs=$oa[12];
+	$MTotal=4096;
+	$MUsed=$MTotal-$MFree;
+	
+	
+	
+	$MAvailablePercent=number_format(($Mem[TotalAvailable]/$Mem[TotalPhysical])*100,2);
+	$MAvailablePercent_str=dse_bt_colorize($MAvailablePercent,60);
+	
+	$MUsedPercent=number_format(($Mem[TotalUsed]/$Mem[TotalPhysical])*100,2);
+	$MUsedPercent_str=dse_bt_colorize($MUsedPercent,50);
+	
+	$MFreePercent=number_format(($Mem[TotalFeee]/$Mem[TotalPhysical])*100,2);
+	$MFreePercent_str=dse_bt_colorize($MFreePercent,20,"MINIMUM");
+	
+	$Mr_str=dse_bt_colorize($Mr,2);
+	$Mb_str=dse_bt_colorize($Mb,2);
+	$Mem[Swap]=dse_bt_colorize($Mem[Swap],257);
+	
+	
+	//."	MInactive=$MInactive MActive=$MActive MFree=$MFree MBuff=$MBuff MCache=$MCache MSwap=$MSwap \n
+	//free_BC_Used=$free_BC_Used free_BC_Free=$free_BC_Free
+	*/
+	
+	//print $section_memory."\n";
+	//exit;
+	// *****************************************************************************************************************
+	// *********************************************** CPU CPU CPU CPU CPU**********************************************
+	// *****************************************************************************************************************
+/*	
+
+	if($vars['Verbosity']>3) print "section_cpu()\n";
+	$CpuIdle=$oa[15];
+	$CpuUser=$oa[13];
+	$CpuSys=$oa[14];
+	$CpuUsePercent=$CpuSys+$CpuUser;
+	
+	$CpuUser_str=dse_bt_colorize($CpuUser,40);
+	$CpuSys_str=dse_bt_colorize($CpuSys,40);
+	$CpuIdle_str=dse_bt_colorize($CpuIdle,40,"MINIMUM");
+	
+	
+	$this_loadavg=`cat /proc/loadavg`;
+	if($this_loadavg!=""){
+		$this_loadavg=str_replace("  ", " ", $this_loadavg); 
+		$this_loadavg=str_replace("  ", " ", $this_loadavg); 
+		$this_loadavg=str_replace("  ", " ", $this_loadavg); 
+		$loadaggA=split(" ",$this_loadavg);
+		$load_1=number_format($loadaggA[0],2);
+		$load_2=number_format($loadaggA[1],2);
+		$load_3=number_format($loadaggA[2],2);
+		$threads=$loadaggA[3];
+		$threadsa=split("/",$threads);
+		$threads_running=$threadsa[0];
+		$threads_total=$threadsa[1];
+		$threads_running=dse_bt_colorize($threads_running,2.001);
+		$threads_str="$threads_running/$threads_total";
+		$last_pid=$loadaggA[4];
+	}
+	//Load: $load_1_str:$load_2:$load_3    Threads:$threads_str  
+	//$load_1_str=dse_bt_colorize($load_1,2.001);
+
+	$section_cpu.= " Sys:$CpuSys_str%  User:$CpuSys_str%  Idle:$CpuIdle_str%  r:$Mr_str b:$Mb_str  ";
+	
+	
+	$section_cpu.= "Used: $Mem[TotalUsed]MB ($MUsedPercent_str%)".
+	   "  Avail: $Mem[TotalAvailable]MB".
+	   "  Free: $Mem[TotalFeee]MB ($MFreePercent_str%)".
+	   "  SwapUsed: $Mem[Swap]MB".
+	   "\n";
+	
+*/	
+	$section_processes="";
+	$section_processes.=colorize("System Processes: \n","cyan","black") . `ps aux | sort -nr -k 3 | grep -v COMMAND | head -20`;		
+
 	/*
 		$Start
 		$DateStr=date("d/M/Y:H:i",$Start);

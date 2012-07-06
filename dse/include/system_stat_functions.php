@@ -596,6 +596,7 @@ function dse_sysstats_mysql_processlist(){
 		
 		$tsa=split("\t",$mysql_processes_line);
 		if(intval($tsa[0])>0){
+			$Found++;
 		//	$ssa=split(" ",$mysql_processes_line);
 			//print "ssa="; print_r($ssa); print "\n";
 			//print "tsa="; print_r($tsa); print "\n";
@@ -612,9 +613,11 @@ function dse_sysstats_mysql_processlist(){
 			$Command=substr($Command,0,100);
             $Info=substr($Info,0,100);
 			$tsa[8]=$Command;				
-							
-			$mysql_processes_array[]=$tsa;
-			$mysql_processes.= "$User $DB $State $Command $Info\n";
+			if(!$vars[dse_sysstats_mysql_processlist__limit] || $Found<$vars[dse_sysstats_mysql_processlist__limit]){
+				$mysql_processes_array[]=$tsa;
+				$mysql_processes.= "$User $DB $State $Command $Info\n";
+		
+			}
 		}
 	}
 	
