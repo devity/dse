@@ -97,20 +97,23 @@ function dse_table_analyze($Database,$Table){
 function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 	global $vars; dse_trace();
 	$DBa=dse_database_list_array();
+	$W=cbp_get_screen_width();
+	$cbp_get_screen_width=intval($W*(2/5));
+	if($cbp_get_screen_width<55){
+		$cbp_get_screen_width=55;
+	}
 	foreach($DBa as $DB){
 		if($DB && $DB!="information_schema"){
 			
-			print bar("Checking Database $DB: ","v","white","blue","black","blue");
+			print bar("Checking Database $DB: ","V","white","blue","cyan","blue");
 			$Ta=dse_table_list_array($DB);
 			foreach($Ta as $T){
 				if($T){
-					print colorize(" Checking Table ","green","black");
-					print colorize($DB,"red","black",TRUE,1);
+					print colorize(" $DB","red","black",TRUE,1);
 					print colorize(".","green","black");
 					print colorize($T,"magenta","black",TRUE,1);
-					print colorize(":  ","green","black");
 					
-					$PadSize=45-(strlen($DB)+strlen($T)+3);
+					$PadSize=$TableNameWidth-(strlen($DB)+strlen($T)+2);
 					print pad("",$PadSize);
 					
 					$IsOK=TRUE;
@@ -142,7 +145,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					$Engine=pad($Engine,10," ","center");
 					$Engine=colorize($Engine,"yellow","black");
 					
-					$Rows=pad(intval($Rows/1000)."k",6," ","right");
+					$Rows=pad(intval($Rows/1000),6," ","right");
 					if(     $TSa['Rows']>1500000){
 						$Rows=colorize($Rows,"red","black",TRUE,1);
 					}elseif($TSa['Rows']> 700000){
@@ -166,7 +169,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					}
 					
 					
-					print "   $Engine    $Rows rows   ${Size}Mb   "; 
+					print " $Engine {$Rows}k rows ${Size} Mb    "; 
 					
 					if($IsOK){
 						print colorize(" OK","green","black",TRUE,1);
