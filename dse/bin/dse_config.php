@@ -13,6 +13,7 @@ $vars['DSE']['DSE_MODIFIED_DATE']="2012/05/26";
  */
 $StartTime=time()+microtime(); $vars['StartTime']=$StartTime;
 $StartLoad=get_load(); $vars['StartLoad']=$StartLoad;
+$vars['Time']=time();
 
 // *********************************************************************************
 // ********* dse General/Global Settings

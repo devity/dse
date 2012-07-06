@@ -85,7 +85,7 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 					$StartTime=time()-(60*$MinutesBack);
 					if($Time>0){
 						$L=str_remove($L,$vars['unk_time__CutTimeAndDateString']." ");
-						$Ago=pad(seconds_to_text(time()-$Time),6);
+						$Ago=pad(seconds_to_text($vars[Time]-$Time),6);
 					}else{
 						$Ago="";
 					}
@@ -118,7 +118,7 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 //print "printing\n";
 //print_r($Intermingled);
 if($Intermingle && is_array($Intermingled)){
-	ksort($Intermingled); foreach($Intermingled as $i=>$L) print $i." ".$L;
+	ksort($Intermingled); foreach($Intermingled as $i=>$L) print $L;// print $i." ".$L;
 }else{
 	
 }
