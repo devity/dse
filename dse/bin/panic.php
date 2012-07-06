@@ -298,6 +298,7 @@ function dse_panic_hd($Interactive=FALSE){
 			$t=time();		
 			progress_bar("reset");
 			$lss_last=0;
+			$CachedFileSizes=array();
 			while(dse_pid_is_running($FindPID)>0){
 				//print "t$asf"; $asf++;
 				sleep(1);
@@ -312,7 +313,12 @@ function dse_panic_hd($Interactive=FALSE){
 					if($lss>0 ){
 						$lss--;
 						for($i=0;$i<$lss  ;$i++){
-							$SizeStr=dse_exec("/dse/bin/dsizeof ".$lsa[$i]);
+							if($CachedFileSizes[$lsa[$i]]){
+								$SizeStr=$CachedFileSizes[$lsa[$i]];
+							}else{
+								$SizeStr=dse_exec("/dse/bin/dsizeof ".$lsa[$i]);
+								$CachedFileSizes[$lsa[$i]]=$SizeStr;
+							}
 							$SizeStr=intval($SizeStr/1000000);
 							if($SizeStr>0){
 								//print "lss=$lss  ";
