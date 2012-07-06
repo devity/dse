@@ -283,17 +283,17 @@ function dse_panic_system_stats(){
 				$CPUBars.= "  ";
 			}
 		}
-		if($IdlePossible){
-			$IdleAverage=100-intval($Idle/$IdlePossible);
+		if($IdlePossible>0){
+			$IdleAverage=100-intval(($Idle/$IdlePossible)*100);
 		}else{
 			$IdleAverage=0;
 		}
 		if($IdleAverage<10){
-			print colorize(" CPU use VERY HIGH ia=$IdleAverage  $Idle/$IdlePossible","white","red",TRUE,5);
+			print colorize(" CPU use VERY HIGH ","white","red",TRUE,5);
 		}elseif($IdleAverage<30){
-			print colorize(" CPU use HIGH ia=$IdleAverage  $Idle/$IdlePossible","white","red",TRUE,1);
+			print colorize(" CPU use HIGH ","white","red",TRUE,1);
 		}else{
-			print colorize(" OK! ia=$IdleAverage  $Idle/$IdlePossible","white","green",TRUE,1);
+			print colorize(" OK! ","white","green",TRUE,1);
 		}
 		print "\n$CPUBars";
 	}
@@ -323,11 +323,11 @@ function dse_panic_system_stats(){
 	
 	
 	print colorize("Net: ");
-	$r=dse_exec("traceroute google.com 2>&1");
+	$r=dse_exec("traceroute yahoo.com 2>&1");
 	if(str_contains($r,"unknown host")){
 		print colorize(" DNS Down ","white","red",TRUE,5);
 	}elseif(str_contains($r,"!H")){
-		print colorize(" google.com Unreachable ","white","red",TRUE,5);
+		print colorize(" yahoo.com Unreachable ","white","red",TRUE,5);
 	}else{
 		
 		
