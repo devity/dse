@@ -97,7 +97,7 @@ function dse_database_check_all(){
 					print colorize($T,"magenta","black",TRUE,1);
 					print colorize(":  ","green","black");
 					
-					$PadSize=90-(strlen($DB)+strlen($T)+3);
+					$PadSize=60-(strlen($DB)+strlen($T)+3);
 					print pad("",$PadSize);
 					
 					$IsOK=TRUE;
@@ -126,11 +126,35 @@ function dse_database_check_all(){
 					$Rows=$TSa['Rows'];
 					$Engine=$TSa['Engine'];
 					$Avg_row_length=$TSa['Avg_row_length'];
-					$Size=$Avg_row_length*$Rows;
+					$Size_int=$Avg_row_length*$Rows;
 					
-					$Engine=pad($Engine,10);
-					$Rows=pad($Rows,11);
-					$Size=pad($Size,15);
+					$Engine=pad($Engine,10," ","center");
+					$Engine=colorize($Engine,"green","black");
+					
+					$Rows=pad($Rows,11," ","right");
+					if($TSa['Rows']>1500000){
+						$Rows=colorize($Rows,"red","black",TRUE,1);
+					}elseif($TSa['Rows']>700000){
+						$Rows=colorize($Rows,"yellow","black",TRUE,1);
+					}elseif($TSa['Rows']>100000){
+						$Rows=colorize($Rows,"green","black",TRUE,1);
+					}else{
+						$Rows=colorize($Rows,"blue","black",TRUE,1);
+					}
+					
+					$Size=pad($Size_int,15," ","right");
+					$Size=colorize($Size,"green","black");
+					if($Size_int>100000000){
+						$Size=colorize($Size,"red","black",TRUE,1);
+					}elseif($TSa['Rows']>10000000){
+						$Size=colorize($Size,"yellow","black",TRUE,1);
+					}elseif($TSa['Rows']>1000000){
+						$Size=colorize($Size,"green","black",TRUE,1);
+					}else{
+						$Size=colorize($Size,"blue","black",TRUE,1);
+					}
+					
+					
 					print "  $Engine   Rows: $Rows   Size: $Size b  \n";
 					if($ErrorMsg){
 						print $ErrorMsg."\n";
