@@ -351,7 +351,7 @@ function dse_exec_bg($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
 	}
 	$TmpFile=dse_tmp_file();
 	exec("$Command  > $TmpFile 2>&1 & echo $!" ,$op); 
-	print_r($op);
+	//print_r($op);
     $pid = (int)$op[0]; 
     $vars[dse_exec_bg_pid2tmp][$pid]=$TmpFile;
 	return $pid;
@@ -513,7 +513,12 @@ function progress_bar($Percent="time",$Width=60){
 	if($Percent=="reset"){
 		$vars[pr_bar__start_time]=time();
 	}elseif($Percent=="time"){
-		$RunTimeStr="*** ".seconds_to_text(time()-$vars[pr_bar__start_time])." of Unkown Time ";
+		if($vars[pr_bar__start_time]){
+			$tt=time()-$vars[pr_bar__start_time];
+		}else{
+			$ff=0;
+		}
+		$RunTimeStr="*** ".seconds_to_text($tt)." of Unkown Time ";
 		$Percent=55;
 	}
 	$GreenPortion=pad($RunTimeStr,intval($Width*($Percent/100)),"*");
