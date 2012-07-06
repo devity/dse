@@ -100,7 +100,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 	foreach($DBa as $DB){
 		if($DB && $DB!="information_schema"){
 			
-			print bar("Checking Database $DB: ","+","black","cyan","black");
+			print bar("Checking Database $DB: ","v","white","blue","black","blue");
 			$Ta=dse_table_list_array($DB);
 			foreach($Ta as $T){
 				if($T){
@@ -131,11 +131,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 						$ErrorMsg.= colorize("ANALYZE $DB.$T => ".$TAa['MsgText'],"white","red",TRUE,1);
 					}
 				
-					if($IsOK){
-						print colorize(" OK","green","black",TRUE,1);
-					}else{
-						print colorize("BAD","red","black",TRUE,1);
-					}
+					
 					
 					$TSa=dse_table_status_array($DB,$T);
 					$Rows=$TSa['Rows'];
@@ -144,14 +140,14 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					$Size_int=$Avg_row_length*$Rows;
 					
 					$Engine=pad($Engine,10," ","center");
-					$Engine=colorize($Engine,"green","black",TRUE,1);
+					$Engine=colorize($Engine,"yellow","black");
 					
 					$Rows=pad(intval($Rows/1000)."k",6," ","right");
-					if($TSa['Rows']>1500000){
+					if(     $TSa['Rows']>1500000){
 						$Rows=colorize($Rows,"red","black",TRUE,1);
-					}elseif($TSa['Rows']>700000){
+					}elseif($TSa['Rows']> 700000){
 						$Rows=colorize($Rows,"yellow","black",TRUE,1);
-					}elseif($TSa['Rows']>100000){
+					}elseif($TSa['Rows']> 100000){
 						$Rows=colorize($Rows,"green","black",TRUE,1);
 					}else{
 						$Rows=colorize($Rows,"blue","black",TRUE,1);
@@ -159,18 +155,24 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					
 					$Size=pad(intval($Size_int/1000000),6," ","right");
 					$Size=colorize($Size,"green","black",TRUE,1);
-					if($Size_int>100000000){
+					if(     $Size_int>100000000){
 						$Size=colorize($Size,"red","black",TRUE,1);
-					}elseif($TSa['Rows']>10000000){
+					}elseif($Size_int> 10000000){
 						$Size=colorize($Size,"yellow","black",TRUE,1);
-					}elseif($TSa['Rows']>1000000){
+					}elseif($Size_int>  1000000){
 						$Size=colorize($Size,"green","black",TRUE,1);
 					}else{
 						$Size=colorize($Size,"blue","black",TRUE,1);
 					}
 					
 					
-					print "   $Engine    $Rows rows   ${Size}Mb  \n";
+					print "   $Engine    $Rows rows   ${Size}Mb   "; 
+					if($IsOK){
+						print colorize(" OK","green","black",TRUE,1);
+					}else{
+						print colorize("BAD","red","black",TRUE,1);
+					}
+					print "\n";
 					if($ErrorMsg){
 						print $ErrorMsg."\n";
 					}
