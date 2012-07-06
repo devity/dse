@@ -51,7 +51,15 @@ function dse_table_analyze($Database,$Table){
 	
 	list($HeaderLine,$DataLine)=split("\n",$r);
 	$Da=split("[ \t]+",$DataLine);
-	list($DdT,$Op,$MsgType,$MsgText)=$Da;
+	$Da=whitespace_minimize($Da);
+	$DdT=strcut($Da,""," ");
+	$Da=strcut($Da," ");
+	$Op=strcut($Da,""," ");
+	$Da=strcut($Da," ");
+	$MsgType=strcut($Da,""," ");
+	$Da=strcut($Da," ");
+	$MsgText=$Da;
+	//list($DdT,$Op,$MsgType,$MsgText)=$Da;
 	return(array("DdT"=>$DdT,"Op"=>$Op,"MsgType"=>$MsgType,"MsgText"=>$MsgText));		
 }
 
@@ -60,9 +68,15 @@ function dse_database_check_all(){
 	global $vars; dse_trace();
 	$DBa=dse_database_list_array();
 	foreach($DBa as $DB){
-		print colorize("Database $DB:\n","cyan","black");
+		print colorize("Checking Database ","green","black");
+		print colorize($DB,"red","black",TRUE,1);
+		print colorize(":\n","green","black");
 		$Ta=dse_table_list_array($DB);
 		foreach($Ta as $T){
+			print colorize("Checking Table ","green","black");
+			print colorize($T,"red","black",TRUE,1);
+			print colorize(":\n","green","black");
+			
 			/*print colorize("CHECK Table $T:\n","green","black");
 			$r=dse_exec("echo \"USE $DB;\n CHECK TABLE $T EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
 			print colorize($r,"yellow","black");
