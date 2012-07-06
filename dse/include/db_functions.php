@@ -30,7 +30,7 @@ function dse_database_repair_all(){
 function dse_table_check($Database,$Table){
 	global $vars; dse_trace();
 	//print colorize("CHECK Table $T:\n","green","black");
-	$r=dse_exec("echo \"USE $Database;\n CHECK TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,TRUE);
+	$r=dse_exec("echo \"USE $Database;\n CHECK TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],TRUE,TRUE);
 	list($HeaderLine,$DataLine)=split("\n",$r);
 	$Da=split("[ \t]+",$DataLine);
 	list($DdT,$Op,$MsgType,$MsgText)=$Da;
@@ -40,7 +40,7 @@ function dse_table_check($Database,$Table){
 function dse_table_analyze($Database,$Table){
 	global $vars; dse_trace();
 	//print colorize("CHECK Table $T:\n","green","black");
-	$r=dse_exec("echo \"USE $Database;\n ANALYZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,TRUE);
+	$r=dse_exec("echo \"USE $Database;\n ANALYZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],TRUE,TRUE);
 	/*$r=strcut($r,"\n");
 	$tbr=array();
 	$ra=split("\n",$r);
@@ -50,8 +50,8 @@ function dse_table_analyze($Database,$Table){
 	*/
 	
 	list($HeaderLine,$DataLine)=split("\n",$r);
+	$DataLine=whitespace_minimize($DataLine);
 	$Da=split("[ \t]+",$DataLine);
-	$Da=whitespace_minimize($Da);
 	$DdT=strcut($Da,""," ");
 	$Da=strcut($Da," ");
 	$Op=strcut($Da,""," ");
