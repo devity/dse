@@ -1558,7 +1558,7 @@ function dse_backup_mysqld() {
 	
 	print " Saving Copy of mysqld Data: ";
 	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
- 	$file=$vars['DSE']['BACKUP_DIR_MYSQL']."/mysqldump".$DATE_TIME_NOW.".sql";
+ 	$file=$vars['DSE']['BACKUP_DIR_MYSQL']."/mysqldump".$DATE_TIME_NOW.".sql.gz";
 	
 	/*$Command="mysqldump --all-databases --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys "
 		."--dump-date --force --quick --routines --verbose --result-file=$file";
@@ -1574,9 +1574,9 @@ function dse_backup_mysqld() {
 		sleep(1);
 	}*/
 	
-	
-	$Command="mysqldump --all-databases --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys "
-		."--dump-date --force --quick --routines --verbose | gzip -9 --stdout > $file";
+	//--all-databases
+	$Command="mysqldump --database=4thWayInfo --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys "
+		."--dump-date --force --quick --routines --verbose | gzip -1 --stdout > $file";
 	$pid=dse_exec_bg($Command,TRUE);
 	while(dse_pid_is_running($pid)){
 		$Size=dse_exec("/dse/bin/dsizeof $file");
@@ -1591,7 +1591,7 @@ function dse_backup_mysqld() {
 	//`mysqlhotcopy-all-databases`;
 
 
-	print " $_OK MySQL backup saved in  ${dir}\n";
+	print " $_OK MySQL backup saved at: $file\n";
 	
 	dse_exec("/dse/aliases/cdf",FALSE,TRUE);
 }

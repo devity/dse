@@ -366,6 +366,7 @@ function dse_panic_hd($Interactive=FALSE){
 						if($A=='Y'){
 							dse_file_delete($lsa[$i]);
 						}
+						print "\n";
 					
 					}
 					//$lss_last=$i;
