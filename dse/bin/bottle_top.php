@@ -177,9 +177,18 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 				$Used=100-$Free;
 				$RedWidth=intval(($Used/100)*$GraphWidth);
 				$GreenWidth=intval(($CPUCoreInfoArray['Idle']/100)*$GraphWidth);
-				print colorize("$i: ","cyan","black");
-				print colorize(pad("$Used%-",$RedWidth,"#","left"),"red","black",TRUE,1);
-				print colorize(pad("-$Free%",$GreenWidth,"#","right"),"green","black",TRUE,1);
+				print colorize("CPU$i: ","cyan","black");
+				if($Used>60){
+					print colorize("$Used% ","red","black");
+				}elseif($Used>30){
+					print colorize("$Used% ","yellow","black");
+				}elseif($Used>10){
+					print colorize("$Used% ","green","black");
+				}else{
+					print colorize("$Used% ","cyan","black");
+				}
+				print colorize(pad("",$RedWidth,"#","left"),"red","black",TRUE,1);
+				print colorize(pad("",$GreenWidth,"#","right"),"green","black",TRUE,1);
 				if($i%2==1) print "\n";
 			}
 			
