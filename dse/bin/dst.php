@@ -29,6 +29,7 @@ $parameters_details = array(
   array('p:','print:',"prints arg"),
   array('x:','X:',"prints at x= arg"),
   array('y:','Y:',"prints at y= arg"),
+  array('z','cursor-position',"prints row col"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -100,6 +101,13 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		if(!$NoNewLines) print "\n";
 		$DidSomething=TRUE;
 		break;
+	case 'z':
+  	case 'cursor-position':
+		dse_exec("/dse/aliases/cursor-get-position",FALSE,TRUE);
+		$DidSomething=TRUE;
+		break;
+		
+		
 }
 exit(0);
 ?>

@@ -443,7 +443,7 @@ function dse_replace_in_file($File,$Needle,$Replacement){
 function progress_bar($Percent="time",$Width=60){
 	global $vars; dse_trace();
 	global $Rainbow,$RainbowSize;
-	print "progress_bar()\n";
+	//print "progress_bar()\n";
 	if($RainbowSize<1){
 		$Rainbow[]=colorize(" ","red","red");
 		$Rainbow[]=colorize(" ","red","red");
@@ -518,10 +518,10 @@ function progress_bar($Percent="time",$Width=60){
 		}else{
 			$ff=0;
 		}
-		$RunTimeStr="*** ".seconds_to_text($tt)." of Unkown Time ";
-		$Percent=55;
+		$RunTimeStr=" ".seconds_to_text($tt)." of Unkown Time ";
+		$Percent=50;
 	}
-	$GreenPortion=pad($RunTimeStr,intval($Width*($Percent/100)),"*");
+	$GreenPortion=pad($RunTimeStr,intval($Width*($Percent/100))," ");
 	$GreenPortion2=$RainbowBar;//pad("",intval($Width*($Percent/100)),"*");
 	$RedPortion=pad("",intval($Width*((100-$Percent)/100)),"*");
 	cbp_cursor_save();
@@ -3751,29 +3751,35 @@ function sbp_cursor_postion($L=0,$C=0){
 //}
 function cbp_cursor_save(){
 	global $vars; dse_trace();
-        print "\0337";
+    //print "\0337";
+    $vars[cbp_cursor_save__position]=dse_exec("/dse/aliases/cursor-get-position",FALSE,FALSE);
 }
 function cbp_cursor_restore(){
 	global $vars; dse_trace();
-        print "\0337";
+    //print "\0337";
+    if($vars[cbp_cursor_save__position]){
+    	list($row,$col)=split(" ",$vars[cbp_cursor_save__position]);
+		sbp_cursor_postion($row,$col);
+		$vars[cbp_cursor_save__position]="";
+    }
 }
 function cbp_screen_clear(){
 	global $vars; dse_trace();
-        print "\033[2J";
+    print "\033[2J";
 }
 function cbp_cursor_left($N=1){
 	global $vars; dse_trace();
-        print "\033[${N}D";
+    print "\033[${N}D";
 }
 function cbp_cursor_up($N=1){
 	global $vars; dse_trace();
-        print "\033[${N}A";
+    print "\033[${N}A";
 }
 function cbp_characters_clear($N=1){
 	global $vars; dse_trace();
-		print "\033[${N}D";
-		for($i=0;$i<$n;$i++) print " ";
-        print "\033[${N}D";
+	print "\033[${N}D";
+	for($i=0;$i<$n;$i++) print " ";
+    print "\033[${N}D";
 }
 
 /*
