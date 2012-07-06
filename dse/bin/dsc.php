@@ -87,6 +87,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'colorize':
 		$Colorize=TRUE;
 		break;
+}
+
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'o':
   	case 'open-ports':
 		print dse_ports_open($Colorize);
