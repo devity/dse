@@ -19,7 +19,7 @@ function dse_code_parse_load($CodeBaseDir="/dse/bin"){
 }
 
 
-function dse_code_parse($CodeBaseDir){
+function dse_code_parse($CodeBaseDir="/dse/bin"){
 	global $vars;
 	$skip=array("phpmyadmin",".dab","/templates/");
 	$DirArray=dse_directory_to_array($CodeBaseDir);
