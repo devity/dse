@@ -182,9 +182,9 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					print " $Engine {$Rows}k rows ${Size} Mb    "; 
 					
 					if($IsOK){
-						print colorize(" OK","white","green",TRUE,1);
+						print colorize("  OK  ","white","green",TRUE,1);
 					}else{
-						print colorize("BAD","white","red",TRUE,1);
+						print colorize("  BAD ","white","red",TRUE,1);
 					}
 					print "\n";
 					
