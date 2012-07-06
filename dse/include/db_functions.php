@@ -30,7 +30,7 @@ function dse_database_repair_all(){
 function dse_table_check($Database,$Table){
 	global $vars; dse_trace();
 	//print colorize("CHECK Table $T:\n","green","black");
-	$r=dse_exec("echo \"USE $Database;\n CHECK TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],TRUE,TRUE);
+	$r=dse_exec("echo \"USE $Database;\n CHECK TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
 	list($HeaderLine,$DataLine)=split("\n",$r);
 	$Da=split("[ \t]+",$DataLine);
 	list($DdT,$Op,$MsgType,$MsgText)=$Da;
@@ -40,7 +40,7 @@ function dse_table_check($Database,$Table){
 function dse_table_analyze($Database,$Table){
 	global $vars; dse_trace();
 	//print colorize("CHECK Table $T:\n","green","black");
-	$r=dse_exec("echo \"USE $Database;\n ANALYZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],TRUE,TRUE);
+	$r=dse_exec("echo \"USE $Database;\n ANALYZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
 	/*$r=strcut($r,"\n");
 	$tbr=array();
 	$ra=split("\n",$r);
@@ -69,34 +69,37 @@ function dse_database_check_all(){
 	global $vars; dse_trace();
 	$DBa=dse_database_list_array();
 	foreach($DBa as $DB){
-		print colorize("Checking Database ","green","black");
-		print colorize($DB,"red","black",TRUE,1);
-		print colorize(":\n","green","black");
-		$Ta=dse_table_list_array($DB);
-		foreach($Ta as $T){
-			print colorize("Checking Table ","green","black");
-			print colorize($T,"red","black",TRUE,1);
+		if($DB){
+			print colorize("Checking Database ","green","black");
+			print colorize($DB,"red","black",TRUE,1);
 			print colorize(":\n","green","black");
-			
-			/*print colorize("CHECK Table $T:\n","green","black");
-			$r=dse_exec("echo \"USE $DB;\n CHECK TABLE $T EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
-			print colorize($r,"yellow","black");
-			
-			print colorize("ANALYZE Table $T:\n","green","black");
-			$r=dse_exec("echo \"USE $DB;\n ANALYZE TABLE $T;\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
-			print colorize($r,"yellow","black");*/
-			$TCa=dse_table_check($DB,$T);
-			if($TCa['MsgText']!="OK"){
-				print "CHECK $DB.$T => ".$TCa['MsgText']."\n";
+			$Ta=dse_table_list_array($DB);
+			foreach($Ta as $T){
+				if($T){
+					print colorize("Checking Table ","green","black");
+					print colorize($T,"red","black",TRUE,1);
+					print colorize(":\n","green","black");
+					
+					/*print colorize("CHECK Table $T:\n","green","black");
+					$r=dse_exec("echo \"USE $DB;\n CHECK TABLE $T EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
+					print colorize($r,"yellow","black");
+					
+					print colorize("ANALYZE Table $T:\n","green","black");
+					$r=dse_exec("echo \"USE $DB;\n ANALYZE TABLE $T;\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
+					print colorize($r,"yellow","black");*/
+					$TCa=dse_table_check($DB,$T);
+					if($TCa['MsgText']!="OK"){
+						print "CHECK $DB.$T => ".$TCa['MsgText']."\n";
+					} 
+					
+					
+					$TAa=dse_table_analyze($DB,$T);
+					if($TAa['MsgText']!="Table is already up to date"){
+						print "ANALYZE $DB.$T => ".$TAa['MsgText']."\n";
+					}
+				
+				}
 			}
-			
-			
-			$TAa=dse_table_analyze($DB,$T);
-			if($TAa['MsgText']!="Table is already up to date"){
-				print "ANALYZE $DB.$T => ".$TAa['MsgText']."\n";
-			}
-			
-			
 		}
 	}
 }
