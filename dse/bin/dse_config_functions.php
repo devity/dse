@@ -1071,11 +1071,11 @@ COMMIT*/
 			$Port=dse_port_number($Port);
 			$PortName=dse_port_name($Port);
 		}
-		if($Port!=53){
+		//if($Port!=53){
 			$TemplateContents.="# allow service $PortName\n";
 			$TemplateContents.="-A INPUT -p tcp -m tcp --dport $Port -m state --state NEW,ESTABLISHED -j ACCEPT \n";
 			$TemplateContents.="-A OUTPUT -p tcp -m tcp --sport $Port -m state --state ESTABLISHED -j ACCEPT \n\n";
-		}
+		//}
 	}
 	
 	$TemplateContents.="\n";

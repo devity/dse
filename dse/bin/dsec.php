@@ -36,6 +36,7 @@ dse_cli_script_start();
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'h':
   	case 'help':
+		$DidSomething=TRUE;
 		print $vars['Usage'];
 		exit(0);
 	case 'q':
@@ -50,6 +51,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 	case 's':
   	case 'status':
+		$DidSomething=TRUE;
 		dse_dsec_overview();
 		exit(0);
 }
@@ -57,6 +59,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'd':
 	case 'port-scan-detect-versions':
+		$DidSomething=TRUE;
 		$Host=$vars['options'][$opt];
 		if(!$Host){
 			print "No host arg1 supplied, using localhost\n";
