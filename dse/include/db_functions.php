@@ -70,13 +70,13 @@ function dse_database_check_all(){
 			print colorize("ANALYZE Table $T:\n","green","black");
 			$r=dse_exec("echo \"USE $DB;\n ANALYZE TABLE $T;\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
 			print colorize($r,"yellow","black");*/
-			$TCa=dse_table_check();
+			$TCa=dse_table_check($DB,$T);
 			if($TCa['MsgText']!="OK"){
 				print "$DB.$T => ".$TCa['MsgText']."\n";
 			}
 			
 			
-			$TAa=dse_table_analyze();
+			$TAa=dse_table_analyze($DB,$T);
 			if($TAa['MsgText']!="Table is already up to date"){
 				print "$DB.$T => ".$TAa['MsgText']."\n";
 			}
