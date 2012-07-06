@@ -98,9 +98,9 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 	global $vars; dse_trace();
 	$DBa=dse_database_list_array();
 	$W=cbp_get_screen_width();
-	$cbp_get_screen_width=intval($W*(2/5));
-	if($cbp_get_screen_width<55){
-		$cbp_get_screen_width=55;
+	$TableNameWidth=intval($W*(2/5));
+	if($TableNameWidth<55){
+		$TableNameWidth=55;
 	}
 	foreach($DBa as $DB){
 		if($DB && $DB!="information_schema"){
