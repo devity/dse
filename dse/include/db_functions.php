@@ -51,7 +51,8 @@ function dse_table_analyze($Database,$Table){
 	
 	list($HeaderLine,$DataLine)=split("\n",$r);
 	$DataLine=whitespace_minimize($DataLine);
-	$Da=split("[ \t]+",$DataLine);
+	//$Da=split("[ \t]+",$DataLine);
+	$Da=$DataLine;
 	$DdT=strcut($Da,""," ");
 	$Da=strcut($Da," ");
 	$Op=strcut($Da,""," ");
