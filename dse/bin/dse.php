@@ -28,7 +28,7 @@ $parameters_details = array(
   array('i','install',"launches dse-install"),
   array('c','configure',"launches dse-configure"),
   array('s','set-env',"set shell environment variables"),
-  array('y','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('y:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('z:','status:',"shows status on all or arg1. options: [initd]"),
   array('x:','code-query:',"shows status of string arg1. grep is unknown string or more info if known as a file, function, of variable name"),
   array('a','reboot',"reboots the server"),
@@ -98,6 +98,8 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 	case 'x':
   	case 'code-query':
+  		ini_set("memory_limit","-1");
+		
 		include_once ("/dse/include/code_functions.php");
   		$String=$vars['options'][$opt];
 		if(sizeof($argv)>1 && $argv[1]){
@@ -148,23 +150,57 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 					}
 				}
 			}
-			/*
+			
 			if(!$LaunchNumber) print bar("code_explorer Defined Functions Results: $DoDir","-","blue","white","green","white");
 			$CodeBaseDir="/dse/bin";
 			$CodeInfoArray=dse_code_parse_load($CodeBaseDir);
 			foreach($CodeInfoArray['Functions']['Def'] as $k=>$fde){
 				if(str_icontains($fde[2],$String)){
+					$Li++;
+					print colorize("$Li","yellow","black");
+					print colorize(": ","blue","black");
+							
 					$f=$fde[0];
 					$l=$fde[1];
 					$n=$fde[2];
 					$p=$fde[3];
 					$d=$fde[4];
 					$n=str_replace($String,colorize($String,"black","yellow"),$n);
-					print " $f:$l  <b class='f9pt'>$n</b> ($p)<br>";
+					$f=colorize($f,"cyan","black");
+					$l=colorize($l,"green","black");
+					$n=colorize($n,"yellow","black");
+					$p=colorize($p,"red","black",TRUE,1);
+					//$n=colorize($n,"white","black",TRUE,1);
+					print " $f::$l  $n ($p)\n";
+					if($LaunchNumber==$Li){
+						dse_launch_code_edit($f,$LineNumber);
+						exit(0);
+					}
+				}
+			}
+			
+			if(!$LaunchNumber) print bar("code_explorer Function Code Results: $DoDir","-","blue","white","green","white");
+			$CodeBaseDir="/dse/bin";
+			$CodeInfoArray=dse_code_parse_load($CodeBaseDir);
+			foreach($CodeInfoArray['Functions']['Code'] as $FunctionName=>$Code){
+				if(str_icontains($Code,$String)){
+					
+					print colorize("$Li","yellow","black");
+					print colorize(": ","blue","black");
+					$Code=str_igrep($Code,$String);
+					$Code=str_replace($String,colorize($String,"black","yellow"),$Code);
+					$FunctionName=colorize($FunctionName,"cyan","black");
+					print "used in function: $FunctionName \n$Code\n";
+					/*$Li++;
+					 if($LaunchNumber==$Li){
+						dse_launch_code_edit($f,$LineNumber);
+						exit(0);
+					}*/
 				}
 			}
 			//$CodeInfoArray['Files'][$FileFullName]
-			*/
+			  //$CodeInfoArray['Functions']['Used']
+			
 		}
 		
 		$DidSomething=TRUE;

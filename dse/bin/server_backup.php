@@ -23,7 +23,7 @@ $parameters_details = array(
   array('e','edit',"backs up and launches a vim of ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']),
   array('w','config-show',"prints ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']),
   array('','config-show',"prints contents of ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']),
-  array('y','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('y:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('z:','status:',"shows status on all or arg1. options: [initd]"),
   array('c','clone',"build a recreate / clone script"),
   //interact w etckeeper

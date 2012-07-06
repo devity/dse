@@ -18,7 +18,7 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $parameters_details = array(
-  array('v','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('h','help',"this message"),
   array('p:','is-package-installed:',"tells what version of a package is installe ot nothing if not installed"),
   array('a','list-installed-packages',"lists installed packages"),

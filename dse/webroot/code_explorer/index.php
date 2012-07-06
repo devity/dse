@@ -3,6 +3,7 @@ $DSE_ROOT="/dse";
 include_once ("$DSE_ROOT/include/web_config.php");
 include_once ("$DSE_ROOT/include/code_functions.php");
 dse_print_page_header();
+ini_set("memory_limit","-1");
 
 $CodeBaseDir="/dse/bin";
 //print "asfsdf1fcqe134<br>";

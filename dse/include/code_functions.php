@@ -3,15 +3,23 @@
 
 function dse_code_parse_save($CodeInfoArray,$CodeBaseDir="/dse/bin"){
 	global $vars;
-	file_put_contents('/tmp/dse_codemanager_parse.cache', serialize($CodeInfoArray)); 
+	$CodeBaseDirEsc=str_replace("/",".",$CodeBaseDir);
+	$cacheFile="/tmp/dse_codemanager_parse.cache$CodeBaseDirEsc";
+	file_put_contents($cacheFile, serialize($CodeInfoArray)); 
 	return;
 }
 
 function dse_code_parse_load($CodeBaseDir="/dse/bin"){
 	global $vars;
-	if(dse_file_exists('/tmp/dse_codemanager_parse.cache')){	
-		$CodeInfoArray = unserialize(file_get_contents('/tmp/dse_codemanager_parse.cache')); 
+	$CodeBaseDirEsc=str_replace("/",".",$CodeBaseDir);
+	$cacheFile="/tmp/dse_codemanager_parse.cache$CodeBaseDirEsc";
+	dpv(2,"dse_code_parse_load($CodeBaseDir){ cacheFile=$cacheFile");
+	
+	if(dse_file_exists($cacheFile)){	
+		dpv(2,"found! cacheFile=$cacheFile");
+		$CodeInfoArray = unserialize(file_get_contents($cacheFile)); 
 	}else{
+		dpv(2,"NO cacheFile=$cacheFile");
 		$CodeInfoArray=dse_code_parse($CodeBaseDir);
 		dse_code_parse_save($CodeInfoArray,$CodeBaseDir);
 	}
@@ -21,6 +29,15 @@ function dse_code_parse_load($CodeBaseDir="/dse/bin"){
 
 function dse_code_parse($CodeBaseDir="/dse/bin"){
 	global $vars;
+	$CodeBaseDirEsc=str_replace("/",".",$CodeBaseDir);
+	$cacheFile="/tmp/dse_codemanager_parse.cache$CodeBaseDirEsc";
+	dpv(2,"dse_code_parse($CodeBaseDir){ cacheFile=$cacheFile");
+	
+	if(dse_file_exists($cacheFile)){	
+		dpv(2,"found! cacheFile=$cacheFile");
+		$CodeInfoArray = unserialize(file_get_contents($cacheFile)); 
+		return $CodeInfoArray;
+	}
 	$skip=array("phpmyadmin",".dab","/templates/");
 	$DirArray=dse_directory_to_array($CodeBaseDir);
 	$CodeInfoArray=dse_code_parse_dir_array_to_code_array($DirArray);
@@ -34,7 +51,7 @@ function dse_code_parse($CodeBaseDir="/dse/bin"){
 			}
 		}
 		if($Do){
-			//print "parsing $FileFullName\n";
+			dpv(2,"parsing $FileFullName");
 			if(!dse_file_is_link($FileFullName)){
 				$CodeInfoArray=dse_code_parse_file_to_array($CodeInfoArray,$FileFullName);
 			}else{
@@ -42,6 +59,7 @@ function dse_code_parse($CodeBaseDir="/dse/bin"){
 			}
 		}
 	}
+	dpv(2,"Pass 2 !!!!!!!!!!!!!!!!!!!! ");
 	foreach($CodeInfoArray['Files'] as $FileFullName=>$Entry){
 		$Do=TRUE;
 		foreach($skip as $s){
@@ -55,6 +73,10 @@ function dse_code_parse($CodeBaseDir="/dse/bin"){
 				$CodeInfoArray=dse_code_parse_file_to_array_pass2($CodeInfoArray,$FileFullName);
 			}
 		}
+	}
+	dpv(2,"DONE returning CodeInfoArray ");
+	if(!dse_file_exists($cacheFile)){	
+		dse_code_parse_save($CodeInfoArray,$CodeBaseDir);
 	}
 	return $CodeInfoArray;
 }
@@ -76,6 +98,7 @@ function dse_code_return_function_declarations($CodeBaseDir){
 
 function dse_code_parse_file_to_array($CodeInfoArray,$FileFullName){
 	global $vars;
+	dpv(2,"dse_code_parse_file_to_array($CodeInfoArray,$FileFullName){");
 	$CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']=array();
 	$CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['FileFullName']=$FileFullName;
 	$CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['Size']=dse_file_get_size($FileFullName);
@@ -102,6 +125,7 @@ function dse_code_parse_file_to_array($CodeInfoArray,$FileFullName){
 	}
 	$CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['Language']=$Language;
 	$CodeInfoArray=dse_code_parse_contents_to_array($CodeInfoArray,$FileFullName);
+	dpv(2,"leaving dse_code_parse_file_to_array($CodeInfoArray,$FileFullName){");
 	return $CodeInfoArray;
 }
 
@@ -138,7 +162,7 @@ function dse_code_parse_contents_to_array_pass2($CodeInfoArray,$FileFullName){
 
 function dse_code_parse_PHP_contents_to_array($CodeInfoArray,$FileFullName){
 	global $vars;
-	//print "+dse_code_parse_PHP_contents_to_array($FileFullName)\n";
+	dpv(2,"dse_code_parse_PHP_contents_to_array($FileFullName){");
 	
 	$CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['Lines']=split("\n",$CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['Contents']);
 	$CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['LineCount']=sizeof($CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['Lines']);
@@ -148,6 +172,7 @@ function dse_code_parse_PHP_contents_to_array($CodeInfoArray,$FileFullName){
 		$LineNumber++;
 		if(str_contains($Line,"function ")){
 			//print "func! $Line\n";
+			dpv(2," func! $Line\n");
 			$FunctionDeclaration=trim(strcut($Line,"function ","{"));
 			$FunctionName=trim(strcut($FunctionDeclaration,"","("));
 			$FunctionParamaters=trim(strcut($FunctionDeclaration,"(",")"));
@@ -168,6 +193,8 @@ function dse_code_parse_PHP_contents_to_array($CodeInfoArray,$FileFullName){
 }
 function dse_code_parse_PHP_contents_to_array_pass2($CodeInfoArray,$FileFullName){
 	global $vars;
+	
+	include_once ($vars['DSE']['DSE_ROOT']."/include/web_functions.php");
 	$LineNumber=0;
 	$CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['LinesParsed']=array();
 	foreach($CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['Lines'] as $Line){

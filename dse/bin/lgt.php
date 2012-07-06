@@ -67,29 +67,23 @@ $LogsCombined="";
 dpv(2,"Using Log Files: ".$vars['DSE']['LGT_LOG_FILES']."\n");
 foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 	dpv(2,"Doing Log File: $LogFile\n");
-		
-	
 	$LogFile=trim($LogFile);
-	$LogFileNameColorized=colorize(pad(basename($LogFile),10),"black","cyan",TRUE,1);
+	$LogFileNameColorized=colorize(pad(basename($LogFile),10)." ","black","cyan",TRUE,1);
 	if($LogFile && dse_file_exists($LogFile)){
 		$LogContents=`tail -n $TailLines $LogFile`;
 		if($LogContents){
 			$LogContents=str_remove($LogContents,dse_hostname());
-			
-			
 			$PrintedThisLogFileName=FALSE;
 			foreach(split("\n",$LogContents) as $L){
 				if($L){
-					
 					$Time=unk_time($L);
 					$StartTime=time()-(60*$MinutesBack);
 					if($Time>0){
 						$L=str_remove($L,$vars['unk_time__CutTimeAndDateString']." ");
-						$Ago=pad(seconds_to_text($vars[Time]-$Time),6);
+						$Ago=colorize(pad(seconds_to_text($vars[Time]-$Time),7),"red","cyan",TRUE,1);
 					}else{
 						$Ago="";
 					}
-					
 					if($Time<=0 || $Time>$StartTime){
 						$L=substr($L,0,$CharsWide);
 						$L=colorize_words($L);
@@ -101,12 +95,15 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 						if($Intermingle){
 							if($Time){
 								$Rand=rand(100,999);
-								$Intermingled[$Time."0".$Rand]="$LogFileNameColorized $Ago  $L\n";
+								$Intermingled[$Time."0".$Rand]="$LogFileNameColorized$Ago  $L\n";
 							}else{
-								print "$LogFileNameColorized $Ago  $L\n";;
+								print "$LogFileNameColorized$Ago  $L\n";;
 							}
 						}else{
-							if((!$PrintedThisLogFileName)) { print colorize($LogFile.": ------\n","cyan"); $PrintedThisLogFileName=TRUE; }
+							if((!$PrintedThisLogFileName)) {
+								 print bar($LogFile.":","v","white","blue","cyan","blue"); 
+								 $PrintedThisLogFileName=TRUE; 
+							}
 							print  "$Ago  $L\n";
 						}
 					}

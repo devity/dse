@@ -21,7 +21,7 @@ $parameters_details = array(
   array('h','help',"this message"),
   array('q','quiet',"same as --verbosity 0"),
   array('l','list-backups',"lists when backups were made of file"),
-  array('y','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('y:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('s','show-diff-side-by-side',"show side-by-side diff w/ options $DiffOptionsSBS"),
   array('d','show-diff',"show diff w/ options $DiffOptionsNormal"),
   array('o:','diff-options::',"show diff w/ options passed in. you must include a leading - and enclose in \"'s"),

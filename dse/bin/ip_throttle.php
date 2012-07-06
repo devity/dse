@@ -17,7 +17,7 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 $parameters_details = array(
   array('h','help',"this message"),
   array('q','quiet',"same as --verbosity 0"),
-  array('y','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('y:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('i','info',"info about <IP>"),
   array('l','log',"log request from <IP>"),
   array('b','block',"add block for request from <IP>"),

@@ -1738,6 +1738,27 @@ function str_tail($String,$N){
 	return $tbr;
 }
 
+function str_igrep($String,$Grep){
+	global $vars; dse_trace();
+	$tbr=array();
+	foreach(split("\n",$String) as $L){
+		if(str_icontains($L,$Grep)){
+			$tbr[]=$L;
+		}
+	}	
+	return array2string($tbr);
+}
+
+function array2string($LineArray){
+	global $vars; dse_trace();
+	$tbr="";
+	foreach($LineArray as $L){
+		if($tbr) $tbr.="\n";
+		$tbr.=$L;
+	}	
+	return $tbr;
+}
+
 function strcut($haystack,$pre,$post=""){
 	global $vars; dse_trace();
 	global $strcut_post_haystack;

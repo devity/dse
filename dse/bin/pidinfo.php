@@ -16,7 +16,7 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 
 $parameters_details = array(
   array('h','help',"this message"),
-  array('v','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('f','family-tree',"shows info for parent and all grandparent processes"),
   array('e','exe-family-tree',"returns string like: init>grandparent>parent>PIDsEXE"),
 );

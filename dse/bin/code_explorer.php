@@ -7,6 +7,8 @@ include_once ("/dse/bin/dse_config.php");
 include_once ("/dse/include/web_functions.php");
 include_once ("/dse/include/code_functions.php");
 $vars['Verbosity']=1;
+ini_set("memory_limit","-1");
+
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE";
@@ -19,7 +21,7 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 $parameters_details = array(
   array('h','help',"this message"),
   array('q','quiet',"same as --verbosity 0"),
-  array('v','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
  // array('p:','parse:',"parses code-base at argv[1]"),
   array('f:','function-declarations:',"shows functions declared in code-base at argv[1]"),
   array('u:','file-info:',"code-base at argv[1] file-info on file = argv[2]"),
@@ -48,6 +50,8 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   		$ShowUsage=TRUE;
 		$DidSomething=TRUE;
 		break;
+}
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'p':
   	case 'parse':
 		dse_code_parse($vars['options'][$opt]);
@@ -119,7 +123,12 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'overview':
 		$DidSomething=TRUE;
 		{
-			$CodeBaseDir=$vars['options'][$opt];
+			print "v=$vars[Verbosity]\n";
+			if($vars['options'][$opt]){
+				$CodeBaseDir=$vars['options'][$opt];
+			}else{
+				$CodeBaseDir="/dse/bin";
+			}
 			$CodeInfoArray=dse_code_parse($CodeBaseDir);
 			print "<table width=100%><tr class='f8pt'>";
 			

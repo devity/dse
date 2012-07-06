@@ -18,7 +18,7 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 
 $parameters_details = array(
   array('h','help',"this message"),
-  array('y','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('y:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('v','listvars',"list configuration variables"),
   array('f','full',"full setup / configuration"),
 );
