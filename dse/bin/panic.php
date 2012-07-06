@@ -290,6 +290,7 @@ function dse_panic_hd($Interactive=FALSE){
 			print "PID=$FindPID\n";
 			$t=time();		
 			progress_bar("reset");
+			$lss_last=0;
 			while(dse_pid_is_running($FindPID)>0){
 				//print "t$asf"; $asf++;
 				//cbp_screen_clear();
@@ -302,12 +303,12 @@ function dse_panic_hd($Interactive=FALSE){
 						for($i=$lss_last;$i<$lss;$i++){
 							$SizeStr=dse_exec("/dse/bin/dsizeof ".$lsa[$i]);
 							$SizeStr=intval($SizeStr/1000000);
-							if($SizeStr>0){
+							//if($SizeStr>0){
 								print "lss=$lss  ";
 								print colorize(pad($lsa[$i],40),"yellow","black")."   ";
 								print colorize(pad($SizeStr,8," ","right"),"red","black",TRUE,1);
 								print colorize(" MB\n","green","black",TRUE,1);
-							}
+							//}
 							$lss_last=$lss;
 						}
 					}
