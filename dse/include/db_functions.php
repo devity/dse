@@ -99,9 +99,8 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 	$DBa=dse_database_list_array();
 	foreach($DBa as $DB){
 		if($DB && $DB!="information_schema"){
-			print colorize("Checking Database ","cyan","black");
-			print colorize($DB,"red","black",TRUE,1);
-			print colorize("...\n","green","black");
+			
+			print bar("Checking Database $DB: ","green","black","cyan","black");
 			$Ta=dse_table_list_array($DB);
 			foreach($Ta as $T){
 				if($T){
@@ -147,7 +146,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					$Engine=pad($Engine,10," ","center");
 					$Engine=colorize($Engine,"green","black");
 					
-					$Rows=pad($Rows,10," ","right");
+					$Rows=pad(intval($Rows/1000)."k",6," ","right");
 					if($TSa['Rows']>1500000){
 						$Rows=colorize($Rows,"red","black",TRUE,1);
 					}elseif($TSa['Rows']>700000){
@@ -158,7 +157,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 						$Rows=colorize($Rows,"blue","black",TRUE,1);
 					}
 					
-					$Size=pad(intval($Size_int/1000000),8," ","right");
+					$Size=pad(intval($Size_int/1000000),6," ","right");
 					$Size=colorize($Size,"green","black");
 					if($Size_int>100000000){
 						$Size=colorize($Size,"red","black",TRUE,1);
