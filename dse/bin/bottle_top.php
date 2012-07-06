@@ -187,9 +187,15 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 				}else{
 					print colorize("$Used% ","cyan","black");
 				}
-				print colorize(pad("",$RedWidth,"#","left"),"red","black",TRUE,1);
-				print colorize(pad("",$GreenWidth,"#","right"),"green","black",TRUE,1);
-				if($i%2==1) print "\n";
+				print pad("",4-strlen($Used));
+				print colorize(pad("",$RedWidth,"#","left"),"red","black",TRUE,0);
+				print colorize(pad("",$GreenWidth,"#","right"),"green","black",TRUE,0);
+				
+				if($i%2==1) {
+					print "\n";
+				}else{
+					print "  ";
+				}
 			}
 			
 		
