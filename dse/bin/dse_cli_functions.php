@@ -527,7 +527,7 @@ function progress_bar($Percent="time",$Width=60){
 	$RedPortion=pad("",intval($Width*((100-$Percent)/100)),"*");
 	cbp_cursor_save();
 	sbp_cursor_postion(0,cbp_get_screen_width()-$Width);
-	print colorize($GreenPortion,"green","black");
+	print colorize($GreenPortion,"white","black",TRUE,1);
 	//if($vars[pr_bar__last]==TRUE){
 		//print colorize($RedPortion,"red","black");
 	//}else{
@@ -1839,7 +1839,7 @@ function pad($String,$Length,$PadChar=" ",$Justification="left"){
 				$String=$String.$PadChar;
 				break;
 			case 'center':
-				if($i<$Length-1){
+				if($i<$Length){
 					if($i%2==1){
 						$Added+=2;
 						$String=$PadChar.$String.$PadChar;
