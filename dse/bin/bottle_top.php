@@ -179,6 +179,7 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 				print colorize(pad("",$GreenWidth,"#"),"green","black",TRUE,1);
 				print "\n";
 			}
+			exit();
 		
 		
 			//sleep(1);
