@@ -268,7 +268,8 @@ function dse_panic_hd($Interactive=FALSE){
 	print "\n";
 	
 	
-	
+	$FNW=$W-20;
+	if$FNW>120) $FNW=120;
 	
 	//look for large files recently
 	
@@ -285,7 +286,7 @@ function dse_panic_hd($Interactive=FALSE){
 		
 			//print "aaaa";
 			`rm /tmp/ls.out`;
-			$c="find / -type f -size +30000k -exec echo {} >>/tmp/ls.out \; 2>/dev/null &";
+			$c="find / -type f -size +25000k -exec echo {} >>/tmp/ls.out \; 2>/dev/null &";
 			print `$c`;
 			//print "bbbb";
 			$FindPID=`/dse/bin/grep2pid "find"`;
@@ -298,19 +299,20 @@ function dse_panic_hd($Interactive=FALSE){
 				sleep(1);
 				 
 				
-				if(time()%10==1){
+				if(time()%4==1){
 					cbp_screen_clear();
 					sbp_cursor_postion(0,0);
 					$ls=dse_file_get_contents("/tmp/ls.out");
 					$lsa=split("\n",$ls);
 					$lss=sizeof($lsa);
 					if($lss>0 ){
+						$lss--;
 						for($i=0;$i<$lss && $i<$H-3;$i++){
 							$SizeStr=dse_exec("/dse/bin/dsizeof ".$lsa[$i]);
 							$SizeStr=intval($SizeStr/1000000);
 							//if($SizeStr>0){
 								//print "lss=$lss  ";
-								print colorize(pad($lsa[$i],$W-20),"yellow","black")."   ";
+								print colorize(pad($lsa[$i],$FNW),"yellow","black")."   ";
 								print colorize(pad($SizeStr,8," ","right"),"red","black",TRUE,1);
 								print colorize(" MB\n","green","black",TRUE,1);
 							//}
