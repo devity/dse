@@ -23,10 +23,17 @@ function dse_table_status_array($Database,$Table){
 	$r=dse_exec("echo \"USE $Database;\n SHOW TABLE STATUS WHERE Name='$Table' ;\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
 	//$r=strcut($r,"\n");
 	$tbr=split("\n",$r);
-	print_r($tbr);
+	$NamesA=split("\t",$tbr[0]);
+	$ValuesA=split("\t",$tbr[1]);
+	$tbra=array();
+	foreach($NamesA as $i=>$N){
+		$V=$ValuesA[$i];
+		$tbra[$N]=$V;
+	}
+	print_r($tbra);
 	print "\n";
 	//$tbr=remove_duplicate_array_lines($tbr);
-	//return $tbr;
+	return $tbra;
 }
 
 
@@ -109,7 +116,12 @@ function dse_database_check_all(){
 						print colorize("OK\n","green","black",TRUE,1);
 					}
 					
-					dse_table_status_array($DB,$T);
+					$TSa=dse_table_status_array($DB,$T);
+					$Rows=$TSa['Rows'];
+					$Engine=$TSa['Engine'];
+					$Avg_row_length=$TSa['Avg_row_length'];
+					$Size=$Avg_row_length*$Rows;
+					print " *  $Engine   Rows: $Rows   Size: $Size b  \n";
 				}
 			}
 		}
