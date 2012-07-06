@@ -443,7 +443,7 @@ function dse_replace_in_file($File,$Needle,$Replacement){
 }
 
 			
-function progress_bar($Percent="time",$Width=60,$Note=""){
+function progress_bar($Percent="time",$Width=80,$Note=""){
 	global $vars; dse_trace();
 	global $Rainbow,$RainbowSize;
 	//print "progress_bar()\n";
@@ -505,7 +505,7 @@ function progress_bar($Percent="time",$Width=60,$Note=""){
 		$Rainbow[]=colorize(" ","red","red");
 		$RainbowSize=sizeof($Rainbow);
 	}
-	$vars[pr_bar__rainbow]+=2;
+	$vars[pr_bar__rainbow]+=3;
 	$ri=$vars[pr_bar__rainbow]%$RainbowSize;
 	$Needed=$Width;
 	$RainbowBar="";
