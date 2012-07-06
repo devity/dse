@@ -3745,11 +3745,11 @@ function cbp_get_screen_height(){
 function sbp_cursor_postion($L=0,$C=0){
 	global $vars; dse_trace();
     print "\033[${L};${C}H";
-	print "sbp_cursor_postion($L=0,$C=0)\n";
 }
 //function sbp_cursor_column($C=0){
   //      print "\033[;${C}H";
 //}
+/*
 function cbp_cursor_save(){
 	global $vars; dse_trace();
     //print "\0337";
@@ -3764,6 +3764,14 @@ function cbp_cursor_restore(){
 		sbp_cursor_postion($row,$col);
 		$vars[cbp_cursor_save__position]="";
     }
+}*/
+function cbp_cursor_save(){
+	global $vars; dse_trace();
+    print "\0337";
+}
+function cbp_cursor_restore(){
+	global $vars; dse_trace();
+    print "\0338";
 }
 function cbp_screen_clear(){
 	global $vars; dse_trace();
