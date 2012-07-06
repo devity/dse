@@ -1844,7 +1844,7 @@ function pad($String,$Length,$PadChar=" ",$Justification="left"){
 				break;
 			case 'center':
 				if($i<$Length-1){
-					if($i%2==0){
+					if($i%2==1){
 						$Added+=2;
 						$String=$PadChar.$String.$PadChar;
 					}
@@ -1860,6 +1860,9 @@ function pad($String,$Length,$PadChar=" ",$Justification="left"){
 				$String=$PadChar.$String;
 				break;
 		}
+	}
+	while(strlen($String)<$Length){
+		$String.=$PadChar;
 	}
 	//print "Added=$Added \n";
 	dpv(6," pad($inString,$Length,$PadChar,$Justification) = [$String] ");
