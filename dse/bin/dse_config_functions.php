@@ -1151,12 +1151,13 @@ COMMIT*/
 	dse_file_put_contents("/etc/iptables_rules",$TemplateContents);
 	
 	print colorize("iptables rules:  saved to /etc/iptables_rules \n","blue","yellow");
-	print $TemplateContents;
+	//print $TemplateContents;
 	
 	$Str="/sbin/iptables-restore < /etc/iptables_rules";
-	dse_file_add_line_if_not("/etc/rc.local",$Str,TRUE);
+	dse_file_add_line_if_not("/etc/rc.local",$Str,1);
 	
-	dse_exec("/sbin/iptables-restore < /etc/iptables_rules 2>&1",TRUE,TRUE);
+	dse_exec("/sbin/iptables-restore < /etc/iptables_rules 2>&1");
+	dse_exec("/sbin/iptables -nvL 2>&1",FALSE,TRUE);
 
 }
 
