@@ -506,7 +506,7 @@ if($FullConfig){
 	}
 		
 		
-		
+		/*
 	$ServiceName="vncserver";
 	if(str_contains($vars['DSE']['SERVICES'],$ServiceName)){
 		print colorize("Creating $ServiceName init.d script.\n","white","blue");
@@ -612,7 +612,7 @@ xulrunner /root/crowbar/trunk/xulapp/application.ini &
 		dse_service_restart($INITD_SCRIPT_ARRAY['ServiceName']."d");
 		print `/dse/bin/dsc -oc`;
 	}
-
+*/
 	
 	dse_configure_iptables_init();
 	
