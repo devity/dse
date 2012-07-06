@@ -17,7 +17,7 @@ Linux 3.0.0-22-generic-pae (VULD) 	07/05/2012 	_i686_	(4 CPU)
 */
 function dse_sysstats_cpu(){
 	global $vars; dse_trace();
-	$r=dse_exec("mpstat -P ALL");//,TRUE,TRUE
+	$r=dse_exec("mpstat -P ALL 1 1");//,TRUE,TRUE
 	$ra=split("\n",$r);
 	//print "ra[]="; print_r($ra); print "\n";
 	$SysInfo=split("[ \t]+",$ra[0]);
