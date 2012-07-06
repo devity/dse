@@ -1839,7 +1839,7 @@ function pad($String,$Length,$PadChar=" ",$Justification="left"){
 				$String=$String.$PadChar;
 				break;
 			case 'center':
-				if($i<$Length){
+				if($i<$Length-2){
 					if($i%2==1){
 						$Added+=2;
 						$String=$PadChar.$String.$PadChar;

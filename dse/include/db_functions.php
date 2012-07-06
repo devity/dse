@@ -131,13 +131,13 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					
 					$IsOK=TRUE;
 					$ErrorMsg="";
-				/*	
+				
 					$TCa=dse_table_check($DB,$T);
 					if($TCa['MsgText']!="OK"){
 						$IsOK=FALSE;
 						$ErrorMsg.= colorize("CHECK $DB.$T => ".$TCa['MsgText'],"white","red",TRUE,1);
 					} 
-					
+					/*	
 					
 					$TAa=dse_table_analyze($DB,$T);
 					if($TAa['MsgText']=="Table is already up to date" || $TAa['MsgText']=="OK"){
