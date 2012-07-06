@@ -98,6 +98,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 	case 'x':
   	case 'code-query':
+		include_once ("/dse/include/code_functions.php");
   		$String=$vars['options'][$opt];
 		if(sizeof($argv)>1 && $argv[1]){
 			$LaunchNumber=$argv[1];
@@ -147,6 +148,23 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 					}
 				}
 			}
+			
+			if(!$LaunchNumber) print bar("code_explorer Defined Functions Results: $DoDir","-","blue","white","green","white");
+			$CodeBaseDir="";
+			$CodeInfoArray=dse_code_parse($CodeBaseDir);
+			foreach($CodeInfoArray['Functions']['Def'] as $k=>$fde){
+				if(str_icontains($fde[2],$String)){
+					$f=$fde[0];
+					$l=$fde[1];
+					$n=$fde[2];
+					$p=$fde[3];
+					$d=$fde[4];
+					$n=str_replace($String,colorize($String,"black","yellow"),$n);
+					print " $f:$l  <b class='f9pt'>$n</b> ($p)<br>";
+				}
+			}
+			//$CodeInfoArray['Files'][$FileFullName]
+			
 		}
 		
 		$DidSomething=TRUE;
