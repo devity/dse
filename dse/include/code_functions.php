@@ -38,7 +38,7 @@ function dse_code_parse($CodeBaseDir="/dse/bin"){
 		$CodeInfoArray = unserialize(file_get_contents($cacheFile)); 
 		return $CodeInfoArray;
 	}
-	$skip=array("phpmyadmin",".dab",".git","/templates/","/library/","Zend",".xml",".jpg",".gif","png",".pdf",".js",".css");
+	$skip=array("phpmyadmin",".dab",".git","/templates/","/library/","Zend",".xml",".jpg",".gif","png",".pdf",".js",".css",".htaccess",".bak",".tar",".gz",".tgz",".txt",".tpl");
 	$DirArray=dse_directory_to_array($CodeBaseDir);
 	$CodeInfoArray=dse_code_parse_dir_array_to_code_array($DirArray);
 	//print print_r($CodeInfoArray);
