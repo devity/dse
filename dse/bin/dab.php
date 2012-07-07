@@ -290,11 +290,11 @@ function ddab_recursive_do_dir($Dir){
 		//print "ddab_recursive_do_dir($Dir)\n";
 	
 	
-	if(str_contains($BackupLocation,"scp ")){
+	if(str_contains($BackupLocationRoot,"scp ")){
 		$do=FALSE; 
 		if($DoClean){
 		}else{
-			$BackupLocation=str_remove($BackupLocation,"scp ");
+			$BackupLocation=str_remove($BackupLocationRoot,"scp ");
 			$BackupFile=$BackupLocation."/".$Dir;
 			$BackupFile=str_replace("//", "/", $BackupFile);
 			$Command="scp \"$Dir\" \"$BackupFile\"";
