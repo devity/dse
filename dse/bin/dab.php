@@ -198,7 +198,7 @@ if($DoBackup){
 		$BytesNeededTotal_tmp=$BytesNeededTotal;
 		$BytesNeededTotal=0;
 		bar("Backing up $Dir to $BackupLocationRoot  ","-","white","magenta");
-			exit();
+			//exit();
 		//print colorize("$Dir => $BackupLocationRoot\n"."black","yellow");
 		ddab_recursive_do_dir($Dir);
 		if($BackupLocationRoot_saved){
