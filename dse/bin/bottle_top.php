@@ -9,8 +9,8 @@ include_once ("/dse/bin/dse_config.php");
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="Bottle Top";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="top-like system bottleneck analyzer";
-$vars['DSE']['BTOP_VERSION']="v0.04b";
-$vars['DSE']['BTOP_VERSION_DATE']="2012/04/30";
+$vars['DSE']['BTOP_VERSION']="v0.05b";
+$vars['DSE']['BTOP_VERSION_DATE']="2012/07/07";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
@@ -317,18 +317,25 @@ function update_display($keys=""){
 		 }
 		 	
 	}
-	
-	$vars[dse_sysstats_mysql_processlist__limit]=intval($H/4);
 
-	if($vars['Verbosity']>3) print "dse_sysstats_mysql_processlist()\n";
-	$dse_sysstats_mysql_processlist_array=dse_sysstats_mysql_processlist();
-	$section_mysql_processes= $dse_sysstats_mysql_processlist_array[3];
 	
+	
+	if(str_contains($vars['DSE']['SERVICES'],"mysql")){	
+		$vars[dse_sysstats_mysql_processlist__limit]=intval($H/4);
+	
+		if($vars['Verbosity']>3) print "dse_sysstats_mysql_processlist()\n";
+		$dse_sysstats_mysql_processlist_array=dse_sysstats_mysql_processlist();
+		$section_mysql_processes= $dse_sysstats_mysql_processlist_array[3];
+		
+	
+		if($vars['Verbosity']>3) print "dse_sysstats_mysql_status()\n";
+		$dse_sysstats_mysql_status_array=dse_sysstats_mysql_status();
+		$section_mysql_stats=$dse_sysstats_mysql_status_array[3];
+	}
 
-	if($vars['Verbosity']>3) print "dse_sysstats_mysql_status()\n";
-	$dse_sysstats_mysql_status_array=dse_sysstats_mysql_status();
-	$section_mysql_stats=$dse_sysstats_mysql_status_array[3];
-	
+
+
+
 
 	/*global $section_files_open;
 	if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) && ($Loops%5)==0 ){
@@ -347,7 +354,7 @@ function update_display($keys=""){
 		
 	global $section_net_listening;
 	if(($Loops%5)==0 ){
-		if($vars['Verbosity']>3) print "dse_sysstats_net_listening()\n";
+		dpv(3,"dse_sysstats_net_listening()");
 		//$dse_sysstats_net_listening_array=dse_sysstats_net_listening();
 		//$section_net_listening="Ports Listening: ".$dse_sysstats_net_listening_array[3];
 		$section_net_listening=colorize("Ports: ","cyan","black").dse_exec("/dse/bin/dsc -oc");

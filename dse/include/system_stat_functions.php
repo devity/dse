@@ -17,6 +17,9 @@ Linux 3.0.0-22-generic-pae (VULD) 	07/05/2012 	_i686_	(4 CPU)
 */
 function dse_sysstats_cpu(){
 	global $vars; dse_trace();
+	
+	// iostat -w1 -c2
+	
 	$r=dse_exec("mpstat -P ALL 1 1");//,TRUE,TRUE
 	$ra=split("\n",$r);
 	//print "ra[]="; print_r($ra); print "\n";
@@ -1107,6 +1110,93 @@ function dse_sysstats_httpd_fullstatus(){
 	//if(!$vars['dpd_httpd_fullstatus__embeded'])	end_feature_box();
 	//print "<br>";	
 }
+
+
+	//CPU, RAM, Drives, NetInterfaces, Displays
+function dse_sysstats_hardware_summary(){
+	global $vars;
+	dpv(3,"dse_sysstats_hardware_summary()");
+	$tbr="";
+	if(dse_is_osx()){
+		$r=dse_exec("/usr/sbin/system_profiler -detailLevel full SPHardwareDataType");
+		$tbr.=$r;
+		$r=dse_exec("sysctl -a");
+		$tbr.=$r;
 		
+		
+		$cpu_count=trim(dse_exec("hwprefs cpu_count"));
+		$memory_size=trim(dse_exec("hwprefs memory_size"));
+		$cpu_type=trim(dse_exec("hwprefs cpu_type"));
+		$cpu_freq=trim(dse_exec("hwprefs cpu_freq"));
+		$cpu_bus_freq=trim(dse_exec("hwprefs cpu_bus_freq"));
+		$machine_type=trim(dse_exec("hwprefs machine_type"));
+		$processors=trim(strcut(trim(dse_exec("system_profiler | grep Processors:")),":"));
+		$ncpu=trim(strcut(trim(dse_exec("sysctl hw.ncpu")),":"));
+		$hwphysicalcpu=trim(strcut(trim(dse_exec("sysctl hw.physicalcpu")),":"));
+		$hwlogicalcpu=trim(strcut(trim(dse_exec("sysctl hw.logicalcpu")),":"));
+		$cpubrand_string=trim(strcut(trim(dse_exec("sysctl machdep.cpu.brand_string")),":"));
+		$cpul1icachesize=intval(trim(strcut(trim(dse_exec("sysctl hw.l1icachesize")),":"))/1024);
+		$cpucachesize=trim(strcut(trim(dse_exec("sysctl machdep.cpu.cache.size")),":"));
+		$cpul3cachesize=intval(trim(strcut(trim(dse_exec("sysctl hw.l3cachesize")),":"))/1024);
+		$hwmachine=trim(strcut(trim(dse_exec("sysctl hw.machine")),":"));
+
+		// /usr/sbin/system_profiler SPHardwareDataType
+		
+		$tbr.=colorize("Hardware Summary:\n","white","green");
+		$tbr.= "Machine Type: ".colorize("$machine_type\n","green","black");
+		
+		$tbr.= "CPU Brand: ".colorize("$cpubrand_string\n","green","black");
+		$tbr.= "CPU Type: ".colorize("$cpu_type\n","green","black");
+		$tbr.= "CPU Arch: ".colorize("$hwmachine\n","green","black");
+		$tbr.= "CPU Freq: ".colorize("$cpu_freq\n","green","black");
+		$tbr.= "CPU Count: ".colorize("$processors\n","green","black");
+		$tbr.= "CPU Core Count: ".colorize("$cpu_count\n","green","black");
+		/*$tbr.= "CPUs: (sysctl hw.ncpu) ".colorize("$ncpu\n","green","black");
+		$tbr.= "CPUs: (sysctl hw.physicalcpu) ".colorize("$hwphysicalcpu\n","green","black");*/
+		$tbr.= "CPU Virtual Cores: ".colorize("$hwlogicalcpu\n","green","black");
+		$tbr.= "CPU L1 Cache Size: ".colorize("$cpul1icachesize KB\n","green","black");
+		$tbr.= "CPU L2 Cache Size: ".colorize("$cpucachesize KB\n","green","black");
+		$tbr.= "CPU L3 Cache Size: ".colorize("$cpul3cachesize KB\n","green","black");
+		
+		$tbr.= "Buss Freq: ".colorize("$cpu_bus_freq\n","green","black");
+		$tbr.= "RAM: ".colorize("$memory_size\n","green","black");
+		
+	}else{
+		$r=dse_exec("hardinfo -r -f text");
+		$tbr.=$r;
+		
+		$r=dse_exec("lshw"); //-xml
+		$tbr.=$r;
+		
+		//$r=dse_exec("lshw -xml");
+		//$tbr.=$r;
+	}
+	
+	return $tbr;
+}
+
+function dse_sysstats_cpu_trace(){
+	global $vars;
+	$tbr="";
+	if(dse_is_osx()){
+		/*
+		 cpuwalk.d - Measure which CPUs a process runs on. Uses DTrace
+		dispqlen.d - dispatcher queue length by CPU. Uses DTrace
+		runocc.d - run queue occupancy by CPU. Uses DTrace
+		sampleproc - sample processes on the CPUs. Uses DTrace
+		 */
+		$r=dse_passthru("sudo sampleproc",TRUE);
+		$tbr.=$r;
+		$r=dse_passthru("sudo cpuwalk.d",TRUE);
+		$tbr.=$r;
+	}else{
+		
+	}
+	
+	return $tbr;
+}
+
+
+
 
 ?>

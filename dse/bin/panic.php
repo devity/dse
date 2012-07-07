@@ -615,6 +615,10 @@ function dse_panic_services($Interactive=FALSE){
 function dse_panic_processes($Interactive=FALSE){
 	global $vars,$CFG_array;
 	
+	print bar("Section:  Processes... ","-","blue","white","white","blue");
+	print "Top CPU Using Processes:\n";
+	$Command="sudo ps -acx -o %cpu,pid,command | sort -rin | head -n10";
+	$r=dse_exec($Command,FALSE,TRUE);
 	
 	return;
 }

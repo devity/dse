@@ -29,6 +29,8 @@ $parameters_details = array(
   array('a','all',"print all available system stats"),
   array('p','prompt',"print brief info for use in shell prompt w: export PS1=\"[\$(/dse/bin/dss --prompt)]  \w:\$ \""),
   array('d','df',"colorized version of df"),
+  array('w','hardware',"basic system hardware info"),
+  
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -66,12 +68,16 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		dse_exec("/dse/bin/dnetstat -c",FALSE,TRUE);	
 		//dse_exec("hddtemp /dev/sdb",FALSE,TRUE);	
 //		lshw -short -C disk
-		
 		exit(0);
 		
 	case 'd':
   	case 'df':
 		dse_print_df();
+		exit(0);
+		
+	case 'w':
+  	case 'hardware':
+		print dse_sysstats_hardware_summary();
 		exit(0);
 }
 

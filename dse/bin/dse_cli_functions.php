@@ -590,7 +590,8 @@ function dpv($MinVerbosity,$Message){
 		dep($Message);
 	}else{
 		if($vars['Verbosity']>=$MinVerbosity){
-			print colorize($Message,"yellow")."\n";
+			print colorize("Dbg$MinVerbosity: ","black","white");
+			print colorize($Message,"yellow","black")."\n";
 		}
 	}
 }
@@ -2766,6 +2767,9 @@ function dse_is_osx(){
 		}
 	}
 	return $vars['DSE']['IS_OSX'];
+	// hwprefs os_class   => Snow Leopard     hwprefs os_type => Mac OS X 10.6.8 (10K549)
+	
+	
 }
 function dse_is_ubuntu(){
 	global $vars; dse_trace();
@@ -4053,7 +4057,11 @@ function dse_ports_open($Colorize=FALSE){
 			$PortName=dse_port_name($p);
 			if($Colorize){
 				if($exe!=$PortName){
-					$tbr.= colorize($exe,"cyan","black").colorize(":","yellow","black").colorize($PortName,"green","black",TRUE,1);
+					if(intval($PortName)>0){
+						$tbr.= colorize($exe,"cyan","black").colorize(":","yellow","black").colorize($PortName,"green","black",TRUE,1);
+					}else{
+						$tbr.= colorize($PortName,"green","black",TRUE,1);
+					}
 				}else{
 					$tbr.= colorize($PortName,"green","black",TRUE,1);
 				}
@@ -4066,4 +4074,29 @@ function dse_ports_open($Colorize=FALSE){
 }
 if($vars['Verbosity']>5) print "dse_cli_functions.php: Done!\n";
 
+
+/*
+ * 
+ //calander
+#!/usr/bin/perl
+
+use POSIX qw/strftime/;
+use integer;
+
+$date = strftime "%e",localtime;
+$date =~ s/\s//;
+@cal = `cal`;
+$cal[0] = (strftime "%B %e %Y", localtime)."\n";
+$cal[0] =~ s/\s\s/ /;
+$il = " " x ((length($cal[1]) - length($cal[0]))/2);
+$cal[0] =~ s/^/ $il/; 
+print $cal[0];
+for ($i = 1; $i <=6; $i++) {
+        $cal[$i] =~ s/^(.*)\n$/ $1/;
+        $cal[$i] =~ s/(^|\s)$date(\s|$)/\[$date\]/;
+        print $cal[$i]."\n";
+}
+ 
+ */
+ 
 ?>

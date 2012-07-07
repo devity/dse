@@ -380,8 +380,14 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		$NotOSXPackageNamesArray[]="lshw";
 		$PackageNamesArray[]="lm-sensors";
 		$NotOSXPackageNamesArray[]="hddtemp";
-		$NotOSXPackageNamesArray[]="mysql-bench";
-		$NotOSXPackageNamesArray[]="apache2-utils";
+		if(str_contains($vars['DSE']['SERVICES'],"mysql")){
+			$NotOSXPackageNamesArray[]="mysql-bench";
+		}
+		if(str_contains($vars['DSE']['SERVICES'],"http")){
+			$NotOSXPackageNamesArray[]="apache2-utils";
+		}
+		
+		$NotOSXPackageNamesArray[]="mpstat";
 		$PackageNamesArray[]="phoronix";
 		$PackageNamesArray[]="cpuburn";
 		$PackageNamesArray[]="lmbench";
