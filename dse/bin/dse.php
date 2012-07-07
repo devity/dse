@@ -30,7 +30,7 @@ $parameters_details = array(
   array('s','set-env',"set shell environment variables"),
   array('y:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('z:','status:',"shows status on all or arg1. options: [initd]"),
-  array('x:','code-query:',"shows status of string arg1. grep is unknown string or more info if known as a file, function, of variable name"),
+  array('x:','code-query:',"shows status of string arg1 in codebase arg2. grep is unknown string or more info if known as a file, function, of variable name"),
   array('a','reboot',"reboots the server"),
   array('b','halt',"halts the server (turns it off! use w/ caution. if you just need to disconnect it from the work because of an attack, run: ".
   	$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']."/panic   and answer the questions  )"),

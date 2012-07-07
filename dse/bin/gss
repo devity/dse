@@ -31,6 +31,7 @@ foreach(split("\n",$out) as $L){
 	if($L){
 		$Li++;
 		$FileName=strcut($L,"",":");
+		$FileName=str_replace($d,"",$FileName);
 		$L=strcut($L,":");
 		$LineNumber=strcut($L,"",":");
 		$Line=strcut($L,":");
