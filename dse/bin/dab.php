@@ -288,173 +288,177 @@ function ddab_recursive_do_dir($Dir){
 	dpv(3,"ddab_recursive_do_dir($Dir)");
 	//if(!str_contains($vars['Verbosity'],"0")){	print "v=".$vars['Verbosity']."\n";exit();}
 		//print "ddab_recursive_do_dir($Dir)\n";
-	$ls=dse_exec("ls -1a $Dir",$vars['Verbosity']>3);
 	
-	dpv(5,"got ls");
-	foreach(split("\n",$ls) as $filename){
-		//print "$filename \n";
+	
+	if(str_contains($BackupLocation,"scp ")){
+		$do=FALSE; 
+		if($DoClean){
+		}else{
+			$BackupLocation=str_remove($BackupLocation,"scp ");
+			$BackupFile=$BackupLocation."/".$Dir;
+			$BackupFile=str_replace("//", "/", $BackupFile);
+			$Command="scp \"$Dir\" \"$BackupFile\"";
+			dse_exec($Command,TRUE);
+			ddab_log("UPDATED FILE: $full_filename");
+			dpv(0," ****** ".colorize(" UPDATED FILE ","yellow").": $full_filename");
+		}
+	}else{
+	
+		$ls=dse_exec("ls -1a $Dir",$vars['Verbosity']>3);
 		
-		if($filename && $filename!="." && $filename!=".." && !str_contains($filename,"Warning:") ){
-			//print colorize("$filename \n","yellow","magenta");
-			$filename_parts=pathinfo($filename);
-			//print_r($filename_parts);
-			$filename_extension=$filename_parts['extension'];
-			$full_filename=$Dir."/".$filename;
-			$full_filename=str_replace("//", "/", $full_filename);
-			$do=TRUE;
-			if(is_dir($full_filename)){
-				
-				
-				
-				foreach($ExcludedDirectoriesArray as $xDir){
-					if($xDir!="" && $xDir==$filename){
-						$do=FALSE; 
-						if($xDir!=".ddab"){
-							$msg=" ******SKIPPED DIRECTORY: $filename/\n";
+		dpv(5,"got ls");
+		foreach(split("\n",$ls) as $filename){
+			//print "$filename \n";
+			
+			if($filename && $filename!="." && $filename!=".." && !str_contains($filename,"Warning:") ){
+				//print colorize("$filename \n","yellow","magenta");
+				$filename_parts=pathinfo($filename);
+				//print_r($filename_parts);
+				$filename_extension=$filename_parts['extension'];
+				$full_filename=$Dir."/".$filename;
+				$full_filename=str_replace("//", "/", $full_filename);
+				$do=TRUE;
+				if(is_dir($full_filename)){
+					
+					
+					
+					foreach($ExcludedDirectoriesArray as $xDir){
+						if($xDir!="" && $xDir==$filename){
+							$do=FALSE; 
+							if($xDir!=".ddab"){
+								$msg=" ******SKIPPED DIRECTORY: $filename/\n";
+								$StatusOutput.=$msg."\n"; dpv(1,$msg);
+							}
+						}
+					}
+					foreach($ExcludedDirectoriesPartialArray as $xDir){
+						if($xDir!="" && !(strstr($filename,$xDir)===FALSE)){
+							$do=FALSE; 
+							$msg=" ******SKIPPED DIRECTORY: $filename/";
 							$StatusOutput.=$msg."\n"; dpv(1,$msg);
 						}
 					}
+					
+					
+					
+					
 				}
-				foreach($ExcludedDirectoriesPartialArray as $xDir){
-					if($xDir!="" && !(strstr($filename,$xDir)===FALSE)){
-						$do=FALSE; 
-						$msg=" ******SKIPPED DIRECTORY: $filename/";
+				foreach($ExcludedExtensionsArray as $xExt){
+					if($xExt!="" && $xExt==$filename_extension){
+						$do=FALSE;
+						$size=filesize($full_filename);
+						$size_str=number_format($size);
+						$msg= " ******SKIPPED FILE: $filename ($size_str B)\n";
 						$StatusOutput.=$msg."\n"; dpv(1,$msg);
 					}
 				}
+						
 				
-				
-				if(str_contains($BackupLocation,"scp ")){
-					$do=FALSE; 
-					if($DoClean){
+				if($do){
+					if(is_dir($full_filename)){
+						$full_filename.="/";
 					}else{
-						$BackupLocation=str_remove($BackupLocation,"scp ");
+						
+					}
+					
+					if(is_dir($full_filename)){
+						dpv(1, "$full_filename  directory"); 
+						$BytesNeededTotal_tmp=$BytesNeededTotal;
+						$BytesNeededTotal=0;
+						ddab_recursive_do_dir($full_filename);
+						global $BytesNeededTotal;
+						$BytesNeededTotal+=$BytesNeededTotal_tmp;
+					}else{
+						print "$full_filename "; 
+						if($BackupLocationRoot && $BackupLocationRoot!=".dab"){
+							$BackupLocation=$BackupLocationRoot."/".$Dir."/";
+						}else{
+							$BackupLocation=$Dir."/".$BackupDirectoryName."/";					
+						}			
+						$BackupLocation=str_replace("//", "/", $BackupLocation);
 						$BackupFile=$BackupLocation."/".$filename;
 						$BackupFile=str_replace("//", "/", $BackupFile);
-						$Command="scp \"$full_filename\" \"$BackupFile\"";
-						dse_exec($Command,TRUE);
-						ddab_log("UPDATED FILE: $full_filename");
-						dpv(0," ****** ".colorize(" UPDATED FILE ","yellow").": $full_filename");
-					}
-				}
-				
-			}
-			foreach($ExcludedExtensionsArray as $xExt){
-				if($xExt!="" && $xExt==$filename_extension){
-					$do=FALSE;
-					$size=filesize($full_filename);
-					$size_str=number_format($size);
-					$msg= " ******SKIPPED FILE: $filename ($size_str B)\n";
-					$StatusOutput.=$msg."\n"; dpv(1,$msg);
-				}
-			}
-					
-			
-			if($do){
-				if(is_dir($full_filename)){
-					$full_filename.="/";
-				}else{
-					
-				}
-				
-				if(is_dir($full_filename)){
-					dpv(1, "$full_filename  directory"); 
-					$BytesNeededTotal_tmp=$BytesNeededTotal;
-					$BytesNeededTotal=0;
-					ddab_recursive_do_dir($full_filename);
-					global $BytesNeededTotal;
-					$BytesNeededTotal+=$BytesNeededTotal_tmp;
-				}else{
-					print "$full_filename "; 
-					if($BackupLocationRoot && $BackupLocationRoot!=".dab"){
-						$BackupLocation=$BackupLocationRoot."/".$Dir."/";
-					}else{
-						$BackupLocation=$Dir."/".$BackupDirectoryName."/";					
-					}			
-					$BackupLocation=str_replace("//", "/", $BackupLocation);
-					$BackupFile=$BackupLocation."/".$filename;
-					$BackupFile=str_replace("//", "/", $BackupFile);
-					
-					if(str_contains($BackupLocation,"scp ")){
-						if($DoClean){
-						}else{
-							$BackupLocation=str_remove($BackupLocation,"scp ");
-							$BackupFile=$BackupLocation."/".$filename;
-							$BackupFile=str_replace("//", "/", $BackupFile);
-							$Command="scp \"$full_filename\" \"$BackupFile\"";
-							dse_exec($Command,TRUE);
-							ddab_log("UPDATED FILE: $full_filename");
-							dpv(0," ****** ".colorize(" UPDATED FILE ","yellow").": $full_filename");
-						}
-					}else{
-					
-						if($DoClean){
-							if(!$BackupLocationsCleanedArray[$BackupLocation]){
-								$Command="dsizeof \"$BackupLocation\"";
-								$BytesCleaned=`$Command`;
-								$BackupLocationsCleanedArray[$BackupLocation]=$BytesCleaned;
-								$BytesCleanedTotal+=$BytesCleaned;
-								//print "$Command => $BytesCleaned\n";
-							//	global $rrmdir_test_only;	$rrmdir_test_only=TRUE;
-								rrmdir($BackupLocation);
+						
+						if(str_contains($BackupLocation,"scp ")){
+							if($DoClean){
 							}else{
-								
+								$BackupLocation=str_remove($BackupLocation,"scp ");
+								$BackupFile=$BackupLocation."/".$filename;
+								$BackupFile=str_replace("//", "/", $BackupFile);
+								$Command="scp \"$full_filename\" \"$BackupFile\"";
+								dse_exec($Command,TRUE);
+								ddab_log("UPDATED FILE: $full_filename");
+								dpv(0," ****** ".colorize(" UPDATED FILE ","yellow").": $full_filename");
 							}
 						}else{
-							$FilesChecked++;
-							$FilesCheckedA[]=$full_filename;
-							if(!file_exists($BackupLocation)){
-								//print "%%%%%% $BackupLocation \n";
-								mkdir($BackupLocation,0777,TRUE);
-							}
-							if(!file_exists($BackupFile)){
-								$FilesNew++;
-								$FilesNewA[]=$full_filename;
-								$Command="cp -fp \"$full_filename\" \"$BackupFile\"";
-								print colorize($Command,"white","red")."\n";
-								dse_exec($Command,$vars['Verbosity']>2);
-								$BytesNeededTotal+=filesize($full_filename);
-								if(filesize($full_filename)>$warn_size_limit){
-									$msg= " ************* BIG file: $full_filename  =".filesize($full_filename)." Bytes";
-									$StatusOutput.=$msg."\n"; dpv(0, $msg);
+						
+							if($DoClean){
+								if(!$BackupLocationsCleanedArray[$BackupLocation]){
+									$Command="dsizeof \"$BackupLocation\"";
+									$BytesCleaned=`$Command`;
+									$BackupLocationsCleanedArray[$BackupLocation]=$BytesCleaned;
+									$BytesCleanedTotal+=$BytesCleaned;
+									//print "$Command => $BytesCleaned\n";
+								//	global $rrmdir_test_only;	$rrmdir_test_only=TRUE;
+									rrmdir($BackupLocation);
+								}else{
+									
 								}
-								ddab_log("NEW FILE: $full_filename");
-								dpv(0," ****** ".colorize(" NEW FILE ","cyan").": $full_filename");
 							}else{
-								if(filesize($full_filename)!=filesize($BackupFile) 
-								
-								){
-									$FilesChanged++;
-									$FilesChangedA[]=$full_filename;
-								//|| filemtime($full_filename)!=filemtime($BackupFile)
-									$BytesNeededTotal+=filesize($full_filename);
-									$mtime=filemtime($BackupFile);
-									$full_filename_extension=dse_file_extension($full_filename);
-									$BackupFile_archive=$BackupFile.".".@date("Ymd-His").".".$full_filename_extension;
-									$Command="cp -fp \"$BackupFile\" \"$BackupFile_archive\"";
-									//print "Cmd=$Command \n";
-									print colorize($Command,"white","red")."\n";
-									dse_exec($Command,$vars['Verbosity']>2);
+								$FilesChecked++;
+								$FilesCheckedA[]=$full_filename;
+								if(!file_exists($BackupLocation)){
+									//print "%%%%%% $BackupLocation \n";
+									mkdir($BackupLocation,0777,TRUE);
+								}
+								if(!file_exists($BackupFile)){
+									$FilesNew++;
+									$FilesNewA[]=$full_filename;
 									$Command="cp -fp \"$full_filename\" \"$BackupFile\"";
 									print colorize($Command,"white","red")."\n";
 									dse_exec($Command,$vars['Verbosity']>2);
-									ddab_log("UPDATED FILE: $full_filename");
-									dpv(0," ****** ".colorize(" UPDATED FILE ","yellow").": $full_filename");
+									$BytesNeededTotal+=filesize($full_filename);
+									if(filesize($full_filename)>$warn_size_limit){
+										$msg= " ************* BIG file: $full_filename  =".filesize($full_filename)." Bytes";
+										$StatusOutput.=$msg."\n"; dpv(0, $msg);
+									}
+									ddab_log("NEW FILE: $full_filename");
+									dpv(0," ****** ".colorize(" NEW FILE ","cyan").": $full_filename");
 								}else{
-									$FilesSame++;
-									$FilesSameA[]=$full_filename;
-									dpv(0,colorize(" OK == ","green").$BackupFile);
-								}	
+									if(filesize($full_filename)!=filesize($BackupFile) 
+									
+									){
+										$FilesChanged++;
+										$FilesChangedA[]=$full_filename;
+									//|| filemtime($full_filename)!=filemtime($BackupFile)
+										$BytesNeededTotal+=filesize($full_filename);
+										$mtime=filemtime($BackupFile);
+										$full_filename_extension=dse_file_extension($full_filename);
+										$BackupFile_archive=$BackupFile.".".@date("Ymd-His").".".$full_filename_extension;
+										$Command="cp -fp \"$BackupFile\" \"$BackupFile_archive\"";
+										//print "Cmd=$Command \n";
+										print colorize($Command,"white","red")."\n";
+										dse_exec($Command,$vars['Verbosity']>2);
+										$Command="cp -fp \"$full_filename\" \"$BackupFile\"";
+										print colorize($Command,"white","red")."\n";
+										dse_exec($Command,$vars['Verbosity']>2);
+										ddab_log("UPDATED FILE: $full_filename");
+										dpv(0," ****** ".colorize(" UPDATED FILE ","yellow").": $full_filename");
+									}else{
+										$FilesSame++;
+										$FilesSameA[]=$full_filename;
+										dpv(0,colorize(" OK == ","green").$BackupFile);
+									}	
+								}
 							}
 						}
+					//	print "\n";
 					}
-				//	print "\n";
 				}
 			}
+	//$BytesNeededTotal_str=$BytesNeededTotal;//number_format($BytesNeededTotal,0);
+	//print "BytesNeededTotal=$BytesNeededTotal_str\n";
 		}
-//$BytesNeededTotal_str=$BytesNeededTotal;//number_format($BytesNeededTotal,0);
-//print "BytesNeededTotal=$BytesNeededTotal_str\n";
-
 	}
 }
 
