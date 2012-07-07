@@ -303,6 +303,9 @@ function ddab_recursive_do_dir($Dir){
 			$full_filename=str_replace("//", "/", $full_filename);
 			$do=TRUE;
 			if(is_dir($full_filename)){
+				
+				
+				
 				foreach($ExcludedDirectoriesArray as $xDir){
 					if($xDir!="" && $xDir==$filename){
 						$do=FALSE; 
@@ -319,6 +322,22 @@ function ddab_recursive_do_dir($Dir){
 						$StatusOutput.=$msg."\n"; dpv(1,$msg);
 					}
 				}
+				
+				
+				if(str_contains($BackupLocation,"scp ")){
+					$do=FALSE; 
+					if($DoClean){
+					}else{
+						$BackupLocation=str_remove($BackupLocation,"scp ");
+						$BackupFile=$BackupLocation."/".$filename;
+						$BackupFile=str_replace("//", "/", $BackupFile);
+						$Command="scp \"$full_filename\" \"$BackupFile\"";
+						dse_exec($Command,TRUE);
+						ddab_log("UPDATED FILE: $full_filename");
+						dpv(0," ****** ".colorize(" UPDATED FILE ","yellow").": $full_filename");
+					}
+				}
+				
 			}
 			foreach($ExcludedExtensionsArray as $xExt){
 				if($xExt!="" && $xExt==$filename_extension){
