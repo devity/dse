@@ -190,7 +190,7 @@ if($DoBackup){
 		if(str_contains($Dir,"=>")){
 			//list($BackupLocationRootDir,$BackupArgument)=split("=>",$Dir);
 			$Dir=trim(strcut($Dir,"","=>"));
-			$BackupArgument=trim(strcut($Dir,"=>"));
+			$BackupArgument=trim(strcut($Line,"=>"));
 			print colorize("CfgLine=$Line\n BackupLocationRootDir=$BackupLocationRootDir BackupLocationRoot=$BackupLocationRoot BackupArgument=$BackupArgument \n","magenta","white");
 			$BackupLocationRoot_saved=$BackupLocationRoot;
 			$BackupLocationRoot=$BackupArgument;
