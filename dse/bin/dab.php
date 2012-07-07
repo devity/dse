@@ -297,7 +297,7 @@ function ddab_recursive_do_dir($Dir){
 			$BackupLocation=str_remove($BackupLocationRoot,"scp ");
 			//$BackupFile=$BackupLocation."/".$Dir;
 			$BackupFile=str_replace("//", "/", $BackupLocation);
-			$Command="scp \"$Dir\" \"$BackupFile\"";
+			$Command="scp -r \"$Dir\" \"$BackupFile\"";
 			dse_exec($Command,TRUE);
 			ddab_log("UPDATED FILE: $full_filename");
 			dpv(0," ****** ".colorize(" UPDATED FILE ","yellow").": $full_filename");
