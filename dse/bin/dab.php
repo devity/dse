@@ -190,14 +190,14 @@ if($DoBackup){
 			//list($BackupLocationRootDir,$BackupArgument)=split("=>",$Dir);
 			$Dir=trim(strcut($Dir,"","=>"));
 			$BackupArgument=trim(strcut($Dir,"=>"));
-			//print colorize("BackupLocationRootDir=$BackupLocationRootDir BackupLocationRoot=$BackupLocationRoot BackupArgument=$BackupArgument \n","magenta","white");
+			print colorize("BackupLocationRootDir=$BackupLocationRootDir BackupLocationRoot=$BackupLocationRoot BackupArgument=$BackupArgument \n","magenta","white");
 			$BackupLocationRoot_saved=$BackupLocationRoot;
 			$BackupLocationRoot=$BackupArgument;
 		}
 		$BytesNeededTotal_tmp=$BytesNeededTotal;
 		$BytesNeededTotal=0;
 		bar("Backing up $Dir to $BackupLocationRoot  ","-","white","magenta");
-			
+			exit();
 		//print colorize("$Dir => $BackupLocationRoot\n"."black","yellow");
 		ddab_recursive_do_dir($Dir);
 		if($BackupLocationRoot_saved){
