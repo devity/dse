@@ -184,13 +184,14 @@ if($DoBackup){
 	dse_print_df();
 	$DidSomething=TRUE;
 	$BytesNeededTotal=0;
-	foreach ($DirectoryArray as $Dir){
+	foreach ($DirectoryArray as $Line){
+		$Dir=$Line;
 		$BackupLocationRoot_saved="";
 		if(str_contains($Dir,"=>")){
 			//list($BackupLocationRootDir,$BackupArgument)=split("=>",$Dir);
 			$Dir=trim(strcut($Dir,"","=>"));
 			$BackupArgument=trim(strcut($Dir,"=>"));
-			print colorize("BackupLocationRootDir=$BackupLocationRootDir BackupLocationRoot=$BackupLocationRoot BackupArgument=$BackupArgument \n","magenta","white");
+			print colorize("CfgLine=$Line\n BackupLocationRootDir=$BackupLocationRootDir BackupLocationRoot=$BackupLocationRoot BackupArgument=$BackupArgument \n","magenta","white");
 			$BackupLocationRoot_saved=$BackupLocationRoot;
 			$BackupLocationRoot=$BackupArgument;
 		}
