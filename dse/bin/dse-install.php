@@ -3,7 +3,7 @@
 error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
 
-//print_r($_SERVER);exit();
+print_r($_SERVER);//exit();
 
 $vars['DSE']['DSE_ROOT']="/dse";
 
@@ -20,6 +20,7 @@ if(!is_dir("/dse")){
 			`ln -s $php /usr/bin/php`;
 		}
 	}
+	print $vars['DSE']['DSE_ROOT']."/bin/dse_cli_functions.php \n";
 }else{
 	$DSEInstalled=TRUE;
 }
