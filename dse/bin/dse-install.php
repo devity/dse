@@ -13,6 +13,13 @@ if(!is_dir("/dse")){
 	$DSEInstalled=FALSE;
 	print "DSE not installed. No /dse\n";
 	$vars['DSE']['DSE_ROOT']=str_replace("/bin/dse-install","",$_SERVER['PATH_TRANSLATED']);
+	print "DSE ROOT set to " . $vars['DSE']['DSE_ROOT']."\n";
+	if(!file_exists("/usr/bin/php")){
+		$php=trim(`sudo find /usr -type f -name php`);
+		if($php){
+			`ln -s $php /usr/bin/php`;
+		}
+	}
 }else{
 	$DSEInstalled=TRUE;
 }
