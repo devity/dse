@@ -170,7 +170,7 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 			$str= "   Loop: $Loops_str / ".$vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']."  Next: ${SleepLeft_str}s      $Load_str   \n";
 			print $str;
 		
-			$GraphWidth=intval((cbp_get_screen_width()/2)-10);
+			$GraphWidth=intval((cbp_get_screen_width()/2)-14);
 			$CPUInfoArray=dse_sysstats_cpu();
 			$CPUCores=$CPUInfoArray[0];
 			foreach($CPUInfoArray[1] as $i=>$CPUCoreInfoArray){
@@ -205,7 +205,7 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 			if($CPUCores==1){
 				$GraphWidth+=5;
 			}else{
-				print "\n";
+				//print "\n";
 				$GraphWidth=$GraphWidth*2+9;
 			}
 			$CPUUsageHistory[]=array($User,$System,$Free);
