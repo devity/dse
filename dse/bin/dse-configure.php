@@ -164,8 +164,17 @@ $DSE_Git_pull_script="/scripts/dse_git_pull";
 $TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/scripts/" . "dse_git_pull";
 dse_configure_file_install_from_template($DSE_Git_pull_script,$TemplateFile,"4775","root:root");
 
-$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "dse.conf";
-dse_configure_file_install_from_template($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],$TemplateFile,"664","root:root");
+if(!dse_file_exists($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'])){
+	$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "dse.conf";
+	dse_configure_file_install_from_template($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],$TemplateFile,"664","root:root");
+	dse_exec("vi ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']);
+}
+
+if(!dse_file_exists($vars['DSE']['SERVER_CONFIG_FILE'])){
+	$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "server.conf";
+	dse_configure_file_install_from_template($vars['DSE']['SERVER_CONFIG_FILE'],$TemplateFile,"664","root:root");
+	dse_exec("vi ".$vars['DSE']['SERVER_CONFIG_FILE']);
+}
 
 $TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "ips_whitelist.txt";
 dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_WHITELIST_FILE'],$TemplateFile,"664","root:root");

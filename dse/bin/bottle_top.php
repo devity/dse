@@ -226,10 +226,10 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 				if($Points<=$GraphWidth || $Pi>$GraphWidth-$Points){
 					list($Usr,$Sys,$Idl)=$Ha;
 					if($Idl>80) $C=colorize("_","green","black",TRUE,0);
-					else if($Idl>60) $C=colorize(",","green","black",TRUE,1);
-					else if($Idl>45) $C=colorize(",","yellow","black",TRUE,1);
-					else if($Idl>23) $C=colorize("-","yellow","black",TRUE,1);
-					else if($Idl>10) $C=colorize("-","red","black",TRUE,1);
+					else if($Idl>65) $C=colorize(",","green","black",TRUE,1);
+					else if($Idl>50) $C=colorize(",","yellow","black",TRUE,1);
+					else if($Idl>35) $C=colorize("-","yellow","black",TRUE,1);
+					else if($Idl>20) $C=colorize("-","red","black",TRUE,1);
 					else if($Idl>=0) $C=colorize("^","red","black",TRUE,1);
 					else $C="?";
 					print $C;

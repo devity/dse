@@ -2,9 +2,29 @@
 <?
 error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
-include_once ("/dse/bin/dse_cli_functions.php");
-include_once ("/dse/bin/dse_config.php");
-include_once ("/dse/bin/dse_config_functions.php");
+
+//print_r($_SERVER);exit();
+
+$vars['DSE']['DSE_ROOT']="/dse";
+
+
+//if(!file_exists("/etc/dse/dse.conf")){
+if(!is_dir("/dse")){
+	$DSEInstalled=FALSE;
+	print "DSE not installed. No /dse\n";
+	$vars['DSE']['DSE_ROOT']=str_replace("/bin/dse-install","",$_SERVER['PATH_TRANSLATED']);
+}else{
+	$DSEInstalled=TRUE;
+}
+
+
+
+
+
+
+include_once ($vars['DSE']['DSE_ROOT']."/bin/dse_cli_functions.php");
+include_once ($vars['DSE']['DSE_ROOT']."/bin/dse_config.php");
+include_once ($vars['DSE']['DSE_ROOT']."/bin/dse_config_functions.php");
 
 dse_require_root();
 $vars['Verbosity']=1;
@@ -95,7 +115,7 @@ dse_cli_script_header();
 if($argv[1]=="help" || $ShowUsage){
 	print $vars['Usage'];
 }
-
+/*
 `rm -rf /tmp/bootinfoscript-061.tar.gz`;
 `wget -qO- http://downloads.sourceforge.net/project/bootinfoscript/bootinfoscript/0.61/bootinfoscript-061.tar.gz > /tmp/bootinfoscript-061.tar.gz 2>/dev/null`;
 
@@ -104,7 +124,7 @@ print `gunzip /tmp/bootinfoscript-061.tar.gz`;
 
 `rm -rf /tmp/bootinfoscript`;
 print `tar xvf /tmp/bootinfoscript-061.tar`;
-
+*/
 
 
 
