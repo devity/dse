@@ -23,18 +23,18 @@ if(!$vars['DSE']){
 
 // *********************************************************************************
 // ********* set directories
-if(getenv("DSE_ROOT")!=""){
-	$vars['DSE']['DSE_ROOT']=getenv("DSE_ROOT");
-}else{
-	$vars['DSE']['DSE_ROOT']="/dse"; 
+if(!$vars['DSE']['DSE_ROOT']){
+	if(getenv("DSE_ROOT")!=""){
+		$vars['DSE']['DSE_ROOT']=getenv("DSE_ROOT");
+	}else{
+		$vars['DSE']['DSE_ROOT']="/dse"; 
+	}
 }
-$vars['DSE']['DSE_BIN_DIR']=$vars['DSE']['DSE_ROOT']."/bin";
-$vars['DSE']['DSE_ALIASES_DIR']=$vars['DSE']['DSE_ROOT']."/aliases";
-$vars['DSE']['SYSTEM_SCRIPTS_DIR']='/scripts';
-
-$vars['DSE']['DSE_TEMPLATES_DIR']=$vars['DSE']['DSE_ROOT']."/install/templates";
-
-$vars['DSE']['DSE_GIT_ROOT']="/root/dse_git";
+if(!$vars['DSE']['DSE_BIN_DIR']) $vars['DSE']['DSE_BIN_DIR']=$vars['DSE']['DSE_ROOT']."/bin";
+if(!$vars['DSE']['DSE_ALIASES_DIR']) $vars['DSE']['DSE_ALIASES_DIR']=$vars['DSE']['DSE_ROOT']."/aliases";
+if(!$vars['DSE']['SYSTEM_SCRIPTS_DIR']) $vars['DSE']['SYSTEM_SCRIPTS_DIR']='/scripts';
+if(!$vars['DSE']['DSE_TEMPLATES_DIR']) $vars['DSE']['DSE_TEMPLATES_DIR']=$vars['DSE']['DSE_ROOT']."/install/templates";
+if(!$vars['DSE']['DSE_GIT_ROOT']) $vars['DSE']['DSE_GIT_ROOT']="/root/dse_git";
 
 
 

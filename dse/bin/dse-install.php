@@ -20,11 +20,14 @@ if(!is_dir("/dse")){
 			`ln -s $php /usr/bin/php`;
 		}
 	}
+	print "DSE ROOT set to " . $vars['DSE']['DSE_ROOT']."\n";
+	
 	print $vars['DSE']['DSE_ROOT']."/bin/dse_cli_functions.php \n";
 }else{
 	$DSEInstalled=TRUE;
 }
-
+print "DSE ROOT set to " . $vars['DSE']['DSE_ROOT']."\n";
+	
 
 
 
@@ -34,7 +37,8 @@ include_once ($vars['DSE']['DSE_ROOT']."/bin/dse_cli_functions.php");
 include_once ($vars['DSE']['DSE_ROOT']."/bin/dse_config.php");
 include_once ($vars['DSE']['DSE_ROOT']."/bin/dse_config_functions.php");
 print "done includes\n";
-
+print "DSE ROOT set to " . $vars['DSE']['DSE_ROOT']."\n";
+	
 dse_require_root();
 $vars['Verbosity']=1;
 
