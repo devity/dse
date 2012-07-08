@@ -96,14 +96,14 @@ print pad("Installing main cfg files from Templates: ".colorize($PackageName,"cy
 if(!dse_file_exists($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'])){
 	$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "dse.conf";
 	dse_configure_file_install_from_template($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],$TemplateFile,"664","root:root");
-	dse_exec("vi ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']);
+	dse_passthru("/dse/bin/vibk ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']);
 	include ("/dse/bin/dse_config.php");
 }
 
 if(!dse_file_exists($vars['DSE']['SERVER_CONFIG_FILE'])){
 	$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "server.conf";
 	dse_configure_file_install_from_template($vars['DSE']['SERVER_CONFIG_FILE'],$TemplateFile,"664","root:root");
-	dse_exec("vi ".$vars['DSE']['SERVER_CONFIG_FILE']);
+	dse_passthru("/dse/bin/vibk ".$vars['DSE']['SERVER_CONFIG_FILE']);
 	include ("/dse/bin/dse_config.php");
 }
 
