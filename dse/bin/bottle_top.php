@@ -173,11 +173,17 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 			$GraphWidth=intval((cbp_get_screen_width()/2)-14);
 			$CPUInfoArray=dse_sysstats_cpu();
 			$CPUCores=$CPUInfoArray[0];
+			$UsrTotal=0;
+			$SysTotal=0;
+			$IdlTotal=0;
 			foreach($CPUInfoArray[1] as $i=>$CPUCoreInfoArray){
 				$Free=intval($CPUCoreInfoArray['Idle']);
 				$User=intval($CPUCoreInfoArray['User']);
 				$Sys=100-($Free+$User);
 				$Used=100-$Free;
+				$UsrTotal+=$User;
+				$SysTotal+=$Sys;
+				$IdlTotal+=$Free;
 				$RedWidth=intval(($Sys/100)*$GraphWidth);
 				$MagentaWidth=intval(($User/100)*$GraphWidth);
 				$GreenWidth=$GraphWidth-($RedWidth+$MagentaWidth);
@@ -208,7 +214,7 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 				//print "\n";
 				$GraphWidth=$GraphWidth*2+9;
 			}
-			$CPUUsageHistory[]=array($User,$System,$Free);
+			$CPUUsageHistory[]=array(intval($UsrTotal/$CPUCores),intval($SysTotal/$CPUCores),intval($IdlTotal/$CPUCores));
 			$Points=sizeof($CPUUsageHistory);
 			$PointsPerCharacter=intval($GraphWidth/$Points);
 			if($PointsPerCharacter<1) $PointsPerCharacter=1;
