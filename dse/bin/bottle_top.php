@@ -208,29 +208,29 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 				print "\n";
 				$GraphWidth=$GraphWidth*2+9;
 			}
-				$CPUUsageHistory[]=array($User,$System,$Free);
-				$Points=sizeof($CPUUsageHistory);
-				$PointsPerCharacter=intval($GraphWidth/$Points);
-				if($PointsPerCharacter<1) $PointsPerCharacter=1;
-				$StartPi=$Points-$GraphWidth;
-				if($StartPi<0) $StartPi=0;
-				print colorize("|","cyan","black",TRUE,1);
-				for($Pi=$StartPi;$Pi<$Points;$Pi++){
-					$Ha=$CPUUsageHistory[$Pi];
-					if($Points<=$GraphWidth || $Pi>$GraphWidth-$Points){
-						list($Usr,$Sys,$Idl)=$Ha;
-						if($Idl>80) $C=colorize("_","green","black",TRUE,0);
-						else if($Idl>60) $C=colorize(",","green","black",TRUE,1);
-						else if($Idl>45) $C=colorize(",","yellow","black",TRUE,1);
-						else if($Idl>23) $C=colorize("-","yellow","black",TRUE,1);
-						else if($Idl>10) $C=colorize("-","red","black",TRUE,1);
-						else if($Idl>=0) $C=colorize("^","red","black",TRUE,1);
-						else $C="?";
-						print $C;
-					}
+			$CPUUsageHistory[]=array($User,$System,$Free);
+			$Points=sizeof($CPUUsageHistory);
+			$PointsPerCharacter=intval($GraphWidth/$Points);
+			if($PointsPerCharacter<1) $PointsPerCharacter=1;
+			$StartPi=$Points-$GraphWidth;
+			if($StartPi<0) $StartPi=0;
+			print colorize("|","cyan","black",TRUE,1);
+			for($Pi=$StartPi;$Pi<$Points;$Pi++){
+				$Ha=$CPUUsageHistory[$Pi];
+				if($Points<=$GraphWidth || $Pi>$GraphWidth-$Points){
+					list($Usr,$Sys,$Idl)=$Ha;
+					if($Idl>80) $C=colorize("_","green","black",TRUE,0);
+					else if($Idl>60) $C=colorize(",","green","black",TRUE,1);
+					else if($Idl>45) $C=colorize(",","yellow","black",TRUE,1);
+					else if($Idl>23) $C=colorize("-","yellow","black",TRUE,1);
+					else if($Idl>10) $C=colorize("-","red","black",TRUE,1);
+					else if($Idl>=0) $C=colorize("^","red","black",TRUE,1);
+					else $C="?";
+					print $C;
 				}
-				//print "p=$Points w=$GraphWidth endPi=$Pi";
 			}
+			//print "p=$Points w=$GraphWidth endPi=$Pi";
+		
 			
 		
 			//sleep(1);
