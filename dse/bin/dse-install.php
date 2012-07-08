@@ -243,6 +243,9 @@ $dse_git_dir="$PWD/dse/dse";
 			}else{
 				print " Installing! ";
 				dse_file_link($DefaultInstallDirectory,$dse_git_dir);
+				
+				print " Running DSE Configure first...\n";
+				dse_passthru("sudo /dse/bin/dse-configure");
 			}
 		}elseif($key=="N"){
 			print " Not installing. ";
