@@ -29,10 +29,11 @@ if(!is_dir("/dse")){
 
 
 
-
+print "starting includes\n";
 include_once ($vars['DSE']['DSE_ROOT']."/bin/dse_cli_functions.php");
 include_once ($vars['DSE']['DSE_ROOT']."/bin/dse_config.php");
 include_once ($vars['DSE']['DSE_ROOT']."/bin/dse_config_functions.php");
+print "done includes\n";
 
 dse_require_root();
 $vars['Verbosity']=1;
