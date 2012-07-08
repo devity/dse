@@ -220,7 +220,7 @@ $dse_git_dir="$PWD/dse/dse";
 		}
 		print "\n";*/
 	}else{
-		print "DSE not installed at $DefaultInstallDirectory    Install? ";
+		print "DSE not installed at /dse    Install? ";
 		$key=strtoupper(dse_get_key());
 		cbp_characters_clear(1);
 		if($key=="Y"){
@@ -242,7 +242,7 @@ $dse_git_dir="$PWD/dse/dse";
 				}
 			}else{
 				print " Installing! ";
-				dse_file_link($DefaultInstallDirectory,$dse_git_dir);
+				dse_file_link("/dse",$dse_git_dir);
 				
 				print " Running DSE Configure first...\n";
 				dse_passthru("sudo /dse/bin/dse-configure");
