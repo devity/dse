@@ -184,9 +184,9 @@ fi
 $PWD=trim(`pwd`);
 $DefaultInstallDirectory=$vars['DSE']['DSE_ROOT'];
 $dse_git_dir="$PWD/dse/dse";
-{
+
 	
-	if(file_exists($DefaultInstallDirectory)){
+	if(file_exists("/dse")){
 	/*	//only ask if QuestionLevel=ALL|FULL|HIGH|10
 	 	print "DSE already installed at $DefaultInstallDirectory    Reinstall? ";
 		$key=strtoupper(dse_get_key());
@@ -254,7 +254,7 @@ $dse_git_dir="$PWD/dse/dse";
 		}
 		print "\n";
 	}
-} 
+
 
 /*
 localepurge: to purge unneeded translations
