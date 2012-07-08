@@ -17,37 +17,49 @@ Linux 3.0.0-22-generic-pae (VULD) 	07/05/2012 	_i686_	(4 CPU)
 */
 function dse_sysstats_cpu(){
 	global $vars; dse_trace();
-	
-	// iostat -w1 -c2
-	
-	$r=dse_exec("mpstat -P ALL 1 1");//,TRUE,TRUE
-	$ra=split("\n",$r);
-	//print "ra[]="; print_r($ra); print "\n";
-	$SysInfo=split("[ \t]+",$ra[0]);
-	
-	//print "SysInfo[]="; print_r($SysInfo); print "\n";
-	$OSType=$SysInfo[0];
-	$KernelVersion=$SysInfo[1];
-	$CPUGeneration=$SysInfo[4];
-	$Hostname=strcut($SysInfo[2],"(",")");
-	$CPUCores=strcut($SysInfo[5],"(");
-	//print "cores=$CPUCores\n";
+	$CPUCores=1;
 	$CPUs=array();
-	for($c=0;$c<$CPUCores;$c++){
-		//print "c=$c ==ra[4+$c] \n";
-		$CoreInfoArray=split("[ \t]+",$ra[4+$c]);
-		$Usr=$CoreInfoArray[3];
-		$Nice=$CoreInfoArray[4];
-		$Sys=$CoreInfoArray[5];
-		$IOWait=$CoreInfoArray[6];
-		$IRQ=$CoreInfoArray[7];
-		$Soft=$CoreInfoArray[8];
-		$Steal=$CoreInfoArray[9];
-		$Guest=$CoreInfoArray[10];
-		$Idle=$CoreInfoArray[11];
-		$Sys+=$Nice+$IOWait+$IRQ+$Soft+$Steal+$Guest;
-		//print "adding core user=$User \n";
+	
+	if(dse_is_osx() || !dse_which("mpstat")){
+		$r=dse_exec("iostat -w1 -c2");
+		$ra=split("\n",$r);
+		$pa=split("[ \t]+",trim($ra[3]));
+	//	print_r($pa); exit();
+		$Usr=$pa[6];
+		$Sys=$pa[7];
+		$Idle=$pa[8];
 		$CPUs[]=array("User"=>$Usr,"Sys"=>$Sys,"Idle"=>$Idle);
+	}else{
+	
+		$r=dse_exec("mpstat -P ALL 1 1");//,TRUE,TRUE
+		$ra=split("\n",$r);
+		//print "ra[]="; print_r($ra); print "\n";
+		$SysInfo=split("[ \t]+",$ra[0]);
+		
+		//print "SysInfo[]="; print_r($SysInfo); print "\n";
+		$OSType=$SysInfo[0];
+		$KernelVersion=$SysInfo[1];
+		$CPUGeneration=$SysInfo[4];
+		$Hostname=strcut($SysInfo[2],"(",")");
+		$CPUCores=strcut($SysInfo[5],"(");
+		//print "cores=$CPUCores\n";
+		$CPUs=array();
+		for($c=0;$c<$CPUCores;$c++){
+			//print "c=$c ==ra[4+$c] \n";
+			$CoreInfoArray=split("[ \t]+",$ra[4+$c]);
+			$Usr=$CoreInfoArray[3];
+			$Nice=$CoreInfoArray[4];
+			$Sys=$CoreInfoArray[5];
+			$IOWait=$CoreInfoArray[6];
+			$IRQ=$CoreInfoArray[7];
+			$Soft=$CoreInfoArray[8];
+			$Steal=$CoreInfoArray[9];
+			$Guest=$CoreInfoArray[10];
+			$Idle=$CoreInfoArray[11];
+			$Sys+=$Nice+$IOWait+$IRQ+$Soft+$Steal+$Guest;
+			//print "adding core user=$User \n";
+			$CPUs[]=array("User"=>$Usr,"Sys"=>$Sys,"Idle"=>$Idle);
+		}
 	}
 	return array($CPUCores,$CPUs);
 }	

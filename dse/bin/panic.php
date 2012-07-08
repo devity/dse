@@ -617,7 +617,7 @@ function dse_panic_processes($Interactive=FALSE){
 	
 	print bar("Section:  Processes... ","-","blue","white","white","blue");
 	print "Top CPU Using Processes:\n";
-	$Command="sudo ps -acx -o %cpu,pid,command | sort -rin | head -n10";
+	$Command="sudo ps -acx -o %cpu,pid,command | sort -rn | head -n10";
 	$r=dse_exec($Command,FALSE,TRUE);
 	
 	return;

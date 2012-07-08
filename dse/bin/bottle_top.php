@@ -170,8 +170,9 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 			$str= "   Loop: $Loops_str / ".$vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']."  Next: ${SleepLeft_str}s      $Load_str   \n";
 			print $str;
 		
-			$GraphWidth=(cbp_get_screen_width()/2)-14;
+			$GraphWidth=intval((cbp_get_screen_width()/2)-10);
 			$CPUInfoArray=dse_sysstats_cpu();
+			$CPUCores=$CPUInfoArray[0];
 			foreach($CPUInfoArray[1] as $i=>$CPUCoreInfoArray){
 				$Free=intval($CPUCoreInfoArray['Idle']);
 				$User=intval($CPUCoreInfoArray['User']);
@@ -200,6 +201,35 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 				}else{
 					print "  ";
 				}
+			}
+			if($CPUCores==1){
+				$GraphWidth+=5;
+			}else{
+				print "\n";
+				$GraphWidth=$GraphWidth*2+9;
+			}
+				$CPUUsageHistory[]=array($User,$System,$Free);
+				$Points=sizeof($CPUUsageHistory);
+				$PointsPerCharacter=intval($GraphWidth/$Points);
+				if($PointsPerCharacter<1) $PointsPerCharacter=1;
+				$StartPi=$Points-$GraphWidth;
+				if($StartPi<0) $StartPi=0;
+				print colorize("|","cyan","black",TRUE,1);
+				for($Pi=$StartPi;$Pi<$Points;$Pi++){
+					$Ha=$CPUUsageHistory[$Pi];
+					if($Points<=$GraphWidth || $Pi>$GraphWidth-$Points){
+						list($Usr,$Sys,$Idl)=$Ha;
+						if($Idl>80) $C=colorize("_","green","black",TRUE,0);
+						else if($Idl>60) $C=colorize(",","green","black",TRUE,1);
+						else if($Idl>45) $C=colorize(",","yellow","black",TRUE,1);
+						else if($Idl>23) $C=colorize("-","yellow","black",TRUE,1);
+						else if($Idl>10) $C=colorize("-","red","black",TRUE,1);
+						else if($Idl>=0) $C=colorize("^","red","black",TRUE,1);
+						else $C="?";
+						print $C;
+					}
+				}
+				//print "p=$Points w=$GraphWidth endPi=$Pi";
 			}
 			
 		
@@ -665,18 +695,21 @@ function update_display($keys=""){
 	dse_sysstats_httpd_fullstatus();
 	print "\n";
 	
-	print colorize("MYSQL: ","cyan","black");
-	print $section_mysql_stats;
-	print "\n";
-	//print "Slow_queries:$Slow_queries ";
-//	print "Last_query_cost:$Last_query_cost ";
-	//foreach($MysqlStatusVars as $var_name){
-	//		$val=$$var_name;
-	//		print " $var_name=$val  -- ";
-	//}
 	
-	print $section_mysql_processes;
-	print "\n";
+	if(str_contains($vars['DSE']['SERVICES'],"mysql")){	
+		print colorize("MYSQL: ","cyan","black");
+		print $section_mysql_stats;
+		print "\n";
+		//print "Slow_queries:$Slow_queries ";
+	//	print "Last_query_cost:$Last_query_cost ";
+		//foreach($MysqlStatusVars as $var_name){
+		//		$val=$$var_name;
+		//		print " $var_name=$val  -- ";
+		//}
+		
+		print $section_mysql_processes;
+		print "\n";
+	}
 	
 	print $section_processes;
 	print "\n";
