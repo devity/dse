@@ -1416,6 +1416,68 @@ function dse_configure_services_init(){
 }
 
 
+function dse_configure_create_needed_directories($NeededDirs){
+	
+	global $vars; dse_trace();
+	
+	
+	foreach($NeededDirs as $DirArray){
+		if($DirArray[0]){
+			$Dir=$DirArray[0];
+			$Mode=$DirArray[1];
+			$Owner=$DirArray[2];
+			print "DSE Directory $Dir: ";
+			
+			if(!is_dir($Dir)){
+				print "$Missing. Create? ";
+				$A=dse_ask_yn();
+				if($A=='Y'){
+					dse_directory_create($Dir,$Mode,$Owner);
+					if(is_dir($Dir)){
+						print $OK;	
+					}else{
+						print $Failed;	
+					}
+				}
+			}else{
+				print "Exists. ";
+				if($Mode!=dse_file_get_mode($Dir) && "2".$Mode!=dse_file_get_mode($Dir) ){
+					print "Mode $NotOK =".dse_file_get_mode($Dir)." ";
+					$A=dse_ask_yn("Set to $Mode?");
+					if($A=='Y'){
+						if(dse_file_set_mode($Dir,$Mode)==0){
+							print "$Fixed. ";
+						}else{
+							print "$Failed. ";
+						}
+					}else{
+						print "$NotFixed";
+					}
+				}
+				if($Owner!=dse_file_get_owner($Dir)){
+					print "Owner $NotOK =".dse_file_get_owner($Dir)."  ";
+					$A=dse_ask_yn("Set to $Owner?");
+					if($A=='Y'){
+						
+						if(dse_file_set_owner($Dir,$Owner)==0){
+							print "$Fixed. ";
+						}else{
+							print "$Failed. ";
+						}
+					}else{
+						print "$NotFixed";
+					}
+				}
+				if($Mode==dse_file_get_mode($Dir) && $Owner==dse_file_get_owner($Dir)){
+					print "$OK";
+				}
+			}
+			print "\n";
+		}
+	}
+}
+
+
 function dse_configure_directories_create(){
 	global $vars; dse_trace();
 	

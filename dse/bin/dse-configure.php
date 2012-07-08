@@ -78,6 +78,40 @@ if($vars['DSE']['HOSTNAME']){
 	dse_server_set_hostname($vars['DSE']['HOSTNAME']);
 }
 
+
+
+
+
+print pad("Creating Needed Config Directories:   ","90%",colorize("-","blue"))."\n";
+
+$NeededDirs=array(
+ array($vars['DSE']['DSE_CONFIG_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
+);
+
+dse_configure_create_needed_directories($NeededDirs);
+
+
+print pad("Installing main cfg files from Templates: ".colorize($PackageName,"cyan")."...   ","90%",colorize("-","blue"))."\n";
+	
+if(!dse_file_exists($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'])){
+	$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "dse.conf";
+	dse_configure_file_install_from_template($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],$TemplateFile,"664","root:root");
+	dse_exec("vi ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']);
+	include ("/dse/bin/dse_config.php");
+}
+
+if(!dse_file_exists($vars['DSE']['SERVER_CONFIG_FILE'])){
+	$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "server.conf";
+	dse_configure_file_install_from_template($vars['DSE']['SERVER_CONFIG_FILE'],$TemplateFile,"664","root:root");
+	dse_exec("vi ".$vars['DSE']['SERVER_CONFIG_FILE']);
+	include ("/dse/bin/dse_config.php");
+}
+
+
+
+
+
+
 print pad("Creating Needed Directories:   ","90%",colorize("-","blue"))."\n";
 
 $NeededDirs=array(
@@ -92,69 +126,12 @@ $NeededDirs=array(
  array($vars['DSE']['DSE_LOG_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
  array($vars['DSE']['DSE_LOG_DIR']."/ip_throttle","777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
  array($vars['DSE']['DSE_LOG_DIR']."/dwi_apache2","777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
- array($vars['DSE']['DSE_CONFIG_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
  array($vars['DSE']['SYSTEM_SCRIPTS_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
 );
 if(str_contains($vars['DSE']['SERVICES'],"dns")){
 	$NeededDirs[]= array("/etc/bind/local","777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']);
 }
-
-
-foreach($NeededDirs as $DirArray){
-	if($DirArray[0]){
-		$Dir=$DirArray[0];
-		$Mode=$DirArray[1];
-		$Owner=$DirArray[2];
-		print "DSE Directory $Dir: ";
-		
-		if(!is_dir($Dir)){
-			print "$Missing. Create? ";
-			$A=dse_ask_yn();
-			if($A=='Y'){
-				dse_directory_create($Dir,$Mode,$Owner);
-				if(is_dir($Dir)){
-					print $OK;	
-				}else{
-					print $Failed;	
-				}
-			}
-		}else{
-			print "Exists. ";
-			if($Mode!=dse_file_get_mode($Dir) && "2".$Mode!=dse_file_get_mode($Dir) ){
-				print "Mode $NotOK =".dse_file_get_mode($Dir)." ";
-				$A=dse_ask_yn("Set to $Mode?");
-				if($A=='Y'){
-					if(dse_file_set_mode($Dir,$Mode)==0){
-						print "$Fixed. ";
-					}else{
-						print "$Failed. ";
-					}
-				}else{
-					print "$NotFixed";
-				}
-			}
-			if($Owner!=dse_file_get_owner($Dir)){
-				print "Owner $NotOK =".dse_file_get_owner($Dir)."  ";
-				$A=dse_ask_yn("Set to $Owner?");
-				if($A=='Y'){
-					
-					if(dse_file_set_owner($Dir,$Owner)==0){
-						print "$Fixed. ";
-					}else{
-						print "$Failed. ";
-					}
-				}else{
-					print "$NotFixed";
-				}
-			}
-			if($Mode==dse_file_get_mode($Dir) && $Owner==dse_file_get_owner($Dir)){
-				print "$OK";
-			}
-		}
-		print "\n";
-	}
-}
-
+dse_configure_create_needed_directories($NeededDirs);
 
 
 
@@ -163,18 +140,6 @@ print pad("Installing cfg files from Templates: ".colorize($PackageName,"cyan").
 $DSE_Git_pull_script="/scripts/dse_git_pull";
 $TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/scripts/" . "dse_git_pull";
 dse_configure_file_install_from_template($DSE_Git_pull_script,$TemplateFile,"4775","root:root");
-
-if(!dse_file_exists($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'])){
-	$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "dse.conf";
-	dse_configure_file_install_from_template($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],$TemplateFile,"664","root:root");
-	dse_exec("vi ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']);
-}
-
-if(!dse_file_exists($vars['DSE']['SERVER_CONFIG_FILE'])){
-	$TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "server.conf";
-	dse_configure_file_install_from_template($vars['DSE']['SERVER_CONFIG_FILE'],$TemplateFile,"664","root:root");
-	dse_exec("vi ".$vars['DSE']['SERVER_CONFIG_FILE']);
-}
 
 $TemplateFile=$vars['DSE']['DSE_TEMPLATES_DIR'] . "/etc/dse/" . "ips_whitelist.txt";
 dse_configure_file_install_from_template($vars['DSE']['DSE_IPTHROTTLE_WHITELIST_FILE'],$TemplateFile,"664","root:root");
