@@ -719,7 +719,7 @@ print `tar xvf /tmp/bootinfoscript-061.tar`;
 }		
 				
 					
-function dse_package_install($PackageName,$Remove=FALSE){
+function dse_package_install($PackageName,$Remove=FALSE,$PreferedInstaller=""){
 	global $vars; dse_trace();
 	if(!$PackageName){
 		return;
@@ -745,9 +745,15 @@ function dse_package_install($PackageName,$Remove=FALSE){
 		if(($brew) && ((strstr($brew,"no brew in")===FALSE)) ){
 			$Installer="brew";
 		}*/
+		$macports=dse_which("port");
+		if($macports){
+			$Installer="port";
+			if(!$PreferedInstaller) $PreferedInstaller=$Installer;
+		}
 		$fink=dse_which("fink");
 		if($fink){
 			$Installer="fink";
+			if(!$PreferedInstaller) $PreferedInstaller=$Installer;
 		}
 	}elseif(dse_is_centos()){
 		$yum=dse_which("yum");
@@ -840,34 +846,67 @@ function dse_package_install($PackageName,$Remove=FALSE){
 		}
 	}elseif($Installer=='fink'){
 		
-		$Command="dpkg -L $PackageName 2>&1";
-		print " Running: $Command\n";
-		if($vars['DSE']['dse_package_install__use_passthru']){
-			passthru($Command);
-		}else{
-			$r=`$Command`;
-			if(!str_contains($r,"s not installed") ){
-				print getColoredString(" Already Installed.\n","green","black");
-				return 0;
+		if($PreferedInstaller=="fink" && $fink){
+			$Command="dpkg -L $PackageName 2>&1";
+			print " Running: $Command\n";
+			if($vars['DSE']['dse_package_install__use_passthru']){
+				passthru($Command);
+			}else{
+				$r=`$Command`;
+				if(!str_contains($r,"s not installed") ){
+					print getColoredString(" Already Installed.\n","green","black");
+					return 0;
+				}
+				
+				$Command="sudo fink -yv $Action $PackageName 2>&1";
+				$r=passthru($Command);
+				return (0);
+				// print "cmd: $Command   r=".$r."\n";
+				if(str_contains($r,"Failed")){
+					print getColoredString(" Install Failed!\n","red","black");
+					return -1;
+			  	}elseif(str_contains($r,"Installed:")){
+					print getColoredString(" Installed!\n","green","black");
+					return 0;
+			  	}elseif(str_contains($r,"o package found fo")){
+					print getColoredString(" Unkown Package Name: $PackageName!\n","red","black");
+					return -1;
+			  	}else{
+				    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
+					return -1;
+				}
+			}
+		}elseif($PreferedInstaller=="port" && $macports){
+			$Command="sudo port install $PackageName 2>&1";
+			print " Running: $Command\n";
+			if($vars['DSE']['dse_package_install__use_passthru']){
+				passthru($Command);
+			}else{
+				$r=`$Command`;
+				if(!str_contains($r,"s not installed") ){
+					print getColoredString(" Already Installed.\n","green","black");
+					return 0;
+				}
+				
+				$Command="sudo port install $PackageName 2>&1";
+				$r=passthru($Command);
+				return (0);
+				// print "cmd: $Command   r=".$r."\n";
+				if(str_contains($r,"Failed")){
+					print getColoredString(" Install Failed!\n","red","black");
+					return -1;
+			  	}elseif(str_contains($r,"Installed:")){
+					print getColoredString(" Installed!\n","green","black");
+					return 0;
+			  	}elseif(str_contains($r,"o package found fo")){
+					print getColoredString(" Unkown Package Name: $PackageName!\n","red","black");
+					return -1;
+			  	}else{
+				    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
+					return -1;
+				}
 			}
 			
-			$Command="sudo fink -yv $Action $PackageName 2>&1";
-			$r=passthru($Command);
-			return (0);
-			// print "cmd: $Command   r=".$r."\n";
-			if(str_contains($r,"Failed")){
-				print getColoredString(" Install Failed!\n","red","black");
-				return -1;
-		  	}elseif(str_contains($r,"Installed:")){
-				print getColoredString(" Installed!\n","green","black");
-				return 0;
-		  	}elseif(str_contains($r,"o package found fo")){
-				print getColoredString(" Unkown Package Name: $PackageName!\n","red","black");
-				return -1;
-		  	}else{
-			    print getColoredString(" ERROR w/ cmd: $Command\n","red","black");
-				return -1;
-			}
 		}
 	}else{
 		print getColoredString(" ERROR: no supported package installer found \n","red","black");
@@ -931,10 +970,17 @@ function dse_package_run_upgrade(){
 		if(($brew) && ((strstr($brew,"no brew in")===FALSE)) ){
 			$Installer="brew";
 		}*/
+		$macports=dse_which("port");
+		if($macports){
+			$Installer="port";
+			if(!$PreferedInstaller) $PreferedInstaller=$Installer;
+		}
 		$fink=dse_which("fink");
 		if($fink){
 			$Installer="fink";
+			if(!$PreferedInstaller) $PreferedInstaller=$Installer;
 		}
+		
 	}elseif(dse_is_centos()){
 		$yum=dse_which("yum");
 		if($yum){
@@ -987,15 +1033,24 @@ function dse_package_run_upgrade(){
 		dse_passthru($Command,TRUE);
 		$Command="sudo $aptget -y upgrade 2>&1";
 		dse_passthru($Command,TRUE);
-	}elseif($Installer=='fink'){
+	}
+	
+	if($fink){
 		$Command="dpkg update 2>&1";
 		dse_passthru($Command,TRUE);
 		$Command="dpkg -y upgrade 2>&1";
 		dse_passthru($Command,TRUE);
-	}else{
-		print getColoredString(" ERROR: no supported package installer found \n","red","black");
-		   
 	}
+	if($macports){
+		$Command="sudo port self-update 2>&1";
+		dse_passthru($Command,TRUE);
+		$Command="sudp port upgrade 2>&1";
+		dse_passthru($Command,TRUE);
+	}
+	//else{
+	//	print getColoredString(" ERROR: no supported package installer found \n","red","black");
+		   
+	//}
 	/* else if($Installer=='port'){
 		$Command="sudo port self-update 2>&1";
 		$r=`$Command`;
