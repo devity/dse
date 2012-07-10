@@ -3,6 +3,8 @@
 function dse_dwi_overview(){
 	global $vars;
 	
+	dse_server_configure_file_load();
+	
 	print "<table border=1 cellpdding=3 cellspacing=0><tr class='f7pt'>
 	
 	<td valign=top><b class='f10pt'>System Stats</b><br>
