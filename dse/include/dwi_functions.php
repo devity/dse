@@ -61,9 +61,11 @@ function dse_dwi_overview(){
 	<tr class='f7pt'>
 	
 	
-	<td valign=top><b class='f10pt'>Monitoring</b><br>
-	".dse_dwi_overview_section_monitoring()."
+	
+	<td valign=top><b class='f10pt'>Domains</b><br>
+	".dse_dwi_overview_section_domains()."
 	</td>
+	
 	
 	
 	<td valign=top><b class='f10pt'></b><br>
@@ -98,7 +100,8 @@ function dse_dwi_overview(){
 	</td>
 	
 	
-	<td valign=top><b class='f10pt'></b><br>
+	<td valign=top><b class='f10pt'>Monitoring</b><br>
+	".dse_dwi_overview_section_monitoring()."
 	</td>
 	
 	
@@ -306,8 +309,6 @@ function dse_dwi_overview_section_monitoring(){
 		$tbr.= $NotInstalled;
 	}
 	$tbr.="<br>";
-	
-	
 	return $tbr;
 }
 
@@ -329,13 +330,37 @@ function dse_dwi_overview_section_backup(){
 		$tbr.= $NotInstalled;
 	}
 	$tbr.="<br>";
-	
-
-	
-	
 	return $tbr;
 }
 
+
+
+function dse_dwi_overview_section_domains(){
+	global $vars;
+	$tbr="";
+	$Installed="<font color=green><b>INSTALLED</b></font>";
+	$NotInstalled="<font color=red><b>NOT INSTALLED</b></font>";
+	$Running="<font color=green><b>RUNNING</b></font>";
+	$NotRunning="<font color=red><b>NOT RUNNING</b></font>";
+	
+	
+	$tbr.=" ";
+	
+	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
+		if($Domain) {
+			print "$Domain ";	
+			foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
+				$url="http://".$Host.".".$Domain."/";
+				print " <a href=$url target=_blank>$Host</a>";
+			}	
+			print "\n";
+		}
+	}
+	 
+
+
+	return $tbr;
+}
 
 ?>
 	
