@@ -348,12 +348,12 @@ function dse_dwi_overview_section_domains(){
 	
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		if($Domain) {
-			print "$Domain ";	
+			$tbr.= "<b>$Domain</b> ";	
 			foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
 				$url="http://".$Host.".".$Domain."/";
-				print " <a href=$url target=_blank>$Host</a>";
+				$tbr.= " <a href=$url target=_blank>$Host</a>";
 			}	
-			print "\n";
+			$tbr.= "\n";
 		}
 	}
 	 
