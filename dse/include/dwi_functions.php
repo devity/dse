@@ -353,10 +353,14 @@ function dse_dwi_overview_section_domains(){
 		if($Domain) {
 			$tbr.= "<b>$Domain</b> ";	
 			foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
-				$url="http://".$Host.".".$Domain."/";
+				if($Host=="*"){
+					$url="http://".$Domain."/";
+				}else{
+					$url="http://".$Host.".".$Domain."/";
+				}
 				$tbr.= " <a href=$url target=_blank>$Host</a>";
 			}	
-			$tbr.= "\n";
+			$tbr.= "<br>";
 		}
 	}
 	 

@@ -120,7 +120,7 @@ function dse_server_set_hostname($NewHostName){
 function dse_server_configure_file_load(){
 	global $vars; dse_trace();
 	global $strcut_post_haystack;
-	dpv(0,"dse_server_configure_file_load");
+	dpv(2,"dse_server_configure_file_load");
 	$ConfigDirectory=$vars['DSE']['DSE_CONFIG_DIR'];
 	$ConfigFileContents=file_get_contents($vars['DSE']['SERVER_CONFIG_FILE']);
 	
@@ -143,7 +143,7 @@ function dse_server_configure_file_load(){
 		}
 	}
 	$ConfigFileContents=$ConfigFileContents_new;
-	dpv(0,"ConfigFileContents=$ConfigFileContents");
+	dpv(2,"ConfigFileContents=$ConfigFileContents");
 	
 	$IncludeCommand="INCLUDE ";
 	$Loops=0;
@@ -227,7 +227,7 @@ function dse_server_configure_file_load(){
 	
 	
 	
-	dpv(0,"looking for domains");
+	dpv(2,"looking for domains");
 	//print "Defines="; print_r($Defines); print "\n";
 	//print "Sets="; print_r($Sets); print "\n";
 	
@@ -248,13 +248,13 @@ function dse_server_configure_file_load(){
 	while( (!( strstr($ProcessedFileContents,$Command)=== FALSE)) && ($Loops<100)){
 	        $Loops++;
 	        $DomainTag=strcut($ProcessedFileContents,$Command." ","END ".$Command);
-			dpv(0,"1 DomainTag=$DomainTag");
+			dpv(3,"1 DomainTag=$DomainTag");
 	        $Pre=strcut($ProcessedFileContents,"",$Command." ");
 	        $Post=strcut($ProcessedFileContents,"END ".$Command);
 	        $ProcessedFileContents=$Pre."".$Post;
 			$Domain=strcut($DomainTag,"","\n");
 			$DomainTag=strcut($DomainTag,"\n");
-			dpv(0,"2 Domain=$Domain DomainTag=$DomainTag");
+			dpv(3,"2 Domain=$Domain DomainTag=$DomainTag");
 			$DomainTags[$Domain]=$DomainTag;
 			$vars['DSE']['SERVER_CONF']['Domains'][]=$Domain;
 			$vars['DSE']['SERVER_CONF']['Webroots'][$Domain]=array();
