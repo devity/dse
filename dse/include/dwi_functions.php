@@ -3,6 +3,7 @@
 function dse_dwi_overview(){
 	global $vars;
 	
+	include_once ("/dse/bin/dse_config_functions.php");
 	dse_server_configure_file_load();
 	
 	print "<table border=1 cellpdding=3 cellspacing=0><tr class='f7pt'>
