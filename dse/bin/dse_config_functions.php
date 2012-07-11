@@ -1917,7 +1917,7 @@ function dse_build_clone_server_script(){
 	}
 	dse_exec("cp -rf /var/log/sudo* ".$clone_directory."/logs/.",TRUE);
 	
-	
+	/*
 	
 	print bar("Starting backup of users' home directories: $clone_directory/home/*","-","blue","white","green","white")."\n";
 	if(!file_exists($clone_directory."/home")){
@@ -1939,7 +1939,7 @@ function dse_build_clone_server_script(){
 			dse_exec($Command,TRUE);
 		}
 	}
-	
+	*/
 	print bar("Starting backup of root's home directory: $clone_directory/home/root","-","blue","white","green","white")."\n";
 	
 		$bn="root";

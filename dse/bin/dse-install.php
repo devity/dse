@@ -59,6 +59,8 @@ $parameters_details = array(
   array('m','manage-packages',"launch dselect to manage packages"),
   array('r','list-rollbacks',"list rollbacks"),
   array('u','pakage-upgrade',"run apt/yum/fink/macport update;upgrade"),
+  array('l','show-package-history',"show package change history"),
+  
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -106,6 +108,17 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		exit();
   	case 'list-rollbacks':
 		dse_exec("up2date --list-rolbacks",TRUE,TRUE);
+		exit();
+	case 'l':
+  	case 'show-package-history':
+		$PackageLogFile="/var/log/dpkg.log";
+		if(dse_file_exists($PackageLogFile)){
+			print dse_exec("cat $PackageLogFile",TRUE);
+		}
+		$PackageLogFile="/var/log/apt/history.log";
+		if(dse_file_exists($PackageLogFile)){
+			print dse_exec("cat $PackageLogFile",TRUE);
+		}
 		exit();
 	case 'u':
   	case 'pakage-upgrade':
