@@ -341,14 +341,6 @@ function dse_dwi_overview_section_backup(){
 function dse_dwi_overview_section_domains(){
 	global $vars;
 	$tbr="";
-	$Installed="<font color=green><b>INSTALLED</b></font>";
-	$NotInstalled="<font color=red><b>NOT INSTALLED</b></font>";
-	$Running="<font color=green><b>RUNNING</b></font>";
-	$NotRunning="<font color=red><b>NOT RUNNING</b></font>";
-	
-	
-	$tbr.=" ";
-	
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		if($Domain) {
 			$tbr.= "<b>$Domain</b> ";	
@@ -363,11 +355,13 @@ function dse_dwi_overview_section_domains(){
 			$tbr.= "<br>";
 		}
 	}
-	 
-
-
 	return $tbr;
 }
+
+
+
+
+
 
 ?>
 	

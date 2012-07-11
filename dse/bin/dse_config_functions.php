@@ -278,7 +278,7 @@ function dse_server_configure_file_load(){
 								$Webroot=$Lpa[2];
 							}
 							$vars['DSE']['SERVER_CONF']['Webroots'][$Domain][$Hosts]=$Webroot;
-							print "added ['Webroots'][$Domain][$Hosts]=$Webroot\n";
+							//print "added ['Webroots'][$Domain][$Hosts]=$Webroot\n";
 							
 							break;
 						case "HOST":
