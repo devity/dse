@@ -296,7 +296,7 @@ function dse_server_configure_file_load(){
 	       	}
 	
 	}
-	print "Domains="; print_r($DomainTags); print "\n";
+	//print "Domains="; print_r($DomainTags); print "\n";
 	
 }
 
