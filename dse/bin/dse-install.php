@@ -423,7 +423,7 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			$NotOSXPackageNamesArray[]="apache2-utils";
 		}
 		
-		$PackageNamesArray[]="munin";
+		//$PackageNamesArray[]="munin";
 		$NotOSXPackageNamesArray[]="mpstat";
 		$PackageNamesArray[]="phoronix";
 		$PackageNamesArray[]="cpuburn";
