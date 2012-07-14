@@ -195,14 +195,14 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		print colorize("Getting File $SourceFile\n","green","black",TRUE,1);
 			
 		
-		$Command="rsync --progress --partial -n $User@$Host:$SourceFile $LocalFile";
+		$Command="rsync --progress --partial -n -r --size-only $User@$Host:$SourceFile $LocalFile";
 		print "C=$Command\n";
 		dse_passthru($Command,TRUE);
-		if(dse_file_exists($File)){
+		/*if(dse_file_exists($File)){
 			print colorize("Success!\n","white","green",TRUE,1);
 		}else{
 			print colorize("Error!\n","white","red",TRUE,1);
-		}
+		}*/
 		exit(0);
 	case 'c':
 	case 'compare-directories':
