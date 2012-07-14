@@ -143,8 +143,12 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			exit(1);
 		}
 		$File=$argv[2];
-		$Dir=dirname($file);
+		$Dir=dirname($File);
 		$FileName=basename($File);
+		if($Dir=="" || $File==$FileName){
+			$Dir=getcwd();
+			$File=$Dir."/".$FileName;
+		}
 		if(dse_file_exists($File)){
 			print colorize("$File Already Exists!\n","white","red",TRUE,1);
 			$A=dse_ask_yn("Delete first?");
