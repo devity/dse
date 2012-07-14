@@ -149,6 +149,8 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			$Dir=getcwd();
 			$File=$Dir."/".$FileName;
 		}
+		print colorize("Getting File $File\n","green","black",TRUE,1);
+			
 		if(dse_file_exists($File)){
 			print colorize("$File Already Exists!\n","white","red",TRUE,1);
 			$A=dse_ask_yn("Delete first?");
@@ -163,6 +165,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		}
 		
 		$Command="scp $User@$Host:$File $File";
+		print "C=$Command\n";
 		dse_passthru($Command,TRUE);
 		if(dse_file_exists($File)){
 			print colorize("Success!\n","white","green",TRUE,1);
