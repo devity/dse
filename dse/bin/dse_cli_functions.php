@@ -346,7 +346,17 @@ function dse_exec($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
 	return $r;
 }
 
-   	
+
+function dse_exec_bar($Command,$ShowCommand=TRUE,$ShowOutput=FALSE){
+	global $vars; dse_trace();
+    $pid = dse_exec_bg($Command,$ShowCommand,$ShowOutput);
+    while( dse_pid_is_running($pid)){
+    	progress_bar();
+		sleep(1);
+    }
+	return dse_exec_bg_results($pid);
+}
+   	   	
 function dse_exec_bg($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
 	global $vars; dse_trace();
 	if($ShowCommand){
