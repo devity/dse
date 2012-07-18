@@ -1,5 +1,0 @@
-#!/bin/bash
-
-. /dse/bin/dse_set-env
-sudo /dse/bin/dreplace -v 2 -s -p $DSE_HTTP_CONF_FILE "^ExtendedStatus" "#ExtendedStatus"
-sudo service httpd restart

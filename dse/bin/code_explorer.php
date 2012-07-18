@@ -27,6 +27,7 @@ $parameters_details = array(
   array('u:','file-info:',"code-base at argv[1] file-info on file = argv[2]"),
   array('o:','overview:',"overview of code-base at argv[1]"),
   array('c:','check-for-errors:',"does a syntax check, etc of code-base at argv[1]"),
+  array('d','compare',"does a diff code-base names argv[1] and argv[2]"),
   
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
@@ -53,6 +54,16 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 }
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+  	case 'd':
+  	case 'compare':
+  		$CodeBaseName1=$argv[1];
+  		$CodeBaseName2=$argv[2];
+		$CodeBaseDir1=$vars['DSE']['CODE_BROWSE_NAMES'][$CodeBaseName1];
+		$CodeBaseDir2=$vars['DSE']['CODE_BROWSE_NAMES'][$CodeBaseName2];
+		$Command="rsync --dry-run -v -r $CodeBaseDir1 $CodeBaseDir2";
+		dse_exec($Command,TRUE,TRUE);
+		$DidSomething=TRUE;
+		break;
   	case 'p':
   	case 'parse':
 		dse_code_parse($vars['options'][$opt]);
