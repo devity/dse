@@ -6,6 +6,7 @@ error_reporting( (E_ALL & ~E_NOTICE) ^ E_DEPRECATED);
 	
 if($vars['Verbosity']>5) print "starting dse_cli_functions.php\n";
 	
+	
 function dse_file_shrink($FileName){
 	global $vars; dse_trace();
 	$Base=basename($FileName);
