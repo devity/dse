@@ -60,7 +60,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   		$CodeBaseName2=$argv[2];
 		$CodeBaseDir1=$vars['DSE']['CODE_BROWSE_NAMES'][$CodeBaseName1];
 		$CodeBaseDir2=$vars['DSE']['CODE_BROWSE_NAMES'][$CodeBaseName2];
-		$Command="rsync --dry-run -v -r $CodeBaseDir1 $CodeBaseDir2";
+		$Command="rsync --dry-run --verbose --recursive --checksum $CodeBaseDir1/ $CodeBaseDir2/";
 		dse_exec($Command,TRUE,TRUE);
 		$DidSomething=TRUE;
 		break;
