@@ -279,6 +279,13 @@ $vars['DSE']['SERVICE_PORTS'][12865]="netserver";
 //tor
 
 
+
+//foreach($vars['DSE']['USERHOST'] as $UserHost){
+	
+//}
+
+
+
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 
 $vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']=$vars['DSE']['SYSTEM_ROOT_FILE_USER'] . ":" .$vars['DSE']['SYSTEM_ROOT_FILE_GROUP'];

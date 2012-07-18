@@ -42,6 +42,8 @@ $parameters_details = array(
   array('i','ls',"a colorfull and more info version of ls"),
   array('d','df',"colorized version of df"),
   array('a','dir-sizes',"get dir sizes in ls"),
+  array('g','get',"gets file arg2 from user@host arg1"),
+  array('r','sync',"rsyncs to file arg2 from file arg2 on user@host arg1"),
   
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
@@ -130,6 +132,78 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'launch-code-edit':
 		$File=$argv[1];
 		exit(dse_launch_code_edit($File));
+	case 'g':
+	case 'get':
+		//print_r($vars[DSE][USERHOST]); exit();
+		$UserHost=$argv[1];
+		if(str_contains($UserHost,"@")){
+			$User=strcut($UserHost,"","@");
+			$Host=strcut($UserHost,"@");
+		}else{
+			print "invalid user@host in arg1. exiting.\n";
+			exit(1);
+		}
+		$File=$argv[2];
+		$Dir=dirname($File);
+		$FileName=basename($File);
+		if($Dir=="" || $File==$FileName){
+			$Dir=getcwd();
+			$File=$Dir."/".$FileName;
+		}
+		print colorize("Getting File $File\n","green","black",TRUE,1);
+			
+		if(dse_file_exists($File)){
+			print colorize("$File Already Exists!\n","white","red",TRUE,1);
+			$A=dse_ask_yn("Delete first?");
+			if($A=='Y'){
+				$backupfilename=dse_file_backup($File);
+				print "backup saved at: $backupfilename\n";
+				dse_file_delete($File);
+			}else{
+				print "Cant get. File Exists. Exiting.\n";
+				exit(1);
+			}
+		}
+		$Command="scp $User@$Host:$File $File";
+		print "C=$Command\n";
+		dse_passthru($Command,TRUE);
+		if(dse_file_exists($File)){
+			print colorize("Success!\n","white","green",TRUE,1);
+		}else{
+			print colorize("Error!\n","white","red",TRUE,1);
+		}
+		exit(0);
+	case 'r':
+	case 'sync':
+		//print_r($vars[DSE][USERHOST]); exit();
+		$UserHost=$argv[1];
+		if(str_contains($UserHost,"@")){
+			$User=strcut($UserHost,"","@");
+			$Host=strcut($UserHost,"@");
+		}else{
+			print "invalid user@host in arg1. exiting.\n";
+			exit(1);
+		}
+		$SourceFile=$argv[2];
+		$LocalFile=$argv[3];
+		$SourceDir=dirname($SourceFile);
+		$SourceFileName=basename($SourceFile);
+		if($SourceDir=="" || $SourceFile==$SourceFileName){
+			$SourceDir=getcwd();
+			$SourceFile=$SourceDir."/".$SourceFileName;
+		}
+		print colorize("Getting File $SourceFile\n","green","black",TRUE,1);
+			
+		
+		$Command="rsync --progress --partial -n -r --size-only $User@$Host:$SourceFile $LocalFile";
+		print "C=$Command\n";
+		dse_passthru($Command,TRUE);
+		/*if(dse_file_exists($File)){
+			print colorize("Success!\n","white","green",TRUE,1);
+		}else{
+			print colorize("Error!\n","white","red",TRUE,1);
+		}*/
+		exit(0);
 	case 'c':
 	case 'compare-directories':
 		$Dir1=$argv[1];

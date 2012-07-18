@@ -28,6 +28,7 @@ $parameters_details = array(
   array('i','install',"launches dse-install"),
   array('c','configure',"launches dse-configure"),
   array('s','set-env',"set shell environment variables"),
+  array('n','one-include',"set shell environment variables"),
   array('y:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('z:','status:',"shows status on all or arg1. options: [initd]"),
   array('x:','code-query:',"shows status of string arg1 in codebase arg2. grep is unknown string or more info if known as a file, function, of variable name"),
@@ -83,6 +84,30 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   		$DoSetEnv=TRUE;
 		$DidSomething=TRUE;
 		break;
+	case 'n':
+  	case 'one-include':
+		$tbr="";
+		
+		$fc=dse_file_get_contents($vars['DSE']['DSE_ROOT']."/bin/dse_cli_functions.php");
+		$tbr.=$fc;
+		
+		$fc=dse_file_get_contents($vars['DSE']['DSE_ROOT']."/bin/dse_config_functions.php");
+		$tbr.=$fc;
+		
+		$fc=dse_file_get_contents($vars['DSE']['DSE_ROOT']."/include/system_stat_functions.php");
+		$tbr.=$fc;
+		
+		$fc=dse_file_get_contents($vars['DSE']['DSE_ROOT']."/include/code_functions.php");
+		$tbr.=$fc;
+		
+		$fc=dse_file_get_contents($vars['DSE']['DSE_ROOT']."/include/web_functions.php");
+		$tbr.=$fc;
+		
+		$fc=dse_file_get_contents($vars['DSE']['DSE_ROOT']."/bin/dse_config.php");
+		$tbr.=strcut($fc,"\n");
+		
+		print $tbr;
+		exit(0);
 	case 'z':
   	case 'status':
 		include_once ("/dse/bin/dse_config_functions.php");
@@ -308,6 +333,7 @@ if($DoSetEnv){
 	
 	$NoExit=TRUE;
 }
+
 
 $EarlyExit=FALSE;
 if($argv[1]=="configure"){

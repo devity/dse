@@ -863,13 +863,13 @@ function dse_sysstats_disks($OnlyReal=TRUE){
 				}else{
 					$Total=$fields[1]*1024;
 				}
-				if($OnlyReal && $Total=="remote" && !str_contains($line,"map->")){
+			//	if((!$OnlyReal) || ($Total=="remote" && !str_contains($line,"map->"))){
 					$fields[4]=100-str_replace("%","",$fields[4]);	
 					$disks_array[$fields[5]]=$fields[4];	
 					$FileSystem=trim($fields[0]);
 					$disks_detailed_array[$fields[5]]=array("Name"=>$fields[5],"PercentFree"=>$fields[4],"FileSystem"=>$FileSystem,"Total"=>$Total,
 						"Free"=>$fields[3]*1024,"Used"=>$fields[2]*1024);
-				}
+				//}
 			}
 		}
 	}

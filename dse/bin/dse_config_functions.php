@@ -1091,6 +1091,8 @@ function dse_package_run_upgrade(){
 function dse_configure_iptables_init(){
 	global $vars; dse_trace();
 	
+	print colorize("dse_configure_iptables_init dont done. nothing done.\n","red","black",TRUE,1);
+	return;
 	/*:INPUT ACCEPT [9019:1653587]
 :FORWARD ACCEPT [0:0]
 :OUTPUT ACCEPT [6900:1127927]
