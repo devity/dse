@@ -1,5 +1,0 @@
-#!/bin/sh
-
-cd $DSE_GIT_ROOT/dse
-sudo git pull origin master
-

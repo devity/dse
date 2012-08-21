@@ -16,6 +16,7 @@
 |
  \________ ___ ___ ___ ___ __ __ __ _ _ _  _  _    _     _     _
  /  DOWNLOAD DSE with:
+
   git:  git clone git://github.com/devity/dse.git
         to install git, if needed:  sudo apt-get install git git-core     
              		   

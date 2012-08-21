@@ -1,5 +1,0 @@
-#!/bin/bash
-
-mkdir /dev/shm/phpsessions
-chmod 777 /dev/shm/phpsessions
-

@@ -301,7 +301,18 @@ putenv ("DSE_MYSQL_LOG_FILE=".$vars['DSE']['MYSQL_LOG_FILE']);
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 
-$vars['DSE']['CODE_BROWSE_DIRECTORIES'][]=$vars['DSE']['DSE_BIN_DIR'];
+$vars['DSE']['CODE_BROWSE_DIRECTORIES'][]=$vars['DSE']['DSE_BIN_DIR']." dse";
+foreach($vars['DSE']['CODE_BROWSE_DIRECTORIES'] as $L){
+	if($L){
+		list($CodeBaseDir,$CodeBaseName)=split(" ",$L);
+		if($CodeBaseName){
+			$vars['DSE']['CODE_BROWSE_NAMES'][$CodeBaseName]=$CodeBaseDir;
+		}
+	}
+}
+
+
+
 
 
 ?>

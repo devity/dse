@@ -207,6 +207,10 @@ dse_file_set_mode($vars['DSE']['DSE_IPTHROTTLE_LOG_DIRECTORY'],"777");
 dse_file_set_mode("/var/log","777");
 dse_file_set_mode("/var","777");
 
+dse_file_set_mode("/var/run/sshd","755");
+
+
+
 
 if(dse_is_osx()){
 	dse_file_set_owner($vars['DSE']['DSE_BIN_DIR']."/dnetstat.php","root:wheel");
@@ -429,9 +433,10 @@ else
    exit -1;
 fi*/
 
-if(dse_is_ubuntu()){
+if(FALSE && dse_is_ubuntu()){
 	if(in_array("desktop", $vars['DSE']['AddComponents'])
 	 && dse_is_package_installed("xorg") ){
+print "jjk23r23f12\n";
 		$DesktopPowerPolicyFile="/usr/share/polkit-1/actions/org.freedesktop.upower.policy";
 		if(!dse_file_exists($DesktopPowerPolicyFile)){
 			$DesktopPowerPolicyFile=dse_fss("org.freedesktop.upower.policy");
@@ -445,6 +450,7 @@ if(dse_is_ubuntu()){
 }
 
 if(dse_file_exists($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'])){
+print "jlkj1k2l3542135\n";
 	$display_errors=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"display_errors");
 	$display_startup_errors=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"display_startup_errors");
 	$log_errors=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"log_errors");
