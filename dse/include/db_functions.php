@@ -41,7 +41,9 @@ function dse_table_repair($Database,$Table){
 	global $vars; dse_trace();
 	$pid=dse_exec_bg("echo \"USE $Database;\n REPAIR TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,TRUE);
 	while(dse_pid_is_running($pid)){
-		progress_bar();
+		global $Tdc,$Tc;
+		progress_bar("time",100," $Tdc/$Tc checked");
+					
 		sleep(1);
 	}
 	return;
@@ -51,7 +53,8 @@ function dse_table_optimize($Database,$Table){
 	global $vars; dse_trace();
 	$pid=dse_exec_bg("echo \"USE $Database;\n OPTIMIZE TABLE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
 	while(dse_pid_is_running($pid)){
-		progress_bar();
+		global $Tdc,$Tc;
+		progress_bar("time",100," $Tdc/$Tc checked");
 		sleep(1);
 	}
 	return;
@@ -65,7 +68,8 @@ function dse_table_check($Database,$Table){
 	//print "pid=$pid\n";
 	while(dse_pid_is_running($pid)){
 		//print " pid=$pid running\n";
-		progress_bar();
+		global $Tdc,$Tc;
+		progress_bar("time",100," $Tdc/$Tc checked");
 		sleep(1);
 	}
 	$r=dse_exec_bg_results($pid);
@@ -88,7 +92,8 @@ function dse_table_analyze($Database,$Table){
 	//print "A pid=$pid\n";
 	while(dse_pid_is_running($pid)){
 		//print " A pid=$pid running\n";
-		progress_bar();
+		global $Tdc,$Tc;
+		progress_bar("time",100," $Tdc/$Tc checked");
 		sleep(1);
 	}
 	$r=dse_exec_bg_results($pid);
@@ -107,21 +112,36 @@ function dse_table_analyze($Database,$Table){
 
 function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 	global $vars; dse_trace();
+	global $Tdc,$Tc;
 	$DBa=dse_database_list_array();
 	$W=cbp_get_screen_width();
 	$TableNameWidth=intval($W*(2/5));
 	if($TableNameWidth<55){
 		$TableNameWidth=55;
 	}
+	$Dc=0; $Tc=0;
 	foreach($DBa as $DB){
 		if($DB && $DB!="information_schema"){
-			
+			$Dc++;
+			$Ta=dse_table_list_array($DB);
+			foreach($Ta as $T){
+				if($T){
+					$Tc++;
+				}
+			}
+		}
+	}
+	$Ddc=0; $Tdc=0;
+	foreach($DBa as $DB){
+		if($DB && $DB!="information_schema"){
+			$Ddc++;
 			print bar("Checking Database $DB: ","v","white","blue","cyan","blue");
 			$Ta=dse_table_list_array($DB);
 			foreach($Ta as $T){
 				if($T){
 					$TablesChecked++;
-					progress_bar(" $TablesChecked checked");
+					$Tdc++;
+					progress_bar("time",100," $Tdc/$Tc checked");
 					print colorize(" $DB","red","black",TRUE,1);
 					print colorize(".","green","black");
 					print colorize($T,"magenta","black",TRUE,1);
@@ -168,7 +188,7 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					
 					
 					if($TSa['Engine']!="CSV"){
-						progress_bar(" $TablesChecked checked");
+						progress_bar("time",100," $Tdc/$Tc checked");
 						$TCa=dse_table_check($DB,$T);
 						if($TCa['MsgText']!="OK"){
 							$IsOK=FALSE;
@@ -176,7 +196,8 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 						} 
 						
 						
-						progress_bar(" $TablesChecked checked");
+						progress_bar("time",100," $Tdc/$Tc checked");
+					
 						$TAa=dse_table_analyze($DB,$T);
 						if($TAa['MsgText']=="Table is already up to date" || $TAa['MsgText']=="OK"){
 						}else{
@@ -208,7 +229,8 @@ function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 					}
 					
 					if(!$IsOK && $DoRepair){
-						progress_bar(" $TablesChecked checked");
+						progress_bar("time",100," $Tdc/$Tc checked");
+					
 						dse_table_repair($DB,$T);
 					}
 					if($DoOptimize){

@@ -5,7 +5,7 @@ ini_set('display_errors','On');
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
 include_once ("/dse/include/db_functions.php");
-$vars['Verbosity']=1;
+$vars['Verbosity']=0;
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE DataBase Manager";
@@ -96,7 +96,8 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		exit(0);
 	case 'r':
   	case 'repair-all':
-		dse_database_repair_all();
+		dse_database_check_all();
+	//	dse_database_repair_all();
 		exit(0);
 	case 'c':
   	case 'check-all':
