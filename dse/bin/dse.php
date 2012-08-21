@@ -311,7 +311,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 }
 
 if($argv[1]=="push"){
-	$Command="git_ul dse";
+	$Command="dse_git_push";
 	if(sizeof($argv)>2 && $argv[2]){
 		$Command .= " " . $argv[2];
 	}else{
