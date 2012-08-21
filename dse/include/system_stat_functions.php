@@ -15,6 +15,29 @@ Linux 3.0.0-22-generic-pae (VULD) 	07/05/2012 	_i686_	(4 CPU)
 11:13:31 PM    2   17.74    2.42    5.20    0.65    0.00    0.25    0.00    0.00   73.73
 11:13:31 PM    3   19.45    2.06    5.07    0.61    0.00    0.23    0.00    0.00   72.57
 */
+
+
+
+
+function dse_sysstats_basic_summary(){
+	global $vars; dse_trace();
+	//cpu:  cores speed bus mips temp use
+	//print_r(dse_sysstats_cpu());
+	//print_r(dse_sysstats_cpu_type());
+	$CPUTypes=dse_sysstats_cpu_type();
+	$CPUCores=sizeof($CPUTypes[0]);
+	$Mhz=$CPUTypes[0][0]["Mhz"];
+	$Ghz=number_format($Mhz/1000000,1);
+	$Mips=$CPUTypes[0][0]["Mips"];
+	print "CPU   Cores: $CPUCores  $Ghz Ghz  $Mips bogomps\n";
+	//memory:  total used avail
+	//hd: type total used avail temp
+	//net: interfaces types speed routes
+	//services: ports
+	//who: 
+}
+
+
 function dse_sysstats_cpu(){
 	global $vars; dse_trace();
 	$CPUCores=1;
@@ -62,6 +85,39 @@ function dse_sysstats_cpu(){
 		}
 	}
 	return array($CPUCores,$CPUs);
+}	
+
+function dse_sysstats_cpu_type(){
+	global $vars; dse_trace();
+	global $strcut_post_haystack;
+	$CPUCores=1;
+	$CPUs=array();
+	
+	
+	$r=dse_exec("cat /proc/cpuinfo");
+	
+		//	print "r=$r\n";
+	$CPUTypes=array();
+	$ca=split("processor\t",$r);
+	$CPUCores=sizeof($ca)-1;
+//	print "Cores=$CPUCores\n";
+//	while(str_contains($r,"processor")){
+	foreach($ca as $t){	
+		//$t=strcut($r,"processor","processor");
+		if($t){
+		//	print "t=$t\n";
+			$Number=trim(strcut($t,":","\n"));
+			$Mhz=trim(strcut(strcut($t,"cpu MHz","\n"),":"));
+			$Mips=trim(strcut(strcut($t,"bogomips","\n"),":"));
+	//print "p= $strcut_post_haystack \n";
+			//$r=$strcut_post_haystack;
+			$CPUTypes[]=array("Number"=>$Number,"Mhz"=>$Mhz,"Mips"=>$Mips);
+		}else{
+			$r="";
+		}
+	}
+
+	return array($CPUTypes);
 }	
 	
 function dse_color_ls($FileArg){

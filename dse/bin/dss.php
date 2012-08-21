@@ -10,8 +10,8 @@ $vars['Verbosity']=1;
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE System Stats";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="basic system monitoring and info";
-$vars['DSE']['DSE_DSE_VERSION']="v0.01b";
-$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/06/29";
+$vars['DSE']['DSE_DSE_VERSION']="v0.02b";
+$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/08/21";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
@@ -27,6 +27,7 @@ $parameters_details = array(
   array('h','help',"this message"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('a','all',"print all available system stats"),
+  array('b','basic',"print basic available system stats (default action)"),
   array('p','prompt',"print brief info for use in shell prompt w: export PS1=\"[\$(/dse/bin/dss --prompt)]  \w:\$ \""),
   array('d','df',"colorized version of df"),
   array('w','hardware',"basic system hardware info"),
@@ -68,6 +69,10 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		dse_exec("/dse/bin/dnetstat -c",FALSE,TRUE);	
 		//dse_exec("hddtemp /dev/sdb",FALSE,TRUE);	
 //		lshw -short -C disk
+		exit(0);	
+	case 'b':
+  	case 'basic':
+		print dse_sysstats_basic_summary();
 		exit(0);
 		
 	case 'd':
@@ -102,7 +107,7 @@ switch($Command){
 		}
 		break;
 }
-
+/*
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'r':
 	case 'request-from-pool':
@@ -162,8 +167,16 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
 }
 
+*/
 
 
+if($DidSomething){
+	print dse_sysstats_basic_summary();
+}
+		
+		
+		/*
+	
 dse_cli_script_header();
 
 
@@ -180,7 +193,7 @@ if($DidSomething){
 	}
 	if(!$NoExit) exit(-1);
 }
-
+*/
 
 exit(0);
 
