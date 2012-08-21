@@ -11,7 +11,7 @@ $vars['Verbosity']=1;
 $vars['DSE']['SCRIPT_NAME']="DSE";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="main script of Devity Server Environment";
 $vars['DSE']['DSE_DSE_VERSION']="v0.04b";
-$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/04/30";
+$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/08/01";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
