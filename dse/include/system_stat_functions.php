@@ -19,21 +19,48 @@ Linux 3.0.0-22-generic-pae (VULD) 	07/05/2012 	_i686_	(4 CPU)
 
 
 
+
+
 function dse_sysstats_basic_summary(){
 	global $vars; dse_trace();
 	//cpu:  cores speed bus mips temp use
-	//print_r(dse_sysstats_cpu());
+	list($CPUCores,$CPUs)=dse_sysstats_cpu();
 	//print_r(dse_sysstats_cpu_type());
 	$CPUTypes=dse_sysstats_cpu_type();
 	$CPUCores=sizeof($CPUTypes[0]);
 	$Mhz=$CPUTypes[0][0]["Mhz"];
 	$Ghz=number_format($Mhz/1000000,1);
 	$Mips=$CPUTypes[0][0]["Mips"];
-	print "CPU   Cores: $CPUCores  $Ghz Ghz  $Mips bogomps\n";
+	$MipsTotal=intval($Mips*$CPUCores/1000);
+	print "CPU:  $CPUCores Cores  @  $Ghz Ghz  ~=  ${MipsTotal}k total bogomps    --  Core Usage %: (";
+	for($c=0;$c<$CPUCores;$c++){
+		if($c>0) print ", ";
+		print intval(100-$CPUs[$c]["Idle"]);
+	}
+	print ")\n";
+	
+	
+	
 	//memory:  total used avail
-	//hd: type total used avail temp
-	//net: interfaces types speed routes
+	//hd: type total used avail temp:
+		dse_print_df();
+	
+		if(dse_which("hddtemp")){
+			if(dse_file_exists("/dev/sda")){
+				dse_exec("hddtemp /dev/sda",FALSE,TRUE);	
+			}
+			if(dse_file_exists("/dev/sdb")){
+				dse_exec("hddtemp /dev/sdb",FALSE,TRUE);	
+			}
+		}
+		
+	//net: interfaces types speed ips routes
+	print "IPs: ";
+	print dse_exec("/dse/bin/dnetstat -a");
+	print "\nPorts Open/Connected:\n";
 	//services: ports
+	print dse_exec("/dse/bin/dnetstat -c");
+	
 	//who: 
 }
 
@@ -43,7 +70,7 @@ function dse_sysstats_cpu(){
 	$CPUCores=1;
 	$CPUs=array();
 	
-	if(dse_is_osx() || !dse_which("mpstat")){
+	if( ( dse_is_osx() || !dse_which("mpstat") ) ){
 		$r=dse_exec("iostat -w1 -c2");
 		$ra=split("\n",$r);
 		$pa=split("[ \t]+",trim($ra[3]));
@@ -64,23 +91,24 @@ function dse_sysstats_cpu(){
 		$KernelVersion=$SysInfo[1];
 		$CPUGeneration=$SysInfo[4];
 		$Hostname=strcut($SysInfo[2],"(",")");
-		$CPUCores=strcut($SysInfo[5],"(");
+		$CPUCores=intval(strcut($SysInfo[5],"("," "));
 		//print "cores=$CPUCores\n";
 		$CPUs=array();
+		$offset=0;
 		for($c=0;$c<$CPUCores;$c++){
 			//print "c=$c ==ra[4+$c] \n";
 			$CoreInfoArray=split("[ \t]+",$ra[4+$c]);
-			$Usr=$CoreInfoArray[3];
-			$Nice=$CoreInfoArray[4];
-			$Sys=$CoreInfoArray[5];
-			$IOWait=$CoreInfoArray[6];
-			$IRQ=$CoreInfoArray[7];
-			$Soft=$CoreInfoArray[8];
-			$Steal=$CoreInfoArray[9];
-			$Guest=$CoreInfoArray[10];
-			$Idle=$CoreInfoArray[11];
+			$Usr=$CoreInfoArray[2+$offset];
+			$Nice=$CoreInfoArray[3+$offset];
+			$Sys=$CoreInfoArray[4+$offset];
+			$IOWait=$CoreInfoArray[5+$offset];
+			$IRQ=$CoreInfoArray[6+$offset];
+			$Soft=$CoreInfoArray[7+$offset];
+			$Steal=$CoreInfoArray[8+$offset];
+			$Guest=$CoreInfoArray[9+$offset];
+			$Idle=$CoreInfoArray[10+$offset];
 			$Sys+=$Nice+$IOWait+$IRQ+$Soft+$Steal+$Guest;
-			//print "adding core user=$User \n";
+			//print "adding core user=$Usr \n";
 			$CPUs[]=array("User"=>$Usr,"Sys"=>$Sys,"Idle"=>$Idle);
 		}
 	}
