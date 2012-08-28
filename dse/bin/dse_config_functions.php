@@ -1727,7 +1727,7 @@ function dse_backup_httpd() {
 	print bar("Backing up HTTP ","-","blue","white","white","blue")."\n";
 	
 	print "httpd Backup Directory: ".$vars['DSE']['BACKUP_DIR_HTTP']." ";
-	if(!is_dir($vars['DSE']['BACKUP_DIR_HTTP'])){
+	if(!dse_file_exists($vars['DSE']['BACKUP_DIR_HTTP'])){
 		print " $Missing. Create? ";
 		$A=dse_ask_yn();
 		if($A=='Y'){
@@ -1742,28 +1742,32 @@ function dse_backup_httpd() {
 	print "\n";
 	
 	$web_data_dir=$vars['DSE']['HTTP_ROOT_DIR'];
+	if(!$web_data_dir || !dse_file_exists($web_data_dir)){
+		print "HTTP root directory (var['DSE']['HTTP_ROOT_DIR']) missing - fatal error. exiting.\n";
+   		exit(1);
+	}
 	$dse_server_httpd_backup_directory=$vars['DSE']['BACKUP_DIR_HTTP'];
 	
-	print " Saving Copy of httpd Data at $web_data_dir ";
+	print " Saving Copy of httpd Data at $web_data_dir \n";
 	
    	$DATE_TIME_NOW=dse_date_format("NOW","FILE");
-   	if(!file_exists($dse_server_httpd_backup_directory)){
+   	if(!dse_file_exists($dse_server_httpd_backup_directory)){
    		print "Backup directory $dse_server_httpd_backup_directory missing - fatal error. exiting.\n";
    		exit(1);
    	}
 	
 	$dir=$dse_server_httpd_backup_directory . "/" . $DATE_TIME_NOW;
 	`mkdir $dir`;   
-	if(!file_exists($dir)){
+	if(!dse_file_exists($dir)){
    		print "Backup directory $dir failed to create - fatal error. exiting.\n";
    		exit(1);
    	}
    	
    
    	$web_conf_dir="/etc/httpd";
-   	if(!is_dir($web_conf_dir)){
+   	if(!dse_file_exists($web_conf_dir)){
    		$web_conf_dir="/etc/apache2";
-	   	if(!is_dir($web_conf_dir)){
+	   	if(!dse_file_exists($web_conf_dir)){
 	   		$web_conf_dir="";
 	   	}
    	}
@@ -1780,6 +1784,20 @@ function dse_backup_httpd() {
 	//}
 
 	print "$_OK  saved in  ${dir}\n";
+	
+	$OutFile=$vars['DSE']['BACKUP_DIR_HTTP']."/".$DATE_TIME_NOW.".tar";
+	$Command="tar --atime-preserve --preserve-order --preserve-permissions -czf $OutFile $dir";
+	dse_exec($Command,TRUE);
+	
+	print "$OutFile Created.\n";
+	
+	$Command="echo rm -rf $dir";
+	dse_exec($Command,TRUE);
+	
+	$Command="gzip $OutFile";
+	dse_exec($Command,TRUE);
+	print "$OutFile.gz Created.\n";
+	
 }
    
    
