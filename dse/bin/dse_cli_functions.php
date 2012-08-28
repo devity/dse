@@ -114,7 +114,7 @@ function dse_trace(){
 //if($vars['Verbosity']>5) print "dse_cli_functions.php: dse_trace() start\n";
    // if(!$vars[dse_enable_debug_code]) return;
 	$vars[dse_Trace_Count]++;
-    if( $vars[dse_Trace_Count]>$vars[dse_Trace_Count_Max] ) return;
+    if( $vars[Verbosity]==0 || $vars[dse_Trace_Count]>$vars[dse_Trace_Count_Max] ) return;
 	
 //if($vars['Verbosity']>5) print "dse_cli_functions.php: dse_trace() calling  debug_backtrace()\n";
    	$bt=debug_backtrace();
