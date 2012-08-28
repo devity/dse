@@ -1746,7 +1746,7 @@ function dse_backup_httpd() {
 	
 	print " Saving Copy of httpd Data at $web_data_dir ";
 	
-   	$DATE_TIME_NOW=dse_dat_format("NOW","FILE");
+   	$DATE_TIME_NOW=dse_date_format("NOW","FILE");
    	if(!file_exists($dse_server_httpd_backup_directory)){
    		print "Backup directory $dse_server_httpd_backup_directory missing - fatal error. exiting.\n";
    		exit(1);
