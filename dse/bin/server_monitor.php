@@ -12,7 +12,7 @@ $dse_alert_sent_lock_file_max_age_minutes=30;
 $dse_from_email="marqul@gmail.com";
 $StartTime=time();
 
-print "argv[1]=$argv[1]\n";
+//print "argv[1]=$argv[1]\n";
 if($argv[1]=="-c"){
 	`rm -f $dse_alert_sent_lock_file`;
 	print "lock cleared. exiting.\n";
