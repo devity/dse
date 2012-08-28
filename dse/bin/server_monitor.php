@@ -28,7 +28,7 @@ if($argv[1]=="-s"){
 		print "No pending locks exists.\n";
 	}
 	$instance_count=trim(`ps aux | grep server_monitor | grep -v grep | wc -l`);
-	if($instance_count>1){
+	if($instance_count>2){
 		print "Daemon server_monitor IS running.\n";
 	}else{
 		print "Daemon server_monitor is NOT running.\n";
