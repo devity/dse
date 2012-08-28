@@ -1724,7 +1724,7 @@ function dse_backup_mysqld() {
 function dse_backup_httpd() {
 	global $vars; dse_trace();
 	dse_detect_os_info();
-	print bar("Backing up HTTP ","-","blue","white","white","blue")."n";
+	print bar("Backing up HTTP ","-","blue","white","white","blue")."\n";
 	
 	print "httpd Backup Directory: ".$vars['DSE']['BACKUP_DIR_HTTP']." ";
 	if(!is_dir($vars['DSE']['BACKUP_DIR_HTTP'])){
@@ -1744,7 +1744,7 @@ function dse_backup_httpd() {
 	$web_data_dir=$vars['DSE']['HTTP_ROOT_DIR'];
 	$dse_server_httpd_backup_directory=$vars['DSE']['BACKUP_DIR_HTTP'];
 	
-	print " Saving Copy of httpd Data at $dse_server_httpd_backup_directory ";
+	print " Saving Copy of httpd Data at $web_data_dir ";
 	
    	$DATE_TIME_NOW=dse_dat_format("NOW","FILE");
    	if(!file_exists($dse_server_httpd_backup_directory)){
@@ -1754,6 +1754,11 @@ function dse_backup_httpd() {
 	
 	$dir=$dse_server_httpd_backup_directory . "/" . $DATE_TIME_NOW;
 	`mkdir $dir`;   
+	if(!file_exists($dir)){
+   		print "Backup directory $dir failed to create - fatal error. exiting.\n";
+   		exit(1);
+   	}
+   	
    
    	$web_conf_dir="/etc/httpd";
    	if(!is_dir($web_conf_dir)){
