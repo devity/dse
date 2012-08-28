@@ -10,6 +10,20 @@ $StartTime=time();
 
 if($argv[1]=="-c"){
 	`rm -f $dse_alert_sent_lock_file`;
+	print "lock cleared. exiting.\n";
+	exit(0);
+}
+if($argv[1]=="-s"){
+	$l=dse_get_server_load();
+	print "Server Load: $l     Alert at Load > $load_alert_level \n";
+	$lock_exists=dse_file_exists($dse_alert_sent_lock_file);
+	if($lock_exists){
+		print "A pending lock exists at: $lock_exists\n";
+	}else{
+		print "No pending locks exists.\n";
+	}
+	print "exiting.\n";
+	exit(0);
 }
 
 print "Starting.\n";
