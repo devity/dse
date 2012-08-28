@@ -42,7 +42,7 @@ if($argv[1]=="-s"){
 print "Starting.\n";
 
 $instance_count=trim(`ps aux | grep server_monitor | grep -v grep | wc -l`);
-if($instance_count>1){
+if($instance_count>2){
 	print "already running. exiting.\n";
 	exit (0);
 }
