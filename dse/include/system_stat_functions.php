@@ -687,7 +687,7 @@ function dse_sysstats_mysql_processlist(){
 
 	$mysql_processes="";
 	$sql_query="SHOW FULL PROCESSLIST";
-	$Command="echo \"$sql_query\" | mysql -u ".$vars['DSE']['MYSQL_USER']." | grep -v PROCESSLIST | grep -v Sleep";
+	$Command="echo \"$sql_query\" | mysql -u ".$vars['DSE']['MYSQL_USER']." | grep -v PROCESSLIST 2>/dev/null | grep -v Sleep  2>/dev/null ";
 	$mysql_processes_raw=dse_exec($Command);
 	$mysql_processes_line_array=split("\n",$mysql_processes_raw);
 	$mysql_processes_array=array();
@@ -712,9 +712,15 @@ function dse_sysstats_mysql_processlist(){
 			$Command=substr($Command,0,100);
             $Info=substr($Info,0,100);
 			$tsa[8]=$Command;				
-			if(!$vars[dse_sysstats_mysql_processlist__limit] || $Found<$vars[dse_sysstats_mysql_processlist__limit]){
+			if($User && (!$vars[dse_sysstats_mysql_processlist__limit] || $Found<$vars[dse_sysstats_mysql_processlist__limit]) ){
 				$mysql_processes_array[]=$tsa;
-				$mysql_processes.= "$User $DB $State $Command $Info\n";
+				$mysql_processes.= "  "
+				.colorize(" $User","purple")
+				.colorize(" $DB","blue")
+				.colorize(" $State","green")
+				.colorize(" $Command","yellow")
+				.colorize(" $Info","cyan")
+				."\n";
 		
 			}
 		}
@@ -977,7 +983,9 @@ function dse_sysstats_httpd_fullstatus(){
 
 	//`/dse/aliases/dse_httpd_fullstatus_on`;
 	
-	if(dse_which("apachectl")){
+	if(dse_which("apache2ctl")){
+		$Command="apache2ctl fullstatus";
+	}elseif(dse_which("apachectl")){
 		$Command="apachectl fullstatus";
 	}elseif(dse_which("/etc/init.d/httpd")){
 		$Command="/etc/init.d/httpd fullstatus";

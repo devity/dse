@@ -24,6 +24,7 @@ $parameters_details = array(
   array('q','quiet',"same as --verbosity 0"),
   array('v:','verbosity:',"0=none 1=some 2=more 5=debug"),
   array('o','open-ports',"lists open ports"),
+  array('e','ports-connected',"lists established connected ports"),
   array('c','color',"colorize"),
   array('r','run-levels',"show current run level settings"),
   array('s','services-set',"services-set"),
@@ -70,14 +71,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		print $vars['Usage'];
 		//exit(0);
 		break;
-	case 'e':
-	case 'edit':
-		$Message="Backing up ".$vars['DSE']['PANIC_CONFIG_FILE']." and launcing in vim:\n";
-		dpv(1,$Message);
-		dse_log($Message);
-		passthru("/dse/bin/vibk ".$vars['DSE']['PANIC_CONFIG_FILE']." 2>&1");
-		//exit(0);
-		break;
+	
 	//case 'c':
   //	case 'config-show':
 	//	print dse_file_get_contents($vars['DSE']['PANIC_CONFIG_FILE']);
@@ -94,6 +88,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'open-ports':
 		print dse_ports_open($Colorize);
 		exit(0);
+	case 'e':
+  	case 'ports-connected':
+		print dse_ports_connected($Colorize);
+		exit(0);
+		
 	case 's':
   	case 'services-set':
 		passthru("sudo rcconf");

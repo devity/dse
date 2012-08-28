@@ -27,6 +27,44 @@ function dse_code_parse_load($CodeBaseDir="/dse/bin"){
 }
 
 
+function dse_code_check($CodeBaseDir="/dse/bin"){
+	global $vars;
+	dpv(4,"dse_code_check($CodeBaseDir){ ");
+	
+	$DirArray=dse_directory_to_array($CodeBaseDir);
+	$CodeInfoArray=dse_code_parse_dir_array_to_code_array($DirArray);
+	//print print_r($CodeInfoArray);
+//	print print_r($CodeInfoArray['Files']); return;
+	foreach($CodeInfoArray['Files'] as $FileFullName=>$Entry){
+		dpv(0,"trying $FileFullName");
+		if(str_contains($FileFullName,".php") || str_contains($FileFullName,".inc")){
+			dpv(5,"parsing $FileFullName");
+			if(!dse_file_is_link($FileFullName)){
+				$r=dse_exec("php -l $FileFullName 2>&1");
+				if(str_contains($r,"PHP Warning: ")){
+					$r=str_remove($r,"\nNo syntax errors detected in $FileFullName");
+					$r=remove_blank_lines($r);
+					$r=str_replace("\n","\n  ",$r);
+					$r="Warning in ".colorize($FileFullName,"yellow","black")."\n  $r\n";
+				}elseif(str_contains($r,"Errors")){
+					$r=str_remove($r,"\nErrors parsing $FileFullName");
+					$r=remove_blank_lines($r);
+					$r=str_replace("\n","\n  ",$r);
+					$r="Error in ".colorize($FileFullName,"red","black")."\n  $r\n";
+				//	$r=str_replace($FileFullName,colorize($FileFullName,"red","black"),$r);
+				}else{
+					$r=str_replace("No syntax errors detected in","Syntax OK", $r);
+					$r=str_replace($FileFullName,colorize($FileFullName,"green","black"),$r);
+				}
+				print "$r";
+			}else{
+				//print "$FileFullName is LINK\n";
+			}
+		}
+	}
+	
+}
+
 function dse_code_parse($CodeBaseDir="/dse/bin"){
 	global $vars;
 	$CodeBaseDirEsc=str_replace("/",".",$CodeBaseDir);
@@ -233,6 +271,9 @@ function dse_code_parse_SH_contents_to_array_pass2($CodeInfoArray,$FileFullName)
 
 function dse_code_parse_dir_array_to_code_array($DirArray,$CodeInfoArray=array()){
 	global $vars;
+	if(!isset($DirArray) || !$DirArray){
+		return $CodeInfoArray;
+	}
 	//print "dse_code_parse_dir_array_to_code_array()\n";
 	if(sizeof($CodeInfoArray)==0){
 		$CodeInfoArray['Functions']=array("Def"=>array(),"Used"=>array());
@@ -280,7 +321,7 @@ $CodeEsc
 ";
 }
 
-function dse_directory_to_array( $path = '.', $level = 0 ){
+function dse_directory_to_array( $path = '.', $max_level=100, $level = 0 ){
 	global $vars;
 	$tbr=array();
 	$path.="/";  $path=str_replace("//", "/", $path);
@@ -292,9 +333,13 @@ function dse_directory_to_array( $path = '.', $level = 0 ){
              
             $spaces = str_repeat( '&nbsp;', ( $level * 4 ) ); 
             if( is_dir( "$path$file" ) ){
-            	$tbr[]=array("DIR",$file,"$path$file", 
-            		dse_directory_to_array( "$path$file", ($level+1) )
+            	if($level<=$max_level){
+	            	$tbr[]=array("DIR",$file,"$path$file", 
+    	        		dse_directory_to_array( "$path$file", $max_level, ($level+1) )
 					 ); 
+				}else{
+					$tbr[]=array("DIR",$file,"$path$file", NULL);
+				}
             } else { 
                $tbr[]=array("FILE",$file,"$path$file", NULL ); 
             } 

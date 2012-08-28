@@ -9,8 +9,8 @@ include_once ("/dse/bin/dse_config.php");
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="Bottle Top";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="top-like system bottleneck analyzer";
-$vars['DSE']['BTOP_VERSION']="v0.05b";
-$vars['DSE']['BTOP_VERSION_DATE']="2012/07/07";
+$vars['DSE']['BTOP_VERSION']="v0.06b";
+$vars['DSE']['BTOP_VERSION_DATE']="2012/08/22";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
@@ -19,8 +19,8 @@ $vars['Verbosity']=$vars['DSE']['SCRIPT_SETTINGS']['Verbosity'];
 $vars['DSE']['SCRIPT_SETTINGS']['ForceHighLoadRun']=FALSE;
 $vars['DSE']['SCRIPT_SETTINGS']['MaxLoadBeforeExit']=5;
 $vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']=FALSE;
-$vars['DSE']['SCRIPT_SETTINGS']['ReloadSeconds']=20;
-$vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']=25;
+$vars['DSE']['SCRIPT_SETTINGS']['ReloadSeconds']=10;
+$vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']=100;
 
 $parameters_details = array(
   array('h','help',"this message"),
@@ -91,7 +91,6 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 
 
 dse_cli_script_header();
-
 
 if($ShowUsage){
 	print $vars['Usage'];
@@ -237,7 +236,7 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 			}
 			//print "p=$Points w=$GraphWidth endPi=$Pi";
 		
-			
+//	print "safdasdfsadfsadfsda45yhgsda"; exit(0);		
 		
 			//sleep(1);
 			$SleepLeft--;
@@ -355,16 +354,17 @@ function update_display($keys=""){
 	}
 
 	
-	
-	if(str_contains($vars['DSE']['SERVICES'],"mysql")){	
+	if(1)
+	if(str_contains($vars['DSE']['SERVICES'],"mysql")){
+		
 		$vars[dse_sysstats_mysql_processlist__limit]=intval($H/4);
 	
-		if($vars['Verbosity']>3) print "dse_sysstats_mysql_processlist()\n";
+		dpv(3,"dse_sysstats_mysql_processlist()");	
 		$dse_sysstats_mysql_processlist_array=dse_sysstats_mysql_processlist();
 		$section_mysql_processes= $dse_sysstats_mysql_processlist_array[3];
 		
 	
-		if($vars['Verbosity']>3) print "dse_sysstats_mysql_status()\n";
+		dpv(3,"dse_sysstats_mysql_status()");	
 		$dse_sysstats_mysql_status_array=dse_sysstats_mysql_status();
 		$section_mysql_stats=$dse_sysstats_mysql_status_array[3];
 	}
@@ -389,12 +389,22 @@ function update_display($keys=""){
 	}*/
 		
 	global $section_net_listening;
-	if(($Loops%5)==0 ){
-		dpv(3,"dse_sysstats_net_listening()");
-		//$dse_sysstats_net_listening_array=dse_sysstats_net_listening();
-		//$section_net_listening="Ports Listening: ".$dse_sysstats_net_listening_array[3];
-		$section_net_listening=colorize("Ports: ","cyan","black").dse_exec("/dse/bin/dsc -oc");
-	}	
+	//if(($Loops%5)==0 ){
+		
+	if(TRUE)
+	{
+	dpv(3,"section_net_listening()");
+	//$dse_sysstats_net_listening_array=dse_sysstats_net_listening();
+	//$section_net_listening="Ports Listening: ".$dse_sysstats_net_listening_array[3];
+	$section_net_listening="";
+	dpv(3," -ports");
+	$section_net_listening.=colorize("Ports: ","cyan","black").dse_exec("/dse/bin/dsc -oc");
+	//$section_net_listening.="\n";
+	//dpv(3," -connections");
+	//$section_net_listening.=colorize("Connections: ","cyan","black").dse_exec("/dse/bin/dsc -ec");
+	}
+	
+	//}	
 		
 		
 	// *****************************************************************************************************************
@@ -546,8 +556,13 @@ function update_display($keys=""){
 	
 */	
 	$section_processes="";
-	$section_processes.=colorize("System Processes: \n","cyan","black") . `ps aux | sort -nr -k 3 | grep -v COMMAND | head -20`;		
-
+	
+	
+	if(1)
+	{
+		if($vars['Verbosity']>3) print "section_processes()\n";
+		$section_processes.=colorize("System Processes: \n","cyan","black") . `ps aux 2>/dev/null | sort -nr -k 3 2>/dev/null | grep -v COMMAND 2>/dev/null | head -20 2>/dev/null `;		
+	}
 	/*
 		$Start
 		$DateStr=date("d/M/Y:H:i",$Start);
@@ -556,6 +571,8 @@ function update_display($keys=""){
 		print "grep \"$DateStr\" $LogFileName > $TmpFileName\n";
 		`grep $DateStr $LogFileName > $TmpFileName`;
 		*/
+		
+	if(TRUE)
 	if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly'])  ){//&& ($Loops%5)==0
 		if($vars['Verbosity']>3) print "section_httpd_log()\n";
 		
@@ -564,12 +581,12 @@ function update_display($keys=""){
 	
 		
 		$section_httpd="";
-		dse_exec("tail -n 800 $LogFileName > $TmpFileName", $vars['Verbosity']>4 );
+		dse_exec("tail -n 1000 $LogFileName > $TmpFileName", $vars['Verbosity']>4 );
 	//	exit();
 		$log_file_handle = fopen($TmpFileName, "r");
 		$vars[dse_lpa_log_line_full_array]=array();
 		$LinesProcessed=0;
-		$MaxLinesToProcess=400;
+		$MaxLinesToProcess=1000;
 		while ( ($La = fgetcsv( $log_file_handle, 0, " ", '"') ) !== FALSE) {
 			$La=dse_log_parse_apache_La_set_Time($La);
 	        $vars[dse_lpa_log_line_full_array][]=$La;
@@ -603,8 +620,8 @@ function update_display($keys=""){
 		$AvgGenTime=number_format(($TotalGenTime/1000/1000)/$Requests,2);
 		$AvgGenTime_str=dse_bt_colorize($AvgGenTime,1.5);
 		$PRpm_str=dse_bt_colorize($PRpm,150);
-		$PRps=$PRpm*60;
-		$PRps_str=dse_bt_colorize($PRps,150*60);
+		$PRps=number_format($PRpm/60,1);
+		$PRps_str=dse_bt_colorize($PRps,150/60);
 		$section_httpd.=colorize("HTTPD:  ","cyan","black"). "Requests:  $PRpm_str/min   $PRps_str/s    Avg: ${AvgGenTime_str}s  \n";//TotalGenTime:$TotalGenTime";
 		//Span:${SpanSeconds}s 
 
@@ -612,6 +629,9 @@ function update_display($keys=""){
 	}
 
 	global $section_disk;
+	
+	if(TRUE)
+	{
 	//if( (!$vars['DSE']['SCRIPT_SETTINGS']['EasyOnly']) &&  ($Loops<=2 || ($Loops%5)==0 ) ){
 		if($vars['Verbosity']>3) print "section_disk()\n";
 		
@@ -660,7 +680,7 @@ function update_display($keys=""){
 	
 		
 		$diskstats_lasttime=microtime(true);
-	//}
+	}
 
 ////////////// *****************************************************************************************************
 ////////////// *****************************************************************************************************
@@ -694,6 +714,7 @@ function update_display($keys=""){
 	print "\n";
 	
 	print $section_net_listening;
+	print "\n";
 	print "\n";
 	
 	print $section_httpd;

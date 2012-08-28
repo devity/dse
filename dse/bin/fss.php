@@ -15,35 +15,24 @@ if(sizeof($argv)>1 && $argv[1]=="--build-cache"){
 	}else{
 		$d="/";
 	}
-	$CacheFile=$d.".dse-fss-cache-file";
-	$ts=time();
-	$Command="sudo find $d > $CacheFile";
-	dse_exec($Command,TRUE);
-	print "Done! ";
-	print time()-$ts . " seconds. ";
-	print trim(`wc -l $CacheFile`). " files found/indexed. ";
-	print "\n";
+	dse_fss_build_cache($d);
 	exit(0);
 }
 
 if(sizeof($argv)>1 && $argv[1]=="-q"){
 	$Quiet=TRUE;
-	
 	if(sizeof($argv)>2 && $argv[2]=="-f"){
 		$ReturnFirstOnly=TRUE;
-		
 		$ss=$argv[3];
 		if(sizeof($argv)>4){
-			$d=$argv[4];
+		$d=str_replace("//","/",$argv[4]."/");
 		}else{
 			$d="/";
 		}
 	}else{
-		
-		
 		$ss=$argv[2];
 		if(sizeof($argv)>3){
-			$d=$argv[3];
+		$d=str_replace("//","/",$argv[3]."/");
 		}else{
 			$d="/";
 		}
@@ -56,7 +45,7 @@ if(sizeof($argv)>1 && $argv[1]=="-q"){
 		$d="/";
 	}
 }
-//print "hi!";
+
 $CacheFile=$d.".dse-fss-cache-file";
 	
 if(file_exists($CacheFile)){
@@ -88,11 +77,20 @@ if($out){
 		print $out;
 	}
 }else{
-	if(!$Quiet) print "No Matches";
+	if(!$Quiet) print "No Matches\n";
 }
 
 
-if(!$Quiet) print "\n";
+if(!$Quiet) print " ^^-- END of fss results --^^ \n";
+
+if(!file_exists($CacheFile)){
+	//$a=dse_ask_yn("No fss cache file. Build now for faster fss call's in the future? y/N?");
+	$a=dse_ask_char_choice("YN","No fss cache file. Build now for faster fss call's in the future?","N",10);
+	print "a=$a\n";
+	if($a==="Y") {
+		dse_fss_build_cache();
+	}
+}
 
 if($out){
 	exit(0);
@@ -101,4 +99,16 @@ if($out){
 }
  
 
+function dse_fss_build_cache($d="/"){
+	global $vars;
+	
+	$CacheFile=$d.".dse-fss-cache-file";
+	$ts=time();
+	$Command="sudo find $d > $CacheFile";
+	dse_exec($Command,TRUE);
+	print "Done! ";
+	print time()-$ts . " seconds. ";
+	print trim(`wc -l $CacheFile`). " files found/indexed. ";
+	print "\n";
+}
 ?>

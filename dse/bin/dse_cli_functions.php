@@ -814,8 +814,13 @@ function dse_ask_entry($Question="Enter Response:",$Default="",$Timeout=""){
 	
 function dse_ask_choice($Options,$Question="Select an option:",$Default="",$Timeout=""){
 	global $vars; dse_trace();
+	if(!is_array($Options)){
+		$TreatOptionsAsString=TRUE;
+		$Options=str_split($Options);
+	}
 	print getColoredString("$Question\n","red");
 	$Keys="";
+	
 	$Os=sizeof($Options);$Oi=0;
 	foreach($Options as $K=>$O){  $Oi++;
 		if($Keys){
@@ -833,15 +838,48 @@ function dse_ask_choice($Options,$Question="Select an option:",$Default="",$Time
 	$key=strtoupper(dse_get_key($Timeout,$Default));
 	$Oi=0;
 	foreach($Options as $K=>$O){  $Oi++;
-		if($key==$K){
+		if($key===$K){
 			print "\n";
-			return $K;
+			if($TreatOptionsAsString){
+				return $Options[intval($K)];
+			}else{
+				return $K;
+			}
 		}
 	}
 	print getColoredString(" Invalid Option. You pressed '$key'. \n","red","black");
-	return dse_ask_choice($Question,$Options,$Default,$Timeout);
+	if($TreatOptionsAsString){
+		return $Options[intval(dse_ask_choice($Options,$Question,$Default,$Timeout))];
+	}else{
+		return dse_ask_choice($Options,$Question,$Default,$Timeout);
+	}
+	
 }
-if($vars['Verbosity']>5) print "dse_cli_functions.php: line 788\n";
+function dse_ask_char_choice($OptionKeys,$Question="Select an option:",$Default="",$Timeout=""){
+	global $vars; dse_trace();
+	$OptionKeysArray=str_split($OptionKeys);
+	
+	print getColoredString("$Question\n","red");
+	$Keys=$OptionKeys;
+	
+	$Os=sizeof($Options);$Oi=0;
+	/*foreach($OptionKeysArray as $i=>$K){  $Oi++;
+		
+		print getColoredString("  $K","yellow").getColoredString(" ) ","purple").getColoredString("   $O\n","green");
+	}*/
+	print getColoredString("         Options: $OptionKeys            Choice? ","blink_red");
+	$key=strtoupper(dse_get_key($Timeout,$Default));
+	$Oi=0;
+	foreach($OptionKeysArray as $K=>$O){  $Oi++;
+		if($key===$O){
+			print "\n";
+			return $O;
+		}
+	}
+	print getColoredString(" Invalid Option. You pressed '$key'. Valid keys: $OptionKeys\n","red","black");
+	return dse_ask_char_choice($OptionKeys,$Question,$Default,$Timeout);
+}
+if($vars['Verbosity']>5) print "dse_cli_functions.php: line 882\n";
 	
 function dse_directory_strip_trail( $path ){ 
 	global $vars; dse_trace();
@@ -4058,7 +4096,7 @@ function dse_get_gateway(){
 }
 
 function dse_ports_open($Colorize=FALSE){
-	global $vars; dse_trace();
+	global $vars; dse_trace(); dpv(6,"dse_ports_open($Colorize){");
 	$tbr="";
 	$r=dse_exec("/dse/bin/dnetstat -o");
 	foreach(split(" ",$r) as $ep){
@@ -4083,6 +4121,37 @@ function dse_ports_open($Colorize=FALSE){
 	}
 	return $tbr;
 }
+function dse_ports_connected($Colorize=FALSE){
+	global $vars; dse_trace(); dpv(6,"dse_ports_connected($Colorize){");
+	$tbr="";
+	$r=dse_exec("/dse/bin/dnetstat -c");
+	dpv(6,"r=$r\n\n");
+	foreach(split("\n",$r) as $port_ips){
+		dpv(6,"\nforeach( this port_ips=$port_ips)");
+		list($port,$ips)=split(":: ",$port_ips);
+		dpv(6,"split -> port=$port ips=$ips");
+		if(trim($port) && trim($ips)){
+			if($tbr) $tbr.=" ";
+			$PortName=dse_port_name($port);
+			if($Colorize){
+				/*if($exe!=$PortName){
+					if(intval($PortName)>0){
+						$tbr.= colorize($PortName,"cyan","black").colorize(": ","yellow","black").colorize($PortName,"green","black",TRUE,1);
+					}else{
+						$tbr.= colorize($PortName,"green","black",TRUE,1);
+					}
+				}else{*/
+				$tbr.= colorize($PortName,"green","black",TRUE,1) ." ". colorize($ips,"grey","black",TRUE,1);
+			}else{
+				$tbr.= "$PortName: $ips";
+			}
+		}
+		dpv(6,"tbr.= \"$PortName: $ips\";");
+	}
+	return $tbr;
+}
+
+
 if($vars['Verbosity']>5) print "dse_cli_functions.php: Done!\n";
 
 

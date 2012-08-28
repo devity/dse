@@ -170,7 +170,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 */
 
 
-if($DidSomething){
+if(!$DidSomething){
 	print dse_sysstats_basic_summary();
 }
 		
