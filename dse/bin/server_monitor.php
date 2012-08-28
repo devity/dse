@@ -89,8 +89,8 @@ function dse_alert_contact($t,$s,$b){
 			exit(1);
 		}
 	}
-	$t=time();
-	`echo -n $time > $dse_alert_sent_lock_file`;
+	$time_now_seconds=time();
+	`echo -n $time_now_seconds > $dse_alert_sent_lock_file`;
 	`chmod 777 $dse_alert_sent_lock_file`;
 
 	
