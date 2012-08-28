@@ -1,5 +1,10 @@
 #!/usr/bin/php
 <?php
+error_reporting(E_ALL && ~E_NOTICE);
+ini_set('display_errors','On');	
+include_once ("/dse/bin/dse_cli_functions.php");
+$vars['Verbosity']=1;
+
 $load_alert_level=1;
 $dse_alert_contact_filename="/etc/dse_alert_contacts";
 $dse_alert_sent_lock_file="/tmp/dse_alert_sent_pending_clearing";
