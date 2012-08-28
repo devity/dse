@@ -1,8 +1,9 @@
 #!/usr/bin/php
 <?php
-$load_alert_level=3;
+$load_alert_level=1;
 $dse_alert_contact_filename="/etc/dse_alert_contacts";
 $dse_alert_sent_lock_file="/tmp/dse_alert_sent_pending_clearing";
+$dse_alert_sent_lock_file_max_age_minutes=30;
 $dse_from_email="marqul@gmail.com";
 $StartTime=time();
 
@@ -46,12 +47,12 @@ function dse_get_server_load(){
 
 function dse_alert_contact($t,$s,$b){
 	global $vars;
-	global $dse_alert_contact_filename,$dse_from_email,$dse_alert_sent_lock_file;
+	global $dse_alert_contact_filename,$dse_from_email,$dse_alert_sent_lock_file,$dse_alert_sent_lock_file_max_age_minutes;
 
 	$lock=trim(`cat $dse_alert_sent_lock_file`);
 	if($lock!=""){
 		$lock_age=time()-$lock;
-		if($lock_age>60*60*3){
+		if($lock_age>60*$dse_alert_sent_lock_file_max_age_minutes){
 			`rm -f $dse_alert_sent_lock_file`;
 		}else{	
 			print "alert pending clearing\n";
