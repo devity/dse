@@ -39,7 +39,6 @@ if($argv[1]=="-s"){
 	exit(0);
 }
 
-print "Starting.\n";
 
 $instance_count=trim(`ps aux | grep server_monitor | grep -v grep | wc -l`);
 if($instance_count>2){
@@ -47,18 +46,22 @@ if($instance_count>2){
 	exit (0);
 }
  
-
-$l=dse_get_server_load();
-if($l>$load_alert_level){
-	sleep(60);
+print "Starting.\n";
+while(TRUE){
 	$l=dse_get_server_load();
 	if($l>$load_alert_level){
-		$s="BD High Load @ $l";
-		$lf=`cat /proc/loadavg`;	
-		$b="server load at $lf ";
-		dse_alert_contact("admin",$s,$b);
+		sleep(60);
+		$l=dse_get_server_load();
+		if($l>$load_alert_level){
+			$s="BD High Load @ $l";
+			$lf=`cat /proc/loadavg`;	
+			$b="server load at $lf ";
+			dse_alert_contact("admin",$s,$b);
+		}
 	}
+	sleep(60);
 }
+
 
 function dse_get_server_load(){
 	global $vars;
