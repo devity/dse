@@ -23,7 +23,7 @@ if($argv[1]=="-s"){
 	print "Server Load: $l     Alert at Load > $load_alert_level \n";
 	$lock_exists=dse_file_exists($dse_alert_sent_lock_file);
 	if($lock_exists){
-		print "A pending lock exists at: $lock_exists\n";
+		print "A pending lock exists at: $dse_alert_sent_lock_file\n";
 	}else{
 		print "No pending locks exists.\n";
 	}
