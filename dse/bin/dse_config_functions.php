@@ -1744,7 +1744,7 @@ function dse_backup_httpd() {
 	$web_data_dir=$vars['DSE']['HTTP_ROOT_DIR'];
 	$dse_server_httpd_backup_directory=$vars['DSE']['BACKUP_DIR_HTTP'];
 	
-	print " Saving Copy of httpd Data: ";
+	print " Saving Copy of httpd Data at $dse_server_httpd_backup_directory ";
 	
    	$DATE_TIME_NOW=dse_dat_format("NOW","FILE");
    	if(!file_exists($dse_server_httpd_backup_directory)){

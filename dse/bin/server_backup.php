@@ -26,6 +26,9 @@ $parameters_details = array(
   array('y:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('z:','status:',"shows status on all or arg1. options: [initd]"),
   array('c','clone',"build a recreate / clone script"),
+  array('a','http',"backup webroot and http confs"),
+  array('m','mysql',"backup mysql data and confs"),
+  array('v','env',"backup environment info"),
   //interact w etckeeper
   //rpm rebuild stored restore points
 );
@@ -80,7 +83,24 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		exit(0);
 		$DidSomething=TRUE;
 		break;
-		
+	case 'a':
+  	case 'http':
+		dse_backup_httpd();
+		exit(0);
+		$DidSomething=TRUE;
+		break;
+	case 'v':
+  	case 'env':
+		dse_backup_server_environment();
+		exit(0);
+		$DidSomething=TRUE;
+		break;
+	case 'm':
+  	case 'mysql':
+		dse_backup_mysqld();
+		exit(0);
+		$DidSomething=TRUE;
+		break;
 }
 
 
@@ -106,8 +126,8 @@ print "\n";
 
 
 
-dse_backup_server_environment();
-dse_backup_mysqld();
+//dse_backup_server_environment();
+//dse_backup_mysqld();
 //dse_backup_httpd();
 
 
