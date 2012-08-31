@@ -19,6 +19,7 @@ function dse_database_find_string_occurances($query,$this_db,$table){
 							$r=dse_exec("echo \"USE $this_db;\n SELECT * FROM $this_table WHERE $this_column LIKE \\\"%$query%\\\";\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
 							$r=strcut($r,"\n");
 							if(strlen($r)>0){
+								$r=substr($r,0,cbp_get_screen_width()-1);
 								print "$this_db:$this_table:$this_column:\n$r\n";
 							}
 						//$tbr=split("\n",$r);
