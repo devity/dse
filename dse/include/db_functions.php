@@ -19,14 +19,21 @@ function dse_database_find_string_occurances($query,$db,$table){
 							$r=dse_exec("echo \"USE $this_db;\n SELECT * FROM $this_table WHERE $this_column LIKE \\\"%$query%\\\";\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
 							$r=strcut($r,"\n");
 							if(strlen($r)>0){
-								$r=substr($r,0,cbp_get_screen_width()-1);
 								print colorize($this_db,"blue");
 								print colorize(":","yellow");
 								print colorize($this_table,"cyan");
 								print colorize(":","yellow");
 								print colorize($this_column,"red");
 								print colorize(":\n","yellow");
-								print colorize("$r\n","green");
+								$ra=split("\n",$r);
+								foreach($ra as $rl){
+									if($rl){
+									$rl=substr($rl,0,cbp_get_screen_width()-1);
+									
+									$rl=str_replace($query,colorize($query,"green"),$rl);
+									print "$rl\n";
+								}
+								print "\n";
 							}
 						//$tbr=split("\n",$r);
 						}
