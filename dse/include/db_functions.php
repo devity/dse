@@ -26,7 +26,7 @@ function dse_database_find_string_occurances($query,$db,$table){
 								print colorize(":","yellow");
 								print colorize($this_column,"red");
 								print colorize(":\n","yellow");
-								print colorize("$r\n","green";
+								print colorize("$r\n","green");
 							}
 						//$tbr=split("\n",$r);
 						}
