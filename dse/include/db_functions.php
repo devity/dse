@@ -1,10 +1,10 @@
 <?php
 
 		
-function dse_database_find_string_occurances($query,$this_db,$table){
+function dse_database_find_string_occurances($query,$db,$table){
 	global $vars; dse_trace();
-	if($this_db && $this_db!="*"){
-		$dbs=array($this_db);
+	if($db && $db!="*"){
+		$dbs=array($db);
 	}else{
 		$dbs=dse_database_list_array();
 	}
@@ -12,7 +12,7 @@ function dse_database_find_string_occurances($query,$this_db,$table){
 		if($this_db && $this_db!="information_schema"){
 			$tables=dse_table_list_array($this_db);
 			foreach($tables as $this_table){
-				if($this_table){
+				if($this_table && $this_table!="FilePublishes"){
 					$columns=dse_column_list_array($this_db,$this_table);
 					foreach($columns as $this_column){
 						if($this_column){
@@ -20,7 +20,13 @@ function dse_database_find_string_occurances($query,$this_db,$table){
 							$r=strcut($r,"\n");
 							if(strlen($r)>0){
 								$r=substr($r,0,cbp_get_screen_width()-1);
-								print "$this_db:$this_table:$this_column:\n$r\n";
+								print colorize($this_db,"blue");
+								print colorize(":","yellow");
+								print colorize($this_table,"cyan");
+								print colorize(":","yellow");
+								print colorize($this_column,"red");
+								print colorize(":\n","yellow");
+								print colorize("$r\n","green";
 							}
 						//$tbr=split("\n",$r);
 						}
