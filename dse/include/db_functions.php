@@ -30,6 +30,7 @@ function dse_database_find_string_occurances($query,$db,$table){
 									if($rl){
 										$rl=substr($rl,0,cbp_get_screen_width()-1);	
 										$rl=str_replace($query,colorize($query,"green"),$rl);
+										$rl=str_replace("\t",colorize("|","blue"),$rl);
 										print "$rl\n";
 									}
 								}
