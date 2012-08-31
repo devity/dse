@@ -36,6 +36,21 @@ function dse_table_list_array($Database){
 	return $tbr;
 }
 
+function dse_column_list_array($Database,$Table){
+	global $vars; dse_trace();
+	$r=dse_exec("echo \"USE $Database;\n DESCRIBE $Table;\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
+
+	$t=split("\n",$r);
+	for($i=1;$i<sizeof($t);$i++){
+		$ValuesA=split("\t",$t[$i]);
+		$tbr[]=$ValuesA[0];
+	}
+	//$r=strcut($r,"\n");
+	//$tbr=split("\n",$r);
+	//$tbr=remove_duplicate_array_lines($tbr);
+	return $tbr;
+}
+
 function dse_table_status_array($Database,$Table){
 	global $vars; dse_trace();
 	$r=dse_exec("echo \"USE $Database;\n SHOW TABLE STATUS WHERE Name='$Table' ;\" | mysql -u ".$vars['DSE']['MYSQL_USER']);
