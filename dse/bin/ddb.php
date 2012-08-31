@@ -29,6 +29,7 @@ $parameters_details = array(
   array('q','quiet',"same as --verbosity 0"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('s','status',"prints status file".$CFG_array['StatusFile']),
+  array('f:','find:',"searches for arg1 in all db and tables or db arg2 and table arg3"),
   array('d','list-databases',"prints list of databases: SHOW DATABASES; command"),
   array('t:','list-tables:',"prints list of tables in database arg1: USE arg1; SHOW TABLES; command"),
   array('r','repair-all',"repairs all tables in all db's"),
@@ -65,6 +66,22 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'verbosity':
 		$vars['Verbosity']=$vars['options'][$opt];
 		dpv(2,"Verbosity set to ".$vars['Verbosity']."\n");
+		break;
+  	case 'f':
+	case 'find':
+		$query=$vars['options'][$opt];
+		if(sizeof($argv)>2){
+			$db=$argv[2];
+		}else{
+			$db="*";
+		}
+		if(sizeof($argv)>3){
+			$table=$argv[3];
+		}else{
+			$table="*";
+		}
+		dpv(2,"Searching db $db, table $table for $query\n");
+		dse_database_find_string_occurances($query,$db,$table);
 		break;
 	case 's':
   	case 'status':
