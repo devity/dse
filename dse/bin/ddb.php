@@ -28,6 +28,7 @@ $parameters_details = array(
   array('h','help',"this message"),
   array('q','quiet',"same as --verbosity 0"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
+  array('w','html',"html output format"),
   array('s','status',"prints status file".$CFG_array['StatusFile']),
   array('f:','find:',"searches for arg1 in all db and tables or db arg2 and table arg3"),
   array('d','list-databases',"prints list of databases: SHOW DATABASES; command"),
@@ -67,6 +68,15 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$vars['Verbosity']=$vars['options'][$opt];
 		dpv(2,"Verbosity set to ".$vars['Verbosity']."\n");
 		break;
+  	case 'w':
+	case 'html':
+		$vars['Verbosity']=$vars['options'][$opt];
+		dpv(2,"Verbosity set to ".$vars['Verbosity']."\n");
+		break;
+}
+
+
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'f':
 	case 'find':
 		$query=$vars['options'][$opt];

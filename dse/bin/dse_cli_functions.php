@@ -3687,6 +3687,20 @@ function colorize($string, $forground_color = null, $background_color = null, $R
 function getColoredString($string, $forground_color = null, $background_color = null, $ResetColorsAfter=TRUE, $type=null) {
 	global $vars; 
 	
+	
+	if($vars['DSE']['OUTPUT_FORMAT']=="HTML"){
+		$tbr="";
+		if($background_color){
+			$tbr.="<span style='background-color:$background_color;'>";
+		}
+		$tbr.="<span style='color:$forground_color;'>$string</span>";
+		if($background_color){
+			$tbr.="</span>";
+		}
+		return $tbr;
+	}
+	
+	
 //if($vars['Verbosity']>5) print "dse_cli_functions.php: getColoredString pre trace\n";
 //dse_trace();
 
