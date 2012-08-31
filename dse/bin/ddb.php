@@ -70,8 +70,8 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;
   	case 'w':
 	case 'html':
-		$vars['Verbosity']=$vars['options'][$opt];
-		dpv(2,"Verbosity set to ".$vars['Verbosity']."\n");
+		$vars['DSE']['OUTPUT_FORMAT']="HTML";
+		dpv(3,"Output format set to HTML\n");
 		break;
 }
 
