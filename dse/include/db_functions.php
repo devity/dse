@@ -28,10 +28,10 @@ function dse_database_find_string_occurances($query,$db,$table){
 								$ra=split("\n",$r);
 								foreach($ra as $rl){
 									if($rl){
-									$rl=substr($rl,0,cbp_get_screen_width()-1);
-									
-									$rl=str_replace($query,colorize($query,"green"),$rl);
-									print "$rl\n";
+										$rl=substr($rl,0,cbp_get_screen_width()-1);	
+										$rl=str_replace($query,colorize($query,"green"),$rl);
+										print "$rl\n";
+									}
 								}
 								print "\n";
 							}
