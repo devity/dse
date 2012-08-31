@@ -70,13 +70,13 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'f':
 	case 'find':
 		$query=$vars['options'][$opt];
-		if(sizeof($argv)>2){
-			$db=$argv[2];
+		if(sizeof($argv)>1){
+			$db=$argv[1];
 		}else{
 			$db="*";
 		}
-		if(sizeof($argv)>3){
-			$table=$argv[3];
+		if(sizeof($argv)>2){
+			$table=$argv[2];
 		}else{
 			$table="*";
 		}

@@ -3,7 +3,7 @@
 		
 function dse_database_find_string_occurances($query,$this_db,$table){
 	global $vars; dse_trace();
-	if($this_db){
+	if($this_db && $this_db!="*"){
 		$dbs=array($this_db);
 	}else{
 		$dbs=dse_database_list_array();
