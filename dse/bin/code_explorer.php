@@ -184,12 +184,15 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'grep':
 		$DidSomething=TRUE;
 		{
+			$GrepString=$vars['options'][$opt];
 			//print "v=$vars[Verbosity]\n";
-			if($vars['options'][$opt]){
-				$CodeBaseDir=$vars['options'][$opt];
+			if($argv[1]){
+				$CodeBaseDir=$argv[1];
 			}else{
 				$CodeBaseDir="/dse/bin";
 			}
+			
+			dpv(1,"Searching for '$GrepString' in $CodeBaseDir");
 			$CodeInfoArray=dse_code_parse($CodeBaseDir);
 			//print "<table width=100%><tr class='f8pt'>";
 			
@@ -199,7 +202,17 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				//$f=$cefa[0];
 					
 				//print "($p)\n";
-				print "Files[$k]=".debug_tostring($cefa)."\n";
+//				print "Files[$k]=".debug_tostring($cefa)."\n";
+				//print "k=$k\n";
+				if(str_icontains($cefa['FileCodeInfoArray']['Contents'],$GrepString)){
+//		print "!!! k=$k\n";
+				
+				
+				
+				//print "Files[$k]=".print_r($cefa,TRUE)."\n";
+					print dse_exec("/dse/bin/gss \"$GrepString\" \"$k\"");
+					print "<br>";
+				}
 			}
 			
 		}

@@ -950,7 +950,7 @@ function dse_directory_to_array( $path = '.', $max_level=100, $level = 0 ){
     $ignore = array( '.', '..' ); 
     $ignore_partial = array( 'crafters/files','events/files', 'ratings/files' ); 
     $dh = @opendir( $path ); 
-    while( false !== ( $file = readdir( $dh ) ) ){ 
+    while( $dh && false !== ( $file = readdir( $dh ) ) ){ 
       //  if( !in_array( $ignore, $file ) ){
       	if($file!="." && $file!=".."){
       		$fullfilename=$path.$file;

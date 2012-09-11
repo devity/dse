@@ -36,7 +36,7 @@ print "Searching for: $GrepString in files w/ name containing: $FindString\n";
 
 $find_cmd="sudo find $d -iname \"*$FindString*\" -exec grep -i -H -n \"$GrepString\" {} 2>/dev/null \\; 2>/dev/null";
 
-$out=dse_exec($find_cmd,TRUE,TRUE);
+$out=dse_exec($find_cmd,TRUE);
 
 foreach(split("\n",$out) as $L){
 	$L=trim($L);
