@@ -1122,9 +1122,12 @@ function dse_cli_script_header(){
 		}
 		//else{
 			print "|  * Script: ".$vars['DSE']['SCRIPT_FILENAME']."\n";
-			print "|  ".$vars['DSE']['Verbosity']."\n";
-			print "|  * Version: ".$vars['DSE']['Verbosity']."\n";
-			print "|  * Date: ".$vars['Verbosity']."\n";
+			if($vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']){
+				print "|  ".$vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']."\n";
+			}
+			print "|  * verbosity: ".$vars['DSE']['Verbosity']."\n";
+			print "|  * Version: ".$vars['DSE']['DSE_DSE_VERSION']."\n";
+			print "|  * Date: ".$vars['DSE']['DSE_DSE_VERSION_DATE']."\n";
 		//}
 		print " \________________________________________________________ __ _  _   _\n";
 		//print "\n";  

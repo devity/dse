@@ -143,31 +143,33 @@ function dse_code_parse($CodeBaseDir="/dse/bin",$DoPassTwo=TRUE){
 			}
 		}
 	}
-	dpv(2,"Pass 2 !!!!!!!!!!!!!!!!!!!! ");
-	$FilesDone=0;
-	$TimeStart=time();
-	foreach($CodeInfoArray['Files'] as $FileFullName=>$Entry){
-		$FilesDone++;
-		if($FileFullName){
-			$PercentDone=$FilesDone/$FileCount;
-			$PercentDoneInt=intval($PercentDone*100);
-			$TimeSoFar=time()-$TimeStart;
-			if($PercentDoneInt>0){
-				$TimeTotal=intval($TimeSoFar/$PercentDone);
-			}else{
-				$TimeTotal=1;
-			}
-			$TimeLeft=$TimeTotal-$TimeSoFar;
-			$Do=TRUE;
-			foreach($skip as $s){
-				if(str_contains($FileFullName,$s)){
-					$Do=FALSE;
+	if($DoPassTwo){
+		dpv(2,"Pass 2 !!!!!!!!!!!!!!!!!!!! ");
+		$FilesDone=0;
+		$TimeStart=time();
+		foreach($CodeInfoArray['Files'] as $FileFullName=>$Entry){
+			$FilesDone++;
+			if($FileFullName){
+				$PercentDone=$FilesDone/$FileCount;
+				$PercentDoneInt=intval($PercentDone*100);
+				$TimeSoFar=time()-$TimeStart;
+				if($PercentDoneInt>0){
+					$TimeTotal=intval($TimeSoFar/$PercentDone);
+				}else{
+					$TimeTotal=1;
 				}
-			}
-			if($Do){
-				dpv(1, "parsingU $FileFullName pass 2  ($PercentDoneInt% -- $FilesDone of $FileCount -- TimeTotal: $TimeTotal  TimeLeft: $TimeLeft  Running: $TimeSoFar seconds)");
-				if(!dse_file_is_link($FileFullName)){
-					$CodeInfoArray=dse_code_parse_file_to_array_pass2($CodeInfoArray,$FileFullName);
+				$TimeLeft=$TimeTotal-$TimeSoFar;
+				$Do=TRUE;
+				foreach($skip as $s){
+					if(str_contains($FileFullName,$s)){
+						$Do=FALSE;
+					}
+				}
+				if($Do){
+					dpv(1, "parsingU $FileFullName pass 2  ($PercentDoneInt% -- $FilesDone of $FileCount -- TimeTotal: $TimeTotal  TimeLeft: $TimeLeft  Running: $TimeSoFar seconds)");
+					if(!dse_file_is_link($FileFullName)){
+						$CodeInfoArray=dse_code_parse_file_to_array_pass2($CodeInfoArray,$FileFullName);
+					}
 				}
 			}
 		}
