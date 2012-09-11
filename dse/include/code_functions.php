@@ -97,8 +97,7 @@ function dse_code_parse($CodeBaseDir="/dse/bin",$DoPassTwo=TRUE){
 		$CodeInfoArray = unserialize(file_get_contents($cacheFile)); 
 		return $CodeInfoArray;
 	}
-	$skip=array("phpmyadmin",".dab",".git","/templates/","/library/","phpMemcached","Zend",".xml",".jpg",".gif","png",".pdf",".js",".css",".htaccess",
-		".bak",".tar",".gz",".tgz","zip",".txt",".tpl");
+	$skip=array("phpmyadmin",".dab",".git","/templates/","/library/","phpMemcached","Zend",".xml",".jpg",".gif","png",".pdf",".js",".css",".htaccess",".bak",".tar",".gz",".tgz","zip",".txt",".tpl",".htm",".html");
 	dpv(2,"calling DirArray=dse_directory_to_array()");
 	$DirArray=dse_directory_to_array($CodeBaseDir);
 	dpv(2,"done DirArray=dse_directory_to_array()");
