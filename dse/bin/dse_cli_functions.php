@@ -948,8 +948,9 @@ function dse_directory_to_array( $path = '.', $max_level=100, $level = 0 ){
 	$tbr=array();
 	$path.="/";  $path=str_replace("//", "/", $path);
     $ignore = array( '.', '..' ); 
-    $ignore_partial = array( 'crafters/files','events/files', 'ratings/files', '/Zend/', '/images', '/phpMemcachedAdmin', '/ZFDebug', '/cache' ); 
+    $ignore_partial = array( 'crafters/files','events/files', 'ratings/files', '/Zend/', '/images', '/phpMemcachedAdmin', '/ZFDebug', '/cache', '/thumbnail' ); 
     $dh = @opendir( $path ); 
+	$FileAnyTypeCount=0;
     while( $dh && false !== ( $file = readdir( $dh ) ) ){ 
       //  if( !in_array( $ignore, $file ) ){
       	if($file!="." && $file!=".."){
@@ -962,6 +963,7 @@ function dse_directory_to_array( $path = '.', $max_level=100, $level = 0 ){
         		}
         	}
 			if(!$ignore){
+				$FileAnyTypeCount++;
 	            if( is_dir( $fullfilename ) ){
 	            	if($level<=$max_level){
 		            	$tbr[]=array(
@@ -981,7 +983,7 @@ function dse_directory_to_array( $path = '.', $max_level=100, $level = 0 ){
     } 
      
     closedir( $dh ); 
-	dpv(3,"} Done dse_directory_to_array($path, $max_level, $level)");
+	dpv(2,"} Done dse_directory_to_array($path, $max_level, $level). Found $FileAnyTypeCount sub-entries.");
 	return $tbr;
 } 
 
