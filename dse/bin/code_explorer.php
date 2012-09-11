@@ -26,7 +26,7 @@ $parameters_details = array(
   array('f:','function-declarations:',"shows functions declared in code-base at argv[1]"),
   array('u:','file-info:',"code-base at argv[1] file-info on file = argv[2]"),
   array('o:','overview:',"overview of code-base at argv[1]"),
-  array('g:','grep:',"does a grep for argv[1] in code-base at argv[2]"),
+  array('g','grep',"does a grep for argv[1] in code-base at argv[2]"),
   array('c:','check-for-errors:',"does a syntax check, etc of code-base at argv[1]"),
   array('d','compare',"does a diff code-base names argv[1] and argv[2]"),
   
@@ -54,6 +54,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$DidSomething=TRUE;
 		break;
 }
+
+dse_cli_script_header();
+
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'd':
   	case 'compare':
@@ -184,10 +187,10 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'grep':
 		$DidSomething=TRUE;
 		{
-			$GrepString=$vars['options'][$opt];
+			$GrepString=$argv[1];
 			//print "v=$vars[Verbosity]\n";
-			if($argv[1]){
-				$CodeBaseDir=$argv[1];
+			if($argv[2]){
+				$CodeBaseDir=$argv[2];
 			}else{
 				$CodeBaseDir="/dse/bin";
 			}
@@ -210,8 +213,10 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				
 				
 				//print "Files[$k]=".print_r($cefa,TRUE)."\n";
-					print dse_exec("/dse/bin/gss \"$GrepString\" \"$k\"");
-					print "<br>";
+					print dse_exec("/dse/bin/gss \"$GrepString\" \"$k\"",TRUE);
+					print "\n";
+				}else{
+					dpv(3, "Not Found in $k");
 				}
 			}
 			
@@ -222,53 +227,10 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			
 }
 
-if($DoSetEnv){
-
-	print "#!/bin/bash\n";
-	print "export DSE_GIT_ROOT=".$vars['DSE']['DSE_GIT_ROOT']."\n";
-	print "export DSE_MYSQL_CONF_FILE=".$vars['DSE']['MYSQL_CONF_FILE']."\n";
-	print "export DSE_MYSQL_LOG_FILE=".$vars['DSE']['MYSQL_LOG_FILE']."\n";
-	print "export DSE_HTTP_CONF_FILE=".$vars['DSE']['HTTP_CONF_FILE']."\n";
-	print "export DSE_HTTP_ERROR_LOG_FILE=".$vars['DSE']['HTTP_ERROR_LOG_FILE']."\n";
-	print "export DSE_HTTP_REQUEST_LOG_FILE=".$vars['DSE']['HTTP_REQUEST_LOG_FILE']."\n";
-	
-	$NoExit=TRUE;
-}
-
-$EarlyExit=FALSE;
-if($argv[1]=="configure"){
-	$PassArgString=""; for($PassArgString_i=1;$PassArgString_i<sizeof($argv);$PassArgString_i++) $PassArgString.=" ".$argv[$PassArgString_i];
-	print `/dse/bin/dse-configure $PassArgString`;
-	$EarlyExit=TRUE;
-}elseif($argv[1]=="install"){
-	$PassArgString=""; for($PassArgString_i=1;$PassArgString_i<sizeof($argv);$PassArgString_i++) $PassArgString.=" ".$argv[$PassArgString_i];
-	print exec("dse-install $PassArgString");
-	print "44444 dse-install $PassArgString\n";
-	$EarlyExit=TRUE;
-}
-if($EarlyExit){
-	print getColoredString($vars['DSE']['SCRIPT_NAME']." Done. Exiting (0)","black","green");
-	$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
-	exit(0);
-}
-
-dse_cli_script_header();
 
 
 	
  
-if($argv[1]=="configure"){
-	$PassArgString=""; for($PassArgString_i=1;$PassArgString_i<sizeof($argv);$PassArgString_i++) $PassArgString.=" ".$argv[$PassArgString_i];
-	print `/dse/bin/dse-configure $PassArgString`;
-	$DidSomething=TRUE;
-}elseif($argv[1]=="install"){
-	$PassArgString=""; for($PassArgString_i=1;$PassArgString_i<sizeof($argv);$PassArgString_i++) $PassArgString.=" ".$argv[$PassArgString_i];
-	print exec("dse-install $PassArgString");
-	print "44444 dse-install $PassArgString\n";
-	$DidSomething=TRUE;
-}
-
-	
 if($ShowUsage){
 	print $vars['Usage'];
 }

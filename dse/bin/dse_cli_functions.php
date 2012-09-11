@@ -1114,12 +1114,17 @@ function dse_cli_script_header(){
 			foreach($vars['DSE']['SCRIPT_SETTINGS'] as $k=>$v){
 				print "|  * $k: $v\n";
 			}
-		}else{
-			print "|  * Script: ".$vars['DSE']['SCRIPT_FILENAME']."\n";
-			print "|  * Verbosity: ".$vars['Verbosity']."\n";
 		}
+		//else{
+			print "|  * Script: ".$vars['DSE']['SCRIPT_FILENAME']."\n";
+			print "|  ".$vars['DSE']['Verbosity']."\n";
+			print "|  * Version: ".$vars['DSE']['Verbosity']."\n";
+			print "|  * Date: ".$vars['Verbosity']."\n";
+		//}
 		print " \________________________________________________________ __ _  _   _\n";
 		//print "\n";  
+
+
 	}
 }
 

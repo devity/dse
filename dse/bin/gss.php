@@ -6,6 +6,7 @@ ini_set('display_errors','On');
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
 $vars['Verbosity']=1;
+$ShowCommand=FALSE;
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="GSS - Grep Search String";
@@ -22,10 +23,10 @@ if(sizeof($argv)>2){
 	$d="/";
 }
 
-print "Searching for: $ss\n";
+//print "Searching for: '$String' in $d\n";
 
 $find_cmd="sudo grep -i -n -R \"$String\" $d 2>/dev/null";
-$out=dse_exec($find_cmd,TRUE);
+$out=dse_exec($find_cmd,$ShowCommand);
 foreach(split("\n",$out) as $L){
 	$L=trim($L);
 	if($L){
