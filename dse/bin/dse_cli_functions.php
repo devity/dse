@@ -983,6 +983,9 @@ function dse_directory_to_array( $path = '.', $max_level=100, $level = 0 ){
     } 
      
     closedir( $dh ); 
+	if($FileAnyTypeCount>25){
+		$FileAnyTypeCount=colorize($FileAnyTypeCount,"white","red");
+	}
 	dpv(2,"} Done dse_directory_to_array($path, $max_level, $level). Found $FileAnyTypeCount sub-entries.");
 	return $tbr;
 } 
