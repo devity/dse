@@ -111,6 +111,7 @@ function dse_code_parse($CodeBaseDir="/dse/bin"){
 	}
 	$FileCount=sizeof($CodeInfoArray['Files']);
 	$FilesDone=0;
+	$TimeStart=time();
 	//print print_r($CodeInfoArray);
 	//print print_r($CodeInfoArray['Files']); return;
 	foreach($CodeInfoArray['Files'] as $FileFullName=>$Entry){
@@ -122,8 +123,8 @@ function dse_code_parse($CodeBaseDir="/dse/bin"){
 					$Do=FALSE;
 				}
 			}
+			$FilesDone++;
 			if($Do){
-				$FilesDone++;
 				$PercentDone=$FilesDone/$FileCount;
 				$PercentDoneInt=intval($PercentDone*100);
 				$TimeSoFar=time()-$TimeStart;
@@ -145,9 +146,10 @@ function dse_code_parse($CodeBaseDir="/dse/bin"){
 	}
 	dpv(2,"Pass 2 !!!!!!!!!!!!!!!!!!!! ");
 	$FilesDone=0;
+	$TimeStart=time();
 	foreach($CodeInfoArray['Files'] as $FileFullName=>$Entry){
+		$FilesDone++;
 		if($FileFullName){
-			$FilesDone++;
 			$PercentDone=$FilesDone/$FileCount;
 			$PercentDoneInt=intval($PercentDone*100);
 			$TimeSoFar=time()-$TimeStart;
