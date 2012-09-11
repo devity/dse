@@ -127,14 +127,14 @@ function dse_code_parse($CodeBaseDir="/dse/bin"){
 				$PercentDone=$FilesDone/$FileCount;
 				$PercentDoneInt=intval($PercentDone*100);
 				$TimeSoFar=time()-$TimeStart;
-				if($PercentDoneInt>0){
-					$TimeTotal=$TimeSoFar/($PercentDoneInt/100);
+				if($PercentDone>0){
+					$TimeTotal=$TimeSoFar/($PercentDone);
 				}else{
 					$TimeTotal=1;
 				}
 				$TimeLeft=$TimeTotal-$TimeSoFar;
 			
-				dpv(2,"parsingT $FileFullName ($PercentDoneInt% -- $FilesDone of $FileCount -- TimeTotal: $TimeTotal  TimeLeft: $TimeLeft seconds)");
+				dpv(2,"parsingT $FileFullName ($PercentDoneInt% -- $FilesDone of $FileCount -- TimeTotal: $TimeTotal  TimeLeft: $TimeLeft  Running: $TimeSoFar seconds)");
 				if(!dse_file_is_link($FileFullName)){
 					$CodeInfoArray=dse_code_parse_file_to_array($CodeInfoArray,$FileFullName);
 				}else{
@@ -268,7 +268,7 @@ function dse_code_parse_PHP_contents_to_array($CodeInfoArray,$FileFullName){
 	foreach($CodeInfoArray['Files'][$FileFullName]['FileCodeInfoArray']['Lines'] as $Line){
 		$LineNumber++;
 		if(str_contains($Line,"function ")){
-			dpv(2," dse_code_parse_PHP_contents_to_array.foreach(Lines) L=$Line\n");
+			dpv(4," dse_code_parse_PHP_contents_to_array.foreach(Lines) L=$Line\n");
 			$FunctionDeclaration=trim(strcut($Line,"function ","{"));
 			$FunctionName=trim(strcut($FunctionDeclaration,"","("));
 			$FunctionParamaters=trim(strcut($FunctionDeclaration,"(",")"));
