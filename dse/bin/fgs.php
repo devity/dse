@@ -15,6 +15,13 @@ $vars['DSE']['DSE_DSE_VERSION_DATE']="2012/08/022";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
+
+if(sizeof($argv)==1 || $argv[1]=="-h"){
+	
+	print "Usage: fgs FindString GrepString [Directory]\n";
+	exit();
+}
+
 $FindString=$argv[1];
 $GrepString=$argv[2];
 if(sizeof($argv)>3){

@@ -13,8 +13,8 @@ ini_set("memory_limit","-1");
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="main script of Devity Server Environment";
-$vars['DSE']['DSE_DSE_VERSION']="v0.04b";
-$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/04/30";
+$vars['DSE']['DSE_DSE_VERSION']="v0.05b";
+$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/09/11";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
@@ -26,6 +26,7 @@ $parameters_details = array(
   array('f:','function-declarations:',"shows functions declared in code-base at argv[1]"),
   array('u:','file-info:',"code-base at argv[1] file-info on file = argv[2]"),
   array('o:','overview:',"overview of code-base at argv[1]"),
+  array('g:','grep:',"does a grep for argv[1] in code-base at argv[2]"),
   array('c:','check-for-errors:',"does a syntax check, etc of code-base at argv[1]"),
   array('d','compare',"does a diff code-base names argv[1] and argv[2]"),
   
@@ -140,7 +141,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'overview':
 		$DidSomething=TRUE;
 		{
-			print "v=$vars[Verbosity]\n";
+			//print "v=$vars[Verbosity]\n";
 			if($vars['options'][$opt]){
 				$CodeBaseDir=$vars['options'][$opt];
 			}else{
@@ -177,6 +178,30 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				print "</td>";
 			
 			print "</tr></table>";
+		}
+		break;
+	case 'g':
+	case 'grep':
+		$DidSomething=TRUE;
+		{
+			//print "v=$vars[Verbosity]\n";
+			if($vars['options'][$opt]){
+				$CodeBaseDir=$vars['options'][$opt];
+			}else{
+				$CodeBaseDir="/dse/bin";
+			}
+			$CodeInfoArray=dse_code_parse($CodeBaseDir);
+			//print "<table width=100%><tr class='f8pt'>";
+			
+			
+			ksort($CodeInfoArray['Files']);
+			foreach($CodeInfoArray['Files'] as $k=>$cefa){
+				//$f=$cefa[0];
+					
+				//print "($p)\n";
+				print "Files[$k]=".debug_tostring($cefa)."\n";
+			}
+			
 		}
 		break;
 		

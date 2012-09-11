@@ -613,7 +613,9 @@ function dep($ErrorMessage,$Log=TRUE){
 			.colorize(" ".$ErrorMessage,"magenta","black")."\n";
 	}
 	$PWD=getcwd();
-	if($Log) dse_log("ERROR ".$vars['DSE']['SCRIPT_FILENAME']."-".$vars['DSE']['DSE_DSE_VERSION']." PWD=$PWD ".$ErrorMessage);
+	if($Log){
+		dse_log("ERROR ".$vars['DSE']['SCRIPT_FILENAME']."-".$vars['DSE']['DSE_DSE_VERSION']." PWD=$PWD ".$ErrorMessage);	
+	}
 }
 
 function dse_log($Message,$File=""){
@@ -899,7 +901,7 @@ function dse_directory_strip_trail( $path ){
 
 function dse_directory_ls( $path = '.', $level = 0 ){ 
 	global $vars; dse_trace();
-	//print "function dse_directory_ls( $path \n";
+	dpv(3,"dse_directory_ls($path, $level){");
 	$path.="/";  $path=dse_directory_strip_trail($path);
     $ignore = array( '.', '..' ); 
     $dh = @opendir( $path ); 
@@ -919,6 +921,7 @@ function dse_directory_ls( $path = '.', $level = 0 ){
         } 
     } 
     closedir( $dh );
+	dpv(4,"} DONE dse_directory_ls($path, $level)");
 	return $tbr;
 } 
 function dse_ls( $search ){ 
@@ -938,6 +941,50 @@ function dse_ls( $search ){
 	}
 	return $tbr;
 } 
+
+function dse_directory_to_array( $path = '.', $max_level=100, $level = 0 ){
+	global $vars;
+	dpv(2,"Starting dse_directory_to_array($path, $max_level, $level){");
+	$tbr=array();
+	$path.="/";  $path=str_replace("//", "/", $path);
+    $ignore = array( '.', '..' ); 
+    $ignore_partial = array( 'crafters/files','events/files', 'ratings/files' ); 
+    $dh = @opendir( $path ); 
+    while( false !== ( $file = readdir( $dh ) ) ){ 
+      //  if( !in_array( $ignore, $file ) ){
+      	if($file!="." && $file!=".."){
+      		$fullfilename=$path.$file;
+        	$ignore=FALSE;
+        	foreach($ignore_partial as $ignore_try){
+        		dpv(5,"ignore_try: str_icontains($file,$ignore_try)");
+        		if(str_icontains($fullfilename,$ignore_try)){
+        			$ignore=TRUE;
+        		}
+        	}
+			if(!$ignore){
+	            if( is_dir( $fullfilename ) ){
+	            	if($level<=$max_level){
+		            	$tbr[]=array(
+		            		"DIR",
+		            		$file,
+		            		$fullfilename, 
+	    	        		dse_directory_to_array( $fullfilename, $max_level, ($level+1) )
+						 );
+					}else{
+						$tbr[]=array("DIR",$file,$fullfilename, NULL);
+					}
+	            } else { 
+	               $tbr[]=array("FILE",$file,$fullfilename, NULL ); 
+	            } 
+			}
+        } 
+    } 
+     
+    closedir( $dh ); 
+	dpv(3,"} Done dse_directory_to_array($path, $max_level, $level)");
+	return $tbr;
+} 
+
 
 
 function dse_pid_is_running($PID){
