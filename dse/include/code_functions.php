@@ -50,7 +50,11 @@ function dse_code_check($CodeBaseDir="/dse/bin"){
 			$PercentDone=$FilesDone/$FileCount;
 			$PercentDoneInt=intval($PercentDone*100);
 			$TimeSoFar=time()-$TimeStart;
-			$TimeTotal=$TimeSoFar/($PercentDoneInt/100);
+			if($PercentDoneInt>0){
+				$TimeTotal=$TimeSoFar/($PercentDoneInt/100);
+			}else{
+				$TimeTotal=1;
+			}
 			$TimeLeft=$TimeTotal-$TimeSoFar;
 			dpv(0,"trying $FileFullName ($PercentDoneInt% -- $FilesDone of $FileCount -- TimeTotal: $TimeTotal  TimeLeft: $TimeLeft seconds)");
 			if(str_contains($FileFullName,".php") || str_contains($FileFullName,".inc")){
@@ -115,7 +119,11 @@ function dse_code_parse($CodeBaseDir="/dse/bin"){
 			$PercentDone=$FilesDone/$FileCount;
 			$PercentDoneInt=intval($PercentDone*100);
 			$TimeSoFar=time()-$TimeStart;
-			$TimeTotal=$TimeSoFar/($PercentDoneInt/100);
+			if($PercentDoneInt>0){
+				$TimeTotal=$TimeSoFar/($PercentDoneInt/100);
+			}else{
+				$TimeTotal=1;
+			}
 			$TimeLeft=$TimeTotal-$TimeSoFar;
 			$Do=TRUE;
 			foreach($skip as $s){
@@ -141,7 +149,11 @@ function dse_code_parse($CodeBaseDir="/dse/bin"){
 			$PercentDone=$FilesDone/$FileCount;
 			$PercentDoneInt=intval($PercentDone*100);
 			$TimeSoFar=time()-$TimeStart;
-			$TimeTotal=$TimeSoFar/($PercentDoneInt/100);
+			if($PercentDoneInt>0){
+				$TimeTotal=$TimeSoFar/($PercentDoneInt/100);
+			}else{
+				$TimeTotal=1;
+			}
 			$TimeLeft=$TimeTotal-$TimeSoFar;
 			$Do=TRUE;
 			foreach($skip as $s){
