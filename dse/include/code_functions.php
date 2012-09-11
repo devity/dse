@@ -173,7 +173,7 @@ function dse_code_parse($CodeBaseDir="/dse/bin",$DoPassTwo=TRUE){
 				}
 			}
 		}
-	}
+	} 
 	dpv(2,"DONE returning CodeInfoArray ");
 	if(!dse_file_exists($cacheFile)){	
 		dse_code_parse_save($CodeInfoArray,$CodeBaseDir);
