@@ -51,12 +51,12 @@ function dse_code_check($CodeBaseDir="/dse/bin"){
 			$PercentDoneInt=intval($PercentDone*100);
 			$TimeSoFar=time()-$TimeStart;
 			if($PercentDoneInt>0){
-				$TimeTotal=$TimeSoFar/($PercentDoneInt/100);
+				$TimeTotal=intval($TimeSoFar/$PercentDone);
 			}else{
 				$TimeTotal=1;
 			}
 			$TimeLeft=$TimeTotal-$TimeSoFar;
-			dpv(0,"trying $FileFullName ($PercentDoneInt% -- $FilesDone of $FileCount -- TimeTotal: $TimeTotal  TimeLeft: $TimeLeft seconds)");
+			dpv(0,"trying $FileFullName ($PercentDoneInt% -- $FilesDone of $FileCount -- TimeTotal: $TimeTotal  TimeLeft: $TimeLeft  Running: $TimeSoFar  seconds)");
 			if(str_contains($FileFullName,".php") || str_contains($FileFullName,".inc")){
 				dpv(5,"parsingA $FileFullName");
 				if(!dse_file_is_link($FileFullName)){
@@ -86,7 +86,7 @@ function dse_code_check($CodeBaseDir="/dse/bin"){
 	
 }
 
-function dse_code_parse($CodeBaseDir="/dse/bin"){
+function dse_code_parse($CodeBaseDir="/dse/bin",$DoPassTwo=TRUE){
 	global $vars;
 	$CodeBaseDirEsc=str_replace("/",".",$CodeBaseDir);
 	$cacheFile="/tmp/dse_codemanager_parse.cache$CodeBaseDirEsc";
@@ -129,13 +129,13 @@ function dse_code_parse($CodeBaseDir="/dse/bin"){
 				$PercentDoneInt=intval($PercentDone*100);
 				$TimeSoFar=time()-$TimeStart;
 				if($PercentDone>0){
-					$TimeTotal=$TimeSoFar/($PercentDone);
+					$TimeTotal=intval($TimeSoFar/($PercentDone));
 				}else{
 					$TimeTotal=1;
 				}
 				$TimeLeft=$TimeTotal-$TimeSoFar;
 			
-				dpv(2,"parsingT $FileFullName ($PercentDoneInt% -- $FilesDone of $FileCount -- TimeTotal: $TimeTotal  TimeLeft: $TimeLeft  Running: $TimeSoFar seconds)");
+				dpv(1,"parsingT $FileFullName ($PercentDoneInt% -- $FilesDone of $FileCount -- TimeTotal: $TimeTotal  TimeLeft: $TimeLeft  Running: $TimeSoFar seconds)");
 				if(!dse_file_is_link($FileFullName)){
 					$CodeInfoArray=dse_code_parse_file_to_array($CodeInfoArray,$FileFullName);
 				}else{
@@ -154,7 +154,7 @@ function dse_code_parse($CodeBaseDir="/dse/bin"){
 			$PercentDoneInt=intval($PercentDone*100);
 			$TimeSoFar=time()-$TimeStart;
 			if($PercentDoneInt>0){
-				$TimeTotal=$TimeSoFar/($PercentDoneInt/100);
+				$TimeTotal=intval($TimeSoFar/$PercentDone);
 			}else{
 				$TimeTotal=1;
 			}
@@ -166,7 +166,7 @@ function dse_code_parse($CodeBaseDir="/dse/bin"){
 				}
 			}
 			if($Do){
-				dpv(2, "parsingU $FileFullName pass 2  ($PercentDoneInt% -- $FilesDone of $FileCount -- TimeTotal: $TimeTotal  TimeLeft: $TimeLeft seconds)");
+				dpv(1, "parsingU $FileFullName pass 2  ($PercentDoneInt% -- $FilesDone of $FileCount -- TimeTotal: $TimeTotal  TimeLeft: $TimeLeft  Running: $TimeSoFar seconds)");
 				if(!dse_file_is_link($FileFullName)){
 					$CodeInfoArray=dse_code_parse_file_to_array_pass2($CodeInfoArray,$FileFullName);
 				}

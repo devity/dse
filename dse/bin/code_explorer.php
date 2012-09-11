@@ -196,7 +196,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			}
 			
 			dpv(1,"Searching for '$GrepString' in $CodeBaseDir");
-			$CodeInfoArray=dse_code_parse($CodeBaseDir);
+			$CodeInfoArray=dse_code_parse($CodeBaseDir,FALSE);
 			//print "<table width=100%><tr class='f8pt'>";
 			
 			
