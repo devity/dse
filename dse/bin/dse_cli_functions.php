@@ -948,7 +948,7 @@ function dse_directory_to_array( $path = '.', $max_level=100, $level = 0 ){
 	$tbr=array();
 	$path.="/";  $path=str_replace("//", "/", $path);
     $ignore = array( '.', '..' ); 
-    $ignore_partial = array( 'crafters/files','events/files', 'ratings/files', '/Zend/' ); 
+    $ignore_partial = array( 'crafters/files','events/files', 'ratings/files', '/Zend/', '/images', '/phpMemcachedAdmin', '/ZFDebug', '/cache' ); 
     $dh = @opendir( $path ); 
     while( $dh && false !== ( $file = readdir( $dh ) ) ){ 
       //  if( !in_array( $ignore, $file ) ){
