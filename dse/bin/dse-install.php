@@ -291,6 +291,9 @@ $PackageNamesArray[]="python";
 
 $NotOSXPackageNamesArray[]="vim";
 
+
+
+$PackageNamesArray[]="tofrodos";
 $PackageNamesArray[]="wget";
 $PackageNamesArray[]="curl";
 $OSXPackageNamesArray[]="lynx";

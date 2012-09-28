@@ -64,6 +64,14 @@ if($argv[1]=="help" || $ShowUsage){
 dse_file_link("/sbin/service",trim(`which service`));
 dse_file_link("/usr/bin/php",trim(`which php`));
 dse_file_link("/bin/php",trim(`which php`));
+if(!dse_which("dos2unix")){
+	dse_file_link("/usr/bin/dos2unix",trim(`which fromdos`));
+}
+if(!dse_which("unix2dos")){
+	dse_file_link("/usr/bin/unix2dos",trim(`which todos`));
+}
+
+
 
 $wget=dse_which("wget");
 //print "wget=$wget\n";

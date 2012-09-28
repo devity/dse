@@ -13,6 +13,7 @@ $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="main script of Devity Server Environme
 $vars['DSE']['SCRIPT_VERSION']="v0.05b";
 $vars['DSE']['SCRIPT_VERSION_DATE']="2012/09/28";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $parameters_details = array(
@@ -349,7 +350,7 @@ if($DoCodeCheck){
 }
 
 if($DoUpdateDocumentation){
-		
+	$Scripts=array();
 	//build list of programs
 	$dd=dse_directory_to_array($vars['DSE']['DSE_BIN_DIR'],0);
 	foreach($dd as $DirEntry){
@@ -365,6 +366,8 @@ if($DoUpdateDocumentation){
 				$FileMTimeSQL=time2SQLDate($FileMTime);
 				$FileMTimeSQL=str_replace("-","/",$FileMTimeSQL);
 				$FileNameC=colorize($FileName,"magenta");
+				$ScriptFileName=str_remove($FileName,".php");
+				$ScriptFileNameC=colorize($ScriptFileName,"magenta");
 				$ScriptName=strcut($File,"RIPT_NAME']=\"","\"");
 				$ScriptNameC=colorize($ScriptName,"cyan");
 				$ScriptDescription=strcut($File,"RIPTION_BRIEF']=\"","\"");
@@ -376,12 +379,17 @@ if($DoUpdateDocumentation){
 				if($FileMTimeSQL!=$ScriptVersionDate){
 					$ScriptVersionDateC=colorize($ScriptVersionDate,"red");
 				}
-				print " * $FileNameC - $ScriptNameC $ScriptVersionC $ScriptVersionDateC ${FileSizeC}kB\n";
-				
+//				print " * $FileNameC - $ScriptNameC $ScriptVersionC $ScriptVersionDateC ${FileSizeC}kB\n";
+				$Scripts[$ScriptFileName]=" * $ScriptFileNameC - $ScriptNameC $ScriptVersionC $ScriptVersionDateC ${FileSizeC}kB\n";
 			}
 		}
 	}
-	
+	asort($Scripts);
+	foreach($Scripts as $ScriptFileName=>$ScriptLine){
+		if($ScriptLine){
+			print $ScriptLine;
+		}
+	}
 	//build README.txt
 	//update dse -h
 	//update version and date in each php file
@@ -513,9 +521,11 @@ if($DoUpdate){
 		`$Command`;
 	
 		if(!$Quiet) print "Backing up ".$vars['DSE']['DSE_ROOT']." to $BackupDir\n";
-		$Command="cp -rf ".$vars['DSE']['DSE_ROOT']." ".$BackupDir."/.";
-		//print "$Command\n";
-		`$Command`;
+		$DSESourceDir=dse_file_link_get_destination($vars['DSE']['DSE_ROOT'])."/";
+		$DSESourceDir=str_replace("dse/dse/","dse",$DSESourceDir);
+		$Command="cp -rf $DSESourceDir ".$BackupDir."/.";
+		print "$Command\n";
+		//`$Command`;
 	}else{
 		if(!$Quiet) print "Skipping backing up of current dse install.\n";
 	}
