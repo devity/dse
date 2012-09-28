@@ -1230,7 +1230,6 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 	}
 	//print "named_conf_local=\n$named_conf_local\n";
 	
-	
 	file_put_contents($vars['DSE']['NAMED_CONF_FILE'], $named_conf_local);
 	dse_file_set_owner($vars['DSE']['NAMED_CONF_FILE'],"root:bind");
 	dse_file_set_mode($vars['DSE']['NAMED_CONF_FILE'],"644");
@@ -1238,29 +1237,23 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 	dse_service_start("named");
 }
 
+
 function dse_configure_create_httpd_conf(){
 	global $vars; dse_trace();
-	
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		print "Domain: $Domain\n";	
 		foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
 			print " Host: $Host.$Domain => $IP\n";
 		}	
 	}
-	 
-	 
-	
 	dse_service_stop("httpd");
-
 	$named_conf_local="";
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		$Domain=strtolower($Domain);
 		$named_conf_local.= "zone \"$Domain\"{ type master; file \"/etc/bind/local/$Domain\"; };\n";	
 	}
-	
 	$NS1=$vars['DSE']['SERVER_CONF']['Sets']['NameServer1'];
 	$NS2=$vars['DSE']['SERVER_CONF']['Sets']['NameServer2'];
-	
 	$i=1;
 	if(sizeof($vars['DSE']['SERVER_CONF']['Domains'])>0){
 		foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){

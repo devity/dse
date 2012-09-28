@@ -213,8 +213,8 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				
 				
 				//print "Files[$k]=".print_r($cefa,TRUE)."\n";
-					print dse_exec("/dse/bin/gss \"$GrepString\" \"$k\"",TRUE);
-					print "\n";
+					print dse_exec("/dse/bin/gss --search-results \"$GrepString\" \"$k\"");
+					//print "\n";
 				}else{
 					dpv(3, "Not Found in $k");
 				}

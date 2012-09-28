@@ -84,7 +84,12 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'hardware':
 		print dse_sysstats_hardware_summary();
 		exit(0);
+/* disk performace
+ * #sudo hdparm -t /dev/sda1
+ */
+
 }
+
 
 
 $Command=$argv[1];
