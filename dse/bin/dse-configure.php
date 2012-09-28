@@ -11,9 +11,10 @@ $vars['Verbosity']=1;
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE Configure Script";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="setup of config files and settings";
-$vars['DSE']['CONFIGURE_VERSION']="v0.03a";
-$vars['DSE']['CONFIGURE_VERSION_DATE']="2012/05/25";
+$vars['DSE']['SCRIPT_VERSION']="v0.04b";
+$vars['DSE']['SCRIPT_VERSION_DATE']="2012/09/28";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $parameters_details = array(

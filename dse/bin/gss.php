@@ -12,9 +12,10 @@ $ShowCommand=TRUE;
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="GSS - Grep Search String";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="grep tailored for server admin manual usage, color, launch files, etc";
-$vars['DSE']['DSE_DSE_VERSION']="v0.05b";
-$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/07/07";
+$vars['DSE']['SCRIPT_VERSION']="v0.05b";
+$vars['DSE']['SCRIPT_VERSION_DATE']="2012/07/07";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="grep_string [start_directory]";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
  
@@ -50,7 +51,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'h':
   	case 'help':
 		print $vars['Usage'];
-		//exit(0);
+		exit(0);
 		break;
 	case 'r':
 	case 'search-results':

@@ -12,6 +12,7 @@ $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="cli level IP throttling";
 $vars['DSE']['SCRIPT_VERSION']="v0.01b";
 $vars['DSE']['SCRIPT_VERSION_DATE']="2012/05/28";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $parameters_details = array(

@@ -1,5 +1,67 @@
 #!/usr/bin/php
-<?
+<?php
+error_reporting(E_ALL && ~E_NOTICE);
+ini_set('display_errors','On');	
+include_once ("/dse/bin/dse_cli_functions.php");
+include_once ("/dse/bin/dse_config.php");
+$vars['Verbosity']=0;
+
+// ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
+$vars['DSE']['SCRIPT_NAME']="DSE MD5";
+$vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="md5 checksum generator";
+$vars['DSE']['SCRIPT_VERSION']="v0.01b";
+$vars['DSE']['SCRIPT_VERSION_DATE']="2012/09/28";
+$vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="[file_name|dir_name]";
+// ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
+
+$parameters_details = array(
+ // array('h','help',"this message"),
+  array('q','quiet',"same as --verbosity 0"),
+  array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
+);
+$vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
+$vars['Usage']=dse_cli_get_usage($parameters_details);
+$vars['argv_origional']=$argv;
+dse_cli_script_start();
+$BackupBeforeUpdate=TRUE;
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+  	case 'v':
+	case 'verbosity':
+		$vars['Verbosity']=$vars['options'][$opt];
+		if($vars['Verbosity']>=2) print "Verbosity set to ".$vars['Verbosity']."\n";
+		break;
+}
+
+dse_cli_script_header();
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+	case 'q':
+	case 'quiet':
+		$Quiet=TRUE;
+		$vars['Verbosity']=0;
+		break;
+	case 'h':
+  	case 'help':
+  		$ShowUsage=TRUE;
+		$DidSomething=TRUE;
+		break;
+}
+
+if($vars['Verbosity']>4){
+	$vars[dse_enable_debug_code]=TRUE;
+}
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+	case 'd':
+  	case 'update-documentation':
+  		$DoUpdateDocumentation=TRUE;
+		$DidSomething=TRUE;
+		break;
+	
+}
+
+
+
+
 
 if(sizeof($argv)<2){
 	print "no argument supplied. STDIN not supported. exiting.\n";
@@ -17,15 +79,21 @@ if(is_dir($argv[1])){
 	$argv[1]=$argv[1]."/";
 	$argv[1]=str_replace("//", "/", $argv[1]);
 	md5_of_directory($argv[1]);
+	dse_shutdown();
+	exit(0);
 }elseif(file_exists($argv[1])){
 	print md5_of_file($argv[1]);
+	dse_shutdown();
 	exit(0);
 }else{
 	print "$argv[1] does not exist or is inaccessable. exiting.\n";
 	exit(-1);
+	dse_shutdown();
 }
 
 
+
+///////////////////////////////////////////////////////////////
 
 function md5_of_directory( $path = '.', $level = 0 ){ 
 	print "$path DIRECTORY\n";
@@ -75,72 +143,6 @@ function md5_of_directory( $path = '.', $level = 0 ){
 
 } 
 
-
-function dse_which($prog){
-	global $vars;
-	$Command="which $prog 2>&1";
-	$r=`$Command`;
-	if(!(strstr($r,"no $prog in")===FALSE)){
-		return "";
-	}else{
-		return trim($r);
-	}
-}
-
-
-function md5_of_file($f){
-        global $vars;
-        $sw_vers=dse_which("md5");
-        if($sw_vers){
-                $m=`md5 -q "$f" 2>/dev/null`;
-                return ($m);
-        }else{
-                $sw_vers=dse_which("md5sum");
-                if($sw_vers){
-                        $m=`md5sum "$f" 2>/dev/null`;
-						$m=str_replace("\t"," ",$m);
-                        $m=strcut($m,""," ");
-                        return ($m);
-                }
-        }
-        print "error in md5_of_file(), no md5 utility found. Supported=(md5,md5sum)";
-        return -1;
-}
-
-
-function strcut($haystack,$pre,$post=""){
-	global $strcut_post_haystack;
-	$strcut_post_haystack="";
-	if($pre=="" || !(stristr($haystack,$pre)===FALSE)){
-		if($pre==""){
-		}else{
-			//if($haystack && $pre){
-				$haystack=substr($haystack,stripos($haystack,$pre)+strlen($pre));
-			//}else{
-			//	$haystack=$haystack; //==""
-			//}
-		}	
-		if( $post!='' && !(strstr($haystack,$post)===FALSE)){	
-			if($post==""){
-				$r=$haystack;
-				$strcut_post_haystack="";
-			}else{
-			
-			
-				$r=substr($haystack,0,strpos($haystack,$post));
-				if($haystack && $post){
-					$strcut_post_haystack=substr($haystack,stripos($haystack,$post)+strlen($post));
-				}
-			}		
-		}else{
-			$r=$haystack;
-			$strcut_post_haystack="";
-		}		
-	}else{		
-		$r="";
-	}
-	return $r;
-}
 
 
 ?>

@@ -10,9 +10,10 @@ $vars['Verbosity']=1;
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="PID Info";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="Gets info about a process by it's PID'";
-$vars['DSE']['DSE_DSE_VERSION']="v0.01b";
-$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/07/11";
+$vars['DSE']['SCRIPT_VERSION']="v0.01b";
+$vars['DSE']['SCRIPT_VERSION_DATE']="2012/07/11";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="(options) PID";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $parameters_details = array(

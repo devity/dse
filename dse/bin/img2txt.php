@@ -9,9 +9,10 @@ $vars['Verbosity']=0;
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="img2txt";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="converts many image formats to a few text/ansi/html version";
-$vars['DSE']['DSE_DSE_VERSION']="v0.01b";
-$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/06/24";
+$vars['DSE']['SCRIPT_VERSION']="v0.01b";
+$vars['DSE']['SCRIPT_VERSION_DATE']="2012/06/24";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $vars['ScriptHeaderShow']=TRUE;

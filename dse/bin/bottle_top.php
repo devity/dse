@@ -9,9 +9,10 @@ include_once ("/dse/bin/dse_config.php");
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="Bottle Top";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="top-like system bottleneck analyzer";
-$vars['DSE']['BTOP_VERSION']="v0.06b";
-$vars['DSE']['BTOP_VERSION_DATE']="2012/08/22";
+$vars['DSE']['SCRIPT_VERSION']="v0.06b";
+$vars['DSE']['SCRIPT_VERSION_DATE']="2012/08/22";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $vars['DSE']['SCRIPT_SETTINGS']['Verbosity']=0;

@@ -56,7 +56,7 @@ function dse_code_check($CodeBaseDir="/dse/bin"){
 				$TimeTotal=1;
 			}
 			$TimeLeft=$TimeTotal-$TimeSoFar;
-			dpv(0,"trying $FileFullName ($PercentDoneInt% -- $FilesDone of $FileCount -- TimeTotal: $TimeTotal  TimeLeft: $TimeLeft  Running: $TimeSoFar  seconds)");
+			dpv(1,"trying $FileFullName ($PercentDoneInt% -- $FilesDone of $FileCount -- TimeTotal: $TimeTotal  TimeLeft: $TimeLeft  Running: $TimeSoFar  seconds)");
 			if(str_contains($FileFullName,".php") || str_contains($FileFullName,".inc")){
 				dpv(5,"parsingA $FileFullName");
 				if(!dse_file_is_link($FileFullName)){

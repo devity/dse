@@ -32,10 +32,15 @@ function dse_file_shrink($FileName){
 
 function dse_shutdown(){
 	global $vars; dse_trace();
-	print "dse_shutdown()\n";
+	return dse_cli_script_shutdown();
+	
+}
+function dse_cli_script_shutdown(){
+	global $vars; dse_trace();
+	//print "dse_shutdown()\n";
 	$tbr="";
-	if(is_array($vars[dse_Trace_Stack])){
-	print "vars[dse_Trace_Stack]=TRUE\n";
+	if(is_array($vars[dse_Trace_Stack]) && sizeof($vars[dse_Trace_Stack])>0 ){
+		print "isarray(vars[dse_Trace_Stack])=TRUE\n";
 		
 		$tn=0;
 		foreach ($vars[dse_Trace_Stack] as $t){
@@ -76,16 +81,17 @@ function dse_shutdown(){
 		
 	*/
 		$tbr.= "\n";
+		
+		if($vars[dse_enable_debug_code]) {
+			//print $tbr;
+		}
+		
+		//global $argv;
+		//.".".basename($argv[0])
+		$DebugOutputFilename="/tmp/dse_trace__".basename($vars['DSE']['SCRIPT_FILENAME']).".".dse_date_format("NOW","FILE");
+		dse_file_put_contents($DebugOutputFilename,$tbr);
+		print "Debug info and trace saved in: $DebugOutputFilename\n";
 	}
-	if($vars[dse_enable_debug_code]) {
-		//print $tbr;
-	}
-	
-	//global $argv;
-	//.".".basename($argv[0])
-	$DebugOutputFilename="/tmp/dse_trace__".basename($vars['DSE']['SCRIPT_FILENAME']).".".dse_date_format("NOW","FILE");
-	dse_file_put_contents($DebugOutputFilename,$tbr);
-	print "Debug info and trace saved in: $DebugOutputFilename\n";
 }
 
 function dse_firewall_internet_hide(){
@@ -114,7 +120,7 @@ function dse_trace(){
 //if($vars['Verbosity']>5) print "dse_cli_functions.php: dse_trace() start\n";
    // if(!$vars[dse_enable_debug_code]) return;
 	$vars[dse_Trace_Count]++;
-    if( $vars[Verbosity]==0 || $vars[dse_Trace_Count]>$vars[dse_Trace_Count_Max] ) return;
+    if( $vars[Verbosity]<3 || $vars[dse_Trace_Count]>$vars[dse_Trace_Count_Max] ) return;
 	
 //if($vars['Verbosity']>5) print "dse_cli_functions.php: dse_trace() calling  debug_backtrace()\n";
    	$bt=debug_backtrace();
@@ -614,7 +620,7 @@ function dep($ErrorMessage,$Log=TRUE){
 	}
 	$PWD=getcwd();
 	if($Log){
-		dse_log("ERROR ".$vars['DSE']['SCRIPT_FILENAME']."-".$vars['DSE']['DSE_DSE_VERSION']." PWD=$PWD ".$ErrorMessage);	
+		dse_log("ERROR ".$vars['DSE']['SCRIPT_FILENAME']."-".$vars['DSE']['SCRIPT_VERSION']." PWD=$PWD ".$ErrorMessage);	
 	}
 }
 
@@ -1126,8 +1132,8 @@ function dse_cli_script_header(){
 				print "|  ".$vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']."\n";
 			}
 			print "|  * verbosity: ".$vars['DSE']['Verbosity']."\n";
-			print "|  * Version: ".$vars['DSE']['DSE_DSE_VERSION']."\n";
-			print "|  * Date: ".$vars['DSE']['DSE_DSE_VERSION_DATE']."\n";
+			print "|  * Script Version: ".$vars['DSE']['SCRIPT_VERSION']."\n";
+			print "|  * Script Release Date: ".$vars['DSE']['SCRIPT_VERSION_DATE']."\n";
 		//}
 		print " \________________________________________________________ __ _  _   _\n";
 		//print "\n";  
@@ -2471,8 +2477,123 @@ function time_float(){
 	return (time()+microtime());
 }
 
+function readable_date($Date){
+	global $vars;
+	return readable_date_range($Date,$Date);
+}
+	
+	
+function readable_date_range($Start,$End){
+	global $vars;
+	
+	/*$STime=SQLDate2time($Start);
+	$ETime=SQLDate2time($End);
+	$SMonth=date("n",$STime);
+	$EMonth=date("n",$ETime);
+	$SDay=date("j",$STime);
+	$EDay=date("j",$ETime);
+	$SYear=date("y",$STime);
+	$EYear=date("y",$ETime);	
+	$TYear=date("y");
+	*/
+	$SDay=$Start[8].$Start[9];
+	$SMonth=$Start[5].$Start[6];
+	$SYear=$Start[2].$Start[3];
+	$SYearC=$Start[0].$Start[1];
+	$EDay=$End[8].$End[9];
+	$EMonth=$End[5].$End[6];
+	$EYear=$End[2].$End[3];
+	$EYearC=$End[0].$End[1];
+	$TYear=date("y");
+	
+	//$YSsuf="&nbsp;<font size=-1>$SYearC</font>$SYear";		
+	//$YEsuf="&nbsp;<font size=-1>$EYearC</font>$EYear";
+	$YSsuf="&nbsp;$SYearC$SYear";		
+	$YEsuf="&nbsp;$EYearC$EYear";
+	
+	if($SMonth==$EMonth){
+		if($SYear!=$TYear){
+			//$YEsuf="&nbsp;$SYear";
+		}else{
+			$YEsuf="";
+		}
+		if($SDay==$EDay){
+			return "$SMonth/${SDay}$YEsuf";
+		}else{
+			return "$SMonth/${SDay}-$SMonth/${EDay}$YEsuf";
+		}
+	}else{
+		//if($SYear!=$EYear || $TYear!=$SYear || $TYear!=$EYear){
+		if($SYear==$EYear ){
+			$YSsuf="";
+		}
+		if($EYear==$TYear ){
+			$YEsuf="";
+		}
+		return "$SMonth/${SDay}${YSsuf}-$EMonth/${EDay}$YEsuf";
+	}	
+}
+
+function DateAddDays($OldDate,$Days){
+	if($OldDate){
+		$OldTime=YYYYMMDD2time($OldDate);
+		if($OldTime){
+			$NewTime=$OldTime+60*60*24*$Days;
+			$NewDate=date("Y-m-d", $NewTime);
+		}
+	}
+	return $NewDate;
+}
+
+function MMDDYYYY2time($in){	
+	$t = split("/",$in);
+	if (count($t)!=3) $t = split("-",$in);
+	if (count($t)!=3) $t = split(" ",$in);
+	if (count($t)!=3) return -1;
+	if (!is_numeric($t[0])) return -2;
+	if (!is_numeric($t[1])) return -3;
+	if (!is_numeric($t[2])) return -4;	
+	if($t[2]<100 && $t[2]>0){
+		$t[2]+=2000;
+	}	
+	if ($t[2]<1902 || $t[2]>2037) return -5;
+	if ($t[2]<1970){
+		$year_offset=1970-$t[2];
+		$t[2]=1970;
+	}	
+	$result=mktime (0,0,0, $t[0], $t[1], $t[2]);
+	if($year_offset){
+		$result-=$year_offset*365*24*60*60;
+	}
+	return $result;
+}
+
+function DDMMYYYY2time($in){	
+	$t = split("/",$in);
+	if (count($t)!=3) $t = split("-",$in);
+	if (count($t)!=3) $t = split(" ",$in);
+	if (count($t)!=3) return -1;
+	if (!is_numeric($t[0])) return -2;
+	if (!is_numeric($t[1])) return -3;
+	if (!is_numeric($t[2])) return -4;	
+	if ($t[2]<1902 || $t[2]>2037) return -5;
+	if ($t[2]<1970){
+		$year_offset=1970-$t[2];
+		$t[2]=1970;
+	}	
+	$result=mktime (0,0,0, $t[1], $t[2], $t[0]);
+	if($year_offset){
+		$result-=$year_offset*365*24*60*60;
+	}
+	return $result;
+}
+
+
+function time2SQLDate($in){
+	return date("Y-m-d",$in);
+}
+
 function SQLDate2time($in){
-	global $vars; dse_trace();
 	return YYYYMMDD2time($in);
 }
 

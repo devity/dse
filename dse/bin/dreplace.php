@@ -11,8 +11,8 @@ $TreatNeedleAsPattern=FALSE;
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE Replace";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="line and string replacer";
-$vars['DSE']['BTOP_VERSION']="v0.01b";
-$vars['DSE']['BTOP_VERSION_DATE']="2012/05/11";
+$vars['DSE']['SCRIPT_VERSION']="v0.01b";
+$vars['DSE']['SCRIPT_VERSION_DATE']="2012/05/11";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 $vars['DSE']['SCRIPT_COMMAND_FORMAT']="(options) input_file needle replace";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******

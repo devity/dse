@@ -14,16 +14,17 @@ $Format="filename";
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="Date String";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="returns system time in a few common formats";
-$vars['DSE']['DATESTR_VERSION']="v0.01b";
-$vars['DSE']['DATESTR_VERSION_DATE']="2012/04/30";
+$vars['DSE']['SCRIPT_VERSION']="v0.02b";
+$vars['DSE']['SCRIPT_VERSION_DATE']="2012/09/28";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="[filename|int|YYYYMMDD]";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 
 
 $parameters_details = array(
   array('h','help',"this message"),
-  array('f','format',"format: [filename,int]"),
+  array('f','format',"format: [filename,int,YYYYMMDD]"),
   array('','version',"version info"),
 );
 $parameters=dse_cli_get_paramaters_array($parameters_details);

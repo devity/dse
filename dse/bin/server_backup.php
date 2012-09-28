@@ -10,9 +10,10 @@ $vars['Verbosity']=1;
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="server-backup";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="makes a backup of web data, mysql, conf's, etc";
-$vars['DSE']['DSE_DSE_VERSION']="v0.01b";
-$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/06/16";
+$vars['DSE']['SCRIPT_VERSION']="v0.01b";
+$vars['DSE']['SCRIPT_VERSION_DATE']="2012/09/28";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 

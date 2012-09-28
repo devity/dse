@@ -10,8 +10,8 @@ $vars['Verbosity']=1;
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE Security";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="basic security manager";
-$vars['DSE']['DSE_DSE_VERSION']="v0.01b";
-$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/07/06";
+$vars['DSE']['SCRIPT_VERSION']="v0.01b";
+$vars['DSE']['SCRIPT_VERSION_DATE']="2012/07/06";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 

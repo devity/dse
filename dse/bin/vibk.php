@@ -11,6 +11,7 @@ $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="invokes vim after making backup";
 $vars['DSE']['VIBK_VERSION']="v0.02b";
 $vars['DSE']['VIBK_VERSION_DATE']="2012/04/30";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="[options] file_name";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 print "Script: ".$vars['DSE']['SCRIPT_FILENAME']."\n";

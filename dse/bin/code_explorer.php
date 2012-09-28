@@ -6,16 +6,17 @@ include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
 include_once ("/dse/include/web_functions.php");
 include_once ("/dse/include/code_functions.php");
-$vars['Verbosity']=1;
+$vars['Verbosity']=0;
 ini_set("memory_limit","-1");
 
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
-$vars['DSE']['SCRIPT_NAME']="DSE";
-$vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="main script of Devity Server Environment";
-$vars['DSE']['DSE_DSE_VERSION']="v0.05b";
-$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/09/11";
+$vars['DSE']['SCRIPT_NAME']="DSE Code Explorer";
+$vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="Source Code managment utility: syntax check, grep, lists of var's and func's, etc.";
+$vars['DSE']['SCRIPT_VERSION']="v0.06b";
+$vars['DSE']['SCRIPT_VERSION_DATE']="2012/09/28";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $parameters_details = array(
@@ -265,6 +266,7 @@ if($DoUpdate){
 	}
 }
 
+dse_cli_script_shutdown();
 if($DidSomething){
 	if(!$Quiet && !$DoSetEnv){
 		print getColoredString($vars['DSE']['SCRIPT_NAME']." Done. Exiting (0)","black","green");

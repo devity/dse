@@ -5,13 +5,13 @@ ini_set('display_errors','On');
 //$vars[dse_enable_debug_code]=TRUE; $vars['Verbosity']=6;
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
-$vars['Verbosity']=1;
+$vars['Verbosity']=0;
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
-$vars['DSE']['SCRIPT_NAME']="DSE";
+$vars['DSE']['SCRIPT_NAME']="DSE Main Script";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="main script of Devity Server Environment";
-$vars['DSE']['DSE_DSE_VERSION']="v0.04b";
-$vars['DSE']['DSE_DSE_VERSION_DATE']="2012/08/01";
+$vars['DSE']['SCRIPT_VERSION']="v0.05b";
+$vars['DSE']['SCRIPT_VERSION_DATE']="2012/09/28";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
@@ -35,6 +35,8 @@ $parameters_details = array(
   array('a','reboot',"reboots the server"),
   array('b','halt',"halts the server (turns it off! use w/ caution. if you just need to disconnect it from the work because of an attack, run: ".
   	$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']."/panic   and answer the questions  )"),
+  array('d','update-documentation',"Update DSE documentation"),
+  array('C','check-code',"Syntax-check the DSE codebase"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -55,6 +57,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$Quiet=TRUE;
 		$vars['Verbosity']=0;
 		break;
+}
+if($vars['Verbosity']>4){
+	$vars[dse_enable_debug_code]=TRUE;
+}
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'h':
   	case 'help':
   		$ShowUsage=TRUE;
@@ -259,12 +266,24 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			sleep(1);
 		}
 		break;
+}	
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+	case 'C':
+  	case 'check-code':
+  		$DoCodeCheck=TRUE;
+		$DidSomething=TRUE;
+		break;
+}	
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+		case 'd':
+  	case 'update-documentation':
+  		$DoUpdateDocumentation=TRUE;
+		$DidSomething=TRUE;
+		break;
 		
 }
 
-if($vars['Verbosity']>4){
-	$vars[dse_enable_debug_code]=TRUE;
-}
+
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'u':
   	case 'update':
@@ -319,6 +338,58 @@ if($argv[1]=="push"){
 	}
 	exit(passthru($Command));
 }
+
+
+
+if($DoCodeCheck){
+		
+	//verify no code errors
+	dse_passthru("/dse/bin/code_explorer -c /dse",TRUE);
+	
+}
+
+if($DoUpdateDocumentation){
+		
+	//build list of programs
+	$dd=dse_directory_to_array($vars['DSE']['DSE_BIN_DIR'],0);
+	foreach($dd as $DirEntry){
+	//	print "\nentry="; print_r($DirEntry);
+		if($DirEntry[0]=="FILE"){
+			$FileName=$DirEntry[1];
+			$FullFileName=$DirEntry[2];
+			if(str_contains($FullFileName,'.php') && !str_contains($FullFileName,'_functions') ){
+				$File=dse_file_get_contents($FullFileName);
+				$FileSize=number_format(strlen($File)/1000);
+				$FileSizeC=colorize($FileSize,"yellow");
+				$FileMTime=dse_file_get_mtime($FullFileName);
+				$FileMTimeSQL=time2SQLDate($FileMTime);
+				$FileMTimeSQL=str_replace("-","/",$FileMTimeSQL);
+				$FileNameC=colorize($FileName,"magenta");
+				$ScriptName=strcut($File,"RIPT_NAME']=\"","\"");
+				$ScriptNameC=colorize($ScriptName,"cyan");
+				$ScriptDescription=strcut($File,"RIPTION_BRIEF']=\"","\"");
+				$ScriptDescriptionC=colorize($ScriptDescription,"grey");
+				$ScriptVersion=strcut($File,"_VERSION']=\"","\"");
+				$ScriptVersionC=colorize($ScriptVersion,"green");
+				$ScriptVersionDate=strcut($File,"_VERSION_DATE']=\"","\"");
+				$ScriptVersionDateC=colorize($ScriptVersionDate,"green");
+				if($FileMTimeSQL!=$ScriptVersionDate){
+					$ScriptVersionDateC=colorize($ScriptVersionDate,"red");
+				}
+				print " * $FileNameC - $ScriptNameC $ScriptVersionC $ScriptVersionDateC ${FileSizeC}kB\n";
+				
+			}
+		}
+	}
+	
+	//build README.txt
+	//update dse -h
+	//update version and date in each php file
+		
+	
+}
+
+
 
 
 if($DoSetEnv){

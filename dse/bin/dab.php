@@ -19,6 +19,7 @@ $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="Devity Automatic Backup";
 $vars['DSE']['SCRIPT_VERSION']="v0.01b";
 $vars['DSE']['SCRIPT_VERSION_DATE']="2012/04/30";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 
