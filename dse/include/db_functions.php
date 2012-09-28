@@ -51,32 +51,45 @@ function dse_database_compare($db1,$db2){
 	$Same=TRUE;
 	$db1_tables=dse_table_list_array($db1);
 	$db2_tables=dse_table_list_array($db2);
+	$db1_tc=sizeof($db1_tables);
+	$db2_tc=sizeof($db2_tables);
+	print "DB1: $db1   Tables: $db1_tc\n";
+	print "DB2: $db1   Tables: $db2_tc\n";
+	
 	foreach($db1_tables as $this_table){
-		if(!$db2_tables[$this_table]){
-			print "$db2 has no table $this_table\n";
-			$Same=FALSE;
-		}else{
-			$db1_columns=dse_column_list_array($db1,$this_table);
-			$db2_columns=dse_column_list_array($db2,$this_table);
-			foreach($db1_columns as $this_column){
-				if(!$db2_columns[$this_column]){
-					print "$db2.$this_table has no column $this_column\n";
-					$Same=FALSE;
+		if($this_table){
+			if(!$db2_tables[$this_table]){
+				print "$db2 has no table $this_table\n";
+				$Same=FALSE;
+			}else{
+				$db1_columns=dse_column_list_array($db1,$this_table);
+				$db2_columns=dse_column_list_array($db2,$this_table);
+				foreach($db1_columns as $this_column){
+					if($this_column){
+						if(!$db2_columns[$this_column]){
+							print "$db2.$this_table has no column $this_column\n";
+							$Same=FALSE;
+						}
+					}
 				}
-			}
-			foreach($db2_columns as $this_column){
-				if(!$db1_columns[$this_column]){
-					print "$db1.$this_table has no column $this_column\n";
-					$Same=FALSE;
+				foreach($db2_columns as $this_column){
+					if($this_column){
+						if(!$db1_columns[$this_column]){
+							print "$db1.$this_table has no column $this_column\n";
+							$Same=FALSE;
+						}
+					}
 				}
 			}
 		}
 	}
 	foreach($db2_tables as $this_table){
-		if(!$db1_tables[$this_table]){
-			print "$db1 has no table $this_table\n";
-			$Same=FALSE;
-		}	
+		if($this_table){
+			if(!$db1_tables[$this_table]){
+				print "$db1 has no table $this_table\n";
+				$Same=FALSE;
+			}	
+		}
 	}
 	
 }
