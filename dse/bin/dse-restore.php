@@ -28,7 +28,7 @@ $vars['DSE']['DSE_BACKUP_DIR_DSE']="/backup/dse";
 //list backups
 
 $DSESourceDir=dse_file_link_get_destination($vars['DSE']['DSE_ROOT'])."/";
-$DSESourceDir=str_replace("dse/dse/","dse",$DSESourceDir);
+$DSESourceDirRoot=str_replace("/dse/dse/","",$DSESourceDir);
 
 //print "source=$DSESourceDir\n";
 
@@ -49,7 +49,7 @@ foreach($dd as $DirEntry){
 		if($DSESourceDir && $DSESourceDir!="/"){
 			$Command="rm -rf $DSESourceDir";
 			//print "$Command\n";
-			$Command2="cp -rf $FullFileName $DSESourceDir";
+			$Command2="cp -rf $FullFileName/dse $DSESourceDirRoot/.";
 			//print "$Command\n";
 			
 		}
