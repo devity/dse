@@ -91,6 +91,11 @@ function dse_database_compare($db1,$db2){
 			}	
 		}
 	}
+	if($Same){
+		print colorize("Database Schemas Match!\n","green","black");
+	}else{
+		print colorize("Database Schemas DIFFER!\n","red","black");
+	}
 	
 }
 
