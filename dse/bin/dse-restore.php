@@ -54,7 +54,7 @@ foreach($dd as $DirEntry){
 			
 		}
 				
-		$Scripts[$ScriptFileName]=" * $ScriptFileName -      \n$Command\n$Command2\n";
+		$Scripts[$ScriptFileName]=" * $ScriptFileName - restore commands:\n$Command\n$Command2\n\n";
 		
 	}
 }
