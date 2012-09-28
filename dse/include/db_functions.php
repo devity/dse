@@ -54,7 +54,7 @@ function dse_database_compare($db1,$db2){
 	$db1_tc=sizeof($db1_tables);
 	$db2_tc=sizeof($db2_tables);
 	print "DB1: $db1   Tables: $db1_tc\n";
-	print "DB2: $db1   Tables: $db2_tc\n";
+	print "DB2: $db2   Tables: $db2_tc\n";
 	
 	foreach($db1_tables as $this_table){
 		if($this_table){
@@ -85,7 +85,7 @@ function dse_database_compare($db1,$db2){
 	}
 	foreach($db2_tables as $this_table){
 		if($this_table){
-			if(!$db1_tables[$this_table]){
+			if(!in_array($this_table,$db1_tables)){
 				print "$db1 has no table $this_table\n";
 				$Same=FALSE;
 			}	
