@@ -58,7 +58,7 @@ function dse_database_compare($db1,$db2){
 	
 	foreach($db1_tables as $this_table){
 		if($this_table){
-			if(!$db2_tables[$this_table]){
+			if(!in_array($this_table,$db2_tables)){
 				print "$db2 has no table $this_table\n";
 				$Same=FALSE;
 			}else{
@@ -66,7 +66,7 @@ function dse_database_compare($db1,$db2){
 				$db2_columns=dse_column_list_array($db2,$this_table);
 				foreach($db1_columns as $this_column){
 					if($this_column){
-						if(!$db2_columns[$this_column]){
+						if(!in_array($this_column,$db2_columns)){
 							print "$db2.$this_table has no column $this_column\n";
 							$Same=FALSE;
 						}
@@ -74,7 +74,7 @@ function dse_database_compare($db1,$db2){
 				}
 				foreach($db2_columns as $this_column){
 					if($this_column){
-						if(!$db1_columns[$this_column]){
+						if(!in_array($this_column,$db1_columns)){
 							print "$db1.$this_table has no column $this_column\n";
 							$Same=FALSE;
 						}
