@@ -47,7 +47,7 @@ foreach($dd as $DirEntry){
 		$DSERoot=dse_file_link_get_destination();
 		
 		if($DSESourceDir && $DSESourceDir!="/"){
-			$Command="rm -rf $DSESourceDir";
+			$Command="rm -rf $DSESourceDirRoot/dse";
 			//print "$Command\n";
 			$Command2="cp -rf $FullFileName/dse $DSESourceDirRoot/.";
 			//print "$Command\n";
