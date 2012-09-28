@@ -515,7 +515,7 @@ if($DoUpdate){
 	
 	$Date_str=@date("YmdGis");
 	if($BackupBeforeUpdate){
-		$BackupDir=$vars['DSE']['DSE_BACKUP_DIR_DSE']."/".$Date_str."/dse";
+		$BackupDir=$vars['DSE']['DSE_BACKUP_DIR_DSE']."/".$Date_str;
 		$Command="mkdir -p ".$BackupDir;
 		//print "$Command\n";
 		`$Command`;
@@ -524,8 +524,8 @@ if($DoUpdate){
 		$DSESourceDir=dse_file_link_get_destination($vars['DSE']['DSE_ROOT'])."/";
 		$DSESourceDir=str_replace("dse/dse/","dse",$DSESourceDir);
 		$Command="cp -rf $DSESourceDir ".$BackupDir."/.";
-		print "$Command\n";
-		//`$Command`;
+		//print "$Command\n";
+		`$Command`;
 	}else{
 		if(!$Quiet) print "Skipping backing up of current dse install.\n";
 	}
