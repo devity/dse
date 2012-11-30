@@ -1308,7 +1308,7 @@ function dse_sysstats_get_hdparm_stats(){
 	foreach(split("\n",$df) as $dfLine){
 		$filesystem=strcut($dfLine,""," ");
 		if($filesystem && $filesystem!="Filesystem" && $filesystem!="none" ){
-			$hdparm=dse_exec("hdparm -tT $filesystem");
+			$hdparm=dse_exec("/sbin/hdparm -tT $filesystem");
 			print $hdparm;
 		}
 	}
