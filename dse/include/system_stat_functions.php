@@ -42,7 +42,20 @@ function dse_sysstats_basic_summary(){
 	
 	
 	//memory:  total used avail
+	print "Memory: \n";
+	$Mem=dse_sysstats_get_memory_stats();
+	print "  Total Physical: ". $Mem[TotalPhysical];
+	print "  Total Available: ". $Mem[TotalAvailable];
+	print "  Free: ". $Mem[TotalFeee];
+	print "  Used: ". $Mem[TotalUsed];
+	print "  Swap: ". $Mem[Swap];
+	print "\n";
+	
+	
 	//hd: type total used avail temp:
+		print "Disks: \n";
+	
+	
 		dse_print_df();
 	
 		if(dse_which("hddtemp")){
@@ -53,6 +66,7 @@ function dse_sysstats_basic_summary(){
 				dse_exec("hddtemp /dev/sdb",FALSE,TRUE);	
 			}
 		}
+		dse_sysstats_get_hdparm_stats();
 		
 	//net: interfaces types speed ips routes
 	print "IPs: ";
@@ -62,6 +76,8 @@ function dse_sysstats_basic_summary(){
 	print dse_exec("/dse/bin/dnetstat -c");
 	
 	//who: 
+	
+	// dmidecode
 }
 
 
@@ -340,7 +356,7 @@ function dse_print_df(){
 	print color_pad("File System","yellow","black",45,"left");
 	print "\n";
 	print bar("","-","cyan","black","blue","black");
-	
+	$GraphWidth=intval((cbp_get_screen_width())-5);
 	list($disks_array,$disks_detailed_array)=dse_sysstats_disks();
 	foreach ($disks_detailed_array as $DiskName => $DiskInfoArray){
 		print color_pad($DiskName,"cyan","black",$NameWidth,"right");
@@ -384,6 +400,15 @@ function dse_print_df(){
 		print $Seperator;
 		print color_pad($DiskInfoArray['FileSystem'],"cyan","black",$FileSystemWidth,"left");
 		print "\n";
+		
+		$PercentUsed=intval(100-$DiskInfoArray['PercentFree']);
+		$DiskUsedWidth=intval($GraphWidth*$PercentUsed/100);
+		$DiskFreeWidth=intval($GraphWidth*$DiskInfoArray['PercentFree']/100);
+		print pad("",3-strlen($Used));
+		print colorize(pad("$PercentUsed% ",$DiskUsedWidth,"=","left"),"red","black",TRUE,0);
+		print colorize(pad(" ".$DiskInfoArray['PercentFree']."%",$DiskFreeWidth,"=","right"),"green","black",TRUE,0);
+		print "\n";		
+		
 	}
 	print bar("","-","cyan","black","blue","black");
 }
@@ -1213,6 +1238,85 @@ function dse_sysstats_httpd_fullstatus(){
 		}*/
 	//if(!$vars['dpd_httpd_fullstatus__embeded'])	end_feature_box();
 	//print "<br>";	
+}
+
+function dse_sysstats_get_memory_stats(){
+	global $vars;
+	dpv(3,"dse_sysstats_get_memory_stats()");
+
+	$unit_size=1024*1024;
+	$o=`vmstat -a -S M 1 2`;
+	$o=str_replace("  ", " ", $o);
+	$o=str_replace("  ", " ", $o);
+	$o=str_replace("  ", " ", $o);
+	$oda=str_replace("  ", " ", $o);
+	$odaa=split("\n",$oda);
+	$oda=$odaa[3];
+	$odaa=split(" ",$oda);
+	
+	
+	$o=`vmstat -S M 1 2`;
+	$o=str_replace("  ", " ", $o);
+	$o=str_replace("  ", " ", $o);
+	$o=str_replace("  ", " ", $o);
+	$o=str_replace("  ", " ", $o);
+	$oa=split("\n",$o);
+	$o=$oa[3];
+	$oa=split(" ",$o);
+	
+	$fo=`free -m`;
+	$fo=str_replace("  ", " ", $fo);
+	$fo=str_replace("  ", " ", $fo);
+	$fo=str_replace("  ", " ", $fo);
+	$fo=str_replace("  ", " ", $fo);
+	$foa=split("\n",$fo);
+	$fo=$foa[1];
+	$fo1a=split(" ",$fo);
+	$fo=$foa[2];
+	$fo2a=split(" ",$fo);
+	$fo=$foa[3];
+	$fo3a=split(" ",$fo);
+	
+	$free_Mem_Total=$fo1a[1];
+	$free_Mem_Used=$fo1a[2];
+	$free_Mem_Free=$fo1a[3];
+	$free_Mem_Shared=$fo1a[4];
+	$free_Mem_Buffers=$fo1a[5];
+	$free_Mem_Cached=$fo1a[6];
+	$free_BC_Total=$fo2a[1];
+	$free_BC_Used=$fo2a[2];
+	$free_BC_Free=$fo2a[3];
+	$free_Swap_Total=$fo3a[1];
+	$free_Swap_Used=$fo3a[2];
+	$free_Swap_Free=$fo3a[3];
+	
+	$Mem=array();
+	$Mem[TotalPhysical]=$free_Mem_Total;
+	$Mem[TotalAvailable]=$free_BC_Free;
+	$Mem[TotalFeee]=$free_Mem_Free;
+	$Mem[TotalUsed]=$Mem[TotalPhysical]-$Mem[TotalAvailable];
+	$Mem[Swap]=$free_Swap_Used;
+	return ($Mem);
+}
+
+
+function dse_sysstats_get_hdparm_stats(){
+	global $vars;
+	dpv(3,"dse_sysstats_get_hdparm_stats()");
+
+	$df=dse_exec("df");
+	foreach(split("\n",$df) as $dfLine){
+		$filesystem=strcut($dfLine,""," ");
+		if($filesystem && $filesystem!="Filesystem" && $filesystem!="none" ){
+			$hdparm=dse_exec("hdparm -tT $filesystem");
+			print $hdparm;
+		}
+	}
+	
+	
+	$hdparmStats=array();
+	$hdparmStats[Swap]=$free_Swap_Used;
+	return ($hdparmStats);
 }
 
 

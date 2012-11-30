@@ -430,6 +430,8 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
 		$PackageNamesArray[]="hardinfo";
+		$PackageNamesArray[]="dmidecode";
+		$PackageNamesArray[]="hdparm";
 		$NotOSXPackageNamesArray[]="lshw";
 		$PackageNamesArray[]="lm-sensors";
 		$NotOSXPackageNamesArray[]="hddtemp";
