@@ -106,6 +106,21 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 
 
 
+
+
+dse_cli_script_header();
+
+$vars['Usage'].= "";
+	
+ 
+	
+if($ShowUsage){
+	print $vars['Usage'];
+}
+
+dse_shutdown();
+
+/*
 print "Starting Backup:\n";
 
 
@@ -124,7 +139,7 @@ if(!is_dir($vars['DSE']['DSE_BACKUP_DIR'])){
 }
 print "\n";
 
-
+*/
 
 
 //dse_backup_server_environment();
@@ -136,6 +151,3 @@ print "Done.\n";
 exit(0);
 
 ?>
-
-
-

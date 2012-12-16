@@ -32,6 +32,12 @@ function dse_sysstats_basic_summary(){
 	$Ghz=number_format($Mhz/1000000,1);
 	$Mips=$CPUTypes[0][0]["Mips"];
 	$MipsTotal=intval($Mips*$CPUCores/1000);
+	
+	$CPUPerformance=dse_sysstats_cpu_test_performance();
+	print "DSE LOOP MIPS=".$CPUPerformance[MIPS]."\n";
+	
+	//$CPUPerformance[MIPS]
+	
 	print "CPU:  $CPUCores Cores  @  $Ghz Ghz  ~=  ${MipsTotal}k total bogomps    --  Core Usage %: (";
 	for($c=0;$c<$CPUCores;$c++){
 		if($c>0) print ", ";
@@ -163,6 +169,27 @@ function dse_sysstats_cpu_type(){
 
 	return array($CPUTypes);
 }	
+
+
+
+function dse_sysstats_cpu_test_performance(){
+	global $vars; dse_trace();
+	$Instructions=0;
+	$rt=4;
+	$st=time_float();
+	while(time_float()<$st+$rt){
+		for($asfas=0;$asfas<100000;$asfas++){
+			$Instructions+=5;
+		}
+	}
+	$MIPS=number_format(($Instructions/(time_float()-$st))/1000000,2);
+	
+	$CPUPerformance=array();
+	$CPUPerformance[MIPS]=$MIPS;
+	
+	return array($CPUPerformance);
+}	
+
 	
 function dse_color_ls($FileArg){
 	global $vars; dse_trace();

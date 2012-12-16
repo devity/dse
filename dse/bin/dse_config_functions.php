@@ -1692,19 +1692,16 @@ function dse_backup_mysqld() {
 	//--all-databases
 	$Command="mysqldump --all-databases --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys "
 		."--dump-date --force --quick --routines --verbose  > $file"; //| gzip -1 --stdout
-	$pid=dse_exec_bg($Command,TRUE);
+	/*$pid=dse_exec_bg($Command,TRUE);
 	while(dse_pid_is_running($pid)){
 		$Size=dse_exec("/dse/bin/dsizeof $file");
 		progress_bar("time",60," $Size B ");
 		sleep(1);
-	}
-	
-	
-	
-	
+	}*/
+	print "running: $Command\n";
+	print `$Command`;
 	
 	//`mysqlhotcopy-all-databases`;
-
 
 	print " $_OK MySQL backup saved at: $file\n";
 	

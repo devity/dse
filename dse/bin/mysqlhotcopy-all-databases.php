@@ -4,7 +4,7 @@
 /* CONFIGURE THESE VARIABLES */
 
 // Database connection
-$mysql_user = 'localroot';
+$mysql_user = 'root';
 $mysql_pass = '';
 $mysql_db = array();	// Array of all databases you want to backup
  
@@ -73,7 +73,7 @@ foreach ($mysql_db as $dbname) {
  
 // Tar and gzip today's backup
 echo "Creating tarball...n";
-$gzipfile = "$backup_path/$today/backup.tgz";
+$gzipfile = "$backup_path/${today}_backup.tgz";
 system("tar -czvf $gzipfile $backup_path/$today/*");
 // Get size of backup
 $a = array("B", "KB", "MB", "GB", "TB", "PB");
