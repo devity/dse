@@ -777,7 +777,13 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
 		if(dse_is_ubuntu()){
-			
+
+			$NotOSXPackageNamesArray[]="xfonts-cyrillic";
+			$NotOSXPackageNamesArray[]="xfonts-75dpi";
+			$NotOSXPackageNamesArray[]="xfonts-100dpi";
+			$NotOSXPackageNamesArray[]="xfonts-base";
+			$NotOSXPackageNamesArray[]="gsfonts-x11";
+			$NotOSXPackageNamesArray[]="ttf-mscorefonts-installer";
 			$NotOSXPackageNamesArray[]="ttf-larabie-uncommon";
 			$NotOSXPackageNamesArray[]="ttf-larabie-straight";
 			$NotOSXPackageNamesArray[]="ttf-larabie-deco";
@@ -920,6 +926,13 @@ if(in_array("desktop", $vars['DSE']['AddComponents'])){
 		passthru("sudo update-rc.d -f modem-manager remove");
 		passthru("sudo update-rc.d -f bluetooth remove");
 		passthru("sudo update-rc.d -f ondemand remove");
+	}
+}
+
+
+if(in_array("desktop", $vars['DSE']['AddComponents'])){
+	if(dse_is_ubuntu()){
+		passthru("sudo fc-cache -f -v");
 	}
 }
 
