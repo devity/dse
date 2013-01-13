@@ -111,12 +111,21 @@ if($ShowEXEFamilyTree && $PIDInfo['PID']>0 ){
 if($ShowEXEFamilyTree ){
 	exit(0);
 }
-print "EXE: ".$PIDInfo['EXE']."\n";
-print "PID: ".$PIDInfo['PID']."\n";
-print "PPID: ".$PIDInfo['PPID']."\n";
-print "PCPU: ".$PIDInfo['PCPU']."\n";
-print "PMEM: ".$PIDInfo['PMEM']."\n";
-print "USER: ".$PIDInfo['USER']."\n";
+if(!$DidSomething){
+	if(sizeof($argv)==1){
+		print "no PID argument given. exiting.\n";
+		exit(-1);
+	}else{
+		$PID=$argv[1];
+	}
+	$PIDInfo=dse_pid_get_info($PID);
+	print "EXE: ".$PIDInfo['EXE']."\n";
+	print "PID: ".$PIDInfo['PID']."\n";
+	print "PPID: ".$PIDInfo['PPID']."\n";
+	print "PCPU: ".$PIDInfo['PCPU']."\n";
+	print "PMEM: ".$PIDInfo['PMEM']."\n";
+	print "USER: ".$PIDInfo['USER']."\n";
+}
 
 if($DidSomething){
 	if(!$Quiet && !$DoSetEnv){

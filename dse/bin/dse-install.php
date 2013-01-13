@@ -277,7 +277,7 @@ readahead: to accelerate boot sequence
  * 
  * */
 //,"postfix","cron-apt","","","","",""
-//"","","","","mytop",""
+//"","","","","",""
 //"","",""
 
 $PackageNamesArray=array();
@@ -436,7 +436,13 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		$PackageNamesArray[]="lm-sensors";
 		$NotOSXPackageNamesArray[]="hddtemp";
 		if(str_contains($vars['DSE']['SERVICES'],"mysql")){
-			$NotOSXPackageNamesArray[]="mysql-bench";
+			if(dse_is_ubuntu()){
+				$NotOSXPackageNamesArray[]="mysql-workbench-gpl";
+			}else{
+				$NotOSXPackageNamesArray[]="mysql-bench";
+			}
+			
+			$NotOSXPackageNamesArray[]="mytop";
 		}
 		if(str_contains($vars['DSE']['SERVICES'],"http")){
 			$NotOSXPackageNamesArray[]="apache2-utils";
@@ -771,6 +777,18 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
 		if(dse_is_ubuntu()){
+			
+			$NotOSXPackageNamesArray[]="ttf-larabie-uncommon";
+			$NotOSXPackageNamesArray[]="ttf-larabie-straight";
+			$NotOSXPackageNamesArray[]="ttf-larabie-deco";
+			$NotOSXPackageNamesArray[]="sun-java6-fonts";
+			$NotOSXPackageNamesArray[]="ttf-sjfonts";
+			$NotOSXPackageNamesArray[]="ttf-georgewilliams";
+			$NotOSXPackageNamesArray[]="ttf-dustin";
+			$NotOSXPackageNamesArray[]="ttf-gentium";
+			$NotOSXPackageNamesArray[]="gnome-specimen";
+
+
 			//$NotOSXPackageNamesArray[]="ubuntu-desktop";
 			$NotOSXPackageNamesArray[]="lightdm"; //$NotOSXPackageNamesArray[]="gdm";
 			$NotOSXPackageNamesArray[]="x-window-system-core";

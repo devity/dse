@@ -27,9 +27,10 @@ $parameters_details = array(
  
   array('h','help',"this message"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
-  array('a','all',"print all available system stats"),
-  array('b','basic',"print basic available system stats (default action)"),
-  array('p','prompt',"print brief info for use in shell prompt w: export PS1=\"[\$(/dse/bin/dss --prompt)]  \w:\$ \""),
+  array('a','all',"all available system stats"),
+  array('b','basic',"basic available system stats (default action)"),
+  array('o','os',"os details"),
+  array('p','prompt',"brief info for use in shell prompt w: export PS1=\"[\$(/dse/bin/dss --prompt)]  \w:\$ \""),
   array('d','df',"colorized version of df"),
   array('w','hardware',"basic system hardware info"),
   
@@ -70,10 +71,20 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		dse_exec("/dse/bin/dnetstat -c",FALSE,TRUE);	
 		//dse_exec("hddtemp /dev/sdb",FALSE,TRUE);	
 //		lshw -short -C disk
+		print dse_os_summary();
+		print dse_sysstats_basic_summary();
+		print dse_sysstats_hardware_summary();
 		exit(0);	
+		
 	case 'b':
   	case 'basic':
+		print dse_os_summary();
 		print dse_sysstats_basic_summary();
+		exit(0);
+		
+	case 'o':
+  	case 'os':
+		print dse_os_summary();
 		exit(0);
 		
 	case 'd':

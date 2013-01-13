@@ -7,6 +7,24 @@ error_reporting( (E_ALL & ~E_NOTICE) ^ E_DEPRECATED);
 if($vars['Verbosity']>5) print "starting dse_cli_functions.php\n";
 	
 	
+	
+function dse_os_summary(){
+	global $vars; dse_trace();
+	$tbr="";
+	if(dse_is_ubuntu()){
+		$contents=dse_file_get_contents("/etc/issue");
+		$contents=remove_blank_lines($contents)."\n";
+		$tbr.= $contents;
+	}else{
+		$contents=dse_file_get_contents("/etc/release");
+		$contents=remove_blank_lines($contents)."\n";
+		$tbr.= $contents;
+	}
+	$tbr.= dse_exec("uname -a");
+	return $tbr;
+}
+
+	
 function dse_file_shrink($FileName){
 	global $vars; dse_trace();
 	$Base=basename($FileName);
@@ -996,6 +1014,24 @@ function dse_directory_to_array( $path = '.', $max_level=100, $level = 0 ){
 	return $tbr;
 } 
 
+
+
+function dse_pid_list(){
+	//print " dse_pid_is_running($PID)\n";
+	global $vars; dse_trace();
+	$PIDList=array();
+	$raw=dse_exec("sudo ps aux");
+	foreach (split("\n",$raw) as $line) {
+		$line=trim($line);
+		$lpa=split("[ \t]+",$line);
+		//print_r($lpa);
+		if($lpa[1]>0){
+			$PIDList[$lpa[1]]=array('exe'=>$lpa[10],'mem'=>$lpa[3],'cpu'=>$lpa[2]);
+		}
+	}
+	//print_r($PIDList);
+	return ($PIDList);
+}
 
 
 function dse_pid_is_running($PID){

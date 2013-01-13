@@ -621,6 +621,44 @@ function dse_panic_processes($Interactive=FALSE){
 	$Command="sudo ps -acx -o %cpu,pid,command | sort -rn | head -n10";
 	$r=dse_exec($Command,FALSE,TRUE);
 	
+			$PIDList=dse_pid_list();
+			
+			$EXEmem=array();
+			$EXEcpu=array();
+			foreach($PIDList as $PID=>$PIDia){
+				$exe=$PIDia['exe'];
+				$mem=$PIDia['mem'];
+				$cpu=$PIDia['cpu'];
+				//print " $PID";
+				//$PIDInfo=dse_pid_get_info($PID);
+				/*
+				print "EXE: ".$PIDInfo['EXE']."\n";
+				print "PID: ".$PIDInfo['PID']."\n";
+				print "PPID: ".$PIDInfo['PPID']."\n";
+				print "PCPU: ".$PIDInfo['PCPU']."\n";
+				print "PMEM: ".$PIDInfo['PMEM']."\n";
+				print "USER: ".$PIDInfo['USER']."\n";
+				print "pid=$PID exe=$exe\n"; */
+				$EXEmem[$exe]+=$mem;
+				$EXEcpu[$exe]+=$cpu;
+			}
+			print "\n";
+			
+			print "High Memory exe's:\n";
+			foreach($EXEmem as $exe=>$mem){
+				if($mem>1){
+					print "$exe  Mem: $mem % \n";
+				}
+			}
+			
+			print "High CPU exe's:\n";
+			foreach($EXEcpu as $exe=>$cpu){
+				if($cpu>1){
+					print "$exe  CPU: $cpu % \n";
+				}
+			}
+		
+	
 	return;
 }
 
