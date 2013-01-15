@@ -764,20 +764,70 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 
 $ComponentName="desktop";
 if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
-	if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
-		$Component=colorize($ComponentName,"cyan");
-		$A=dse_ask_yn("Install Component $Component?");
-		print "\n";
-		if($A=='Y'){
-			$vars['DSE']['AddComponents'][]=$ComponentName;
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
-		}else{
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
-		}
-	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
 		if(dse_is_ubuntu()){
+			
+		
+			$DebSourcesArray[]="http://deb.opera.com/opera/ stable non-free";
+			$AptKeyURLsArray[]="http://deb.opera.com/archive.key";
+			$PackageNamesArray[]="debian-archive-keyring";
+			$PackageNamesArray[]="opera";
+			
+			$PackageNamesArray[]="chromium-browser";
+			
+			$PackageNamesArray[]="compizconfig-settings-manager";
+			$PackageNamesArray[]="compiz-plugins-extra";
+			
+			$AddAptRepositoryArray[]="ppa:tualatrix/ppa";	
+			$PackageNamesArray[]="ubuntu-tweak";
+			
+			$PackageNamesArray[]="psensor";
+			$PackageNamesArray[]="hddtemp";
+			$PackageNamesArray[]="lm-sensors";
+			
+			$PackageNamesArray[]="dconf-tools";
+			$PackageNamesArray[]="gnome-tweak-tool";
+			$PackageNamesArray[]="gnome-shell";
+			$PackageNamesArray[]="lo-menubar";
 
+			$PackageNamesArray[]="totem-mozilla";
+			$PackageNamesArray[]="icedax";
+			$PackageNamesArray[]="tagtool";
+			$PackageNamesArray[]="easytag";
+			$PackageNamesArray[]="id3tool";
+			$PackageNamesArray[]="lame";
+			$PackageNamesArray[]="nautilus-script-audio-convert";
+			
+			$PackageNamesArray[]="gstreamer0.10-plugins-ugly";
+			$PackageNamesArray[]="gstreamer0.10-ffmpeg";
+			$PackageNamesArray[]="libxine1-ffmpeg";
+			$PackageNamesArray[]="gxine";
+			$PackageNamesArray[]="mencoder";
+			$PackageNamesArray[]="libmad0";
+			$PackageNamesArray[]="mpg321";
+			$PackageNamesArray[]="flashplugin-installer"; //flashplugin-nonfree 
+			$PackageNamesArray[]="libdvdread4";
+			$PackageNamesArray[]="vlc";
+			$NotOSXPackageNamesArray[]="ubuntu-restricted-extras";
+	
+			
+			$PackageNamesArray[]="p7zip-rar";
+			$PackageNamesArray[]="p7zip-full";
+			$PackageNamesArray[]="unace";
+			$PackageNamesArray[]="unrar";
+			$PackageNamesArray[]="zip";
+			$PackageNamesArray[]="unzip";
+			$PackageNamesArray[]="sharutils";
+			$PackageNamesArray[]="rar";
+			$PackageNamesArray[]="uudeview";
+			$PackageNamesArray[]="mpack";
+			$PackageNamesArray[]="arj";
+			$PackageNamesArray[]="lha";
+			$PackageNamesArray[]="cabextract";
+			$PackageNamesArray[]="file-roller";
+			
+			
+			
 			$NotOSXPackageNamesArray[]="xfonts-cyrillic";
 			$NotOSXPackageNamesArray[]="xfonts-75dpi";
 			$NotOSXPackageNamesArray[]="xfonts-100dpi";
@@ -894,6 +944,25 @@ if(dse_is_osx()){
 }else{
 	foreach($NotOSXPackageNamesArray as $p) $PackageNamesArray[]=$p;
 }
+
+
+foreach($DebSourcesArray as $DebSource){
+	$Command="sudo deb $DebSource";
+	dse_exec($Command,TRUE,TRUE);
+}
+foreach($AptKeyURLsArray as $AptKeyURL){
+	$Command="wget -qO - $AptKeyURL | sudo apt-key add -";
+	dse_exec($Command,TRUE,TRUE);
+}
+
+foreach($AddAptRepositoryArray as $AddAptRepository){
+	$Command="sudo add-apt-repository $AddAptRepository";
+	dse_exec($Command,TRUE,TRUE);
+}
+
+			
+			
+			
 	
 	
 foreach($PackageNamesArray as $PackageName){
