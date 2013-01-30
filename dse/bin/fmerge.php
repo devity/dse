@@ -4,15 +4,15 @@ error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
-$vars['Verbosity']=6;
+$vars['Verbosity']=1;
 dpv(6,"trace:head");
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE File Merger";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="finds duplicate files, syncs directories";
-$vars['DSE']['SCRIPT_VERSION']="v0.01b";
-$vars['DSE']['SCRIPT_VERSION_DATE']="2013/01/24";
+$vars['DSE']['SCRIPT_VERSION']="v0.02b";
+$vars['DSE']['SCRIPT_VERSION_DATE']="2013/01/29";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
-$vars['DSE']['SCRIPT_COMMAND_FORMAT']="[source] [destination]";
+$vars['DSE']['SCRIPT_COMMAND_FORMAT']="[source] [destination]\n example: fmerge -c /dir user@host.com:/parent/destination_dir";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
 $parameters_details = array(
@@ -140,7 +140,7 @@ function dse_fmerge_process_directory_array( $s, $d, $da, $action ){
 					
 					$hs=md5_of_file2($fullname).dse_file_get_stat_field2($fullname,"size");
 					$hd=md5_of_file2($ed).dse_file_get_stat_field2($ed,"size");
-					
+					print "hs==hd: $hs==$hd\n";
 					if(dse_file_exists2($ed)){
 						if($hs==$hd){
 							if(!$vars['fmerge']['silent-success']){
@@ -184,6 +184,17 @@ function dse_fmerge_process_directory_array( $s, $d, $da, $action ){
 
 function md5_of_file2($f){
 	global $vars; dse_trace();
+	
+	if(str_contains($f,"@")){
+		$rfpa=split(":",$f);
+		$uap=$rfpa[0];
+		$frf=$rfpa[1];
+		$Command="ssh $uap /dse/bin/dmd5 $frf";
+		$r=dse_exec($Command);
+		return $r;
+	}else{
+		
+	}
         $sw_vers=dse_which("md5");
 		$f=str_replace("\"","\\\"",$f);
         if($sw_vers){
