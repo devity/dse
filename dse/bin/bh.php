@@ -15,7 +15,7 @@ $RunCommands=FALSE;
 $RunInBackground=FALSE;
 
 $Verbosity=0;
-
+ 
 $parameters = array(
   'h' => 'help',
   'r' => 'run-grep',

@@ -144,9 +144,9 @@ function dse_fmerge_process_directory_array( $s, $d, $da, $action ){
 					if(dse_file_exists2($ed)){
 						if($hs==$hd){
 							if(!$vars['fmerge']['silent-success']){
-								//print "$fullname ";
-								//print "MATCH: $ed";
-								//print "\n";
+								print "$fullname ";
+								print "MATCH: $ed";
+								print "\n";
 							}
 						}else{
 							print "$fullname ";
