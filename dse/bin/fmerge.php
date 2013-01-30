@@ -50,6 +50,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		break;	
 	case 'h':
   	case 'help':
+		print $vars['Usage'];
   		$ShowUsage=TRUE;
 		$DidSomething=TRUE;
 		break;
