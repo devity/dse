@@ -30,11 +30,15 @@ $parameters_details = array(
   array('q','quiet',"same as --verbosity 0"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('w','html',"html output format"),
-  array('s','status',"prints status file".$CFG_array['StatusFile']),
+  array('l','dlb-status',"prints status file".$CFG_array['StatusFile']),
   array('f:','find:',"searches for arg1 in all db and tables or db arg2 and table arg3"),
   array('d','list-databases',"prints list of databases: SHOW DATABASES; command"),
   array('t:','list-tables:',"prints list of tables in database arg1: USE arg1; SHOW TABLES; command"),
-  array('r','repair-all',"repairs all tables in all db's"),
+  array('i','fix',"repairs all tables in all db's"),
+  array('r','restart',"restart daemon"),
+  array('s','status',"status daemon"),
+  array('x','stop',"stop daemon"),
+  array('g','start',"start daemon"),
   array('c','check-all',"check all tables in all db's"),
   array('o','compare-schema',"compares schema of all tables between db arg1 and arg2"),
  // array('e','edit',"backs up and launches a vim of ".$vars['DSE']['DLB_CONFIG_FILE']),
@@ -95,14 +99,34 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		dpv(2,"Searching db $db, table $table for $query\n");
 		dse_database_find_string_occurances($query,$db,$table);
 		break;
-	case 's':
-  	case 'status':
+	case 'l	':
+  	case 'dlb-status':
 		if($RunningPID>0){
 			print "DLB Daemon is RUNNING PID=$RunningPID\n";
 		}else{
 			print "DLB Daemon is NOT RUNNING!\n";
 		}
 		dpv(1,dse_file_get_contents($CFG_array['StatusFile']));
+		exit(0);
+	case 'r':
+  	case 'restart':
+		$ServiceName=dse_database_service_name();
+		$r=dse_exec("service $ServiceName restart",FALSE,TRUE);
+		exit(0);
+	case 'x':
+  	case 'stop':
+		$ServiceName=dse_database_service_name();
+		$r=dse_exec("service $ServiceName stop",FALSE,TRUE);
+		exit(0);
+	case 'g':
+  	case 'start':
+		$ServiceName=dse_database_service_name();
+		$r=dse_exec("service $ServiceName start",FALSE,TRUE);
+		exit(0);
+	case 's':
+  	case 'status':
+		$ServiceName=dse_database_service_name();
+		$r=dse_exec("service $ServiceName start",FALSE,TRUE);
 		exit(0);
 	case 'd':
   	case 'list-databases':
@@ -123,8 +147,8 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			if($t) print "$t\n";
 		}
 		exit(0);
-	case 'r':
-  	case 'repair-all':
+	case 'i':
+  	case 'fix':
 		dse_database_check_all();
 	//	dse_database_repair_all();
 		exit(0);

@@ -9,7 +9,7 @@ include_once ("/dse/bin/dse_config.php");
 $Lines=40;
 $MinutesBack=60;
 $NumberOfBytesSameLimit=13;
-$Intermingle=TRUE;
+$Intermingle=FALSE;
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="Log Tail";
@@ -26,12 +26,32 @@ $shortopts .= "m:";  // Required value
 $shortopts .= "v:";  // Required value
 $shortopts .= "t::"; // Optional value
 $shortopts .= "i"; // These options do not accept values
+$shortopts .= "h"; 
+$shortopts .= "l"; 
 
 $options = getopt($shortopts);
 
+if(key_exists('h', $options)){
+	print "lgt -options
+	-h    this message
+	-n #  lines 
+	-m #  minutes back
+	-v    verbosity
+	-i    intermingle
+	-l    list log files used
+";
+	
+}
+if(key_exists('l', $options)){
+	foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
+		print "$LogFile\n";
+	}
+	exit();
+}
 if($options['v']){
 	$vars[Verbosity]=$options['v'];
 }
+
 if($options['n']){
 	$Lines=$options['n'];
 }
@@ -39,7 +59,7 @@ if($options['m']){
 	$MinutesBack=$options['m'];
 }
 if(key_exists('i', $options)){
-	$Intermingle=FALSE;
+	$Intermingle=TRUE;
 }
 
 $CharsWide=cbp_get_screen_width()-19;
@@ -85,7 +105,9 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 					}else{
 						$Ago="";
 					}
-					if($Time<=0 || $Time>$StartTime){
+				//	print "4=$Time > $StartTime \n";
+					//if($Time<=0 || $Time>$StartTime){
+						print "in";
 						$L=substr($L,0,$CharsWide);
 						$L=colorize_words($L);
 						if($Time<=0){
@@ -96,6 +118,7 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 						if($Intermingle){
 							if($Time){
 								$Rand=rand(100,999);
+								
 								$Intermingled[$Time."0".$Rand]="$LogFileNameColorized$Ago  $L\n";
 							}else{
 								print "$LogFileNameColorized$Ago  $L\n";;
@@ -107,7 +130,7 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 							}
 							print  "$Ago  $L\n";
 						}
-					}
+					//}
 				}
 			}
 		}

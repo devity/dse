@@ -1,5 +1,9 @@
 <?php
 
+function dse_database_service_name(){
+	global $vars; dse_trace();
+	return "mysql";
+}
 		
 function dse_database_find_string_occurances($query,$db,$table){
 	global $vars; dse_trace();

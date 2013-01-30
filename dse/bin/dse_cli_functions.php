@@ -366,6 +366,9 @@ function dse_exec($Command,$ShowCommand=FALSE,$ShowOutput=FALSE){
 	$r=`$Command`;
 	if($ShowOutput) {
 		print $r;
+	}
+	
+	if($ShowCommand){
 		print bar("END Command: ".colorize($Command,"white","red"),"^","yellow","black","red","black");
 	}
 	return $r;
@@ -621,19 +624,19 @@ function dse_pid_get_exe_tree($PID,$Reverse=FALSE){
 	
 function dpv($MinVerbosity,$Message){
 	global $vars; dse_trace();
-	if(str_icontains($Message,"error ") || str_icontains($Message,"error: ")){
-		dep($Message);
-	}else{
+	//if(str_icontains($Message,"error ") || str_icontains($Message,"error: ")){
+	//	dep($Message);
+	//}else{
 		if($vars['Verbosity']>=$MinVerbosity){
 			print colorize("Dbg$MinVerbosity: ","black","white");
 			print colorize($Message,"yellow","black")."\n";
 		}
-	}
+	//}
 }
 function dep($ErrorMessage,$Log=TRUE){
 	global $vars; dse_trace();
 	if($vars['Verbosity']>=0){
-		print colorize("ERROR:","white","red")
+		print colorize("depERROR:","white","red")
 			.colorize(" ".$ErrorMessage,"magenta","black")."\n";
 	}
 	$PWD=getcwd();

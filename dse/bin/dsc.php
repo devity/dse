@@ -37,7 +37,7 @@ $parameters_details = array(
  );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
-$vars['Usage'].= "Test sample image with:    /dse/bin/img2txt -v5 -s fast /dse/images/penguin.jpg\n\n";
+$vars['Usage'].= "";
 $vars['argv_origional']=$argv;
 
 dse_cli_script_start();
