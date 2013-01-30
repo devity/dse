@@ -138,8 +138,8 @@ function dse_fmerge_process_directory_array( $s, $d, $da, $action ){
 				case "compare-hash":
 					$ed=str_replace($s,$d,$fullname); 
 					
-					$hs=md5_of_file2($fullname).dse_file_get_stat_field2($fullname,"size");
-					$hd=md5_of_file2($ed).dse_file_get_stat_field2($ed,"size");
+					$hs=md5_of_file2($fullname); //dse_file_get_stat_field2($fullname,"size");
+					$hd=md5_of_file2($ed); //.dse_file_get_stat_field2($ed,"size");
 					print "hs==hd: $hs==$hd\n";
 					if(dse_file_exists2($ed)){
 						if($hs==$hd){
@@ -209,7 +209,7 @@ function md5_of_file2($f){
         print "error in md5_of_file(), no md5 utility found. Supported:(md5,md5sum)";
         return -1;
 }
-
+ 
 function dse_file_exists2($DestinationFile){
 	global $vars; dse_trace();
 	

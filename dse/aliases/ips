@@ -1,2 +1,2 @@
 #!/bin/sh
-/dse/bin/dnetstat -x
+/dse/bin/dnetstat -a
