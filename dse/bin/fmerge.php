@@ -192,8 +192,6 @@ function md5_of_file2($f){
 		$Command="ssh $uap /dse/bin/dmd5 $frf";
 		$r=dse_exec($Command);
 		return $r;
-	}else{
-		
 	}
         $sw_vers=dse_which("md5");
 		$f=str_replace("\"","\\\"",$f);
@@ -214,6 +212,19 @@ function md5_of_file2($f){
 
 function dse_file_exists2($DestinationFile){
 	global $vars; dse_trace();
+	
+	if(str_contains($DestinationFile,"@")){
+		$rfpa=split(":",$DestinationFile);
+		$uap=$rfpa[0];
+		$frf=$rfpa[1];
+		$Command="ssh $uap /dse/bin/fstat $frf";
+		$r=dse_exec($Command);
+		if(str_contains($r,"does not exist")){
+			return FALSE;
+		}
+		return TRUE;
+	}
+	
 	$DestinationFile=str_replace("\"","\\\"",$DestinationFile);
 	$r=`ls -la "$DestinationFile" 2>&1`;
 	if(str_contains($r,'No such file or directory')){
