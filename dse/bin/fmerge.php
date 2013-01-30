@@ -4,8 +4,8 @@ error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
-$vars['Verbosity']=0;
-
+$vars['Verbosity']=6;
+dpv(6,"trace:head");
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE File Merger";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="finds duplicate files, syncs directories";
@@ -30,6 +30,7 @@ $vars['argv_origional']=$argv;
 dse_cli_script_start();
 $BackupBeforeUpdate=TRUE;
 
+dpv(6,"trace:atop_foreach");
 $vars['fmerge']['silent-success']=FALSE;
 
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
