@@ -217,6 +217,8 @@ dse_file_set_mode("/var/log","777");
 dse_file_set_mode("/var","777");
 
 dse_file_set_mode("/var/run/sshd","755");
+print "----- set ssh file modes\n";
+dse_file_set_mode("/var/lib/sudo","0700");
 
 
 
