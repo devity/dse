@@ -448,22 +448,27 @@ $vars['Usage'].= "\n  ________ ___ __ _  _    _
    dbp            - backup and patch
    ddb            - database manager
    dfm            - file modifier / manager
+   dgcg			  - gerber file (G Code) generator & manipulator
    dlb            - load balancer / service status monitor
    dmd5           - file md5 checksum generator
    dnetstat       - network info
    dreplace       - replaces arg2 with arg3 in file arg1
    dsc            - service/daemon controler
-   dsizeof        - returns size in bytes of arg1
    dse            - script that sets dse variables, get's status, provides 
                      help, etc
-   dse-install    - installs dse on server
+   dsec           - basic security manager
    dse-configure  - runs setup of config and variables and environment
    dse_daemon     - answers select DSE commands/requests from remotely
    dse_set-env    - sets dse vars for shell. use: . /dse/bin/dse_set-env
+   dse-install    - installs dse on server
+   dse-restore    - revert to a prevous dse version or backup
+   dsizeof        - returns size in bytes of arg1   
    dsm            - devity server monitor - watches load, processes, hd, etc.
    dss            - system stats
    dst            - shell text utilities: color, cursor
    dtmp           - returns a valid, unique full /tmp/ filename
+   fgs            - does a grep on find results
+   fmerge         - finds duplicate files, syncs directories
    fss            - find string
    fstat          - file info
    grep2exe       - returns script name for a string on ps output lines

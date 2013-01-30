@@ -210,16 +210,18 @@ if(str_contains($vars['DSE']['SERVICES'],"dwi")){
 }
 
 
-dse_file_set_mode($vars['DSE']['DSE_IPTHROTTLE_LOG_DIRECTORY'],"777");
+dse_file_set_mode($vars['DSE']['DSE_IPTHROTTLE_LOG_DIRECTORY'],"0777");
 
 
-dse_file_set_mode("/var/log","777");
-dse_file_set_mode("/var","777");
+dse_file_set_mode("/var/log","0777");
+dse_file_set_mode("/var","0777");
 
-dse_file_set_mode("/var/run/sshd","755");
-print "----- set ssh file modes\n";
-dse_file_set_mode("/var/lib/sudo","0700");
-
+if(dse_file_exists("/var/run/sshd")){
+	dse_file_set_mode("/var/run/sshd","0755");
+}
+if(dse_file_exists("/var/lib/sudo")){
+	dse_file_set_mode("/var/lib/sudo","0700");
+}
 
 
 
