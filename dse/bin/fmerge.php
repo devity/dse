@@ -140,7 +140,7 @@ function dse_fmerge_process_directory_array( $s, $d, $da, $action ){
 					
 					$hs=md5_of_file2($fullname); //dse_file_get_stat_field2($fullname,"size");
 					$hd=md5_of_file2($ed); //.dse_file_get_stat_field2($ed,"size");
-					print "hs==hd: $hs==$hd\n";
+				//	print "hs==hd: $hs==$hd\n";
 					if(dse_file_exists2($ed)){
 						if($hs==$hd){
 							if(!$vars['fmerge']['silent-success']){
