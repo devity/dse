@@ -141,6 +141,8 @@ print "\n";
 
 */
 
+// rsync --archive --include '*/' --include '*.html' --include '*.php' --exclude '*' --progress --partial --checksum -v root@eventlister.com:/webroot . 
+
 
 //dse_backup_server_environment();
 //dse_backup_mysqld();

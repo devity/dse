@@ -4296,6 +4296,17 @@ function dse_service_name_from_common_name($service){
 	}
 	return $service;
 }
+
+function dse_service_action($service,$action){
+	global $vars; dse_trace();
+	$service=dse_service_name_from_common_name($service);
+	$Command="service $service_common $action";
+	$r=dse_exec($Command);
+	return TRUE;
+}
+			
+			
+			
 function dse_port_number($port_name){
 	global $vars; dse_trace();
 	foreach($vars['DSE']['SERVICE_PORTS'] as $Port=>$Name){
