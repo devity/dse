@@ -1,4 +1,13 @@
 <?
+
+
+function dse_vm_drop_caches(){
+	global $vars; dse_trace();
+	$Command="sync; echo 3 > /proc/sys/vm/drop_caches";
+	$r=dse_exec($Command);
+}
+
+
 function dse_sysstats_sdvcqwev(){
 	global $vars; dse_trace();
 	
@@ -17,9 +26,38 @@ Linux 3.0.0-22-generic-pae (VULD) 	07/05/2012 	_i686_	(4 CPU)
 */
 
 
+function dse_sysstats_process_summary(){
+	global $vars; dse_trace();
+	print "dse_sysstats_basic_summary(){\n";
+	
+	$Command="ps aux";
+	$ps_out=dse_exec($Command);
+	$EXEsDone=array();
+	foreach(explode("\n",$ps_out) as $psLine){
+		while(str_contains($psLine,"  ")){
+			$psLine=str_replace("  "," ",$psLine);
+		}
+	//	print "psLine=$psLine \n";
+		$psla=explode(" ",$psLine);
+		//print "psla="; print_r($psla); print "\n";
+		$ExeName=$psla[10];
+		
+		while(str_contains($ExeName,"/")){
+			$ExeName=strcut($ExeName,"/");
+		}
+		
+		if(!$EXEsDone[$ExeName]){
+			$EXEsDone[$ExeName]=TRUE;
+			if(!str_contains($ExeName,"[")){
+				$Command="ps -ylC ${ExeName} --sort:rss | awk '{sum+=$8; ++n} END {print \"Tot=\"sum\"(\"n\")\";print \"Avg=\"sum\"/\"n\"=\"sum/n/1024\"MB\"}'";
+				$r=dse_exec($Command);
+				print "\n   exe=$ExeName: ".$r;
+			}
+		}
+	}
 
-
-
+	print "}dse_sysstats_basic_summary()}\n";
+}
 
 function dse_sysstats_basic_summary(){
 	global $vars; dse_trace();

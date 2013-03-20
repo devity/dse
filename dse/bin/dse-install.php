@@ -287,6 +287,8 @@ $NotOSXPackageNamesArray=array();
 $NotOSXPackageNamesArray[]="perl";
 $NotOSXPackageNamesArray[]="perl-tk";
 $PackageNamesArray[]="php5";
+$PackageNamesArray[]="php5-curl";
+
 $PackageNamesArray[]="python";
 
 $NotOSXPackageNamesArray[]="vim";
@@ -429,6 +431,7 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		}
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		$PackageNamesArray[]="strace";
 		$PackageNamesArray[]="hardinfo";
 		$PackageNamesArray[]="dmidecode";
 		$PackageNamesArray[]="hdparm";

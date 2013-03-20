@@ -6,14 +6,18 @@ function dse_dsec_overview(){
 	
 	print colorize("Ports: ","cyan","black").dse_ports_open(TRUE)."\n";
 
-	print dse_exec("who");
+	print "Who: ".dse_exec("who");
 
 	print "
 	ToDo:\n
 	 logwatch   \n
 	 rkhunter, chkrootkit \n
 	 fail2ban, snort \n
-	
+	 tripwire
+	 aide
+	 fail2ban
+	 snort
+	 
 	";
 
 

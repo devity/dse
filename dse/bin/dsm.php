@@ -37,7 +37,6 @@ $parameters = array(
   'q' => 'quiet',
   's' => 'stats',
   'v:' => 'verbosity:',
-);
 $flag_help_lines = array(
   'h' => "\thelp - this message",
   'c' => "\tclean - cleans up (DELETES!) all backups of all files and dirs currently matched by the config file",
@@ -110,7 +109,7 @@ dpv(5," parsing argument: ".$opt);
 	case 'stats':
 		$DoShowStats=TRUE;
 		$DidSomething=TRUE;
-	
+		break;
  }
 }
 if(!$DidSomething){

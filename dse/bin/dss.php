@@ -33,12 +33,18 @@ $parameters_details = array(
   array('p','prompt',"brief info for use in shell prompt w: export PS1=\"[\$(/dse/bin/dss --prompt)]  \w:\$ \""),
   array('d','df',"colorized version of df"),
   array('w','hardware',"basic system hardware info"),
+  array('P','process-summary',"process summary"),
+  array('r','drop-caches',"sync n clear vm cache"),
+  
+  
   
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
 $vars['argv_origional']=$argv;
 dse_cli_script_start();
+		
+	//	print_r($vars['options']);
 		
 $BackupBeforeUpdate=TRUE;
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
@@ -100,9 +106,22 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
  * #sudo hdparm -t /dev/sda1
  */
 
+
+	case 'P':
+	case 'process-summary';
+		include_once ("/dse/include/system_stat_functions.php");
+		dse_sysstats_process_summary();
+		$DidSomething=TRUE;
+		exit(0);
+		
+	case 'r':
+	case 'drop-caches';
+		include_once ("/dse/include/system_stat_functions.php");
+		print "Dropping VM caches....\n";
+		dse_vm_drop_caches();
+		$DidSomething=TRUE;
+		exit(0);
 }
-
-
 
 $Command=$argv[1];
 switch($Command){
