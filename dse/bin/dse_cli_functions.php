@@ -20,6 +20,13 @@ function dse_os_summary(){
 		$contents=remove_blank_lines($contents)."\n";
 		$tbr.= $contents;
 	}
+	
+	
+	if(dse_is_ubuntu()){
+		$Release=dse_ubuntu_release();
+		$tbr.="Ubuntu Release Name: $Release\n";
+	}
+	
 	$tbr.= dse_exec("uname -a");
 	return $tbr;
 }
