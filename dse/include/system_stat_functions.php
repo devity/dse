@@ -318,8 +318,10 @@ function dse_color_ls($FileArg){
 					$Size_str="-";
 					$BlockSize_str="-";
 				}else{
-					$Size_str=trim(dse_exec("/dse/bin/dsizeof -r \"$FullFileName\"",$vars['Verbosity']>4));
-					$BlockSize_str=trim(dse_exec("/dse/bin/dsizeof -br \"$FullFileName\"",$vars['Verbosity']>4));
+					$Size=trim(dse_exec("/dse/bin/dsizeof \"$FullFileName\"",$vars['Verbosity']>4));
+					$Size_str=dse_file_size_to_readable($Size);
+					$BlockSize=trim(dse_exec("/dse/bin/dsizeof -b \"$FullFileName\"",$vars['Verbosity']>4));
+					$BlockSize_str=dse_file_size_to_readable($BlockSize);
 				}
 			}else{
 				$Size_str="-";
@@ -372,7 +374,15 @@ function dse_color_ls($FileArg){
 			print color_pad($Type,"cyan","black",$TypeWidth,"right");
 		}
 		print $Seperator;
-		print color_pad($Size_str,"green","black",$SizeWidth,"right");
+		if($Size<1024*1024){
+			print color_pad($Size_str,"green","black",$SizeWidth,"right");
+		}elseif($Size<1024*1024*256){
+			print color_pad($Size_str,"yellow","black",$SizeWidth,"right");
+		}elseif($Size<1024*1024*1024){
+			print color_pad($Size_str,"red","black",$SizeWidth,"right");
+		}else{
+			print color_pad($Size_str,"black","green",$SizeWidth,"right");
+		}
 		print $Seperator;
 		print color_pad($BlockSize_str,"red","black",$BlockSizeWidth,"right");
 		print $Seperator;

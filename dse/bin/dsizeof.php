@@ -11,10 +11,12 @@ $Verbosity=0;
 
 
 $parameters = array(
+  'h' => 'help',
   'r' => 'human',
   'b' => 'block-size',
 );
 $flag_help_lines = array(
+  'h' => "\help - this help message",
   'r' => "\thuman - human readable",
   'b' => "\block-size - return total space used on disks by used blocks",
 );
@@ -58,6 +60,11 @@ if($Verbosity>=3) {
 
 $Options="-c";
 foreach (array_keys($options) as $opt) switch ($opt) {
+	case 'h':
+  	case 'help':
+  		print $Usage."\n";
+		exit();
+		break;
 	case 'r':
   	case 'human':
   		$OutputHumanReadable=TRUE;

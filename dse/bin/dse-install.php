@@ -284,6 +284,11 @@ $PackageNamesArray=array();
 $OSXPackageNamesArray=array();
 $NotOSXPackageNamesArray=array();
 
+
+
+$PackageNamesArray[]="apt-get";
+$PackageNamesArray[]="install";
+
 $NotOSXPackageNamesArray[]="perl";
 $NotOSXPackageNamesArray[]="perl-tk";
 $PackageNamesArray[]="php5";
@@ -294,6 +299,7 @@ $PackageNamesArray[]="python";
 $NotOSXPackageNamesArray[]="vim";
 
 
+$PackageNamesArray[]="tcpdump";
 
 $PackageNamesArray[]="tofrodos";
 $PackageNamesArray[]="wget";
@@ -305,8 +311,20 @@ $PackageNamesArray[]="rsync";
 //$PackageNamesArray[]="bnz";
 $PackageNamesArray[]="bzr";
 
-$PackageNamesArray[]="install";
-$PackageNamesArray[]="apt-get";
+
+
+$PackageNamesArray[]="pcregrep";
+$PackageNamesArray[]="nmap";
+
+
+// ip to location
+$PackageNamesArray[]="libgeoip1";
+$PackageNamesArray[]="geoip-bin";
+$PackageNamesArray[]="geoip-database";
+//wget -N http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
+//gunzip GeoLiteCity.dat.gz
+//mkdir /usr/local/share/GeoIP/
+//mv GeoLiteCity.dat /usr/local/share/GeoIP/
 
 
 $NotOSXPackageNamesArray[]="memstat";
@@ -514,7 +532,16 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		$PackageNamesArray[]="logwatch";
 		$PackageNamesArray[]="tripwire";
 		$PackageNamesArray[]="aide";
-		$PackageNamesArray[]="snort"; //http://code.google.com/p/pulledpork/
+		
+		$PackageNamesArray[]="snort"; 
+		$PackageNamesArray[]="libcrypt-ssleay-perl"; 
+		//acidbase
+		//sudo apt-get install oinkmaster
+		//snort-mysql
+		//http://code.google.com/p/pulledpork/
+		//svn checkout http://pulledpork.googlecode.com/svn/trunk/ pulledpork-read-only
+		//svn checkout http://snort-stat.googlecode.com/svn/trunk/ snort-stat-read-only
+		
 	}
 }
 if(str_contains($vars['DSE']['SERVICES'],"cacti")){

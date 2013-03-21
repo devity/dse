@@ -1713,11 +1713,11 @@ function dse_file_size_to_readable($size){
 	if($size<1024){
 		return number_format($size,0)." B";
 	}elseif($size<1024*1024){
-		return number_format($size/1024,0)." kB";
+		return number_format($size/1024,0)." k";
 	}elseif($size<1024*1024*1024){
-		return number_format($size/(1024*1024),0)." MB";
+		return number_format($size/(1024*1024),0)." M";
 	}elseif($size<1024*1024*1024*1024){
-		return number_format($size/(1024*1024*1024),1)." GB";
+		return number_format($size/(1024*1024*1024),1)." G";
 	}else{
 		return number_format($size,0)." B";
 	}
