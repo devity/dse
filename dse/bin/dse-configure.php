@@ -273,7 +273,31 @@ if(!str_contains($PATH,$vars['DSE']['DSE_BIN_DIR'])){
 		}else{
 			print "$OK Path= $PATH\n";
 			
-			
+			print "Checking root's .profile PATH from ".$vars['DSE']['ROOT_BASH_PROFILE'];
+			if(!dse_file_exists($vars['DSE']['ROOT_BASH_PROFILE'])){
+				print "$Failed to verify. No ".$vars['DSE']['ROOT_BASH_PROFILE']."\n";
+			}else{
+				$Command="grep \"PATH=\" ".$vars['DSE']['ROOT_BASH_PROFILE'];
+				$PATH=strcut(trim(`$Command`),"=");
+				if(!str_contains($PATH,$vars['DSE']['DSE_BIN_DIR'])){
+					print "Cant find ".$vars['DSE']['DSE_BIN_DIR']." in PATH: $PATH\n";
+					$A=dse_ask_yn(" Update to PATH?");
+					if($A=='Y'){
+						//$Command="echo \"PATH=\$PATH:".$vars['DSE']['DSE_BIN_DIR'].":".$vars['DSE']['DSE_ALIASES_DIR'].":".$vars['DSE']['SYSTEM_SCRIPTS_DIR']
+						//  ."\nexport PATH\" >> ".$vars['DSE']['USER_BASH_PROFILE'];
+						$Command="/dse/bin/dbp --line-append ".$vars['DSE']['ROOT_BASH_PROFILE']." \"PATH=\$PATH:".$vars['DSE']['DSE_BIN_DIR'].":".$vars['DSE']['DSE_ALIASES_DIR'].":"
+							.$vars['DSE']['SYSTEM_SCRIPTS_DIR']."\nexport PATH\"";
+						$r=`$Command`;
+						print "$Updated\n";
+					}else{
+						print "$NotChanged\n";
+					}
+						
+				}else{
+					print "$OK Path= $PATH\n";
+				}
+			}
+
 			print "Checking user's .profile PATH from ".$vars['DSE']['USER_BASH_PROFILE'];
 			if(!dse_file_exists($vars['DSE']['USER_BASH_PROFILE'])){
 				print "$Failed to verify. No ".$vars['DSE']['USER_BASH_PROFILE']."\n";
