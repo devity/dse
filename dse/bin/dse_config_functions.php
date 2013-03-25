@@ -1673,7 +1673,7 @@ function dse_backup_mysqld() {
 	
 	print " Saving Copy of mysqld Data: ";
 	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
- 	$file=$vars['DSE']['BACKUP_DIR_MYSQL']."/mysqldump".$DATE_TIME_NOW.".sql";
+ 	$gzfile=$vars['DSE']['BACKUP_DIR_MYSQL']."/mysqldump".$DATE_TIME_NOW.".sql.gz";
 	
 	/*$Command="mysqldump --all-databases --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys "
 		."--dump-date --force --quick --routines --verbose --result-file=$file";
@@ -1691,7 +1691,7 @@ function dse_backup_mysqld() {
 	
 	//--all-databases
 	$Command="mysqldump --all-databases --user=".$vars['DSE']['MYSQL_USER']." --add-drop-database --comments --debug-info --disable-keys "
-		."--dump-date --force --quick --routines --verbose  > $file"; //| gzip -1 --stdout
+		."--dump-date --force --quick --routines --verbose | gzip -c > $gzfile"; //| gzip -1 --stdout
 	/*$pid=dse_exec_bg($Command,TRUE);
 	while(dse_pid_is_running($pid)){
 		$Size=dse_exec("/dse/bin/dsizeof $file");

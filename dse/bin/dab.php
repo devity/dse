@@ -175,8 +175,8 @@ $ExcludedDirectoriesArray[]=$BackupDirectoryName;
 
 print "Exclude Extensions: $ExcludedExtensionsList\n";
 print "Excluded Directories: $ExcludedDirectoriesList\n";
+print "Excluded Directories Partial: $ExcludedDirectoriesPartialList\n";
 print "\n";
-
 
 if($DoBackup){
 	global $FilesChecked,$FilesNew,$FilesChanged,$FilesSame;
@@ -333,7 +333,7 @@ function ddab_recursive_do_dir($Dir){
 						}
 					}
 					foreach($ExcludedDirectoriesPartialArray as $xDir){
-						if($xDir!="" && !(strstr($filename,$xDir)===FALSE)){
+						if($xDir!="" && !(strstr($full_filename,$xDir)===FALSE)){
 							$do=FALSE; 
 							$msg=" ******SKIPPED DIRECTORY: $filename/";
 							$StatusOutput.=$msg."\n"; dpv(1,$msg);

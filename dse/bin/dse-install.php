@@ -291,6 +291,10 @@ $PackageNamesArray[]="install";
 
 $NotOSXPackageNamesArray[]="perl";
 $NotOSXPackageNamesArray[]="perl-tk";
+//curl -kL http://xrl.us/perlbrewinstall | bash
+//echo source ~/perl5/perlbrew/etc/bashrc >> $HOME/.bashrc
+
+
 $PackageNamesArray[]="php5";
 $PackageNamesArray[]="php5-curl";
 
