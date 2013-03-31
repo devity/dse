@@ -6,7 +6,7 @@ error_reporting( (E_ALL & ~E_NOTICE) ^ E_DEPRECATED);
 	
 if($vars['Verbosity']>5) print "starting dse_cli_functions.php\n";
 	
-	
+	 
 	
 function dse_os_summary(){
 	global $vars; dse_trace();
@@ -1477,10 +1477,14 @@ function dse_file_delete($File){
 
 
 
-function dse_file_set_mode($DestinationFile,$Mode){
+function dse_file_set_mode($DestinationFile,$Mode,$Recursive=FALSE){
 	global $vars; dse_trace();
 	if($DestinationFile && $Mode){
-		$command="chmod -R $Mode $DestinationFile 2>&1";
+		if($Recursive){
+			$command="chmod -R $Mode $DestinationFile 2>&1";
+		}else{
+			$command="chmod $Mode $DestinationFile 2>&1";
+		}
 		print `$command`;
 		$CurrentPermissions=dse_file_get_mode($DestinationFile);
 		if(intval($Mode)!=$CurrentPermissions){
@@ -1491,10 +1495,14 @@ function dse_file_set_mode($DestinationFile,$Mode){
 	return -1;
 }
 
-function dse_file_set_owner($DestinationFile,$Owner){
+function dse_file_set_owner($DestinationFile,$Owner,$Recursive=FALSE){
 	global $vars; dse_trace();
 	if($DestinationFile && $Owner){
-		$command="chown $Owner $DestinationFile";
+		if($Recursive){
+			$command="chown -R $Owner $DestinationFile";
+		}else{
+			$command="chown $Owner $DestinationFile";
+		}
 		`$command`;
 		//$CurrentPermissions=dse_file_get_mode($DestinationFile);
 		//if(intval($Mode)!=$CurrentPermissions){
@@ -1512,8 +1520,9 @@ function dse_mkdir($Destination,$Mode="",$Owner=""){
 
 function dse_directory_create($Destination,$Mode="",$Owner=""){
 	global $vars; dse_trace();
-	print "DSE dir: $Destination ";
+	print "dse_directory_create($Destination,$Mode,$Owner);\n";
 	if(!file_exists($Destination)) {
+		print " creating\n";
 		$command="mkdir -p $Destination";
 		dse_exec($command,TRUE);
 	}
@@ -1525,10 +1534,12 @@ function dse_directory_create($Destination,$Mode="",$Owner=""){
 	
 	if($Owner){
 		$command="chown -R $Owner $Destination";
+		print " doing $command\n";
 		`$command`;
 	}
 	if($Mode){
 		$command="chmod -R $Mode $Destination";
+		print " doing $command\n";
 		`$command`;
 	}
 	print getColoredString(" OK.\n","green","black");

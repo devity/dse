@@ -1,0 +1,14 @@
+#!/bin/bash
+
+x=/tmp/.youtube-dl-$(date +%y.%m.%d_%H.%M.%S)-$RANDOM.flv
+
+youtube-dl --output=$x --format=18 "$1"
+
+avconv -i $x -acodec libmp3lame -ac 2 -ab 128k -vn -y "$2"
+
+rm $x
+
+# if you get "ERROR: unable to download video" 
+# update youtube-dl with
+# sudo youtube-dl -U
+

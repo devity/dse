@@ -499,7 +499,7 @@ function dse_apt_uu(){
 	global $vars; dse_trace();
 	$Installer=dse_get_installer_name();
 	passthru("sudo $Installer update");
-	passthru("sudo $Installer upgrade");
+	passthru("sudo $Installer -y upgrade");
 }
 				
 function dse_get_installer_name(){
@@ -1281,11 +1281,17 @@ function dse_configure_create_httpd_conf(){
 	 ServerName $ServerName
 	 ServerAlias $ServerAlias
 	 DocumentRoot $DocRoot/$Webroot
-	 ErrorLog /var/log/apache2/error.log
-	 CustomLog /var/log/apache2/access.log combined
+	 #ErrorLog /var/log/apache2/error.log
 	$Extra
+	
+	
+		<Directory $DocRoot/$Webroot/>
+	    	#AllowOverride ErrorDocument
+	    </Directory>
+	
 	</VirtualHost>
 	";
+	// CustomLog /var/log/apache2/access.log combined
 					$site_file="/etc/apache2/sites-available/$Host.$domain";
 					if($Host=="_blank") $site_file="/etc/apache2/sites-available/$domain";
 					print "Saving file $site_file $site\n";
@@ -1498,7 +1504,11 @@ function dse_configure_directories_create(){
 		}else{
 			$ug="";
 		}
-		dse_directory_create($vars['DSE']['HTTP_ROOT_DIR'],"755",$ug);
+		dse_directory_create($vars['DSE']['HTTP_ROOT_DIR']);
+		if($ug){
+			dse_file_set_owner($vars['DSE']['HTTP_ROOT_DIR'],$ug,FALSE);
+		}
+		dse_file_set_mode($vars['DSE']['HTTP_ROOT_DIR'],"755",FALSE);
 	}
 	
 	

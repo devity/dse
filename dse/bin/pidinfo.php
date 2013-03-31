@@ -1,5 +1,6 @@
 #!/usr/bin/php
 <?php
+
 error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
 include_once ("/dse/bin/dse_cli_functions.php");
@@ -18,17 +19,22 @@ $vars['DSE']['SCRIPT_COMMAND_FORMAT']="(options) PID";
 
 $parameters_details = array(
   array('h','help',"this message"),
-  array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('f','family-tree',"shows info for parent and all grandparent processes"),
   array('e','exe-family-tree',"returns string like: init>grandparent>parent>PIDsEXE"),
   array('c','cpu-trace',"shows info on processes hitting the cpu"),
+  array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   //throttle / nice   http://www.willnolan.com/cputhrottle/cputhrottle.html
 );
+
+
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
 $vars['argv_origional']=$argv;
 dse_cli_script_start();
 		
+//print "vars['options']=";print_r($vars['options']);
+//print "argv=";print_r($argv);
+
 $BackupBeforeUpdate=TRUE;
 foreach (array_keys($vars['options']) as $opt) {switch ($opt) {
 	case 'h':
@@ -86,8 +92,9 @@ dse_cli_script_header();
 
 
 
-if($ShowFamilyTree && $PIDInfo['PID']>0 ){
+if($ShowFamilyTree && $PIDInfo['PID']>0  && $PIDInfo['PPID']>0 ){
 	$Command="/dse/bin/pidinfo -f ".$PIDInfo['PPID'];
+//	print "calling $Command\n";
 	$parent=`$Command`;
 	print $parent;
 }
@@ -95,7 +102,7 @@ if($ShowCPUTrace){
 	print dse_sysstats_cpu_trace();
 }
 
-if($ShowEXEFamilyTree && $PIDInfo['PID']>0 ){
+if($ShowEXEFamilyTree && $PIDInfo['PID']>0  && $PIDInfo['PPID']>0 ){
 	if($PIDInfo['PPID']=="0"){
 		$parent="0";
 	}else{
@@ -111,13 +118,14 @@ if($ShowEXEFamilyTree && $PIDInfo['PID']>0 ){
 if($ShowEXEFamilyTree ){
 	exit(0);
 }
-if(!$DidSomething){
+if(!$DidSomething || $ShowFamilyTree || $ShowEXEFamilyTree){
 	if(sizeof($argv)==1){
 		print "no PID argument given. exiting.\n";
 		exit(-1);
 	}else{
 		$PID=$argv[1];
 	}
+//	print "argv in =";	print_r($argv);
 	$PIDInfo=dse_pid_get_info($PID);
 	print "EXE: ".$PIDInfo['EXE']."\n";
 	print "PID: ".$PIDInfo['PID']."\n";

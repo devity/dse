@@ -194,6 +194,7 @@ fi
 
 
 
+dse_apt_uu();
 
 $PWD=trim(`pwd`);
 $DefaultInstallDirectory=$vars['DSE']['DSE_ROOT'];
@@ -843,7 +844,9 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			$PackageNamesArray[]="libdvdread4";
 			$PackageNamesArray[]="vlc";
 			$NotOSXPackageNamesArray[]="ubuntu-restricted-extras";
-	
+			$PackageNamesArray[]="ffmpeg";
+			
+			$PackageNamesArray[]="youtube-dl";
 			
 			$PackageNamesArray[]="p7zip-rar";
 			$PackageNamesArray[]="p7zip-full";
@@ -1040,6 +1043,8 @@ if(in_array("desktop", $vars['DSE']['AddComponents'])){
 }
 
 
+
+dse_apt_uu();
 
 // ********* main script activity END ************
 
