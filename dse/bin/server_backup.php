@@ -29,6 +29,7 @@ $parameters_details = array(
   array('c','clone',"build a recreate / clone script"),
   array('a','http',"backup webroot and http confs"),
   array('m','mysql',"backup mysql data and confs"),
+  array('r','mysql-raw',"backup mysql using hotcopy"),
   array('v','env',"backup environment info"),
   //interact w etckeeper
   //rpm rebuild stored restore points
@@ -102,6 +103,13 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		exit(0);
 		$DidSomething=TRUE;
 		break;
+	case 'r':
+  	case 'mysql-raw':
+		dse_backup_mysqld_raw();
+		exit(0);
+		$DidSomething=TRUE;
+		break;
+		
 }
 
 

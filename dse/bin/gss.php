@@ -36,6 +36,7 @@ $vars['argv_origional']=$argv;
 
 dse_cli_script_start();
 	
+$DoGrep=TRUE;
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'q':
 	case 'quiet':
@@ -64,13 +65,16 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 //print "\n\n";
 if(!$OutputAsSearchResults){
 	dse_cli_script_header();
-}
-
+} 
+ 
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	
   	case 'd':
 	case 'daemon':
-		
+		break;
+  	case 'g':
+	case 'grep':
+		$DoGrep=TRUE;
 		break;
 }
 
@@ -85,17 +89,18 @@ if($DoGrep || (!$DidSomething)  ){
 	}else{
 		$d="/";
 	}
-		
+		 
 		
 	if(is_dir($d)){
 		$IsDir=TRUE;
 		$ShowFileName=TRUE;
-	}else{
+	}else{ 
 		print "File: ".colorize("$d","cyan","black")."\n";
 	}	
 	
+	$String=str_replace('\\','\\\\',$String);
 	$find_cmd="sudo grep -i -n -R --with-filename \"$String\" $d 2>/dev/null";
-	$out=dse_exec($find_cmd,$ShowCommand);
+	$out=dse_exec($find_cmd,$ShowCommand||$vars[Verbosity]>=2); 
 	//$out=dse_exec($find_cmd,TRUE,TRUE);
 	foreach(split("\n",$out) as $L){
 		$L=trim($L);

@@ -211,10 +211,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 				if(str_icontains($cefa['FileCodeInfoArray']['Contents'],$GrepString)){
 //		print "!!! k=$k\n";
 				
-				
-				
 				//print "Files[$k]=".print_r($cefa,TRUE)."\n";
-					print dse_exec("/dse/bin/gss --search-results \"$GrepString\" \"$k\"");
+					$GrepString=str_replace('\\','\\\\',$GrepString);
+					print dse_exec("/dse/bin/gss --search-results \"$GrepString\" \"$k\"",$vars['Verbosity']>=2);
 					//print "\n";
 				}else{
 					dpv(3, "Not Found in $k");

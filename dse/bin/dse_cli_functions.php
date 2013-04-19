@@ -2713,6 +2713,9 @@ function debug_tostring(&$var){
 	return d2s($var);
 }
 	
+function v2s(&$var){
+	return d2s($var);
+}
 	
 function d2s(&$var){
 	global $vars; dse_trace();
@@ -4304,6 +4307,14 @@ function http_lynx_get($URL){
 			return "";
 		}
 	}
+}
+function http_headers($URL){
+	global $vars; dse_trace();
+	$URL=str_replace("\"","%34",$URL);
+	$URL=str_replace("\n","",$URL);
+	$command="/usr/bin/lynx -connect_timeout=10 -head -source \"$URL\"";
+	return dse_exec($command);	
+	
 }
  
 

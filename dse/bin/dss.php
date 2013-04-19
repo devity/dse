@@ -35,6 +35,7 @@ $parameters_details = array(
   array('w','hardware',"basic system hardware info"),
   array('P','process-summary',"process summary"),
   array('r','drop-caches',"sync n clear vm cache"),
+  array('u','upgrade-all',"upgrade packages, gems, pecl, pear, geoip, etc."),
   
   
   
@@ -120,6 +121,12 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		print "Dropping VM caches....\n";
 		dse_vm_drop_caches();
 		$DidSomething=TRUE;
+		exit(0);
+		
+	case 'u':
+  	case 'upgrade-all': 
+		include_once ("/dse/bin/dse_config_functions.php");
+		print dse_upgrade_all();
 		exit(0);
 }
 

@@ -37,12 +37,15 @@ $parameters = array(
   'q' => 'quiet',
   's' => 'stats',
   'v:' => 'verbosity:',
+  'e' => 'edit',
+);
 $flag_help_lines = array(
   'h' => "\thelp - this message",
   'c' => "\tclean - cleans up (DELETES!) all backups of all files and dirs currently matched by the config file",
   'q' => "quiet - same as -v 0",
   's' => "stats - statistics0",
   'v:' => "\tverbosity - 0=none 1=some 2=more 3=debug",
+  'e' => "edit backs up and launches a vim of dsm.conf",
 );
 
 
@@ -95,6 +98,11 @@ dpv(5," parsing argument: ".$opt);
 	case 'quiet':
 		$vars['Verbosity']=0;
 		break;
+	case 'e':
+	case 'edit':
+		passthru("vibk $CfgFile");
+		$DidSomething=TRUE;
+		breastartk;
 	case 'c':
 	case 'clean':
 		$DoClean=TRUE;
@@ -123,6 +131,77 @@ $BackupLocation="";
 //$wget=`which wget`; print "wget=$wget \n"; $path=getenv("PATH"); print "path=$path\n";
 
 dpv(4,"reading/parsing config file: ".$CfgFile);
+$vars[dsm_cfg]=dse_read_config_file($CfgFile);
+
+
+print_r($vars[dsm_cfg]); 
+
+$ServerLoad=get_load();
+
+if($vars[dsm_cfg][LoadMax] && $ServerLoad>$vars[dsm_cfg][LoadMax]){
+	
+	dsm_log("Load: $ServerLoad FAIL, Restarting services");
+	dsm_log("Load: $ServerLoad FAIL, Restarting services","alert");
+	foreach($vars[dsm_cfg][ServicesToRestart] as $ServiceName){
+		if($ServiceName){
+			dse_exec("service $ServiceName stop",TRUE,TRUE);
+		}
+	}
+
+	$MaxTime=time()+50;
+	while($ServerLoad>$vars[dsm_cfg][LoadMax]){
+		print "Server Load at $ServerLoad - Sleeping until under ".$vars[dsm_cfg][LoadMax]."\n";
+		sleep(5);
+		if(time()>$MaxTime){
+			print "Overtme! Exiting - next pass will restore...\n";
+			exit();
+		}
+		$ServerLoad=get_load();
+	}
+
+	foreach($vars[dsm_cfg][ServicesToRestart] as $ServiceName){
+		if($ServiceName){
+			dse_exec("service $ServiceName start",TRUE,TRUE);
+		}
+	}
+}else{
+	print "Server Load: OK - $ServerLoad - max=".$vars[dsm_cfg][LoadMax]."\n";
+	dsm_log("Load: $ServerLoad OK");
+}
+
+if($vars[dsm_cfg][LocalhostTestURL]){
+	print "Testing: ".$vars[dsm_cfg][LocalhostTestURL]." ";
+	$html=http_get($vars[dsm_cfg][LocalhostTestURL]);
+
+	if($html!="OK"){
+		print " FAIL, Restarting services\n";
+		dsm_log("TestURL: FAIL, Restarting services");
+		dsm_log("TestURL: FAIL, Restarting services","alert");
+		foreach($vars[dsm_cfg][ServicesToRestart] as $ServiceName){
+			if($ServiceName){
+				dse_exec("service $ServiceName stop",TRUE,TRUE);
+				dse_exec("service $ServiceName start",TRUE,TRUE);
+			//	dse_exec("service $ServiceName restart",TRUE,TRUE);
+			}
+		}
+		print " Getting headers...\n";
+		$headers=http_headers($vars[dsm_cfg][LocalhostTestURL]);
+		if(str_contains($headers,"Internal Server Error")){			//do a code check
+			$Message="  Internal Server Error!\n $headers \n  Starting a code parse check..";
+			print "$Message\n";
+			dsm_log("$Message");
+			dsm_log("$Message","alert");
+			dse_passthru("code_explorer -v 0 -c ".$vars[dsm_cfg][LocalhostTestWebroot],TRUE);
+		}else{
+			print "  NO server error in headers. html returned=\n$html\n";
+		}
+	}else{
+		print " OK Returned!\n";
+	}
+	
+		
+}
+/*
 $CfgData=file_get_contents($CfgFile);
 if($CfgData==""){
 	print "ERROR opening config file: $CfgFile\n";
@@ -196,9 +275,13 @@ foreach(split("\n",$CfgData) as $Line){
 	//print $tbr;
 }
 dse_file_put_contents($StatusFile,$tbr);
-
+*/
 dpv(5,"done reading/parsing config");
 if($DoShowStats){
+	dse_exec('uptime',FALSE,TRUE);
+	dse_exec('cdf',FALSE,TRUE);
+	dse_exec('vmstat 1 5',FALSE,TRUE);
+	dse_exec('who',FALSE,TRUE);
 	$StatusFileContents=`cat $StatusFile`;
 	dpv(3, "Status File: $StatusFile");
 	print $StatusFileContents ;
@@ -211,6 +294,15 @@ dpv(5,"exiting");
 exit();
 
 
-
+function dsm_log($Line,$Type=""){
+	global $vars;
+	$LogFile=$vars[dsm_cfg][LogFile];
+	if($Type){
+		$LogFile.=".".$Type;
+	}
+	$TimeStr=dse_date_format();
+	$c="echo \"$TimeStr $Line\" >> $LogFile ";
+	dse_exec($c);
+}
  
 ?>

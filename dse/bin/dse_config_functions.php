@@ -495,6 +495,15 @@ function dse_install_yum(){
 //sudp apt-get -yv upgrade
 //sudo port -v selfupdate
 
+function dse_upgrade_all(){
+	global $vars; dse_trace();
+	dse_apt_uu();
+
+	$Command="sudo pear update-channels";
+	dse_exec($Command,TRUE);	
+}
+
+
 function dse_apt_uu(){
 	global $vars; dse_trace();
 	$Installer=dse_get_installer_name();
@@ -1718,6 +1727,67 @@ function dse_backup_mysqld() {
 	dse_exec("/dse/aliases/cdf",FALSE,TRUE);
 }
    
+   
+function dse_backup_mysqld_raw() {
+	global $vars; dse_trace();
+	dse_detect_os_info();
+	
+	print bar("Backing up MYSQL raw files","-","blue","white","white","blue")."n";
+		
+	$Command="service mysql status";
+	$r=dse_exec($Command);
+	if(str_contains($r,"stop")){
+		print "Warning service mysqld not running, starting it.\n";
+		$Command="service mysql start";
+		$r=dse_exec($Command);
+	}
+	
+	dse_exec("/dse/aliases/cdf",FALSE,TRUE);
+	print "MySQL Backup Directory: ".$vars['DSE']['BACKUP_DIR_MYSQL']." ";
+	if(!is_dir($vars['DSE']['BACKUP_DIR_MYSQL'])){
+		print " $Missing. Create? ";
+		$A=dse_ask_yn();
+		if($A=='Y'){
+			dse_directory_create($vars['DSE']['BACKUP_DIR_MYSQL'],"777","root:root");
+		}else{
+			print "\n  Can't backup w/o backup dir. Exiting.\n";
+			exit(-1);	
+		}
+	}else{
+		print $OK;
+	}
+	print "\n";
+	
+	print " Saving Copy of mysqld Data: ";
+	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
+ 	$image_directory=$vars['DSE']['BACKUP_DIR_MYSQL']."/mysqlraw".$DATE_TIME_NOW;
+	dse_directory_create($image_directory,"777","root:root");
+
+	
+	$DatabaseDirsToBackup=dse_directory_to_array("/var/lib/mysql/",0);
+	//	print v2s($DatabaseDirsToBackup);
+	foreach( $DatabaseDirsToBackup as $DatabaseToBackupLine ){
+		if($DatabaseToBackupLine[0]=="DIR"){
+			$DatabaseToBackup=$DatabaseToBackupLine[1];
+			print " - Hotcopy'ing Database: $DatabaseToBackup \n";
+			//print "DatabaseToBackupLine=".v2s($DatabaseToBackupLine)."\n";
+		
+		 	$Command="mysqlhotcopy $DatabaseToBackup $image_directory/";
+			print "running: $Command\n";
+			print dse_exec($Command);
+		}
+	}
+
+
+	$gzipfile = $vars['DSE']['BACKUP_DIR_MYSQL']."/mysqlraw_${DATE_TIME_NOW}.tgz";
+	echo "Creating tarball of $image_directory at $gzipfile ...\n";
+	dse_exec("tar -czvf $image_directory/*");
+	//dse_exec("rm -rf $image_directory");
+	
+	
+	print " $_OK MySQL raw hotcopy backup saved at: $image_directory\n";
+	dse_exec("/dse/aliases/cdf",FALSE,TRUE);
+}
    
 
 

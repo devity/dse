@@ -66,17 +66,21 @@ function dse_code_check($CodeBaseDir="/dse/bin"){
 						$r=remove_blank_lines($r);
 						$r=str_replace("\n","\n  ",$r);
 						$r="Warning in ".colorize($FileFullName,"yellow","black")."\n  $r\n";
+						print "$r";
 					}elseif(str_contains($r,"Errors")){
 						$r=str_remove($r,"\nErrors parsing $FileFullName");
 						$r=remove_blank_lines($r);
 						$r=str_replace("\n","\n  ",$r);
 						$r="Error in ".colorize($FileFullName,"red","black")."\n  $r\n";
+						print "$r";
 					//	$r=str_replace($FileFullName,colorize($FileFullName,"red","black"),$r);
 					}else{
-						$r=str_replace("No syntax errors detected in","Syntax OK", $r);
-						$r=str_replace($FileFullName,colorize($FileFullName,"green","black"),$r);
+						if($vars['Verbosity']>0){
+							$r=str_replace("No syntax errors detected in","Syntax OK", $r);
+							$r=str_replace($FileFullName,colorize($FileFullName,"green","black"),$r);
+							print "$r";
+						}
 					}
-					print "$r";
 				}else{
 					//print "$FileFullName is LINK\n";
 				}

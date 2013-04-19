@@ -346,6 +346,7 @@ $NotOSXPackageNamesArray[]="xosview";
 
 
 $PackageNamesArray[]="build-essential";
+$PackageNamesArray[]="yasm";
 $NotOSXPackageNamesArray[]="util-linux";
 //$NotOSXPackageNamesArray[]="filefrog";
 $NotOSXPackageNamesArray[]="loop-aes-utils";
@@ -595,8 +596,23 @@ if(str_contains($vars['DSE']['SERVICES'],"smtp")){
 	$PackageNamesArray[]="courier-ssl";
 }
 
-    	  
  
+if(str_contains($vars['DSE']['SERVICES'],"http")){
+	$PackageNamesArray[]="php5-dev";
+	$PackageNamesArray[]="php5-geoip";
+	
+	/*
+	 * wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
+gunzip GeoLiteCity.dat.gz
+sudo mkdir -v /usr/share/GeoIP
+sudo mv -v GeoLiteCity.dat /usr/share/GeoIP/GeoIPCity.dat
+	 * */
+	
+	//$PackageNamesArray[]="libgeoip-dev";
+	//sudo pecl install geoip  // extension=geoip.so>php.ini
+	
+}
+	
 
 
 if(str_contains($vars['DSE']['SERVICES'],"mysql")){
@@ -845,6 +861,11 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			$PackageNamesArray[]="vlc";
 			$NotOSXPackageNamesArray[]="ubuntu-restricted-extras";
 			$PackageNamesArray[]="ffmpeg";
+			$PackageNamesArray[]="winff";
+			$PackageNamesArray[]="libavcodec-extra-53";
+			$PackageNamesArray[]="libavbin0";
+			
+			$PackageNamesArray[]="soundconverter";
 			
 			$PackageNamesArray[]="youtube-dl";
 			

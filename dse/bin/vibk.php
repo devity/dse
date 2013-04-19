@@ -114,6 +114,19 @@ if($ListBackups){
 	print "--------- current $file | $mtime_str | $size_str\n";
 	if($ShowDiff) print `diff $DiffOptions $name_orig $last_file`;
 }else{
+	print "Testing $file write permission\n";
+	
+	if(dse_file_exists($file)){
+		//test for write ability
+		if(!is_writable($file)){
+			print "ERROR no write permission for $file.\n";
+			exit(-103);
+		}
+		print "OK $file seems writeable.\n";
+    //    fclose($TestWriteHandle);
+	}
+	exit();
+	
 	$backupfilename=dse_file_backup($file);
 	print "backup saved at: $backupfilename\n";
 	
@@ -131,6 +144,8 @@ if($ListBackups){
 			}
 		}
 	}
+
+
 	
 	//passthru("$vim $file 2>&1");
 	dse_launch_vibk_edit($file);

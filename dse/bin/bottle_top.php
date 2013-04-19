@@ -176,9 +176,14 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 			$UsrTotal=0;
 			$SysTotal=0;
 			$IdlTotal=0;
+			//cbp_screen_clear();sbp_cursor_postion(0,0);print_r($CPUInfoArray);print "\n";//exit();
+	
 			foreach($CPUInfoArray[1] as $i=>$CPUCoreInfoArray){
 				$Free=intval($CPUCoreInfoArray['Idle']);
 				$User=intval($CPUCoreInfoArray['User']);
+				
+			//	print "u=$User f=$Free \n";
+				
 				$Sys=100-($Free+$User);
 				$Used=100-$Free;
 				$UsrTotal+=$User;
@@ -187,6 +192,9 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 				$RedWidth=intval(($Sys/100)*$GraphWidth);
 				$MagentaWidth=intval(($User/100)*$GraphWidth);
 				$GreenWidth=$GraphWidth-($RedWidth+$MagentaWidth);
+				
+//				print "\n\nu=$User s=$Sys f=$Free u=$Used rw=$RedWidth mw=$MagentaWidth gw=$GreenWidth\n";
+				
 				print colorize("CPU$i: ","cyan","black",TRUE,0);
 				if($Used>60){
 					print colorize("$Used% ","red","black",TRUE,1);
@@ -208,6 +216,7 @@ while($DoLoop && ($vars['DSE']['SCRIPT_SETTINGS']['MaxLoops']==0 || $Loops<$vars
 					print "  ";
 				}
 			}
+//exit();
 			if($CPUCores==1){
 				$GraphWidth+=5;
 			}else{
@@ -704,7 +713,7 @@ function update_display($keys=""){
 	print "\n";
 
 	
-	print $section_cpu;
+//	print $section_cpu;
 	//print $section_memory;
 	print $section_files_open;
 

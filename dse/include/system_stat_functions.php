@@ -155,6 +155,12 @@ function dse_sysstats_cpu(){
 		//print "cores=$CPUCores\n";
 		$CPUs=array();
 		$offset=0;
+		if($r){
+			$tsa=split("[ \t]+",$ra[2]);
+			if($tsa[2]=="CPU"){
+				$offset=1;
+			}
+		}
 		for($c=0;$c<$CPUCores;$c++){
 			//print "c=$c ==ra[4+$c] \n";
 			$CoreInfoArray=split("[ \t]+",$ra[4+$c]);

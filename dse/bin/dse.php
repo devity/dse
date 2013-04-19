@@ -567,6 +567,7 @@ if($DidSomething){
 	if(!$Quiet && !$DoSetEnv){
 		print getColoredString("Nothing to do! try --help for usage. ".$vars['DSE']['SCRIPT_NAME']." Done. Exiting (-1)","pink","black");
 		$vars[shell_colors_reset_foreground]='';	print getColoredString("\n","white","black");
+		print $vars['Usage'];
 	}
 	if(!$NoExit) exit(-1);
 }

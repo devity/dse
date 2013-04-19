@@ -4,7 +4,70 @@ function dse_database_service_name(){
 	global $vars; dse_trace();
 	return "mysql";
 }
+
+
+
+
+
 		
+function dse_database_make_hotlive_copy_of_database($db=""){
+	global $vars; dse_trace();
+	if(!$db){
+		$dbs=dse_database_list_array();
+		foreach ($dbs as $db){
+			if($db && !str_contains($db,"_HLBackup")){
+				dse_database_make_hotlive_copy_of_database($db);
+			}
+		}
+		return;
+	}
+	$db_hotlive=$db.'_HLBackup';
+	
+	
+	print "Doing hotlivebackup of database $db to database $dh_hotlive:\n";
+	
+	//delete old hotlive database
+	$DrowCommand="DROP DATABASE IF EXISTS $dh_hotlive";
+	$r=dse_exec("echo \"$DrowCommand;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],TRUE,TRUE);
+	print "r=$r\n";
+	
+	//do hotlive copy
+	$db_path='/var/lib/mysql/'.$db.'/';
+	$backup_path='/var/lib/mysql/'.$db_hotlive.'/';
+
+	$cmd="mkdir -p $backup_path";
+	$r=dse_exec($cmd,TRUE,TRUE);
+	print "r=$r\n";
+	
+	/*
+	$cmd="cp -rf  $db_path/* $backup_path/.";
+	$r=dse_exec($cmd,TRUE,TRUE);
+	print "r=$r\n";
+	*/
+	$cmd="mysqlhotcopy --addtodest --user=".$vars['DSE']['MYSQL_USER']." $db $backup_path";
+	$r=dse_exec($cmd,TRUE,TRUE);
+	print "r=$r\n";
+	
+	$cmd="service ".dse_database_service_name()." restart";
+	$r=dse_exec($cmd,TRUE,TRUE);
+	print "r=$r\n";
+	
+	$cmd="mv -f  $backup_path$db/* $backup_path/.";
+	$r=dse_exec($cmd,TRUE,TRUE);
+	print "r=$r\n";
+	$cmd="rm -rf  $backup_path$db";
+	$r=dse_exec($cmd,TRUE,TRUE);
+	print "r=$r\n";
+	
+	$cmd="chown -R mysql:mysql $backup_path";
+	$r=dse_exec($cmd,TRUE,TRUE);
+	print "r=$r\n";
+	$cmd="chmod -R 755 $backup_path";
+	$r=dse_exec($cmd,TRUE,TRUE);
+	print "r=$r\n";
+}
+
+
 function dse_database_find_string_occurances($query,$db,$table){
 	global $vars; dse_trace();
 	if($db && $db!="*"){
