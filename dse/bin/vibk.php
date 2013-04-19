@@ -125,8 +125,8 @@ if($ListBackups){
 		print "OK $file seems writeable.\n";
     //    fclose($TestWriteHandle);
 	}
-	exit();
-	
+//	exit();
+	 
 	$backupfilename=dse_file_backup($file);
 	print "backup saved at: $backupfilename\n";
 	
