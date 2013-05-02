@@ -24,13 +24,14 @@ $CFG_array=array();
 
 $parameters_details = array(
  
+ //abcdef
   array('c','compare-directories',"compare-directories arg1 to arg2 or if no arg2, pwd"),
   array('h','help',"this message"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('e','edit',"backs up and launches a vim of arg1 "),
   array('u','remove-duplicate-lines',"remove duplicate lines"),
   array('b','remove-blank-lines',"remove blank lines"),
-  array('m:','mid:',"returns tail -1 arg1 | head -n arg2"),
+  array('m:','mid:',"returns tail|head. format: --mid start-end file  or --mid start+count file"),
   array('q:','line-with-string:',"returns line number of line in file arg2 w string arg1"),
   array('n','number',"adds a incrementing line number to start of each line"),
   array('l','find-large-files',"finds larges files in arg1"),
@@ -45,6 +46,7 @@ $parameters_details = array(
   array('a','dir-sizes',"get dir sizes in ls"),
   array('g','get',"gets file arg2 from user@host arg1"),
   array('r','sync',"rsyncs to file arg2 from file arg2 on user@host arg1"),
+  array('f','run-command-batch',"takes list of commands in fine arg1 and DELETES and executes one at a time"),
   
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
@@ -334,6 +336,17 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'a':
 	case 'dir-sizes':
 		exit(0);
+	case 'f':
+	case 'run-command-batch':
+		if(sizeof($argv)>1){
+			$CommandBatchFile=$argv[1];
+			
+			dse_run_command_batch($CommandBatchFile);
+		}else{
+			print "no arg1 command-batch-file given to run\n";
+			exit(1);
+		}
+		break;
 	default:
 		dep("unknown option passed to dfm: opt='$opt'");
 		break;
@@ -501,5 +514,50 @@ if($DidSomething){
 
 exit(0);
 
+
+
+
+function dse_run_command_batch($CommandBatchFile){
+	global $vars; dse_trace();
+	$TimeStart=time();
+	$CommandBatchSize=trim(dse_exec("wc -l \"$CommandBatchFile\""));
+	$CommandBatchSizeInitial=$CommandBatchSize;
+	while($CommandBatchSize>0){
+		$NumberDone++;
+	//	print "Number of Commands Left to run: $CommandBatchSize\n";
+		$Command=dse_file_strip_last_line($CommandBatchFile,TRUE);
+	//	print "Command=$Command\n";	
+		$Command=trim($Command);
+		
+		$TimeRunning=time()-$TimeStart;
+		$TimeRunningStr=seconds_to_text($TimeRunning);
+		
+		$TimeTotalExpected=intval($TimeRunning*($CommandBatchSize/$NumberDone));
+		
+		$TimeLeft=$TimeTotalExpected-$TimeRunning;
+		$TimeLeftStr=seconds_to_text($TimeLeft);
+		
+		$CommandBatchSize=trim(dse_exec("wc -l \"$CommandBatchFile\""));
+		$PercentDone=number_format(($CommandBatchSize/$CommandBatchSizeInitial)*100,1);
+		print "#Left: $CommandBatchSize  $PercentDone%  $TimeRunningStr  $TimeLeftStr  Cmd: $Command\n";
+	}
+}
+
+ 
+
+function dse_file_strip_last_line($FileName,$SaveFile=FALSE){
+	global $vars; dse_trace();
+	$LastLine=dse_exec("tail -n1 \"$FileName\"");
+	if($SaveFile){
+		dse_exec("sed -ie '\$d' \"$FileName\"");
+	}
+	return $LastLine;
+}
+
+ 
+ 
+ 
+ 
+ 
  
 ?>

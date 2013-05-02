@@ -40,7 +40,7 @@ $parameters_details = array(
   array('x','stop',"stop daemon"),
   array('g','start',"start daemon"),
   array('u:','hotlive-backup:',"make a hotlive backup of a db"),
-  array('c','check-all',"check all tables in all db's"),
+  array('c','check',"check all tables in all db's or of db arg1"),
   array('o','compare-schema',"compares schema of all tables between db arg1 and arg2"),
  // array('e','edit',"backs up and launches a vim of ".$vars['DSE']['DLB_CONFIG_FILE']),
 //  array('c','config-show',"prints contents of ".$vars['DSE']['DLB_CONFIG_FILE']),
@@ -165,8 +165,13 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	//	dse_database_repair_all();
 		exit(0);
 	case 'c':
-  	case 'check-all':
-		dse_database_check_all();
+  	case 'check':
+		if(sizeof($argv)>1){
+			$db=$argv[1];
+			dse_database_check($db);
+		}else{
+			dse_database_check_all();
+		}
 		exit(0);
 		
 	case 'o':

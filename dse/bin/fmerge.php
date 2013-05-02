@@ -21,6 +21,7 @@ $parameters_details = array(
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('h','help',"this message"),
   array('s','silent-success',"dont report any matches, only missing"),
+  array('b','batch-commands-out',"output the fix commands"),
   array('c','compare-existance',"compare esistance of [d] for each [s]"),
   array('a','compare-hash',"compare [s] and [d] by hash and size"),
 );
@@ -57,7 +58,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 's':
 	case 'silent-success':
 		$vars['fmerge']['silent-success']=TRUE;
-		break;	
+		break;		
+	case 'b':
+	case 'batch-commands-out':
+		$vars['fmerge']['batch-commands-out']=TRUE;
+		break;
 }
 
 if($vars['Verbosity']>4){
@@ -69,12 +74,9 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$DidSomething=TRUE;
 		$s=$argv[1];
 		$d=$argv[2];
-		
 		$directory_array=dse_directory_to_array2($s,2);
 		//print_r($directory_array);
-		
 		dse_fmerge_process_directory_array($s,$d,$directory_array,"compare-existance");
-		
 		break;
 		
 		
@@ -84,13 +86,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$DidSomething=TRUE;
 		$s=$argv[1];
 		$d=$argv[2];
-		
 		$directory_array=dse_directory_to_array2($s,2);
 		//print_r($directory_array);
-		
 		dse_fmerge_process_directory_array($s,$d,$directory_array,"compare-hash");
-		
 		break;
+		
 	
 }
 
@@ -124,15 +124,19 @@ function dse_fmerge_process_directory_array( $s, $d, $da, $action ){
 				case "compare-existance":
 					$ed=str_replace($s,$d,$fullname); 
 					if(dse_file_exists2($ed)){
-						if(!$vars['fmerge']['silent-success']){
+						if(!$vars['fmerge']['silent-success'] && !$vars['fmerge']['batch-commands-out']){
 							print "$fullname ";
 							print "EXISTS: $ed";
 							print "\n";
 						}
 					}else{
-						print "$fullname ";
-						print "MISSING: $ed";
-						print "\n";
+						if($vars['fmerge']['batch-commands-out']){
+							print "cp $fullname ->? \n";
+						}else{
+							print "$fullname ";
+							print "MISSING: $ed";
+							print "\n";
+						}
 					}
 					break;
 				case "compare-hash":
@@ -140,23 +144,31 @@ function dse_fmerge_process_directory_array( $s, $d, $da, $action ){
 					
 					$hs=md5_of_file2($fullname); //dse_file_get_stat_field2($fullname,"size");
 					$hd=md5_of_file2($ed); //.dse_file_get_stat_field2($ed,"size");
-				//	print "hs==hd: $hs==$hd\n";
+					//print "hs==hd: $hs==$hd  ";
 					if(dse_file_exists2($ed)){
 						if($hs==$hd){
-							if(!$vars['fmerge']['silent-success']){
+							if(!$vars['fmerge']['silent-success'] && !$vars['fmerge']['batch-commands-out']){
 								print "$fullname ";
 								print "MATCH: $ed";
 								print "\n";
 							}
 						}else{
-							print "$fullname ";
-							print "DIFFERENT: $ed";
-							print "\n";
+							if($vars['fmerge']['batch-commands-out']){
+								print "cp \"$fullname\" \"$ed\"\n";
+							}else{
+								print "$fullname ";
+								print "DIFFERENT: $ed";
+								print "\n";
+							}
 						}
 					}else{
-						print "$fullname ";
-						print "MISSING: $ed";
-						print "\n";
+						if($vars['fmerge']['batch-commands-out']){
+							print "scp \"$fullname\" \"$ed\"\n";
+						}else{
+							print "$fullname ";
+							print "MISSING: $ed";
+							print "\n";
+						}
 					}
 					break;
 			}
@@ -169,9 +181,13 @@ function dse_fmerge_process_directory_array( $s, $d, $da, $action ){
 					//empty directory
 				}
 			}else{
-				print "$fullname ";
-				print "MISSING: $ed";
-				print "\n";
+				if($vars['fmerge']['batch-commands-out']){
+					print "mkdir -p \"$ed\"\n";
+				}else{
+					print "$fullname ";
+					print "MISSING: $ed";
+					print "\n";
+				}
 			}
 		}else{
 			print "unexpected. ds[0]=".$de[0]." error: 4tgf34gv34gv31tttttt\n";
