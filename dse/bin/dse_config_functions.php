@@ -643,6 +643,11 @@ function dse_install_file_from_url($URL){
 			print "Command: $Command\n";
 			passthru($Command);
 			break;
+		case 'bz2':
+			$Command="sudo bunzip2 $LocalFullFileName";
+			print "Command: $Command\n"; 
+			passthru($Command);
+			break;
 		case 'gz':
 			$LocalFullUncompressedFileName=str_remove($LocalFullFileName,".gz");
 			
@@ -1339,7 +1344,7 @@ function dse_configure_install_packages(){
 
 //"iftop",,"git","gnome","ubuntu-desktop"
 	$PackageNamesArray=array("vim","memstat","sysstat","yum","chkconfig","lynx-cur","perl-tk","cron-apt","dnsutils","update-inetd",
-		"build-essential","rpm-build","aide","chkrootkit","rkhunter","logwatch","xosview");
+		"build-essential","rpm-build","chkrootkit","rkhunter","logwatch","xosview"); //aide
 	foreach($PackageNamesArray as $PackageName){
 		$r=dse_package_install($PackageName);
 		if($r<0){

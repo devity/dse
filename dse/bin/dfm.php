@@ -46,7 +46,7 @@ $parameters_details = array(
   array('a','dir-sizes',"get dir sizes in ls"),
   array('g','get',"gets file arg2 from user@host arg1"),
   array('r','sync',"rsyncs to file arg2 from file arg2 on user@host arg1"),
-  array('f','run-command-batch',"takes list of commands in fine arg1 and DELETES and executes one at a time"),
+  array('f:','run-command-batch:',"takes list of commands in fine arg1 and DELETES and executes one at a time"),
   
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
@@ -339,9 +339,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'f':
 	case 'run-command-batch':
 		if(sizeof($argv)>1){
-			$CommandBatchFile=$argv[1];
+			$CommandBatchFile=$vars['options'][$opt];
 			
-			dse_run_command_batch($CommandBatchFile);
+			$CommandFormat=$argv[1];
+			print "			dse_run_command_batch($CommandBatchFile,$CommandFormat);\n";
+			dse_run_command_batch($CommandBatchFile,$CommandFormat);
 		}else{
 			print "no arg1 command-batch-file given to run\n";
 			exit(1);
@@ -517,8 +519,9 @@ exit(0);
 
 
 
-function dse_run_command_batch($CommandBatchFile){
+function dse_run_command_batch($CommandBatchFile,$CommandFormat=""){
 	global $vars; dse_trace();
+	print " dse_run_command_batch($CommandBatchFile,$CommandFormat)\n";
 	$TimeStart=time();
 	$CommandBatchSize=trim(dse_exec("wc -l \"$CommandBatchFile\""));
 	$CommandBatchSizeInitial=$CommandBatchSize;
@@ -528,6 +531,12 @@ function dse_run_command_batch($CommandBatchFile){
 		$Command=dse_file_strip_last_line($CommandBatchFile,TRUE);
 	//	print "Command=$Command\n";	
 		$Command=trim($Command);
+		$Command=str_replace("/backup/webroot/prd_min_craftlister_com","",$Command);
+		if($CommandFormat){
+			$Command=str_replace("REPLACE",$Command,$CommandFormat);
+		}else{
+			
+		}
 		
 		$TimeRunning=time()-$TimeStart;
 		$TimeRunningStr=seconds_to_text($TimeRunning);
@@ -540,6 +549,7 @@ function dse_run_command_batch($CommandBatchFile){
 		$CommandBatchSize=trim(dse_exec("wc -l \"$CommandBatchFile\""));
 		$PercentDone=number_format(($CommandBatchSize/$CommandBatchSizeInitial)*100,1);
 		print "#Left: $CommandBatchSize  $PercentDone%  $TimeRunningStr  $TimeLeftStr  Cmd: $Command\n";
+		$r=dse_exec($Command,FALSE,FALSE);
 	}
 }
 

@@ -316,6 +316,12 @@ $PackageNamesArray[]="rsync";
 //$PackageNamesArray[]="bnz";
 $PackageNamesArray[]="bzr";
 
+$PackageNamesArray[]="openssl";
+$PackageNamesArray[]="libssl-dev";
+$PackageNamesArray[]="libxrender-dev";
+$PackageNamesArray[]="qt4-dev-tools";
+$PackageNamesArray[]="libqt4-dev";
+
 
 
 $PackageNamesArray[]="pcregrep";
@@ -332,6 +338,12 @@ $PackageNamesArray[]="geoip-database";
 //mv GeoLiteCity.dat /usr/local/share/GeoIP/
 
 
+
+foreach($vars['DSE']['AddPkg'] as $Pkg){
+	$PackageNamesArray[]=$Pkg;
+}
+
+
 $NotOSXPackageNamesArray[]="memstat";
 $NotOSXPackageNamesArray[]="iftop";
 $NotOSXPackageNamesArray[]="htop";
@@ -342,6 +354,7 @@ $NotOSXPackageNamesArray[]="iftop";
 $NotOSXPackageNamesArray[]="xosview";
 //http://bootinfoscript.sourceforge.net
 //$NotOSXPackageNamesArray[]="mytop";
+
 
 
 
@@ -533,11 +546,11 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
 		$PackageNamesArray[]="fail2ban";
-		$PackageNamesArray[]="rkhunter";
+		//$PackageNamesArray[]="rkhunter";
 		$PackageNamesArray[]="chkrootkit";
 		$PackageNamesArray[]="logwatch";
 		$PackageNamesArray[]="tripwire";
-		$PackageNamesArray[]="aide";
+		//$PackageNamesArray[]="aide";
 		
 		$PackageNamesArray[]="snort"; 
 		$PackageNamesArray[]="libcrypt-ssleay-perl"; 
@@ -810,6 +823,29 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		$NotOSXPackageNamesArray[]="imagemagick";
 		$NotOSXPackageNamesArray[]="libmagickcore-dev";
 		$PackageNamesArray[]="graphviz";
+		$NotOSXPackageNamesArray[]="xorg";
+		$NotOSXPackageNamesArray[]="xfonts-cyrillic";
+		$NotOSXPackageNamesArray[]="xfonts-75dpi";
+		$NotOSXPackageNamesArray[]="xfonts-100dpi";
+		$NotOSXPackageNamesArray[]="xfonts-base";
+		$NotOSXPackageNamesArray[]="gsfonts-x11";
+		$NotOSXPackageNamesArray[]="ttf-mscorefonts-installer";
+		$NotOSXPackageNamesArray[]="ttf-larabie-uncommon";
+		$NotOSXPackageNamesArray[]="ttf-larabie-straight";
+		$NotOSXPackageNamesArray[]="ttf-larabie-deco";
+		$NotOSXPackageNamesArray[]="sun-java6-fonts";
+		$NotOSXPackageNamesArray[]="ttf-sjfonts";
+		$NotOSXPackageNamesArray[]="ttf-georgewilliams";
+		$NotOSXPackageNamesArray[]="ttf-dustin";
+		$NotOSXPackageNamesArray[]="ttf-gentium";
+		
+		$URL="https://wkhtmltopdf.googlecode.com/files/wkhtmltopdf-0.9.9-static-amd64.tar.bz2";
+		$r=dse_install_file_from_url($URL);
+	
+		$URL="https://wkhtmltopdf.googlecode.com/files/wkhtmltoimage-0.11.0_rc1-static-amd64.tar.bz2";
+		$r=dse_install_file_from_url($URL);
+				
+		
 	}
 }
 
@@ -886,27 +922,12 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			
 			
 			
-			$NotOSXPackageNamesArray[]="xfonts-cyrillic";
-			$NotOSXPackageNamesArray[]="xfonts-75dpi";
-			$NotOSXPackageNamesArray[]="xfonts-100dpi";
-			$NotOSXPackageNamesArray[]="xfonts-base";
-			$NotOSXPackageNamesArray[]="gsfonts-x11";
-			$NotOSXPackageNamesArray[]="ttf-mscorefonts-installer";
-			$NotOSXPackageNamesArray[]="ttf-larabie-uncommon";
-			$NotOSXPackageNamesArray[]="ttf-larabie-straight";
-			$NotOSXPackageNamesArray[]="ttf-larabie-deco";
-			$NotOSXPackageNamesArray[]="sun-java6-fonts";
-			$NotOSXPackageNamesArray[]="ttf-sjfonts";
-			$NotOSXPackageNamesArray[]="ttf-georgewilliams";
-			$NotOSXPackageNamesArray[]="ttf-dustin";
-			$NotOSXPackageNamesArray[]="ttf-gentium";
 			$NotOSXPackageNamesArray[]="gnome-specimen";
 
 
 			//$NotOSXPackageNamesArray[]="ubuntu-desktop";
 			$NotOSXPackageNamesArray[]="lightdm"; //$NotOSXPackageNamesArray[]="gdm";
 			$NotOSXPackageNamesArray[]="x-window-system-core";
-			$NotOSXPackageNamesArray[]="xorg";
 			
 			$NotOSXPackageNamesArray[]="lubuntu-desktop";
 			$NotOSXPackageNamesArray[]="lxde";
