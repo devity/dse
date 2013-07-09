@@ -46,6 +46,8 @@ $parameters_details = array(
  // array('','log-show:',"shows tail of log ".$CFG_array['LogFile']."  argv1 lines"),
   array('h','help',"this message"),
   array('q','quiet',"same as --verbosity 0"),
+  array('d','demo',"output demo gcode and image"),
+  array('g','grid',"outputs a grid arg1 x arg2 by arg3 deep"),
   array('z','guage-chart',"AWG guage chart"),
   array('u:','units:',"mm, in"),
   array('t:','tool-diameter:',"tool diameter in units"),
@@ -102,262 +104,371 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'help':
 		print $vars['Usage'];
 		exit(0);
+	case 'd':
+  	case 'demo':
+		dgcg_demo();
+		exit(0);
+	case 'g':
+  	case 'grid':
+		$Width=$argv[1];
+		$Height=$argv[2];
+		$Depth=$argv[3];
+		dgcg_grid($Width,$Height,$Depth);
+		exit(0);
 }
 
 
 
 
 
-
-
-//0=AWG 1=in 2=mm 3=turns_per_in 4=turns_per_cm 5=area_kcmil 6=area_mm2 7=ohms/km 8=ohms/kFT
-$AWGChart=array(
-array(0),
-array(1,	0.2893,	7.348,	3.46,	1.36,	83.7,	42.4,	0.4066,	0.1239),
-array(2,	0.2576,	6.544,	3.88,	1.53,	66.4,	33.6,	0.5127,	0.1563),
-array(3,	0.2294,	5.827,	4.36,	1.72,	52.6,	26.7,	0.6465,	0.1970),
-array(4,	0.2043,	5.189,	4.89,	1.93,	41.7,	21.2,	0.8152,	0.2485),
-array(5,	0.1819,	4.621,	5.50,	2.16,	33.1,	16.8,	1.028,	0.3133),
-array(6,	0.1620,	4.115,	6.17,	2.43,	26.3,	13.3,	1.296,	0.3951),
-array(7,	0.1443,	3.665,	6.93,	2.73,	20.8,	10.5,	1.634,	0.4982),
-array(8,	0.1285,	3.264,	7.78,	3.06,	16.5,	8.37,	2.061,	0.6282),
-array(9,	0.1144,	2.906,	8.74,	3.44,	13.1,	6.63,	2.599,	0.7921),
-array(10,	0.1019,	2.588,	9.81,	3.86,	10.4,	5.26,	3.277,	0.9989),
-array(11,	0.0907,	2.305,	11.0,	4.34,	8.23,	4.17,	4.132,	1.260),
-array(12,	0.0808,	2.053,	12.4,	4.87,	6.53,	3.31,	5.211,	1.588),
-array(13,	0.0720,	1.828,	13.9,	5.47,	5.18,	2.62,	6.571,	2.003),
-array(14,	0.0641,	1.628,	15.6,	6.14,	4.11,	2.08,	8.286,	2.525),
-array(15,	0.0571,	1.450,	17.5,	6.90,	3.26,	1.65,	10.45,	3.184),
-array(16,	0.0508,	1.291,	19.7,	7.75,	2.58,	1.31,	13.17,	4.016),
-array(17,	0.0453,	1.150,	22.1,	8.70,	2.05,	1.04,	16.61,	5.064),
-array(18,	0.0403,	1.024,	24.8,	9.77,	1.62,	0.823,	20.95,	6.385),
-array(19,	0.0359,	0.912,	27.9,	11.0,	1.29,	0.653,	26.42,	8.051),
-array(20,	0.0320,	0.812,	31.3,	12.3,	1.02,	0.518,	33.31,	10.15),
-array(21,	0.0285,	0.723,	35.1,	13.8,	0.810,	0.410,	42.00,	12.80),
-array(22,	0.0253,	0.644,	39.5,	15.5,	0.642,	0.326,	52.96,	16.14),
-array(23,	0.0226,	0.573,	44.3,	17.4,	0.509,	0.258,	66.79,	20.36),
-array(24,	0.0201,	0.511,	49.7,	19.6,	0.404,	0.205,	84.22,	25.67),
-array(25,	0.0179,	0.455,	55.9,	22.0,	0.320,	0.162,	106.2,	32.37),
-array(26,	0.0159,	0.405,	62.7,	24.7,	0.254,	0.129,	133.9,	40.81),
-array(27,	0.0142,	0.361,	70.4,	27.7,	0.202,	0.102,	168.9,	51.47),
-array(28,	0.0126,	0.321,	79.1,	31.1,	0.160,	0.0810,	212.9,	64.90),
-array(29,	0.0113,	0.286,	88.8,	35.0,	0.127,	0.0642,	268.5,	81.84),
-array(30,	0.0100,	0.255,	99.7,	39.3,	0.101,	0.0509,	338.6,	103.2),
-array(31,	0.00893,	0.227,	112,	44.1,	0.0797,	0.0404,	426.9,	130.1),		
-array(32,	0.00795,	0.202,	126,	49.5,	0.0632,	0.0320,	538.3,	164.1),
-array(33,	0.00708,	0.180,	141,	55.6,	0.0501,	0.0254,	678.8,	206.9),
-array(34,	0.00630,	0.160,	159,	62.4,	0.0398,	0.0201,	856.0,	260.9),	
-array(35,	0.00561,	0.143,	178,	70.1,	0.0315,	0.0160,	1079,	329.0),	
-array(36,	0.00500,	0.127,	200,	78.7,	0.0250,	0.0127,	1361,	414.8),	
-array(37,	0.00445,	0.113,	225,	88.4,	0.0198,	0.0100,	1716,	523.1),	
-array(38,	0.00397,	0.101,	252,	99.3,	0.0157,	0.00797,	2164,	659.6),	
-array(39,	0.00353,	0.0897,	283,	111,	0.0125,	0.00632,	2729,	831.8),
-array(40,	0.00314,	0.0799,	318,	125,	0.00989,	0.00501,	3441,	1049),
-);
-$Pi=3.14159;
-
-
-$vars['DGCG']['Program']['Body']="";
-
-
-dgcg_program_start();
-
-$Depth=.25;
-$Z=0;
-
-$FontHeight=.5;
-dgcg_text(.5,9,$Z,"ABCDEFGHIJKLM",$Depth,$FontHeight);
-dgcg_text(.5,8.4,$Z,"NOPQRSTUVWXYZ",$Depth,$FontHeight);
-dgcg_text(.5,7.8,$Z,"()[]{}<>\\|/!?.,;:'\"",$Depth,$FontHeight);
-dgcg_text(.5,7.2,$Z,"0123456789-=+_@#$%^&*",$Depth,$FontHeight);
-
-
-
-
-dgcg_go(.5,.5,$Z);
-dgcg_line(8,.5,$Z,$Depth);
-
-dgcg_go(.5,5.5,$Z);
-dgcg_line(8,5.5,$Z,$Depth);
-
-$Diameter=5;
-$RadiansStart=3*$Pi/2;
-$RadiansStop=5*$Pi/2;
-dgcg_arc(8,3,0,$Diameter,$RadiansStart,$RadiansStop,$Depth);
-
-
-
-dgcg_go(.5,1.25,$Z);
-dgcg_line(8,1.25,$Z,$Depth);
-
-dgcg_go(.5,4.75,$Z);
-dgcg_line(8,4.75,$Z,$Depth);
-
-$Diameter=3.5;
-$RadiansStart=3*$Pi/2;
-$RadiansStop=5*$Pi/2;
-dgcg_arc(8,3,0,$Diameter,$RadiansStart,$RadiansStop,$Depth);
-
-
-
-dgcg_go(.5,2,$Z);
-dgcg_line(8,2,$Z,$Depth);
-
-dgcg_go(.5,4,$Z);
-dgcg_line(8,4,$Z,$Depth);
-
-$Diameter=2;
-$RadiansStart=3*$Pi/2;
-$RadiansStop=5*$Pi/2;
-dgcg_arc(8,3,0,$Diameter,$RadiansStart,$RadiansStop,$Depth);
-
-
-
-dgcg_volume(11,.5,$Z,1,2.25,$Depth);
-dgcg_volume(11,.5+2.5+.5,$Z,1,2.25,$Depth);
-
-//middle
-dgcg_volume(.5,2.5,$Z,3,1,$Depth);
-dgcg_volume(.5+3+.5,2.5,$Z,3,1,$Depth);
-
-
-
-
-$vars['DGCG']['Tool']['Diameter']=.1;
-$vars['DGCG']['Tool']['Radius']=$vars['DGCG']['Tool']['Diameter']/2;
-$vars['DGCG']['Tool']['PassStep']=$vars['DGCG']['Tool']['Diameter']/3;
-
-$hx=.25;
-for($mm=1;$mm<=20;$mm++){
-	dgcg_hole($hx,6.2,$Z,mm2in($mm),$Depth);
-	$hx+=mm2in($mm*1.25);
-}
-
-
-
-
-
-$x=.5;
-$y=5.7;
-$Length=12.01;
-$Width=0.4;
-$Depth=0.01;
-$Units="in";
-$ShowNumbers=TRUE;
-dgcg_ruler_x($x,$y,$z,$Length,$Width,$Depth,$Units,$ShowNumbers);
-
- 
-
-
-
-
-/*
-
-
-dgcg_go(1.5,1,$Z);
-dgcg_line(1.5,3,$Z,$Depth);
-
-dgcg_go(2.5,3,$Z);
-dgcg_line(2.5,3,$Z,$Depth);
-
-$X=3;
-$Y=2;
-
-$Diameter=2;
-$RadiansStart=$Pi/2;
-$RadiansStop=3*$Pi/2;
-
-dgcg_arc($X,$Y,$Z,$Diameter,$RadiansStart,$RadiansStop,$Depth);
+function dgcg_grid($Width,$Height,$Depth){
+	global $vars;
 	
-$Diameter=1;
-dgcg_arc($X,$Y,$Z,$Diameter,$RadiansStart,$RadiansStop,$Depth);
-*/
-/*
-$Depth=1;
-$maxx=2;
-$x=0;
-$y=1;
-$z=0;
-for($a=1;$a<=40;$a++){
-	$Diameter=$AWGChart[$a][1];
-	$x+=$Diameter*1.5;
-	if($x>$maxx){
-		$x=$Diameter*1.5;
-		$y+=$Diameter*1.5;
+	
+	$vars['DGCG']['Program']['Body']="";
+	
+	
+	dgcg_program_start();
+	
+	$Depth=.25;
+	$Z=0;
+	/*
+	$FontHeight=.5;
+	dgcg_text(.5,9,$Z,"ABCDEFGHIJKLM",$Depth,$FontHeight);
+	
+	
+	
+	dgcg_go(.5,.5,$Z);
+	dgcg_line(8,.5,$Z,$Depth);
+	
+	dgcg_go(.5,5.5,$Z);
+	dgcg_line(8,5.5,$Z,$Depth);
+	
+	$Diameter=5;
+	$RadiansStart=3*$Pi/2;
+	$RadiansStop=5*$Pi/2;
+	dgcg_arc(8,3,0,$Diameter,$RadiansStart,$RadiansStop,$Depth);
+	
+	
+	
+	dgcg_go(.5,1.25,$Z);
+	dgcg_line(8,1.25,$Z,$Depth);
+	
+	
+	$x=.5;
+	$y=5.7;
+	$Length=12.01;
+	$Width=0.4;
+	$Depth=0.01;
+	$Units="in";
+	$ShowNumbers=TRUE;
+	dgcg_ruler_x($x,$y,$z,$Length,$Width,$Depth,$Units,$ShowNumbers);
+	
+	 */
+	
+	dgcg_home();
+	
+//	dgcg_line($Width,0,0,$Depth);
+	//dgcg_line($Width,$Height,0,$Depth);
+	//dgcg_line(0,$Height,0,$Depth);
+	//dgcg_line(0,0,0,$Depth);
+	
+	for($x=0;$x<=$Width;$x++){
+		dgcg_go($x,0,0);
+		dgcg_line($x,$Height,0,$Depth);
 	}
-	print "adding AWG $a hole, diameter: $Diameter inches at $x,$y,$z\n";
-	dgcg_hole($x,$y,$z,$Diameter,$Depth);
-}
-
-
-$W=5;
-$L=5;
-$Rows=5;
-$Cols=5;
-$HoleDiameter=0.05;
-$HoleDepth=1;
-dgcg_grid($W,$L,$Rows,$Cols,$HoleDiameter,$HoleDepth);
- 
-$x=1;
-$y=1;
-$z=0;
-$Diameter=3;
-$Depth=2;
-//dgcg_hole($x,$y,$z,$Diameter,$Depth);
-
-$cx=0;
-for($h=1;$h<10;$h++){
-	$cx=$cx+$h*1.1;
-	$y=0;
-	$z=0;
-	$Diameter=$h;
-	$Depth=4;
-	dgcg_hole($cx,$y,$z,$Diameter,$Depth);
+	for($y=0;$y<=$Height;$y++){
+		dgcg_go(0,$y,0);
+		dgcg_line($Width,$y,0,$Depth);
+	}
 	
+	dgcg_home();
+	
+	/*$x=0;
+	$y=0;
+	$Length=$Width+.01;
+	$Width=0.4;
+	$Depth=0.01;
+	$Units="in";
+	$ShowNumbers=TRUE;
+	for($y=0;$y<=$Height;$y++){
+		$ShowNumbers=($y==0);
+		dgcg_ruler_x($x,$y,$z,$Length,$Width,$Depth,$Units,$ShowNumbers);
+	}*/
+	
+	dgcg_home();
+	
+	dgcg_program_end();
+	
+	if($vars['DGCG']['Program']['Image']['FileName']){
+		unlink($vars['DGCG']['Program']['Image']['FileName']);
+	}
+	dse_file_put_contents("/tmp/dgcg_convert_command.sh",$vars['DGCG']['Program']['convert_command']);
+	$r=dse_exec("chmod a+x /tmp/dgcg_convert_command.sh",TRUE,TRUE);
+	$r=dse_exec("/tmp/dgcg_convert_command.sh",TRUE,TRUE);
+	if($OutFile){
+		dse_file_put_contents($OutFile,$vars['DGCG']['Program']['Body']);
+	}else{
+		print $vars['DGCG']['Program']['Body']."\n";
+	}
 }
 
 
-$x=.1;$y=.1;$z=0;
-$Length=6;
-$Width=0.4;
-$Depth=0.01;
-$Units="in";
-$ShowNumbers=FALSE;
-dgcg_ruler_x($x,$y,$z,$Length,$Width,$Depth,$Units,$ShowNumbers);
-
- 
-
-$X=0;
-$Y=0;
-$Z=0;
-$W=4;
-$H=5;
-$Depth=4;
-//dgcg_volume($X,$Y,$Z,$W,$H,$Depth);
-*/
-
-dgcg_program_end();
-
-if($vars['DGCG']['Program']['Image']['FileName']){
-	unlink($vars['DGCG']['Program']['Image']['FileName']);
-}
-dse_file_put_contents("/tmp/dgcg_convert_command.sh",$vars['DGCG']['Program']['convert_command']);
-
-$r=dse_exec("chmod a+x /tmp/dgcg_convert_command.sh",TRUE,TRUE);
-print $r;
-
-
-$r=dse_exec("/tmp/dgcg_convert_command.sh",TRUE,TRUE);
-//$r=dse_exec($vars['DGCG']['Program']['convert_command'],TRUE,TRUE);
-print $r;
-
-
-if($OutFile){
-	dse_file_put_contents($OutFile,$vars['DGCG']['Program']['Body']);
-}else{
-	print $vars['DGCG']['Program']['Body']."\n";
+function dgcg_home(){
+	global $vars;
+	dgcg_go(0,0,0);
 }
 
+function dgcg_demo(){
+	global $vars;
+	//0=AWG 1=in 2=mm 3=turns_per_in 4=turns_per_cm 5=area_kcmil 6=area_mm2 7=ohms/km 8=ohms/kFT
+	$AWGChart=array(
+	array(0),
+	array(1,	0.2893,	7.348,	3.46,	1.36,	83.7,	42.4,	0.4066,	0.1239),
+	array(2,	0.2576,	6.544,	3.88,	1.53,	66.4,	33.6,	0.5127,	0.1563),
+	array(3,	0.2294,	5.827,	4.36,	1.72,	52.6,	26.7,	0.6465,	0.1970),
+	array(4,	0.2043,	5.189,	4.89,	1.93,	41.7,	21.2,	0.8152,	0.2485),
+	array(5,	0.1819,	4.621,	5.50,	2.16,	33.1,	16.8,	1.028,	0.3133),
+	array(6,	0.1620,	4.115,	6.17,	2.43,	26.3,	13.3,	1.296,	0.3951),
+	array(7,	0.1443,	3.665,	6.93,	2.73,	20.8,	10.5,	1.634,	0.4982),
+	array(8,	0.1285,	3.264,	7.78,	3.06,	16.5,	8.37,	2.061,	0.6282),
+	array(9,	0.1144,	2.906,	8.74,	3.44,	13.1,	6.63,	2.599,	0.7921),
+	array(10,	0.1019,	2.588,	9.81,	3.86,	10.4,	5.26,	3.277,	0.9989),
+	array(11,	0.0907,	2.305,	11.0,	4.34,	8.23,	4.17,	4.132,	1.260),
+	array(12,	0.0808,	2.053,	12.4,	4.87,	6.53,	3.31,	5.211,	1.588),
+	array(13,	0.0720,	1.828,	13.9,	5.47,	5.18,	2.62,	6.571,	2.003),
+	array(14,	0.0641,	1.628,	15.6,	6.14,	4.11,	2.08,	8.286,	2.525),
+	array(15,	0.0571,	1.450,	17.5,	6.90,	3.26,	1.65,	10.45,	3.184),
+	array(16,	0.0508,	1.291,	19.7,	7.75,	2.58,	1.31,	13.17,	4.016),
+	array(17,	0.0453,	1.150,	22.1,	8.70,	2.05,	1.04,	16.61,	5.064),
+	array(18,	0.0403,	1.024,	24.8,	9.77,	1.62,	0.823,	20.95,	6.385),
+	array(19,	0.0359,	0.912,	27.9,	11.0,	1.29,	0.653,	26.42,	8.051),
+	array(20,	0.0320,	0.812,	31.3,	12.3,	1.02,	0.518,	33.31,	10.15),
+	array(21,	0.0285,	0.723,	35.1,	13.8,	0.810,	0.410,	42.00,	12.80),
+	array(22,	0.0253,	0.644,	39.5,	15.5,	0.642,	0.326,	52.96,	16.14),
+	array(23,	0.0226,	0.573,	44.3,	17.4,	0.509,	0.258,	66.79,	20.36),
+	array(24,	0.0201,	0.511,	49.7,	19.6,	0.404,	0.205,	84.22,	25.67),
+	array(25,	0.0179,	0.455,	55.9,	22.0,	0.320,	0.162,	106.2,	32.37),
+	array(26,	0.0159,	0.405,	62.7,	24.7,	0.254,	0.129,	133.9,	40.81),
+	array(27,	0.0142,	0.361,	70.4,	27.7,	0.202,	0.102,	168.9,	51.47),
+	array(28,	0.0126,	0.321,	79.1,	31.1,	0.160,	0.0810,	212.9,	64.90),
+	array(29,	0.0113,	0.286,	88.8,	35.0,	0.127,	0.0642,	268.5,	81.84),
+	array(30,	0.0100,	0.255,	99.7,	39.3,	0.101,	0.0509,	338.6,	103.2),
+	array(31,	0.00893,	0.227,	112,	44.1,	0.0797,	0.0404,	426.9,	130.1),		
+	array(32,	0.00795,	0.202,	126,	49.5,	0.0632,	0.0320,	538.3,	164.1),
+	array(33,	0.00708,	0.180,	141,	55.6,	0.0501,	0.0254,	678.8,	206.9),
+	array(34,	0.00630,	0.160,	159,	62.4,	0.0398,	0.0201,	856.0,	260.9),	
+	array(35,	0.00561,	0.143,	178,	70.1,	0.0315,	0.0160,	1079,	329.0),	
+	array(36,	0.00500,	0.127,	200,	78.7,	0.0250,	0.0127,	1361,	414.8),	
+	array(37,	0.00445,	0.113,	225,	88.4,	0.0198,	0.0100,	1716,	523.1),	
+	array(38,	0.00397,	0.101,	252,	99.3,	0.0157,	0.00797,	2164,	659.6),	
+	array(39,	0.00353,	0.0897,	283,	111,	0.0125,	0.00632,	2729,	831.8),
+	array(40,	0.00314,	0.0799,	318,	125,	0.00989,	0.00501,	3441,	1049),
+	);
+	$Pi=3.14159;
+	
+	
+	$vars['DGCG']['Program']['Body']="";
+	
+	
+	dgcg_program_start();
+	
+	$Depth=.25;
+	$Z=0;
+	
+	$FontHeight=.5;
+	dgcg_text(.5,9,$Z,"ABCDEFGHIJKLM",$Depth,$FontHeight);
+	dgcg_text(.5,8.4,$Z,"NOPQRSTUVWXYZ",$Depth,$FontHeight);
+	dgcg_text(.5,7.8,$Z,"()[]{}<>\\|/!?.,;:'\"",$Depth,$FontHeight);
+	dgcg_text(.5,7.2,$Z,"0123456789-=+_@#$%^&*",$Depth,$FontHeight);
+	
+	
+	
+	
+	dgcg_go(.5,.5,$Z);
+	dgcg_line(8,.5,$Z,$Depth);
+	
+	dgcg_go(.5,5.5,$Z);
+	dgcg_line(8,5.5,$Z,$Depth);
+	
+	$Diameter=5;
+	$RadiansStart=3*$Pi/2;
+	$RadiansStop=5*$Pi/2;
+	dgcg_arc(8,3,0,$Diameter,$RadiansStart,$RadiansStop,$Depth);
+	
+	
+	
+	dgcg_go(.5,1.25,$Z);
+	dgcg_line(8,1.25,$Z,$Depth);
+	
+	dgcg_go(.5,4.75,$Z);
+	dgcg_line(8,4.75,$Z,$Depth);
+	
+	$Diameter=3.5;
+	$RadiansStart=3*$Pi/2;
+	$RadiansStop=5*$Pi/2;
+	dgcg_arc(8,3,0,$Diameter,$RadiansStart,$RadiansStop,$Depth);
+	
+	
+	
+	dgcg_go(.5,2,$Z);
+	dgcg_line(8,2,$Z,$Depth);
+	
+	dgcg_go(.5,4,$Z);
+	dgcg_line(8,4,$Z,$Depth);
+	
+	$Diameter=2;
+	$RadiansStart=3*$Pi/2;
+	$RadiansStop=5*$Pi/2;
+	dgcg_arc(8,3,0,$Diameter,$RadiansStart,$RadiansStop,$Depth);
+	
+	
+	
+	dgcg_volume(11,.5,$Z,1,2.25,$Depth);
+	dgcg_volume(11,.5+2.5+.5,$Z,1,2.25,$Depth);
+	
+	//middle
+	dgcg_volume(.5,2.5,$Z,3,1,$Depth);
+	dgcg_volume(.5+3+.5,2.5,$Z,3,1,$Depth);
+	
+	
+	
+	
+	$vars['DGCG']['Tool']['Diameter']=.1;
+	$vars['DGCG']['Tool']['Radius']=$vars['DGCG']['Tool']['Diameter']/2;
+	$vars['DGCG']['Tool']['PassStep']=$vars['DGCG']['Tool']['Diameter']/3;
+	
+	$hx=.25;
+	for($mm=1;$mm<=20;$mm++){
+		dgcg_hole($hx,6.2,$Z,mm2in($mm),$Depth);
+		$hx+=mm2in($mm*1.25);
+	}
+	
+	
+	
+	
+	
+	$x=.5;
+	$y=5.7;
+	$Length=12.01;
+	$Width=0.4;
+	$Depth=0.01;
+	$Units="in";
+	$ShowNumbers=TRUE;
+	dgcg_ruler_x($x,$y,$z,$Length,$Width,$Depth,$Units,$ShowNumbers);
+	
+	 
+	
+	
+	
+	
+	/*
+	
+	
+	dgcg_go(1.5,1,$Z);
+	dgcg_line(1.5,3,$Z,$Depth);
+	
+	dgcg_go(2.5,3,$Z);
+	dgcg_line(2.5,3,$Z,$Depth);
+	
+	$X=3;
+	$Y=2;
+	
+	$Diameter=2;
+	$RadiansStart=$Pi/2;
+	$RadiansStop=3*$Pi/2;
+	
+	dgcg_arc($X,$Y,$Z,$Diameter,$RadiansStart,$RadiansStop,$Depth);
+		
+	$Diameter=1;
+	dgcg_arc($X,$Y,$Z,$Diameter,$RadiansStart,$RadiansStop,$Depth);
+	*/
+	/*
+	$Depth=1;
+	$maxx=2;
+	$x=0;
+	$y=1;
+	$z=0;
+	for($a=1;$a<=40;$a++){
+		$Diameter=$AWGChart[$a][1];
+		$x+=$Diameter*1.5;
+		if($x>$maxx){
+			$x=$Diameter*1.5;
+			$y+=$Diameter*1.5;
+		}
+		print "adding AWG $a hole, diameter: $Diameter inches at $x,$y,$z\n";
+		dgcg_hole($x,$y,$z,$Diameter,$Depth);
+	}
+	
+	
+	$W=5;
+	$L=5;
+	$Rows=5;
+	$Cols=5;
+	$HoleDiameter=0.05;
+	$HoleDepth=1;
+	dgcg_grid($W,$L,$Rows,$Cols,$HoleDiameter,$HoleDepth);
+	 
+	$x=1;
+	$y=1;
+	$z=0;
+	$Diameter=3;
+	$Depth=2;
+	//dgcg_hole($x,$y,$z,$Diameter,$Depth);
+	
+	$cx=0;
+	for($h=1;$h<10;$h++){
+		$cx=$cx+$h*1.1;
+		$y=0;
+		$z=0;
+		$Diameter=$h;
+		$Depth=4;
+		dgcg_hole($cx,$y,$z,$Diameter,$Depth);
+		
+	}
+	
+	
+	$x=.1;$y=.1;$z=0;
+	$Length=6;
+	$Width=0.4;
+	$Depth=0.01;
+	$Units="in";
+	$ShowNumbers=FALSE;
+	dgcg_ruler_x($x,$y,$z,$Length,$Width,$Depth,$Units,$ShowNumbers);
+	
+	 
+	
+	$X=0;
+	$Y=0;
+	$Z=0;
+	$W=4;
+	$H=5;
+	$Depth=4;
+	//dgcg_volume($X,$Y,$Z,$W,$H,$Depth);
+	*/
+	
+	dgcg_program_end();
+	
+	if($vars['DGCG']['Program']['Image']['FileName']){
+		unlink($vars['DGCG']['Program']['Image']['FileName']);
+	}
+	dse_file_put_contents("/tmp/dgcg_convert_command.sh",$vars['DGCG']['Program']['convert_command']);
+	
+	$r=dse_exec("chmod a+x /tmp/dgcg_convert_command.sh",TRUE,TRUE);
+	print $r;
+	
+	
+	$r=dse_exec("/tmp/dgcg_convert_command.sh",TRUE,TRUE);
+	//$r=dse_exec($vars['DGCG']['Program']['convert_command'],TRUE,TRUE);
+	print $r;
+	
+	
+	if($OutFile){
+		dse_file_put_contents($OutFile,$vars['DGCG']['Program']['Body']);
+	}else{
+		print $vars['DGCG']['Program']['Body']."\n";
+	}
+}
 
 exit();
 

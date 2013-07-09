@@ -287,24 +287,32 @@ $NotOSXPackageNamesArray=array();
 
 
 
+$NotOSXPackageNamesArray[]="vim";
 $PackageNamesArray[]="apt-get";
 $PackageNamesArray[]="install";
 
-$NotOSXPackageNamesArray[]="perl";
-$NotOSXPackageNamesArray[]="perl-tk";
+
 //curl -kL http://xrl.us/perlbrewinstall | bash
 //echo source ~/perl5/perlbrew/etc/bashrc >> $HOME/.bashrc
 
 
+$NotOSXPackageNamesArray[]="perl";
+$NotOSXPackageNamesArray[]="perl-tk";
 $PackageNamesArray[]="php5";
 $PackageNamesArray[]="php5-curl";
-
 $PackageNamesArray[]="python";
+$PackageNamesArray[]="g++"; 
+$PackageNamesArray[]="build-essential";
+$PackageNamesArray[]="yasm";
 
-$NotOSXPackageNamesArray[]="vim";
+$PackageNamesArray[]="libssl-dev";
+$PackageNamesArray[]="libxrender-dev";
+$PackageNamesArray[]="qt4-dev-tools";
+$PackageNamesArray[]="libqt4-dev";
+$PackageNamesArray[]="libqt4-webkit";
 
 
-$PackageNamesArray[]="tcpdump";
+
 
 $PackageNamesArray[]="tofrodos";
 $PackageNamesArray[]="wget";
@@ -314,21 +322,18 @@ $NotOSXPackageNamesArray[]="lynx-cur";
 
 $PackageNamesArray[]="rsync";
 //$PackageNamesArray[]="bnz";
-$PackageNamesArray[]="bzr";
+$PackageNamesArray[]="bzr"; 
 $PackageNamesArray[]="subversion";
 $PackageNamesArray[]="git-core";
 
 $PackageNamesArray[]="openssl";
-$PackageNamesArray[]="libssl-dev";
-$PackageNamesArray[]="libxrender-dev";
-$PackageNamesArray[]="qt4-dev-tools";
-$PackageNamesArray[]="libqt4-dev";
 
 
 
 $PackageNamesArray[]="pcregrep";
 $PackageNamesArray[]="nmap";
 
+$PackageNamesArray[]="tcpdump";
 
 // ip to location
 $PackageNamesArray[]="libgeoip1";
@@ -360,8 +365,7 @@ $NotOSXPackageNamesArray[]="xosview";
 
 
 
-$PackageNamesArray[]="build-essential";
-$PackageNamesArray[]="yasm";
+
 $NotOSXPackageNamesArray[]="util-linux";
 //$NotOSXPackageNamesArray[]="filefrog";
 $NotOSXPackageNamesArray[]="loop-aes-utils";
@@ -846,6 +850,9 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	
 		$URL="https://wkhtmltopdf.googlecode.com/files/wkhtmltoimage-0.11.0_rc1-static-amd64.tar.bz2";
 		$r=dse_install_file_from_url($URL);
+	
+		//$URL="svn co https://cutycapt.svn.sourceforge.net/svnroot/cutycapt";
+		//$r=dse_install_file_from_url($URL);
 				
 		
 	}
