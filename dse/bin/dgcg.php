@@ -127,11 +127,10 @@ function dgcg_grid($Width,$Height,$Depth){
 	
 	$vars['DGCG']['Program']['Body']="";
 	
-	
 	dgcg_program_start();
 	
-	$Depth=.25;
-	$Z=0;
+//	$Depth=.25;
+//	$Z=0;
 	/*
 	$FontHeight=.5;
 	dgcg_text(.5,9,$Z,"ABCDEFGHIJKLM",$Depth,$FontHeight);
@@ -533,7 +532,7 @@ function dgcg_go($x,$y,$z){
 	$vars['DGCG']['Current']['X']=$x;
 	$vars['DGCG']['Current']['Y']=$y;
 	$vars['DGCG']['Current']['Z']=$z;
-	$vars['DGCG']['Program']['Body'].= "G1 X$x Y$y Z$z\n";
+	$vars['DGCG']['Program']['Body'].= "G1 X$x Y$y Z$z F100000\n";
 }
 function dgcg_go_x($x){
 	global $vars;
@@ -738,7 +737,9 @@ function dgcg_program_start(){
 	}else{
 		$vars['DGCG']['Program']['Body'].= "G20 G00 Z1\n"; //mm=G21  in=G20
 	}
-	$vars['DGCG']['Program']['Body'].= "G90\n"; //(set absolute distance mode)
+	$vars['DGCG']['Program']['Body'].= "G80 G90 G94\n"; //(set absolute distance mode)
+	$vars['DGCG']['Program']['Body'].= "G64 P1.0\n"; 
+	$vars['DGCG']['Program']['Body'].= "F100000\n"; 
 	
 	$vars['DGCG']['Program']['convert_command']= "convert"; 
 	if($vars['DGCG']['Program']['Image']['Stereo']){
