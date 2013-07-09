@@ -47,7 +47,8 @@ $parameters_details = array(
   array('h','help',"this message"),
   array('q','quiet',"same as --verbosity 0"),
   array('d','demo',"output demo gcode and image"),
-  array('g','grid',"outputs a grid arg1 x arg2 by arg3 deep"),
+  array('g','grid',"outputs a graph-paper-type grid of: arg1 x arg2 by arg3 deep"),
+  array('i','grating',"outputs a grid of holes arg1 x arg2 by arg3 deep with holes arg4 diameter and spaced by arg5"),
   array('z','guage-chart',"AWG guage chart"),
   array('u:','units:',"mm, in"),
   array('t:','tool-diameter:',"tool diameter in units"),
@@ -115,10 +116,51 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$Depth=$argv[3];
 		dgcg_grid($Width,$Height,$Depth);
 		exit(0);
+	case 'i':
+  	case 'grating':
+		$Width=$argv[1];
+		$Height=$argv[2];
+		$Depth=$argv[3];
+		$Diameter=$argv[4];
+		$Spacing=$argv[5];
+		dgcg_grating($Width,$Height,$Depth,$Diameter,$Spacing);
+		exit(0);
 }
 
 
-
+function dgcg_grating($Width,$Height,$Depth,$Diameter,$Spacing){
+	global $vars,$OutFile;
+	
+	
+	$vars['DGCG']['Program']['Body']="";
+	
+	dgcg_program_start();
+	
+	
+	dgcg_home();
+	
+	$Rows=intval(($Height-$Spacing)/($Spacing+$Diameter));
+	$Cols=intval(($Width-$Spacing)/($Spacing+$Diameter));
+	print "r=$Rows c=$Cols\n";
+	dgcg_hole_grid($Width,$Height,$Rows,$Cols,$Diameter,$Depth);
+	
+	dgcg_home();
+	
+	dgcg_program_end();
+	
+	if($vars['DGCG']['Program']['Image']['FileName']){
+		unlink($vars['DGCG']['Program']['Image']['FileName']);
+	}
+	dse_file_put_contents("/tmp/dgcg_convert_command.sh",$vars['DGCG']['Program']['convert_command']);
+	$r=dse_exec("chmod a+x /tmp/dgcg_convert_command.sh",TRUE,TRUE);
+	$r=dse_exec("/tmp/dgcg_convert_command.sh",TRUE,TRUE);
+	if($OutFile){
+		dse_file_put_contents($OutFile,$vars['DGCG']['Program']['Body']);
+		print "G-code data saved to file: $OutFile\n";
+	}else{
+		print $vars['DGCG']['Program']['Body']."\n";
+	}
+}
 
 
 function dgcg_grid($Width,$Height,$Depth){
@@ -129,41 +171,6 @@ function dgcg_grid($Width,$Height,$Depth){
 	
 	dgcg_program_start();
 	
-//	$Depth=.25;
-//	$Z=0;
-	/*
-	$FontHeight=.5;
-	dgcg_text(.5,9,$Z,"ABCDEFGHIJKLM",$Depth,$FontHeight);
-	
-	
-	
-	dgcg_go(.5,.5,$Z);
-	dgcg_line(8,.5,$Z,$Depth);
-	
-	dgcg_go(.5,5.5,$Z);
-	dgcg_line(8,5.5,$Z,$Depth);
-	
-	$Diameter=5;
-	$RadiansStart=3*$Pi/2;
-	$RadiansStop=5*$Pi/2;
-	dgcg_arc(8,3,0,$Diameter,$RadiansStart,$RadiansStop,$Depth);
-	
-	
-	
-	dgcg_go(.5,1.25,$Z);
-	dgcg_line(8,1.25,$Z,$Depth);
-	
-	
-	$x=.5;
-	$y=5.7;
-	$Length=12.01;
-	$Width=0.4;
-	$Depth=0.01;
-	$Units="in";
-	$ShowNumbers=TRUE;
-	dgcg_ruler_x($x,$y,$z,$Length,$Width,$Depth,$Units,$ShowNumbers);
-	
-	 */
 	
 	dgcg_home();
 	
@@ -182,18 +189,7 @@ function dgcg_grid($Width,$Height,$Depth){
 	}
 	
 	dgcg_home();
-	
-	/*$x=0;
-	$y=0;
-	$Length=$Width+.01;
-	$Width=0.4;
-	$Depth=0.01;
-	$Units="in";
-	$ShowNumbers=TRUE;
-	for($y=0;$y<=$Height;$y++){
-		$ShowNumbers=($y==0);
-		dgcg_ruler_x($x,$y,$z,$Length,$Width,$Depth,$Units,$ShowNumbers);
-	}*/
+
 	
 	dgcg_home();
 	
