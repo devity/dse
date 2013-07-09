@@ -122,7 +122,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 
 
 function dgcg_grid($Width,$Height,$Depth){
-	global $vars;
+	global $vars,$OutFile;
 	
 	
 	$vars['DGCG']['Program']['Body']="";
@@ -208,6 +208,7 @@ function dgcg_grid($Width,$Height,$Depth){
 	$r=dse_exec("/tmp/dgcg_convert_command.sh",TRUE,TRUE);
 	if($OutFile){
 		dse_file_put_contents($OutFile,$vars['DGCG']['Program']['Body']);
+		print "G-code data saved to file: $OutFile\n";
 	}else{
 		print $vars['DGCG']['Program']['Body']."\n";
 	}
@@ -220,7 +221,7 @@ function dgcg_home(){
 }
 
 function dgcg_demo(){
-	global $vars;
+	global $vars,$OutFile;
 	//0=AWG 1=in 2=mm 3=turns_per_in 4=turns_per_cm 5=area_kcmil 6=area_mm2 7=ohms/km 8=ohms/kFT
 	$AWGChart=array(
 	array(0),
