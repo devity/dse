@@ -34,7 +34,7 @@ $parameters_details = array(
   array('f:','find:',"searches for arg1 in all db and tables or db arg2 and table arg3"),
   array('d','list-databases',"prints list of databases: SHOW DATABASES; command"),
   array('t:','list-tables:',"prints list of tables in database arg1: USE arg1; SHOW TABLES; command"),
-  array('i','fix',"repairs all tables in all db's"),
+  array('i','repair',"repairs all tables in all db's, or DB arg1 or table arg2 in DB arg1"),
   array('r','restart',"restart daemon"),
   array('s','status',"status daemon"),
   array('x','stop',"stop daemon"),
@@ -160,19 +160,28 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		}
 		exit(0);
 	case 'i':
-  	case 'fix':
-		dse_database_check_all();
-	//	dse_database_repair_all();
+  	case 'repair':
+		$db=""; $table="";
+		if(sizeof($argv)>1){
+			$db=$argv[1];
+			if(sizeof($argv)>1){
+				$table=$argv[2];
+			}
+		}
+		dse_database_repair($db,$table);
 		exit(0);
 	case 'c':
   	case 'check':
+		$db=""; $table="";
 		if(sizeof($argv)>1){
 			$db=$argv[1];
-			dse_database_check($db);
-		}else{
-			dse_database_check_all();
+			if(sizeof($argv)>1){
+				$table=$argv[2];
+			}
 		}
+		dse_database_check_table($db,$table);
 		exit(0);
+		
 		
 	case 'o':
   	case 'compare-schema':

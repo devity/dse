@@ -558,7 +558,6 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		$PackageNamesArray[]="tripwire";
 		//$PackageNamesArray[]="aide";
 		
-		$PackageNamesArray[]="snort"; 
 		$PackageNamesArray[]="libcrypt-ssleay-perl"; 
 		//acidbase
 		//sudo apt-get install oinkmaster
@@ -569,6 +568,29 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		
 	}
 }
+
+$ComponentName="network-monitoring";
+if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
+	if(!in_array($ComponentName, $vars['DSE']['AddComponents'])){
+		$Component=colorize($ComponentName,"cyan");
+		$A=dse_ask_yn("Install Component $Component?");
+		print "\n";
+		if($A=='Y'){
+			$vars['DSE']['AddComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+		}else{
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+		}
+	}
+	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
+	
+		$PackageNamesArray[]="snort"; 
+		
+		//svn checkout http://snort-stat.googlecode.com/svn/trunk/ snort-stat-read-only
+		
+	}
+}
+
 if(str_contains($vars['DSE']['SERVICES'],"cacti")){
 	$PackageNamesArray[]="cacti";
 	$PackageNamesArray[]="rrdtool";

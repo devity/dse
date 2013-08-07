@@ -1739,6 +1739,8 @@ function dse_backup_mysqld_raw() {
 	
 	print bar("Backing up MYSQL raw files","-","blue","white","white","blue")."n";
 		
+	dse_service_restart("mysql");
+		
 	$Command="service mysql status";
 	$r=dse_exec($Command);
 	if(str_contains($r,"stop")){

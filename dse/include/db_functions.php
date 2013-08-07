@@ -218,9 +218,31 @@ function dse_table_status_array($Database,$Table){
 }
 
 
+
+function dse_database_repair($Database="",$Table=""){
+	global $vars; dse_trace();
+	if($Database && $Table){
+		dse_table_repair($Database,$Table);
+	}elseif($Database){
+		$Tables=dse_table_list_array($Database);
+		foreach($Tables as $Table){
+			dse_table_repair($Database,$Table);
+		}
+	}else{
+		$Databases=dse_database_list_array($Database);
+		foreach($Databases as $Database){
+			$Tables=dse_table_list_array($Database);
+			foreach($Tables as $Table){
+				dse_table_repair($Database,$Table);
+			}
+		}	
+	}
+}
+
 function dse_table_repair($Database,$Table){
 	global $vars; dse_trace();
-	$pid=dse_exec_bg("echo \"USE $Database;\n REPAIR TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,TRUE);
+	print "Repairing: $Database.$Table\n";
+	$pid=dse_exec_bg("echo \"USE $Database;\\n REPAIR TABLE $Table EXTENDED;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],TRUE,TRUE);
 	while(dse_pid_is_running($pid)){
 		global $Tdc,$Tc;
 		progress_bar("time",100," $Tdc/$Tc checked");
@@ -235,7 +257,7 @@ function dse_table_repair($Database,$Table){
 		$IsOK=FALSE;
 		dse_exec("service mysql stop");
 		$Command="mysqlcheck -r $Database $Table -u ".$vars['DSE']['MYSQL_USER'];
-		$r=dse_exec($Command);
+		$r=dse_exec($Command,TRUE,TRUE);
 		dse_exec("service mysql start");
 	}
 						
@@ -433,6 +455,135 @@ function dse_database_check($DB,$DoRepair=TRUE,$DoOptimize=TRUE){
 	
 }
 
+
+function dse_database_check_table($Database="",$Table="",$DoRepair=TRUE,$DoOptimize=TRUE){
+	global $vars; dse_trace();
+
+
+	if(!$Database || !$Table){
+		if($Database){
+			$Tables=dse_table_list_array($Database);
+			foreach($Tables as $Table){
+				dse_database_check_table($Database,$Table,$DoRepair,$DoOptimize);
+			}
+			
+		}else{
+			$Databases=dse_database_list_array($Database);
+			foreach($Databases as $Database){
+				$Tables=dse_table_list_array($Database);
+				foreach($Tables as $Table){
+					dse_database_check_table($Database,$Table,$DoRepair,$DoOptimize);
+				}
+			}	
+			
+		}
+		return;
+	}
+
+
+	$W=cbp_get_screen_width();
+	$TableNameWidth=intval($W*(2/5));
+	if($TableNameWidth<55){
+		$TableNameWidth=55;
+	}
+
+
+	print colorize(" $DB","red","black",TRUE,1);
+	print colorize(".","green","black");
+	print colorize($Database.".".$Table,"magenta","black",TRUE,1);
+	
+	$PadSize=$TableNameWidth-(strlen($Database)+strlen($Table)+2);
+	print pad("",$PadSize);
+	
+	$IsOK=TRUE;
+	$ErrorMsg="";
+
+	
+	
+	$TSa=dse_table_status_array($Database,$Table);
+	$Rows=$TSa['Rows'];
+	$Engine=$TSa['Engine'];
+	$Avg_row_length=$TSa['Avg_row_length'];
+	$Size_int=$Avg_row_length*$Rows;
+	
+	$Engine=pad($Engine,10," ","center");
+	$Engine=colorize($Engine,"yellow","black");
+	
+	$Rows=pad(intval($Rows/1000),6," ","right");
+	if(     $TSa['Rows']>1500000){
+		$Rows=colorize($Rows,"red","black",TRUE,1);
+	}elseif($TSa['Rows']> 700000){
+		$Rows=colorize($Rows,"yellow","black",TRUE,1);
+	}elseif($TSa['Rows']> 100000){
+		$Rows=colorize($Rows,"green","black",TRUE,1);
+	}else{
+		$Rows=colorize($Rows,"blue","black",TRUE,1);
+	}
+	
+	$Size=pad(intval($Size_int/1000000),6," ","right");
+	$Size=colorize($Size,"green","black",TRUE,1);
+	if(     $Size_int>100000000){
+		$Size=colorize($Size,"red","black",TRUE,1);
+	}elseif($Size_int> 10000000){
+		$Size=colorize($Size,"yellow","black",TRUE,1);
+	}elseif($Size_int>  1000000){
+		$Size=colorize($Size,"green","black",TRUE,1);
+	}else{
+		$Size=colorize($Size,"blue","black",TRUE,1);
+	}
+	
+	
+	if($TSa['Engine']!="CSV"){
+		progress_bar("time",100," checking");
+		$TCa=dse_table_check($Database,$Table);
+		if($TCa['MsgText']!="OK"){
+			$IsOK=FALSE;
+			$ErrorMsg.= colorize("CHECK $DB.$T => ".$TCa['MsgText'],"white","red",TRUE,1);
+		} 
+		
+		
+		progress_bar("time",100," analyzing");
+	
+		$TAa=dse_table_analyze($Database,$Table);
+		if($TAa['MsgText']=="Table is already up to date" || $TAa['MsgText']=="OK"){
+		}else{
+			$IsOK=FALSE;
+			if($ErrorMsg) $ErrorMsg.="\n";
+			$ErrorMsg.= colorize("ANALYZE $DB.$T => ".$TAa['MsgText'],"white","red",TRUE,1);
+		}
+	
+		
+	}
+	
+	print " $Engine {$Rows}k rows ${Size} MB    "; 
+	
+	if($TSa['Engine']=="CSV"){
+		print colorize("  ???  ","red","yellow",TRUE,1);
+	}else{
+		if($IsOK){
+			print colorize("  OK!  ","white","green",TRUE,1);
+		}else{
+			print colorize("  BAD  ","white","red",TRUE,1);
+		}
+	}	
+	
+	print "\n";
+	
+	
+	if($ErrorMsg){
+		print $ErrorMsg."\n";
+	}
+	
+	if(!$IsOK && $DoRepair){
+		progress_bar("time",100," repairing");
+		
+		dse_table_repair($Database,$Table);
+		
+		if($DoOptimize){
+			dse_table_optimize($Database,$Table);
+		}
+	}
+}
 
 function dse_database_check_all($DoRepair=TRUE,$DoOptimize=TRUE){
 	global $vars; dse_trace();

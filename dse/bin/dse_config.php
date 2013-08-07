@@ -189,6 +189,7 @@ $vars['DSE']['YellowWords']=array("status","result","permission","login","logout
 
 $vars['DSE']['ComponentsAvailable']=array("image-processing","desktop","tor","xurlrunner","crowbar","synergy","flyback");
 $vars['DSE']['AddComponents']=array();
+$vars['DSE']['AddPkg']=array();
 $vars['DSE']['DisabledComponents']=array();
 
 // *********************************************************************************

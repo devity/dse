@@ -179,20 +179,23 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'r':
 	case 'sync': //rsyncs to file arg3 from file arg2 on user@host arg1
 		//print_r($vars[DSE][USERHOST]); exit();
-		$UserHost=$argv[1];
-		if(str_contains($UserHost,"@")){
-			$User=strcut($UserHost,"","@");
-			$Host=strcut($UserHost,"@");
-		}else{
-			print "invalid user@host in arg1. exiting.\n";
-			exit(1);
-		}
-		$SourceFile=$argv[2];
-		if($argv[3]){
-			$LocalFile=$argv[3];
-		}else{
-			$LocalFile=$SourceFile;
-		}
+		
+		//if(sizeof($argv)==4){
+			$UserHost=$argv[1];
+			if(str_contains($UserHost,"@")){
+				$User=strcut($UserHost,"","@");
+				$Host=strcut($UserHost,"@");
+			}else{
+				print "invalid user@host in arg1. exiting.\n";
+				exit(1);
+			}
+			$SourceFile=$argv[2];
+			if($argv[3]){
+				$LocalFile=$argv[3];
+			}else{
+				$LocalFile=$SourceFile;
+			}
+		
 		
 		$SourceDir=dirname($SourceFile);
 		$SourceFileName=basename($SourceFile);

@@ -4322,6 +4322,8 @@ function dse_service_name_from_common_name($service){
 	global $vars; dse_trace();
 	if(@key_exists($service, $vars['DSE']['SERVICE_NICKNAMES'])){
 		return $vars['DSE']['SERVICE_NICKNAMES'][$service];
+	}else{
+		print_r($vars['DSE']['SERVICE_NICKNAMES']); exit();
 	}
 	return $service;
 }
