@@ -30,9 +30,9 @@ $vars['DGCG']['Program']['Image']['Stereo']=FALSE	;
 $vars['DGCG']['Program']['Image']['PixelsPerUnit']=50;
 $vars['DGCG']['Program']['Image']['FileName']="dgcg_out.jpg";
 $vars['DGCG']['Program']['Image']['Margin']=50;
-$vars['DGCG']['Program']['Image']['Width']=800;
-$vars['DGCG']['Program']['Image']['Height']=800;
-$vars['DGCG']['Program']['Image']['ShowMoves']=FALSE;
+$vars['DGCG']['Program']['Image']['Width']=1000;
+$vars['DGCG']['Program']['Image']['Height']=1000;
+$vars['DGCG']['Program']['Image']['ShowMoves']=TRUE;
 
 global $CFG_array;
 $CFG_array=array();
@@ -141,7 +141,7 @@ function dgcg_grating($Width,$Height,$Depth,$Diameter,$Spacing){
 	
 	$Rows=intval(($Height-$Spacing)/($Spacing+$Diameter));
 	$Cols=intval(($Width-$Spacing)/($Spacing+$Diameter));
-	print "r=$Rows c=$Cols\n";
+//	print "r=$Rows c=$Cols\n";
 	dgcg_hole_grid($Width,$Height,$Rows,$Cols,$Diameter,$Depth);
 	
 	dgcg_home();
@@ -620,11 +620,12 @@ function dgcg_hole_grid($W,$L,$Rows,$Cols,$HoleDiameter,$HoleDepth,$Clearence=0)
 			$x=$r*$Lgap;
 			$y=$c*$Wgap;
 			$z=$Clearence;
-			dgcg_go($x,$y,$z);
+			dgcg_hole($x,$y,$z,$HoleDiameter,$HoleDepth);
+			//dgcg_go($x,$y,$z);
 			$z=-1*$HoleDepth;
-			dgcg_go($x,$y,$z);
+			//dgcg_go($x,$y,$z);
 			$z=$Clearence;
-			dgcg_go($x,$y,$z);
+			//dgcg_go($x,$y,$z);
 		}
 	}
 }
@@ -736,25 +737,27 @@ function dgcg_program_start(){
 	$vars['DGCG']['Program']['Body'].= "G80 G90 G94\n"; //(set absolute distance mode)
 	$vars['DGCG']['Program']['Body'].= "G64 P1.0\n"; 
 	$vars['DGCG']['Program']['Body'].= "F100000\n"; 
-	
-	$vars['DGCG']['Program']['convert_command']= "convert"; 
-	if($vars['DGCG']['Program']['Image']['Stereo']){
-		$vars['DGCG']['Program']['convert_command'].= " -size ".($vars['DGCG']['Program']['Image']['Width']*2)."x".$vars['DGCG']['Program']['Image']['Height']." xc:lightblue"; 
-	}else{
-		$vars['DGCG']['Program']['convert_command'].= " -size ".$vars['DGCG']['Program']['Image']['Width']."x".$vars['DGCG']['Program']['Image']['Height']." xc:lightblue"; 
-	}
-	
-	
-	
-	
-	
+	$vars['DGCG']['Program']['convert_command']="";
 	
 }
 
 function dgcg_program_end(){
 	global $vars;
+	
+	
+	if($vars['DGCG']['Program']['Image']['Stereo']){
+		$vars['DGCG']['Program']['convert_command']= "convert -size "
+			.($vars['DGCG']['Program']['Image']['Width']*2)."x".$vars['DGCG']['Program']['Image']['Height']
+			." xc:lightblue ".$vars['DGCG']['Program']['convert_command']; 
+	}else{
+		$vars['DGCG']['Program']['convert_command']= "convert -size "
+			.$vars['DGCG']['Program']['Image']['Width']."x".$vars['DGCG']['Program']['Image']['Height']
+			." xc:lightblue ".$vars['DGCG']['Program']['convert_command']; 
+	}
+	$vars['DGCG']['Program']['convert_command'].=" ".$vars['DGCG']['Program']['Image']['FileName'];
+	
+	
 	$vars['DGCG']['Program']['Body'].="M2\n";// (end program)
-	$vars['DGCG']['Program']['convert_command'].= " ".$vars['DGCG']['Program']['Image']['FileName']; 
 }
 
 

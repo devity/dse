@@ -45,7 +45,7 @@ $parameters_details = array(
   array('d','df',"colorized version of df"),
   array('a','dir-sizes',"get dir sizes in ls"),
   array('g','get',"gets file arg2 from user@host arg1"),
-  array('r','sync',"rsyncs to file arg2 from file arg2 on user@host arg1"),
+  array('r','sync',"rsyncs to file arg3 from file arg2 on user@host arg1"),
   array('f:','run-command-batch:',"takes list of commands in fine arg1 and DELETES and executes one at a time"),
   
 );
@@ -177,7 +177,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		}
 		exit(0);
 	case 'r':
-	case 'sync':
+	case 'sync': //rsyncs to file arg3 from file arg2 on user@host arg1
 		//print_r($vars[DSE][USERHOST]); exit();
 		$UserHost=$argv[1];
 		if(str_contains($UserHost,"@")){
@@ -188,7 +188,12 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			exit(1);
 		}
 		$SourceFile=$argv[2];
-		$LocalFile=$argv[3];
+		if($argv[3]){
+			$LocalFile=$argv[3];
+		}else{
+			$LocalFile=$SourceFile;
+		}
+		
 		$SourceDir=dirname($SourceFile);
 		$SourceFileName=basename($SourceFile);
 		if($SourceDir=="" || $SourceFile==$SourceFileName){
@@ -198,8 +203,8 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		print colorize("Getting File $SourceFile\n","green","black",TRUE,1);
 			
 		
-		$Command="rsync --progress --partial -n -r --size-only $User@$Host:$SourceFile $LocalFile";
-		print "C=$Command\n";
+		$Command="rsync --progress --partial --recursive --size-only $User@$Host:$SourceFile $LocalFile";
+		print "C=$Command\n"; //--dry-run 
 		dse_passthru($Command,TRUE);
 		/*if(dse_file_exists($File)){
 			print colorize("Success!\n","white","green",TRUE,1);
