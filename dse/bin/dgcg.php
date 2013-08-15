@@ -51,6 +51,7 @@ $parameters_details = array(
   array('i','grating',"outputs a grid of holes arg1 x arg2 by arg3 deep with holes arg4 diameter and spaced by arg5"),
   array('z','guage-chart',"AWG guage chart"),
   array('u:','units:',"mm, in"),
+  array('f:','file:',"commands from input .dngc script file"),
   array('t:','tool-diameter:',"tool diameter in units"),
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('o:','gcode-outfile:',"outfile to save final g-code to"),
@@ -83,6 +84,12 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'image-outfile':
 		$vars['DGCG']['Program']['Image']['FileName']=$vars['options'][$opt];
 		dpv(2,"Outfile set to $OutFile\n");
+		break;
+  	case 'f':
+	case 'file':
+		$DNGC_Filename=$vars['options'][$opt];
+		dgcg_dngc_file_process($DNGC_Filename);
+		exit();
 		break;
   	case 'u':
 	case 'units':
@@ -125,6 +132,81 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$Spacing=$argv[5];
 		dgcg_grating($Width,$Height,$Depth,$Diameter,$Spacing);
 		exit(0);
+}
+
+
+function dgcg_dngc_file_process($DNGC_Filename){
+	global $vars,$OutFile;
+
+	
+	
+	if($DNGC_Filename){
+		dpv(2,"Processing $DNGC_Filename\n");
+		
+		$Xc=0; $Yc=0; $Zc=0;
+		$vars['DGCG']['Program']['Body']="";
+		dgcg_program_start();
+		dgcg_home();
+	
+	
+		$Lines=explode("\n",`cat $DNGC_Filename`);
+		foreach($Lines as $L){
+			$L=strcut($L,"","#");
+			$L=trim($L);
+			if($L){
+				$L=strtolower($L);
+				$La=explode(" ",$L);
+				switch($La[0]){
+					case 'go':
+						if(sizeof($La)==4){
+							$Xp=substr($La[1],1);
+							$Yp=substr($La[2],1);
+							$Zp=substr($La[3],1);
+							dgcg_go($Xp,$Yp,$Zp);
+						}else{
+							for($Lai=0;$Lai<sizeof($La);$Lai++){
+								$d=substr($La[$Lai],0,1);
+								$p=substr($La[$Lai],1);
+								switch($d){
+									case 'x':
+										dgcg_go_x($p);
+										break;
+									case 'y':
+										dgcg_go_y($p);
+										break;
+									case 'z':
+										dgcg_go_z($p);
+										break;
+								}
+							}
+						}
+						break;
+					default:
+						break;
+				}
+			}
+		}
+		
+		
+		dgcg_program_end();
+		
+		if($vars['DGCG']['Program']['Image']['FileName']){
+			unlink($vars['DGCG']['Program']['Image']['FileName']);
+		}
+		dse_file_put_contents("/tmp/dgcg_convert_command.sh",$vars['DGCG']['Program']['convert_command']);
+		$r=dse_exec("chmod a+x /tmp/dgcg_convert_command.sh",TRUE,TRUE);
+		$r=dse_exec("/tmp/dgcg_convert_command.sh",TRUE,TRUE);
+		if($OutFile){
+			dse_file_put_contents($OutFile,$vars['DGCG']['Program']['Body']);
+			print "G-code data saved to file: $OutFile\n";
+		}else{
+			print $vars['DGCG']['Program']['Body']."\n";
+		}
+		
+		
+	}else{
+		dpv(0,"dgcg_dngc_file_process() error: no filename passed. returning.\n");
+	}
 }
 
 
