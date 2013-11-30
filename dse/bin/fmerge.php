@@ -4,6 +4,7 @@ error_reporting(E_ALL && ~E_NOTICE);
 ini_set('display_errors','On');	
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
+include_once ("/dse/include/ffdb_functions.php");
 $vars['Verbosity']=1;
 dpv(6,"trace:head");
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
@@ -24,6 +25,7 @@ $parameters_details = array(
   array('b','batch-commands-out',"output the fix commands"),
   array('c','compare-existance',"compare esistance of [d] for each [s]"),
   array('a','compare-hash',"compare [s] and [d] by hash and size"),
+  array('t','test',"test - DONT USE"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -40,6 +42,18 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$vars['Verbosity']=$vars['options'][$opt];
 		if($vars['Verbosity']>=2) print "Verbosity set to ".$vars['Verbosity']."\n";
 		break;
+	case 't':
+	case 'test':
+		$Values=array(
+			'ID'=>1,
+			'Name'=>'Bob',
+			'Agw'=>4,
+			'MD5'=>'34rf2341fc213c',
+		);
+		 dse_ffdb_insert("ttable",$Values);
+		 $m=dse_ffdb_select_by_field("ttable","Name","Bob");
+		 print_r($m); 
+	break;
 }
 
 dse_cli_script_header();

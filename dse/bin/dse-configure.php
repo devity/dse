@@ -55,6 +55,7 @@ dse_cli_script_header();
 
 if($argv[1]=="help" || $ShowUsage){
 	print $vars['Usage'];
+	exit();
 }
 
 // ********* main script activity START ************

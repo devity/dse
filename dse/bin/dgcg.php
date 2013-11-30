@@ -146,7 +146,7 @@ function dgcg_dngc_file_process($DNGC_Filename){
 		$Xc=0; $Yc=0; $Zc=0;
 		$vars['DGCG']['Program']['Body']="";
 		dgcg_program_start();
-		dgcg_home();
+//		dgcg_home();
 	
 	
 		$Lines=explode("\n",`cat $DNGC_Filename`);

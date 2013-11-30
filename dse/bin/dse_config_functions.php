@@ -278,8 +278,19 @@ function dse_server_configure_file_load(){
 								$Webroot=$Lpa[2];
 							}
 							$vars['DSE']['SERVER_CONF']['Webroots'][$Domain][$Hosts]=$Webroot;
-							//print "added ['Webroots'][$Domain][$Hosts]=$Webroot\n";
-							
+							break;
+						case "HTTPS":
+							$Hosts=$Lpa[1];
+							if($Lpa[3]){
+								$IP=$Lpa[2];
+								$Webroot=$Lpa[3];
+								foreach(split(",",$Hosts) as $Host){
+									$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host]=$IP;
+								}
+							}else{
+								$Webroot=$Lpa[2];
+							}
+							$vars['DSE']['SERVER_CONF']['WebrootsSSL'][$Domain][$Hosts]=$Webroot;
 							break;
 						case "HOST":
 						case "HOSTS":
@@ -1292,19 +1303,41 @@ function dse_configure_create_httpd_conf(){
 					}
 					$site="
 	<VirtualHost *:80>
-	 ServerName $ServerName
-	 ServerAlias $ServerAlias
-	 DocumentRoot $DocRoot/$Webroot
-	 #ErrorLog /var/log/apache2/error.log
-	$Extra
-	
-	
+		ServerName $ServerName
+		ServerAlias $ServerAlias
+		DocumentRoot $DocRoot/$Webroot
+		#ErrorLog /var/log/apache2/error.log
+		$Extra
 		<Directory $DocRoot/$Webroot/>
 	    	#AllowOverride ErrorDocument
-	    </Directory>
-	
+	    </Directory>	
 	</VirtualHost>
 	";
+					if($vars['DSE']['SERVER_CONF']['WebrootsSSL'][$Domain][$Host]){
+						$KeyFile=$Host.".".$Domain;
+						$site.="
+		<VirtualHost *:443>
+			ServerName $ServerName
+			ServerAlias $ServerAlias
+			DocumentRoot $DocRoot/$Webroot
+			#ErrorLog /var/log/apache2/error.log
+			$Extra		
+			<Directory $DocRoot/$Webroot/>
+				#AllowOverride ErrorDocument
+			</Directory>
+			SSLEngine On
+			SSLCertificateFile /etc/apache2/ssl/crt/${KeyFile}.crt
+			SSLCertificateKeyFile /etc/apache2/ssl/key/${KeyFile}.key
+			<Location />
+				SSLRequireSSL On
+				SSLVerifyClient optional
+				SSLVerifyDepth 1
+				SSLOptions +StdEnvVars +StrictRequire
+			</Location>
+		</VirtualHost>
+		";					
+					}
+	
 	// CustomLog /var/log/apache2/access.log combined
 					$site_file="/etc/apache2/sites-available/$Host.$domain";
 					if($Host=="_blank") $site_file="/etc/apache2/sites-available/$domain";
