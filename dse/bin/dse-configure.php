@@ -88,9 +88,14 @@ if($vars['DSE']['HOSTNAME']){
 	dse_server_set_hostname($vars['DSE']['HOSTNAME']);
 }
 
-
-
-
+if(dse_which("git")){
+	if($vars['DSE']['GIT_NAME']){
+		dse_exec("git config --global user.name \"".$vars['DSE']['GIT_NAME']."\"");
+	}
+	if($vars['DSE']['GIT_EMAIL']){
+		dse_exec("git config --global user.email \"".$vars['DSE']['GIT_EMAIL']."\"");
+	}
+}
 
 print pad("Creating Needed Config Directories:   ","90%",colorize("-","blue"))."\n";
 
