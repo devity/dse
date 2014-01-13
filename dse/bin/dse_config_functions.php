@@ -1323,6 +1323,7 @@ function dse_configure_create_httpd_conf(){
 			#ErrorLog /var/log/apache2/error.log
 			$Extra		
 			<Directory $DocRoot/$Webroot/>
+				SSLRenegBufferSize 100000000
 				#AllowOverride ErrorDocument
 			</Directory>
 			SSLEngine On
@@ -1821,7 +1822,9 @@ function dse_backup_mysqld_raw() {
 
 	$gzipfile = $vars['DSE']['BACKUP_DIR_MYSQL']."/mysqlraw_${DATE_TIME_NOW}.tgz";
 	echo "Creating tarball of $image_directory at $gzipfile ...\n";
-	dse_exec("tar -czvf $image_directory/*");
+	$c="tar -czvf $gzipfile $image_directory/*";
+	print "$c\n";
+	dse_exec($c);
 	//dse_exec("rm -rf $image_directory");
 	
 	

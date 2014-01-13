@@ -53,7 +53,6 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'help':
 		print $vars['Usage'];
 		exit(0);
-		break;
 	case 'r':
 	case 'search-results':
 		$OutputAsSearchResults=TRUE;
