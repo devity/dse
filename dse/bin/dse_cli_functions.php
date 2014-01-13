@@ -1,5 +1,4 @@
 <?php
-print "fsadfasd";
 ini_set('display_errors','On');
 ini_set('display_startup_errors','On');
 ini_set('log_errors','On');
