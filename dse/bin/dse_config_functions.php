@@ -1215,14 +1215,15 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		$domain=strtolower($Domain);
 		print "$domain *****\n";
+		$serial=date("YmdG");
 		$zone="\$TTL	300
 
-@		IN	SOA	$domain.	louis.louismarquette.com. (
-			2003042204 ; serial
+@		IN	SOA	$domain.	louis.devity.com. (
+			$serial ; serial
 			28800 ; refresh
 			14400 ; retry
-			3600000 ; expire
-			86400 ; default_ttl
+			86400 ; expire
+			500 ; default_ttl
 			)
 @               IN      NS      $NS1.
 @               IN      NS      $NS2.
