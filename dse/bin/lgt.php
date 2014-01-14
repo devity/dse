@@ -40,7 +40,7 @@ if(key_exists('h', $options)){
 	-i    intermingle
 	-l    list log files used
 ";
-	
+	exit();
 }
 if(key_exists('l', $options)){
 	foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
