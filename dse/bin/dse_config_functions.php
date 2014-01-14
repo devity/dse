@@ -1350,7 +1350,7 @@ function dse_configure_create_httpd_conf(){
 	// CustomLog /var/log/apache2/access.log combined
 					$site_file="/etc/apache2/sites-available/$Host.$domain";
 					if($Host=="_blank") $site_file="/etc/apache2/sites-available/$domain";
-					print "Saving file $site_file\n";
+					print "a2ensite: $Host.$domain $site_file\n";
 					file_put_contents($site_file, $site);
 					dse_file_set_owner($site_file,"root:root");
 					dse_file_set_mode($site_file,"644");

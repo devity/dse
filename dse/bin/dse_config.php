@@ -217,9 +217,13 @@ if(str_contains($vars['DSE']['SERVICES'],"smtp")){
 	$smtpd="";
 	if(dse_which("postfix")) $smtpd="postfix";		
 	if($smtpd){
-		$vars['DSE']['SERVICE_NICKNAMES']["smtp"]=$smtpd;
+		if(!array_key_exists("smtp", $vars['DSE']['SERVICE_NICKNAMES'])){	
+			$vars['DSE']['SERVICE_NICKNAMES']["smtp"]=$smtpd;
+		}
 		if($smtpd=="postfix"){			
-			$vars['DSE']['SERVICE_NICKNAMES']["postfix"]=$smtpd;
+			if(!array_key_exists("postfix", $vars['DSE']['SERVICE_NICKNAMES'])){
+				$vars['DSE']['SERVICE_NICKNAMES']["postfix"]=$smtpd;
+			}
 		}
 	}
 }
@@ -240,9 +244,15 @@ if(str_contains($vars['DSE']['SERVICES'],"mysql")){
 	if(dse_which("mysqld")) $mysqld="mysqld";
 		elseif(dse_which("mysql")) $mysqld="mysql";
 		else $mysqld="mysql";
-	$vars['DSE']['SERVICE_NICKNAMES']["mysqld"]=$mysqld;
-	$vars['DSE']['SERVICE_NICKNAMES']["mysql"]=$mysqld;
-	$vars['DSE']['SERVICE_NICKNAMES']["db"]=$mysqld;
+	if(!array_key_exists("mysqld", $vars['DSE']['SERVICE_NICKNAMES'])){
+		$vars['DSE']['SERVICE_NICKNAMES']["mysqld"]=$mysqld;
+	}
+	if(!array_key_exists("mysql", $vars['DSE']['SERVICE_NICKNAMES'])){
+		$vars['DSE']['SERVICE_NICKNAMES']["mysql"]=$mysqld;
+	}
+	if(!array_key_exists("db", $vars['DSE']['SERVICE_NICKNAMES'])){
+		$vars['DSE']['SERVICE_NICKNAMES']["db"]=$mysqld;
+	}
 }
 if(str_contains($vars['DSE']['SERVICES'],"dns")){
 	
