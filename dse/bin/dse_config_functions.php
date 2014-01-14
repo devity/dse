@@ -1218,7 +1218,7 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 	
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		$domain=strtolower($Domain);
-		print "$domain *****\n";
+		//print "$domain *****\n";
 		$serial=date("YmdG");
 		$zone="\$TTL	300
 
@@ -1246,9 +1246,11 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 		// print_r($vars['DSE']['SERVER_CONF']['Hosts'][$Domain]);
         foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
         	$Host=strtolower($Host);
-			if($Host=="_blank") $Host="@";
+			if($Host=="_blank"){
+				$Host="@";
+			}
 			$zone.= "$Host	IN	A	$IP\n";
-			print  "$Host	IN	A	$IP\n";
+			//print  "$Host	IN	A	$IP\n";
 			
 		}
 		$zone_file="/etc/bind/local/$domain";
@@ -1348,7 +1350,7 @@ function dse_configure_create_httpd_conf(){
 	// CustomLog /var/log/apache2/access.log combined
 					$site_file="/etc/apache2/sites-available/$Host.$domain";
 					if($Host=="_blank") $site_file="/etc/apache2/sites-available/$domain";
-					print "Saving file $site_file $site\n";
+					print "Saving file $site_file\n";
 					file_put_contents($site_file, $site);
 					dse_file_set_owner($site_file,"root:root");
 					dse_file_set_mode($site_file,"644");
@@ -1384,13 +1386,7 @@ function dse_configure_create_httpd_conf(){
 
 function dse_configure_create_smtp_conf(){
 	global $vars; dse_trace();
-	$DidAnSSL=FALSE;
-	/*foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
-		print "Domain: $Domain\n";	
-		foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
-			print " Host: $Host.$Domain => $IP\n";
-		}	
-	}*/
+	print "Creating SMTP Config Files...\n";
 	dse_service_stop("postfix");
 	$SmtpHosts=array(); $FileHostsContent="";
 	$SmtpVirtuals=array(); $FileVirtualContents="";
