@@ -4,11 +4,8 @@ $PFile="/tmp/primes.txt";
 $n=8;
 
 for($ni=1;$ni<50;$ni++){
-$ts=time();
 $n=ngpp($ni);
 $p=nip($n);
-$tr=time()-$ts;
-print "[$tr s] ";
 if($p){
 	print "$n is PRIME\n";
 	file_put_contents($PFile,"$n\n",FILE_APPEND);
