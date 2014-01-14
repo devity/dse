@@ -1266,6 +1266,7 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 
 function dse_configure_create_httpd_conf(){
 	global $vars; dse_trace();
+	$DidAnSSL=FALSE;
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		print "Domain: $Domain\n";	
 		foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
@@ -1306,15 +1307,16 @@ function dse_configure_create_httpd_conf(){
 	<VirtualHost *:80>
 		ServerName $ServerName
 		ServerAlias $ServerAlias
-		DocumentRoot $DocRoot/$Webroot
-		#ErrorLog /var/log/apache2/error.log
-		$Extra
-		<Directory $DocRoot/$Webroot/>
+		DocumentRoot $DocRoot/$Webroot		
+		$Extra<Directory $DocRoot/$Webroot/>
 	    	#AllowOverride ErrorDocument
 	    </Directory>	
-	</VirtualHost>
+	</VirtualHost>	
 	";
+	
+		#ErrorLog /var/log/apache2/error.log
 					if($vars['DSE']['SERVER_CONF']['WebrootsSSL'][$Domain][$Host]){
+						$DidAnSSL=TRUE;
 						$KeyFile=$Host.".".$Domain;
 						$site.="
 		<VirtualHost *:443>
@@ -1322,8 +1324,7 @@ function dse_configure_create_httpd_conf(){
 			ServerAlias $ServerAlias
 			DocumentRoot $DocRoot/$Webroot
 			#ErrorLog /var/log/apache2/error.log
-			$Extra		
-			<Directory $DocRoot/$Webroot/>				
+			$Extra<Directory $DocRoot/$Webroot/>				
 				#AllowOverride ErrorDocument
 			</Directory>
 			SSLEngine On
@@ -1355,9 +1356,9 @@ function dse_configure_create_httpd_conf(){
 					
 					
 					if($Host=="_blank") {
-						$r=`a2ensite $domain`;
+						$r=dse_exec("a2ensite $domain");
 					}else{
-						$r=`a2ensite $Host.$domain`;
+						$r=dse_exec("a2ensite $Host.$domain");
 					}
 					print $r;
 				
@@ -1368,6 +1369,9 @@ function dse_configure_create_httpd_conf(){
 			}
 		//if($i>4) break;
 		}
+	}
+	if($DidAnSSL){
+		$r=dse_exec("sudo a2enmod ssl");
 	}
 	dse_service_start("httpd");
 }

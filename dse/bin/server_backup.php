@@ -152,6 +152,10 @@ print "\n";
 // rsync --archive --include '*/' --include '*.html' --include '*.php' --exclude '*' --progress --partial --checksum -v root@eventlister.com:/webroot . 
 
 // rsync --archive --include '*/' --include '*.html' --include '*.php' --exclude '*' --progress --partial --checksum -v --dry-run /webroot/prd-craftlister_com /webroot/dev-craftlister_com
+
+//rsync --include '*/' --include '*.html' --include '*.php' --exclude '*' --recursive --progress --size-only -ptgo /webroot/prd-craftlister_com/* root@alienation.craftlister.com:/webroot/prd-craftlister_com/.
+
+
 //dse_backup_server_environment();
 //dse_backup_mysqld();
 //dse_backup_httpd();
