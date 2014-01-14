@@ -1323,8 +1323,7 @@ function dse_configure_create_httpd_conf(){
 			DocumentRoot $DocRoot/$Webroot
 			#ErrorLog /var/log/apache2/error.log
 			$Extra		
-			<Directory $DocRoot/$Webroot/>
-				SSLRenegBufferSize 100000000
+			<Directory $DocRoot/$Webroot/>				
 				#AllowOverride ErrorDocument
 			</Directory>
 			SSLEngine On
@@ -1338,6 +1337,7 @@ function dse_configure_create_httpd_conf(){
 			</Location>
 		</VirtualHost>
 		";					
+		//SSLRenegBufferSize 100000000
 					}
 	
 	// CustomLog /var/log/apache2/access.log combined
