@@ -240,7 +240,8 @@ function dse_server_configure_file_load(){
 	$vars['DSE']['SERVER_CONF']['FirewallAllowIPs']=$FirewallAllow;
 	$vars['DSE']['SERVER_CONF']['Domains']=array();
 	$vars['DSE']['SERVER_CONF']['Webroots']=array();
-	$vars['DSE']['SERVER_CONF']['Hosts']=array();
+	$vars['DSE']['SERVER_CONF']['Hosts']=array();	
+	$vars['DSE']['SERVER_CONF']['EmailsVirtual']=array();
 	$vars['DSE']['SERVER_CONF']['Sets']=$Sets;
 	$vars['DSE']['SERVER_CONF']['Defines']=$Defines;
 	
@@ -266,6 +267,9 @@ function dse_server_configure_file_load(){
 					//print_r($Lpa);
 					$Protocol=$Lpa[0];
 					switch($Protocol){
+						case "VEMAIL":
+							$vars['DSE']['SERVER_CONF']['EmailsVirtual'][]=array($Domain,$Lpa[1],$Lpa[1]."@".$Domain,$Lpa[2]);
+							break;
 						case "HTTP":
 							$Hosts=$Lpa[1];
 							if($Lpa[3]){
@@ -1374,6 +1378,40 @@ function dse_configure_create_httpd_conf(){
 		$r=dse_exec("sudo a2enmod ssl");
 	}
 	dse_service_start("httpd");
+}
+
+
+
+function dse_configure_create_smtp_conf(){
+	global $vars; dse_trace();
+	$DidAnSSL=FALSE;
+	/*foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
+		print "Domain: $Domain\n";	
+		foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
+			print " Host: $Host.$Domain => $IP\n";
+		}	
+	}*/
+	dse_service_stop("postfix");
+	$SmtpHosts=array(); $FileHostsContent="";
+	$SmtpVirtuals=array(); $FileVirtualContents="";
+	$i=1;
+	//$vars['DSE']['SERVER_CONF']['EmailsVirtual'][]=array($Domain,$Lpa[1],$Lpa[1]."@".$Domain,$Lpa[2]);
+	if(sizeof($vars['DSE']['SERVER_CONF']['EmailsVirtual'])>0){
+		foreach($vars['DSE']['SERVER_CONF']['EmailsVirtual'] as $EmailVirtualArray){
+			list($EvDomain,$EvUser,$EvEmail,$EvDestEmail)=$EmailVirtualArray;
+			$EvDomain=strtolower($EvDomain);
+			if(!$SmtpHosts[$EvDomain]){
+				$SmtpHosts[$EvDomain]=$EvDomain;
+				$FileHostsContent.="$EvDomain\n";
+			}
+			$SmtpVirtuals[$EvEmail]=$EvDestEmail;
+			$FileVirtualContents.="$EvEmail $EvDestEmail\n";
+		}
+	}
+	file_out_contents("/etc/postfix/virtual",$FileVirtualContents);
+	file_out_contents("/etc/postfix/vhosts.txt",$FileHostsContent);
+	$r=dse_exec("postmap  /etc/postfix/virtual",TRUE,TRUE);
+	dse_service_start("smtp");
 }
 
 

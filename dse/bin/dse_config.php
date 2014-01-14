@@ -213,6 +213,13 @@ if(str_contains($vars['DSE']['SERVICES'],"mysql")){
 		
 	
 $vars['DSE']['SERVICE_NICKNAMES']=array();
+if(str_contains($vars['DSE']['SERVICES'],"smtp")){
+	$smtpd="";
+	if(dse_which("postfix")) $smtpd="postfix";		
+	if($smtpd){
+		$vars['DSE']['SERVICE_NICKNAMES']["smtp"]=$smtpd;
+	}
+}
 if(str_contains($vars['DSE']['SERVICES'],"http")){
 	if(dse_which("apache2")) $httpd="apache2";
 		elseif(dse_which("apache")) $httpd="apache";

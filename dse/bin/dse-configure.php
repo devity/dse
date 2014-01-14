@@ -545,8 +545,15 @@ if($FullConfig){
 	print colorize("Services to be Setup/Configured: ","yellow","black");
 	print colorize($vars['DSE']['SERVICES']."\n","red","cyan");
 	
-	if(str_contains($vars['DSE']['SERVICES'],"dns")) dse_configure_create_named_conf();
-	if(str_contains($vars['DSE']['SERVICES'],"http")) dse_configure_create_httpd_conf();
+	if(str_contains($vars['DSE']['SERVICES'],"dns")){
+		dse_configure_create_named_conf();
+	}
+	if(str_contains($vars['DSE']['SERVICES'],"http")){
+		dse_configure_create_httpd_conf();
+	}
+	if(str_contains($vars['DSE']['SERVICES'],"smtp")){
+		dse_configure_create_smtp_conf();
+	}
 	
 	if(str_contains($vars['DSE']['SERVICES'],"desktop")){
 		print "Installing 'desktop' packages:\n";
@@ -565,6 +572,8 @@ if($FullConfig){
 			}
 		}
 	}
+		
+	
 		
 		
 		/*
