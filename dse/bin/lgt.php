@@ -6,7 +6,7 @@ ini_set("memory_limit","-1");
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
 
-$Lines=40;
+$Lines=100;
 $MinutesBack=60;
 $NumberOfBytesSameLimit=13;
 $Intermingle=FALSE;
@@ -106,7 +106,7 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 						$Ago="";
 					}
 				//	print "4=$Time > $StartTime \n";
-					//if($Time<=0 || $Time>$StartTime){
+					if($Time<=0 || $Time>$StartTime){
 						//print "in";
 						$L=substr($L,0,$CharsWide);
 						$L=colorize_words($L);
@@ -117,8 +117,7 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 						}
 						if($Intermingle){
 							if($Time){
-								$Rand=rand(100,999);
-								
+								$Rand=rand(100,999);								
 								$Intermingled[$Time."0".$Rand]="$LogFileNameColorized$Ago  $L\n";
 							}else{
 								print "$LogFileNameColorized$Ago  $L\n";;
@@ -130,7 +129,7 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 							}
 							print  "$Ago  $L\n";
 						}
-					//}
+					}
 				}
 			}
 		}
