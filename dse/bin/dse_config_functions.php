@@ -1387,7 +1387,7 @@ function dse_configure_create_httpd_conf(){
 function dse_configure_create_smtp_conf(){
 	global $vars; dse_trace();
 	print "Creating SMTP Config Files...\n";
-	dse_service_stop("postfix");
+	dse_service_stop("smtp");
 	$SmtpHosts=array(); $FileHostsContent="";
 	$SmtpVirtuals=array(); $FileVirtualContents="";
 	$i=1;

@@ -218,6 +218,9 @@ if(str_contains($vars['DSE']['SERVICES'],"smtp")){
 	if(dse_which("postfix")) $smtpd="postfix";		
 	if($smtpd){
 		$vars['DSE']['SERVICE_NICKNAMES']["smtp"]=$smtpd;
+		if($smtpd=="postfix"){			
+			$vars['DSE']['SERVICE_NICKNAMES']["postfix"]=$smtpd;
+		}
 	}
 }
 if(str_contains($vars['DSE']['SERVICES'],"http")){
