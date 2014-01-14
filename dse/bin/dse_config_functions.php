@@ -1366,7 +1366,7 @@ function dse_configure_create_httpd_conf(){
 					}else{
 						$r=dse_exec("a2ensite $Host.$domain");
 					}
-					print $r;
+					//print $r;
 				
 					//if($i>4) break;
 					$i++;
@@ -1404,8 +1404,8 @@ function dse_configure_create_smtp_conf(){
 			$FileVirtualContents.="$EvEmail $EvDestEmail\n";
 		}
 	}
-	file_out_contents("/etc/postfix/virtual",$FileVirtualContents);
-	file_out_contents("/etc/postfix/vhosts.txt",$FileHostsContent);
+	file_put_contents("/etc/postfix/virtual",$FileVirtualContents);
+	file_put_contents("/etc/postfix/vhosts.txt",$FileHostsContent);
 	$r=dse_exec("postmap  /etc/postfix/virtual",TRUE,TRUE);
 	dse_service_start("smtp");
 }
