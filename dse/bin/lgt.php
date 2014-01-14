@@ -107,7 +107,7 @@ foreach (split(",",$vars['DSE']['LGT_LOG_FILES']) as $LogFile ){
 					}
 				//	print "4=$Time > $StartTime \n";
 					//if($Time<=0 || $Time>$StartTime){
-						print "in";
+						//print "in";
 						$L=substr($L,0,$CharsWide);
 						$L=colorize_words($L);
 						if($Time<=0){
