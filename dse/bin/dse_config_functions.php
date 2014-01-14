@@ -1382,7 +1382,7 @@ function dse_configure_create_httpd_conf(){
 	dse_service_start("httpd");
 }
 
-
+ 
 
 function dse_configure_create_smtp_conf(){
 	global $vars; dse_trace();
