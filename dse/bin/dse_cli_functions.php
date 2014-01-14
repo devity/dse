@@ -1840,6 +1840,13 @@ function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 						$tbra[$Name]=array();
 					}
 					$tbra[$Name][]=$Value;
+				}elseif(str_contains($Name,"[")){
+					$NameBase=strcut($Name,"","[");
+					$NameIndex=strcut($Name,"[","]");
+					if( (!isset($tbra[$NameBase])) ){
+						$tbra[$NameBase]=array();
+					} 
+					$tbra[$NameBase][$NameIndex]=$Value;
 				}else{
 					if( (!isset($tbra[$Name])) || $OverwriteExisting){
 						$tbra[$Name]=$Value;
