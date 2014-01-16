@@ -214,6 +214,7 @@ if(str_contains($vars['DSE']['SERVICES'],"mysql")){
 	
 $vars['DSE']['SERVICE_NICKNAMES']=array();
 if(str_contains($vars['DSE']['SERVICES'],"smtp")){
+	$vars['DSE']['SERVICE_NICKNAMES']["smtp"]="postfix";
 	$smtpd="";
 	if(dse_which("postfix")) $smtpd="postfix";		
 	if($smtpd){
