@@ -32,6 +32,7 @@ print "DSE ROOT set to " . $vars['DSE']['DSE_ROOT']."\n";
 
 
 
+
 print "starting includes\n";
 include_once ($vars['DSE']['DSE_ROOT']."/bin/dse_cli_functions.php");
 include_once ($vars['DSE']['DSE_ROOT']."/bin/dse_config.php");
@@ -299,6 +300,7 @@ $PackageNamesArray[]="install";
 $NotOSXPackageNamesArray[]="perl";
 $NotOSXPackageNamesArray[]="perl-tk";
 $PackageNamesArray[]="php5";
+$PackageNamesArray[]="php5-cli";
 $PackageNamesArray[]="php5-curl";
 $PackageNamesArray[]="python";
 $PackageNamesArray[]="g++"; 
@@ -607,6 +609,13 @@ if(str_contains($vars['DSE']['SERVICES'],"dns")){
 if(str_contains($vars['DSE']['SERVICES'],"ssh")){
 	$PackageNamesArray[]="openssh-server";
 }
+
+
+	//$PackageNamesArray[]="clamav-base";
+	//$PackageNamesArray[]="libclamav6";
+	//$PackageNamesArray[]="clamav-daemon";
+	//$PackageNamesArray[]="clamav-freshclam";
+
 if(str_contains($vars['DSE']['SERVICES'],"smtp")){
 	$PackageNamesArray[]="postfix";
 	$PackageNamesArray[]="postfix-mysql";
@@ -616,32 +625,27 @@ if(str_contains($vars['DSE']['SERVICES'],"smtp")){
 	$PackageNamesArray[]="libauthen-sasl-cyrus-perl";
 	$PackageNamesArray[]="sasl2-bin";
 	$PackageNamesArray[]="libpam-mysql";
-	$PackageNamesArray[]="clamav-base";
-	$PackageNamesArray[]="libclamav6";
-	$PackageNamesArray[]="clamav-daemon";
-	$PackageNamesArray[]="clamav-freshclam";
 	$PackageNamesArray[]="amavisd-new";
 	$PackageNamesArray[]="spamassassin";
 	$PackageNamesArray[]="spamc";
-	$PackageNamesArray[]="postgrey";
-	$PackageNamesArray[]="squirrelmail";
+	$PackageNamesArray[]="postgrey";	
+	
+	
 	$PackageNamesArray[]="squirrelmail-locales";
-	$PackageNamesArray[]="php-pear";
-	$PackageNamesArray[]="php5-cli";
-	$PackageNamesArray[]="courier-base";
-	$PackageNamesArray[]="squirrelmail";
-	$PackageNamesArray[]="courier-authdaemon";
-	$PackageNamesArray[]="courier-authlib-mysql";
-	$PackageNamesArray[]="courier-imap";
-	$PackageNamesArray[]="courier-imap-ssl";
-	$PackageNamesArray[]="courier-ssl";
+	//$PackageNamesArray[]="squirrelmail";
+	//$PackageNamesArray[]="courier-base";
+	//$PackageNamesArray[]="courier-authdaemon";
+	//$PackageNamesArray[]="courier-authlib-mysql";
+	//$PackageNamesArray[]="courier-imap";
+	//$PackageNamesArray[]="courier-imap-ssl";
+	//$PackageNamesArray[]="courier-ssl";
 }
 
  
 if(str_contains($vars['DSE']['SERVICES'],"http")){
 	$PackageNamesArray[]="php5-dev";
 	$PackageNamesArray[]="php5-geoip";
-	
+	$PackageNamesArray[]="php-pear";
 	/*
 	 * wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
 gunzip GeoLiteCity.dat.gz
