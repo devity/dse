@@ -283,6 +283,16 @@ sub mysql_setup {
 			badprint "Attempted to use login credentials, but they were invalid\n";
 			exit 0;
 		}
+	} elsif ($opt{user} ne 0 ) {
+		$mysqllogin = "-u $opt{user} ".$remotestring;
+		my $loginstatus = `mysqladmin ping $mysqllogin 2>&1`;
+		if ($loginstatus =~ /mysqld is alive/) {
+			goodprint "Logged in using credentials passed on the command line\n";
+			return 1;
+		} else {
+			badprint "Attempted to use login credentials, but they were invalid\n";
+			exit 0;
+		}
 	}
 	if ( -r "/etc/psa/.psa.shadow" and $doremote == 0 ) {
 		# It's a Plesk box, use the available credentials
