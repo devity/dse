@@ -1390,9 +1390,12 @@ function dse_sysstats_get_hdparm_stats(){
 		$filesystem=strcut($dfLine,""," ");
 		if($filesystem && $filesystem!="Filesystem" && $filesystem!="none" ){
 			$hdparm=dse_exec("sudo /sbin/hdparm -tT $filesystem");
-			print $hdparm;
+			print $hdparm;			
 		}
 	}
+	$hdparm=dse_exec("sudo dd if=/dev/zero of=/tmp/output bs=8k count=10k; rm -f /tmp/output");
+	print $hdparm;
+	
 	
 	
 	$hdparmStats=array();

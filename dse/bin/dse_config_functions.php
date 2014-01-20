@@ -238,7 +238,9 @@ function dse_server_configure_file_load(){
 	$vars['DSE']['SERVER_CONF']=array();
 	$vars['DSE']['SERVER_CONF']['FirewallPortsOpen']=$FirewallOpen;
 	$vars['DSE']['SERVER_CONF']['FirewallAllowIPs']=$FirewallAllow;
-	$vars['DSE']['SERVER_CONF']['Domains']=array();
+	$vars['DSE']['SERVER_CONF']['Domains']=array();	
+	$vars['DSE']['SERVER_CONF']['MX']=array();	
+	$vars['DSE']['SERVER_CONF']['DNStxt']=array();
 	$vars['DSE']['SERVER_CONF']['Webroots']=array();
 	$vars['DSE']['SERVER_CONF']['Hosts']=array();	
 	$vars['DSE']['SERVER_CONF']['EmailsVirtual']=array();
@@ -303,6 +305,22 @@ function dse_server_configure_file_load(){
 							foreach(split(",",$Hosts) as $Host){
 								$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host]=$IP;
 							}
+							break;
+						case 'DNS_MX':							
+							$Host=$Lpa[1];
+							$Priority=$Lpa[2];
+							if(!array_key_exists($Domain, $vars['DSE']['SERVER_CONF']['MX'])){
+								$vars['DSE']['SERVER_CONF']['MX'][$Domain]=array();
+							}
+							$vars['DSE']['SERVER_CONF']['MX'][$Domain][]=array($Host,$Priority);
+							break;
+						case 'DNS_TXT':							
+							$Host=$Lpa[1];
+							$Txt=substr($Line,"$Host ");
+							if(!array_key_exists($Domain, $vars['DSE']['SERVER_CONF']['DNStxt'])){
+								$vars['DSE']['SERVER_CONF']['DNStxt'][$Domain]=array();
+							}
+							$vars['DSE']['SERVER_CONF']['DNStxt'][$Domain][]=array($Host,$Txt);
 							break;
 						
 					}
@@ -1230,9 +1248,19 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 			500 ; default_ttl
 			)
 @               IN      NS      $NS1.
-@               IN      NS      $NS2.
-                IN      MX      10 smtp.devity.com.
+@               IN      NS      $NS2.                
 ";
+//			IN      MX      10 smtp.devity.com.
+
+		foreach($vars['DSE']['SERVER_CONF']['MX'][$Domain] as $MxArray){
+			list($MXHost,$MXPriority)=$MxArray;
+			$zone.="IN      MX      $MXPriority $MXHost.\n";
+		}
+		foreach($vars['DSE']['SERVER_CONF']['DNStxt'][$Domain] as $DNStxtArray){
+			list($DNStxtHost,$DNStxtTxt)=$DNStxtArray;
+			$zone.="$DNStxtHost.		IN      TXT     $DNStxtTxt\n";
+		}
+
 		/*if(array_key_exists("_blank",$vars['DSE']['SERVER_CONF']['Hosts'][$Domain])){
 			$IP=$vars['DSE']['SERVER_CONF']['Hosts'][$Domain]['_blank'];
 			$zone.= "@		IN	A	$IP\n";
