@@ -1,12 +1,49 @@
 <?php
 
+
+function dse_database_stats($Show="ALL"){
+	global $vars; dse_trace();
+
+	$Command="SHOW STATUS;";
+	$r=dse_exec("echo \"$Command\" | mysql -u ".$vars['DSE']['MYSQL_USER'],FALSE,FALSE);
+	
+	$ShowMAIN=array(
+		"Uptime",
+		"Queries", 
+		"Questions",
+		"Threads_running",
+		"Connections",
+		"Table_locks_immediate", "Table_locks_waited",
+		"Key_blocks_unused", "Key_blocks_used", "Key_read_requests", "Key_reads", "Key_write_requests", "Key_writes",
+		"Max_used_connections", 
+		"Not_flushed_delayed_rows",
+		"Open_files", "Open_table_definitions", "Open_tables", "Opened_files",
+		"Qcache_free_blocks", "Qcache_free_memory", "Qcache_hits", "Qcache_inserts", "Qcache_not_cached", "Qcache_queries_in_cache",
+			"Qcache_total_blocks", 
+		
+		
+		);
+	
+	$rla=explode("\n",$r);
+	foreach($rla as $l){
+		$lpa=explode("\t",$l);
+		//print "0=$lpa[0] 1=$lpa[1]\n";
+		if($Show=="ALL"){
+			print "$lpa[0]: $lpa[1]\n";	
+		}elseif($Show="MAIN"){
+			if(	in_array($lpa[0], $ShowMAIN) ){
+				print "$lpa[0]: $lpa[1]\n";			
+			}
+		}
+	}
+
+}
+
+
 function dse_database_service_name(){
 	global $vars; dse_trace();
 	return "mysql";
 }
-
-
-
 
 
 		

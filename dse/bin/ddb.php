@@ -39,6 +39,8 @@ $parameters_details = array(
   array('s','status',"status daemon"),
   array('x','stop',"stop daemon"),
   array('g','start',"start daemon"),
+  array('z','stats',"daemon stats"),
+  array('y','stats-main',"daemon most important stats"),
   array('u:','hotlive-backup:',"make a hotlive backup of a db"),
   array('c','check',"check all tables in all db's or of db arg1"),
   array('o','compare-schema',"compares schema of all tables between db arg1 and arg2"),
@@ -139,6 +141,14 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'status':
 		$ServiceName=dse_database_service_name();
 		$r=dse_exec("service $ServiceName start",FALSE,TRUE);
+		exit(0);
+	case 'z':
+  	case 'stats':
+		dse_database_stats();		
+		exit(0);
+	case 'y':
+  	case 'stats-main':
+		dse_database_stats("MAIN");		
 		exit(0);
 	case 'd':
   	case 'list-databases':
