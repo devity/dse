@@ -316,7 +316,11 @@ function dse_server_configure_file_load(){
 							break;
 						case 'DNS_TXT':							
 							$Host=$Lpa[1];
-							$Txt=trim(strcut($Line,"$Host"));
+							//$Txt=trim(strcut($Line,"$Host"));
+							$Txt="";
+							for($lpai=2;$lpai<sizeof($Lpa);$lpai++){
+								$Txt.=$Lpa[$lpai];
+							}
 							if(!array_key_exists($Domain, $vars['DSE']['SERVER_CONF']['DNStxt'])){
 								$vars['DSE']['SERVER_CONF']['DNStxt'][$Domain]=array();
 							}
