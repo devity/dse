@@ -507,11 +507,15 @@ function dse_database_check_table($Database="",$Table="",$DoRepair=TRUE,$DoOptim
 		}else{
 			$Databases=dse_database_list_array($Database);
 			foreach($Databases as $Database){
-				if($Database!="information_schema"){
+				$Database=trim($Database);
+				if($Database && $Database!="information_schema"){
 					$Tables=dse_table_list_array($Database);
 					foreach($Tables as $Table){
-						print "dse_database_check_table($Database,$Table,$DoRepair,$DoOptimize);\n";
-						dse_database_check_table($Database,$Table,$DoRepair,$DoOptimize);
+						$Table=trim($Table);
+						if($Table){
+							print "dse_database_check_table($Database,$Table,$DoRepair,$DoOptimize);\n";
+							dse_database_check_table($Database,$Table,$DoRepair,$DoOptimize);
+						}
 					}
 				}
 			}	
