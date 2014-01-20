@@ -1253,13 +1253,17 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 ";
 //			IN      MX      10 smtp.devity.com.
 
-		foreach($vars['DSE']['SERVER_CONF']['MX'][$Domain] as $MxArray){
-			list($MXHost,$MXPriority)=$MxArray;
-			$zone.="IN      MX      $MXPriority $MXHost.\n";
+		if(array_key_exists($Domain,$vars['DSE']['SERVER_CONF']['MX'])){
+			foreach($vars['DSE']['SERVER_CONF']['MX'][$Domain] as $MxArray){
+				list($MXHost,$MXPriority)=$MxArray;
+				$zone.="IN      MX      $MXPriority $MXHost.\n";
+			}
 		}
-		foreach($vars['DSE']['SERVER_CONF']['DNStxt'][$Domain] as $DNStxtArray){
-			list($DNStxtHost,$DNStxtTxt)=$DNStxtArray;
-			$zone.="$DNStxtHost.		IN      TXT     $DNStxtTxt\n";
+		if(array_key_exists($Domain,$vars['DSE']['SERVER_CONF']['DNStxt'])){
+			foreach($vars['DSE']['SERVER_CONF']['DNStxt'][$Domain] as $DNStxtArray){
+				list($DNStxtHost,$DNStxtTxt)=$DNStxtArray;
+				$zone.="$DNStxtHost.		IN      TXT     $DNStxtTxt\n";
+			}
 		}
 
 		/*if(array_key_exists("_blank",$vars['DSE']['SERVER_CONF']['Hosts'][$Domain])){
