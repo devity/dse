@@ -1243,17 +1243,18 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 		$domain=strtolower($Domain);
 		//print "$domain *****\n";
 		$serial=date("YmdG");
-		$zone="\$TTL	300
+		$zone="\$ORIGIN	${Domain}.
+\$TTL	300
 
-@		IN	SOA	$domain.	louis.devity.com. (
-			$serial ; serial
-			28800 ; refresh
-			14400 ; retry
-			86400 ; expire
-			500 ; default_ttl
+@		IN	SOA	${NS1}.	marqul.gmail.com. (
+			${serial} ; serial
+			3h ; refresh
+			600 ; retry
+			1d ; expire
+			1000 ; default_ttl
 			)
-@               IN      NS      $NS1.
-@               IN      NS      $NS2.                
+@               IN      NS      ${NS1}.
+@               IN      NS      ${NS2}.                
 ";
 //			IN      MX      10 smtp.devity.com.
 
