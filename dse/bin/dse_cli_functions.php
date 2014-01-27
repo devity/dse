@@ -1809,49 +1809,102 @@ function dse_file_put_contents($filename,$Str){
 // returns array of Names=>Values
 function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 	global $vars; dse_trace();
-	$CfgData=@dse_file_get_contents($filename);
-	if($CfgData==""){
+	global $strcut_post_haystack;
+	
+	$ConfigFileContents=@dse_file_get_contents($filename);
+	if($ConfigFileContents==""){
 		print "ERROR opening config file: $filename\n";
+	}	
+	
+	//print "$ConfigFileContents\n\n";
+	
+	$ConfigDirectory=dirname($filename);
+	$ConfigFileContents=str_replace("\t", " ", $ConfigFileContents);
+	while(str_contains($ConfigFileContents, "  ")){
+		$ConfigFileContents=str_replace("  ", " ", $ConfigFileContents);
 	}
-	$DirectoryArray=array();
-	foreach(split("\n",$CfgData) as $Line){
-		if(!(strstr($Line,"#")===FALSE)){
-			//print "CCC\n";
-			if(strpos($Line,"#")==0){
+	
+	
+	$IncludeCommand="INCLUDE ";	$Loops=0;
+	while( str_icontains($ConfigFileContents,$IncludeCommand) && $Loops<100 ){
+	        $Loops++;
+	        $ConfigFileIncludeName=stricut($ConfigFileContents,$IncludeCommand,"\n");
+	        $ConfigFileContentsPreInclude=stricut($ConfigFileContents,"",$IncludeCommand);
+	        //$ConfigFileContentsPostInclude=substr($strcut_post_haystack,strlen($ConfigFileIncludeName)+1);
+	        $ConfigFileContentsPostInclude=$strcut_post_haystack;
+	        $ConfigFileIncludeFullFileName=$ConfigDirectory . "/" . $ConfigFileIncludeName;
+	        $ConfigFileIncludeContents=file_get_contents($ConfigFileIncludeFullFileName);
+	        $ConfigFileContents=$ConfigFileContentsPreInclude."\n#START OF INC: $ConfigFileIncludeFullFileName\n".$ConfigFileIncludeContents."\n#END OF INC: $ConfigFileIncludeFullFileName\n".$ConfigFileContentsPostInclude;
+	}
+		
+	foreach(array("SET ","DEFINE ") as $IncludeCommand){
+		$Loops=0;
+		while( str_icontains($ConfigFileContents,$IncludeCommand) && $Loops<100 ){
+	        $Loops++;
+	        $NeV=stricut($ConfigFileContents,$IncludeCommand,"\n"); 
+	        $Holder=stricut($NeV,""," ");
+	        $HolderValue=stricut($NeV," ");
+			$Sets[$Holder]=$HolderValue;
+			$tbra[$Holder]=$HolderValue;
+			print "DEFINE $Holder = $HolderValue\n";
+	        $ConfigFileContentsPreInclude=stricut($ConfigFileContents,"",$IncludeCommand);
+	        //$ConfigFileContentsPostInclude=substr($strcut_post_haystack,strlen($NeV)+1);
+			$ConfigFileContentsPostInclude=$strcut_post_haystack;
+	        $ConfigFileContents=$ConfigFileContentsPreInclude.$ConfigFileContentsPostInclude;
+			if($Holder){
+				while(str_contains($ConfigFileContents,$Holder)){
+					$ConfigFileContents=str_replace($Holder,$HolderValue,$ConfigFileContents);
+				}
+			}
+		}
+	}
+	//if($filename=="/etc/dse/dsm.conf")return $tbra;
+	
+	$LineArray=split("\n",$ConfigFileContents);
+	
+	foreach($LineArray as $Line){
+	//	print "LineRaw=$Line\n";
+		$Line=trim($Line);
+		if(str_contains($Line,"#")){
+			if(strpos($Line,"#")===0){
 				$Line="";
 			}else{	
 				$Line=substr($Line,0,strpos($Line,"#")-1);
+				$Line=trim($Line);
 			}
 		}
-		//print "Line=$Line\n";
-		if(str_contains($Line,"+=")){
-			$Lpa=split("\\+=",$Line);
-			if($Lpa[0] && $Lpa[1]){
-				$tbra[$Lpa[0]].=$Lpa[1];
-			}
-		}else{
-			$Name=strcut($Line,"","=");
-			$Value=strcut($Line,"=");
-			//print "nv=: $Name && $Value\n";
-			if($Name && $Value){
-				if(str_contains($Name,"[]")){
-					$Name=str_replace("[]","",$Name);
-					if( (!isset($tbra[$Name])) ){
-						$tbra[$Name]=array();
-					}
-					$tbra[$Name][]=$Value;
-				}elseif(str_contains($Name,"[")){
-					$NameBase=strcut($Name,"","[");
-					$NameIndex=strcut($Name,"[","]");
-					if( (!isset($tbra[$NameBase])) ){
-						$tbra[$NameBase]=array();
-					} 
-					$tbra[$NameBase][$NameIndex]=$Value;
-				}else{
-					if( (!isset($tbra[$Name])) || $OverwriteExisting){
-						$tbra[$Name]=$Value;
-					}
-				}	
+		
+		if($Line){
+		//	print "Line=$Line\n";
+			if(str_contains($Line,"+=")){
+				$Lpa=split("\\+=",$Line);
+				if($Lpa[0] && $Lpa[1]){
+					$tbra[$Lpa[0]].=$Lpa[1];
+				}
+			}else{
+				$Name=strcut($Line,"","=");
+				$Value=strcut($Line,"=");
+				//print "nv=: $Name && $Value\n";
+				if($Name && $Value){
+					if(str_contains($Name,"[]")){
+						$Name=str_replace("[]","",$Name);
+						if( (!isset($tbra[$Name])) ){
+							$tbra[$Name]=array();
+						}
+						$tbra[$Name][]=$Value;
+					}elseif(str_contains($Name,"[")){
+						$NameBase=strcut($Name,"","[");
+						$NameIndex=strcut($Name,"[","]");
+						if( (!isset($tbra[$NameBase])) ){
+							$tbra[$NameBase]=array();
+						} 
+						$tbra[$NameBase][$NameIndex]=$Value;
+					}else{
+						if( (!isset($tbra[$Name])) || $OverwriteExisting){
+							$tbra[$Name]=$Value;
+						}
+					}	
+				}
 			}
 		}
 	}
@@ -1943,11 +1996,11 @@ function strcut($haystack,$pre,$post=""){
 	global $vars; dse_trace();
 	global $strcut_post_haystack;
 	$strcut_post_haystack="";
-	if($pre=="" || !(stristr($haystack,$pre)===FALSE)){
+	if($pre=="" || !(strstr($haystack,$pre)===FALSE)){
 		if($pre==""){
 		}else{
 			//if($haystack && $pre){
-				$haystack=substr($haystack,stripos($haystack,$pre)+strlen($pre));
+				$haystack=substr($haystack,strpos($haystack,$pre)+strlen($pre));
 			//}else{
 			//	$haystack=$haystack; //==""
 			//}
@@ -1958,6 +2011,39 @@ function strcut($haystack,$pre,$post=""){
 				$strcut_post_haystack="";
 			}else{
 				$r=substr($haystack,0,strpos($haystack,$post));
+				if($haystack && $post){
+					$strcut_post_haystack=substr($haystack,strpos($haystack,$post)+strlen($post));
+				}
+			}		
+		}else{
+			$r=$haystack;
+			$strcut_post_haystack="";
+		}		
+	}else{		
+		$r="";
+	}
+	return $r;
+}
+	
+function stricut($haystack,$pre,$post=""){
+	global $vars; dse_trace();
+	global $strcut_post_haystack;
+	$strcut_post_haystack="";
+	if($pre=="" || !(stristr($haystack,$pre)===FALSE)){
+		if($pre==""){
+		}else{
+			//if($haystack && $pre){
+				$haystack=substr($haystack,stripos($haystack,$pre)+strlen($pre));
+			//}else{
+			//	$haystack=$haystack; //==""
+			//}
+		}	
+		if( $post!='' && !(stristr($haystack,$post)===FALSE)){	
+			if($post==""){
+				$r=$haystack;
+				$strcut_post_haystack="";
+			}else{
+				$r=substr($haystack,0,stripos($haystack,$post));
 				if($haystack && $post){
 					$strcut_post_haystack=substr($haystack,stripos($haystack,$post)+strlen($post));
 				}

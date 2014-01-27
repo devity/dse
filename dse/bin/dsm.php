@@ -8,7 +8,8 @@ include_once ("/dse/bin/dse_config.php");
 // *************************************************************************
 // *************************************************************************
 
-$StartTime=time();
+
+$StartTime=microtime(TRUE);
 
 $PID=getmypid();
 $RunningPID=trim(`ps ux | grep dab | grep bin/php | grep -v grep | grep -v $PID`);
@@ -121,23 +122,89 @@ dpv(5," parsing argument: ".$opt);
  }
 }
 if(!$DidSomething){
-	$DoShowStats=TRUE;
+	$DoMonitorRun=TRUE;
 }
 dpv(5,"done parsing arguments");
 
 
-$BackupLocation="";
+if($DoMonitorRun){
+	$BackupLocation="";
+	
+	//$wget=`which wget`; print "wget=$wget \n"; $path=getenv("PATH"); print "path=$path\n";
+	
+	dpv(4,"reading/parsing config file: ".$CfgFile);
+	$vars[dsm_cfg]=dse_read_config_file($CfgFile);
+	
+	
+	//print "$CfgFile array()=\n";
+	//print_r($vars[dsm_cfg]); 
+	
+	$Hostname=dse_hostname();
+	$ServerLoad=get_load();
+	
+	foreach($vars[dsm_cfg][Monitors] as $MonitorLine){
+		print "DoinMonitorLine: $MonitorLine\n";
+		list($MonitorType,$MonitorSource,$MonitorThresholds,$MonitorActions)=explode(" ",$MonitorLine);
+		switch(strtolower($MonitorType)){
+			case 'ssurl';
+				$SourceHtml=http_get($MonitorSource);
+				if($SourceHtml==""){
+					$AlertMsg="ALERT! ssurl fail $MonitorSource";
+					print " $AlertMsg\n";
+					dsm_log($AlertMsg);
+					dsm_do_alert_actions(
+						"ALERT! ssurl fail",
+						"$MonitorSource",
+						$MonitorActions);
+				}else{
+					$SourceSSArray=unserialize($SourceHtml);
+					$MonitorHostname=$SourceSSArray['hostname'];
+					//print "SourceSSArray="; print_r($SourceSSArray);print "\n"; 
+					$DoThisMonitorAlert=FALSE;
+					foreach(explode(",",$MonitorThresholds) as $MonitorThreshold){
+						//print " MonitorThreshold=$MonitorThreshold\n";
+						if(str_contains($MonitorThreshold,">")){
+							list($MonitorVarName,$MonitorVarThreshold)=explode(">",$MonitorThreshold);
+							if(array_key_exists($MonitorVarName, $SourceSSArray)){
+								if($SourceSSArray[$MonitorVarName]>$MonitorVarThreshold){
+									$AlertMsg="ALERT! $MonitorHostname:$MonitorVarName ".$SourceSSArray[$MonitorVarName]." > $MonitorVarThreshold";
+									print " $AlertMsg\n";
+									dsm_log($AlertMsg);
+									dsm_do_alert_actions(
+										"$MonitorHostname:$MonitorVarName = ".$SourceSSArray[$MonitorVarName],
+										"Thresh >".$MonitorVarThreshold,
+										$MonitorActions);
+								}else{
+									print " OK $MonitorHostname:$MonitorVarName ".$SourceSSArray[$MonitorVarName]."  <= $MonitorVarThreshold\n";
+								}
+							}
+						}elseif(str_contains($MonitorThreshold,"<")){
+							list($MonitorVarName,$MonitorVarThreshold)=explode("<",$MonitorThreshold);
+							if(array_key_exists($MonitorVarName, $SourceSSArray)){
+								if($SourceSSArray[$MonitorVarName]<$MonitorVarThreshold){
+									$AlertMsg="ALERT! $MonitorHostname:$MonitorVarName ".$SourceSSArray[$MonitorVarName]." < $MonitorVarThreshold";
+									print " $AlertMsg\n";
+									dsm_log($AlertMsg);								
+									dsm_do_alert_actions(
+										"$MonitorHostname:$MonitorVarName = ".$SourceSSArray[$MonitorVarName],
+										"Thresh <".$MonitorVarThreshold,
+										$MonitorActions);
+								}else{
+									print " OK $MonitorHostname:$MonitorVarName ".$SourceSSArray[$MonitorVarName]."  >= $MonitorVarThreshold\n";
+								}
+							}
+						}
+					}
+				} 
+				break;
+		}
+	}
+	$RunTime=microtime(TRUE)-$StartTime;
+	
+	dsm_log("Run Done. ".number_format($RunTime,2)." seconds.");
+}
 
-//$wget=`which wget`; print "wget=$wget \n"; $path=getenv("PATH"); print "path=$path\n";
-
-dpv(4,"reading/parsing config file: ".$CfgFile);
-$vars[dsm_cfg]=dse_read_config_file($CfgFile);
-
-
-print_r($vars[dsm_cfg]); 
-
-$ServerLoad=get_load();
-
+/*
 if($vars[dsm_cfg][LoadMax] && $ServerLoad>$vars[dsm_cfg][LoadMax]){
 	
 	dsm_log("Load: $ServerLoad FAIL, Restarting services");
@@ -201,6 +268,8 @@ if($vars[dsm_cfg][LocalhostTestURL]){
 	
 		
 }
+ */
+ 
 /*
 $CfgData=file_get_contents($CfgFile);
 if($CfgData==""){
@@ -277,7 +346,7 @@ foreach(split("\n",$CfgData) as $Line){
 dse_file_put_contents($StatusFile,$tbr);
 */
 dpv(5,"done reading/parsing config");
-if($DoShowStats){
+if(FALSE && $DoShowStats){
 	dse_exec('uptime',FALSE,TRUE);
 	dse_exec('cdf',FALSE,TRUE);
 	dse_exec('vmstat 1 5',FALSE,TRUE);
@@ -305,4 +374,32 @@ function dsm_log($Line,$Type=""){
 	dse_exec($c);
 }
  
+ 
+function dsm_do_alert_actions($Headline,$Msg,$Actions){
+	global $vars;
+	
+	foreach(explode(",",$Actions) as $Action){
+		$Action=trim($Action);		
+		if($Action){
+			print "Doing Action: $Action\n";
+			$filename="/tmp/dsm.alert.cache.".sanitize_file_name("$Headline $Msg $Actions");
+			if(!file_exists($filename)){			
+				if(str_contains($Action,"@")){
+					$Subject=$Headline;
+					$Body=$Msg;
+					mail($Action,$Subject,$Body);
+					file_put_contents($filename,time());
+					print "	mail($Action,$Subject,$Body); $filename\n";
+				}
+			}else{
+				print "	ALREADY mail($Action,$Subject,$Body); delete $filename to clear\n";
+			}
+		}
+	}
+}
+ 
+function sanitize_file_name( $raw ) {
+    $escaped = preg_replace('/[^A-Za-z0-9_\-]/', '_', $raw);
+	return $escaped;
+}
 ?>
