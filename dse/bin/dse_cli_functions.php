@@ -4383,18 +4383,30 @@ function http_get($URL,$PostData=""){
 	global $vars; dse_trace();
 	return http_lynx_get($URL);
 }
+function http_get_timeout($URL,$LimitSeconds,$PostData=""){
+	global $vars; dse_trace();
+	return http_lynx_get($URL,$LimitSeconds);
+}
  
-function http_lynx_get($URL){
+function http_lynx_get($URL,$LimitSeconds=0){
 	global $vars; dse_trace();
 	$URL=str_replace("\"","%34",$URL);
 	$URL=str_replace("\n","",$URL);
 	//return `/usr/bin/lynx -connect_timeout=10 -source "$URL"`;	
 	$wget=dse_which("wget");
 	if($wget){
+		if($LimitSeconds>0){
+			$wget="timeout $LimitSeconds ".$wget;
+		}
 		return `$wget -qO- "$URL"`;	
 	}else{
 		if(file_exists("/usr/bin/wget")){
-			return `/usr/bin/wget -qO- "$URL"`;	
+			if($LimitSeconds>0){
+				$cmd="timeout $LimitSeconds /usr/bin/wget -qO- \"$URL\"";
+				return `$cmd`;
+			}else{
+				return `/usr/bin/wget -qO- "$URL"`;
+			}	
 		}else{
 			print getColoredString("ERROR: no wget\n","red","black");
 			return "";

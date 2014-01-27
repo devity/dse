@@ -147,7 +147,7 @@ if($DoMonitorRun){
 		list($MonitorType,$MonitorSource,$MonitorThresholds,$MonitorActions)=explode(" ",$MonitorLine);
 		switch(strtolower($MonitorType)){
 			case 'ssurl';
-				$SourceHtml=http_get($MonitorSource);
+				$SourceHtml=http_get_timeout($MonitorSource,10);
 				if($SourceHtml==""){
 					$AlertMsg="ALERT! ssurl fail $MonitorSource";
 					print " $AlertMsg\n";
