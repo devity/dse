@@ -58,13 +58,13 @@ function dse_database_make_hotlive_copy_of_database($db=""){
 		}
 		return;
 	}
-	$db_hotlive=$db.'_HLBackup';
+	$db_hotlive=$db.'_HLBackup_'.date("Ymd");
 	
 	
-	print "Doing hotlivebackup of database $db to database $dh_hotlive:\n";
+	print "Doing hotlivebackup of database $db to database $db_hotlive:\n";
 	
 	//delete old hotlive database
-	$DrowCommand="DROP DATABASE IF EXISTS $dh_hotlive";
+	$DrowCommand="DROP DATABASE IF EXISTS $db_hotlive";
 	$r=dse_exec("echo \"$DrowCommand;\" | mysql -u ".$vars['DSE']['MYSQL_USER'],TRUE,TRUE);
 	print "r=$r\n";
 	
@@ -255,6 +255,27 @@ function dse_table_status_array($Database,$Table){
 }
 
 
+
+
+function dse_database_optimize($Database="",$Table=""){
+	global $vars; dse_trace();
+	if($Database && $Table){
+		dse_table_optimize($Database,$Table);
+	}elseif($Database){
+		$Tables=dse_table_list_array($Database);
+		foreach($Tables as $Table){
+			dse_table_optimize($Database,$Table);
+		}
+	}else{
+		$Databases=dse_database_list_array($Database);
+		foreach($Databases as $Database){
+			$Tables=dse_table_list_array($Database);
+			foreach($Tables as $Table){
+				dse_table_optimize($Database,$Table);
+			}
+		}	
+	}
+}
 
 function dse_database_repair($Database="",$Table=""){
 	global $vars; dse_trace();

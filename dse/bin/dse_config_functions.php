@@ -20,6 +20,20 @@ $ cat package_list | xargs sudo apt-get install
  * 
 */
 
+
+
+function dse_return_configs($Serialized=FALSE){
+	global $vars; dse_trace();
+	dse_server_configure_file_load();
+	
+	if($Serialized){
+		return serialize($vars['DSE']);
+	}else{
+		return $vars['DSE'];
+	}
+}
+
+
 function dse_initd_entry_add($Script,$ServiceName,$Rank=99){
 	global $vars; dse_trace();
 	if(dse_is_osx()){
@@ -324,7 +338,7 @@ function dse_server_configure_file_load(){
 							if(!array_key_exists($Domain, $vars['DSE']['SERVER_CONF']['DNStxt'])){
 								$vars['DSE']['SERVER_CONF']['DNStxt'][$Domain]=array();
 							}
-							print "------- DNS_TXT h=$Host t=$Txt \n";
+						//print "------- DNS_TXT h=$Host t=$Txt \n";
 							$vars['DSE']['SERVER_CONF']['DNStxt'][$Domain][]=array($Host,$Txt);
 							break;
 						

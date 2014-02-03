@@ -35,13 +35,14 @@ $parameters_details = array(
   array('d','list-databases',"prints list of databases: SHOW DATABASES; command"),
   array('t:','list-tables:',"prints list of tables in database arg1: USE arg1; SHOW TABLES; command"),
   array('i','repair',"repairs all tables in all db's, or DB arg1 or table arg2 in DB arg1"),
+  array('O','optimize',"repairs all tables in all db's, or DB arg1 or table arg2 in DB arg1"),
   array('r','restart',"restart daemon"),
   array('s','status',"status daemon"),
   array('x','stop',"stop daemon"),
   array('g','start',"start daemon"),
   array('z','stats',"daemon stats"),
   array('y','stats-main',"daemon most important stats"),
-  array('u:','hotlive-backup:',"make a hotlive backup of a db"),
+  array('u:','hotlive-backup:',"make a hotlive backup of a all db's or of db arg1"),
   array('c','check',"check all tables in all db's or of db arg1"),
   array('o','compare-schema',"compares schema of all tables between db arg1 and arg2"),
  // array('e','edit',"backs up and launches a vim of ".$vars['DSE']['DLB_CONFIG_FILE']),
@@ -179,6 +180,17 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			}
 		}
 		dse_database_repair($db,$table);
+		exit(0);
+	case 'O':
+  	case 'optimize':
+		$db=""; $table="";
+		if(sizeof($argv)>1){
+			$db=$argv[1];
+			if(sizeof($argv)>1){
+				$table=$argv[2];
+			}
+		}
+		dse_database_optimize($db,$table);
 		exit(0);
 	case 'c':
   	case 'check':

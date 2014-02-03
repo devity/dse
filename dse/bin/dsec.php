@@ -20,6 +20,7 @@ $CFG_array=array();
 //$CFG_array['QueriesMade']=0;
 //$CFG_array=dse_read_config_file($vars['DSE']['DLB_CONFIG_FILE'],$CFG_array);	
 
+// d h pqrs v  H
 			
 $parameters_details = array(
   array('h','help',"this message"),
@@ -29,6 +30,7 @@ $parameters_details = array(
   array('r','rootkit',"rootkit check "),
   array('p:','port-scan',"does an basic portscan on arg1 "),
   array('d:','port-scan-detect-versions:',"does an nmap -A -T4 on arg1 "),
+  array('H:','file-hash:',"generate file hashs for path arg1 to stdout"),
 );
 
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
@@ -87,16 +89,25 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		
   	case 'r':
 	case 'rootkit':
-		$DidSomething=TRUE;
-		
+		$DidSomething=TRUE;		
 		$Command="rkhunter --check --skip-keypress";
 		//$r=dse_exec($Command,FALSE,TRUE);
-		pcntl_exec("/usr/bin/rkhunter",array("--check","--skip-keypress"));
-		
+		pcntl_exec("/usr/bin/rkhunter",array("--check","--skip-keypress"));		
 		$Command="/usr/sbin/chkrootkit";
 		//$r=dse_exec($Command,FALSE,TRUE);
-		pcntl_exec($Command);
+		pcntl_exec($Command);		
+		break;
 		
+			
+  	case 'H':
+	case 'file-hash':
+		$DidSomething=TRUE;
+		$Path=$vars['options'][$opt];
+		if(!$Path){
+			$Path="/";
+			print "No path arg1 supplied, using $Path\n";			
+		}
+		dse_dsec_file_hash($Path);
 		break;
 }
 

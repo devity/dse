@@ -16,6 +16,7 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 $vars['DSE']['SCRIPT_COMMAND_FORMAT']="";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
+// abcde hi  l n  q s uvwxyz   C R
 $parameters_details = array(
   array('l','log-show:',"shows tail of log ".$vars['DSE']['LOG_FILE']),
   array('h','help',"this message"),
@@ -28,6 +29,7 @@ $parameters_details = array(
   array('','config-show',"prints contents of ".$vars['DSE']['DSE_CONFIG_FILE_GLOBAL']),
   array('i','install',"launches dse-install"),
   array('c','configure',"launches dse-configure"),
+  array('R','return-configs',"return configs as serialized array"),
   array('s','set-env',"set shell environment variables"),
   array('n','one-include',"set shell environment variables"),
   array('y:','verbosity:',"0=none 1=some 2=more 3=debug"),
@@ -68,6 +70,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   		$ShowUsage=TRUE;
 		$DidSomething=TRUE;
 		break;
+	case 'R':
+  	case 'return-configs':
+		include_once ("/dse/bin/dse_config_functions.php");
+  		print dse_return_configs(TRUE);
+		exit;
 	case 'l':
 	case 'log-show':
 		if($vars['options'][$opt]) $Lines=$vars['options'][$opt]; else $Lines=$vars['DSE']['LOG_SHOW_LINES'];

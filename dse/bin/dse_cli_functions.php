@@ -940,21 +940,28 @@ function dse_directory_ls( $path = '.', $level = 0 ){
     $ignore = array( '.', '..' ); 
     $dh = @opendir( $path ); 
 	$tbr=array();
-    while( false !== ( $file = readdir( $dh ) ) ){
-    	//print "readdir returned file=$file\n";
-    	if($file){
-    		//print "p=$path f=$file\n"; 
-	        if( !in_array( $file, $ignore ) ){ 
-	            if( is_dir( "$path$file" ) ){
-	            //	print "calling dse_directory_ls( $path $file\n"; 
-	                $tbr[]=array("DIR",dse_directory_ls( "$path$file", ($level+1) ) ); 
-	            } else { 
-	             	$tbr[]=array("FILE","$path$file");
-	            } 
-			}
-        } 
-    } 
-    closedir( $dh );
+	if($dh){
+	    while(false !== ( $file = readdir( $dh ) ) ){
+	    	//print "readdir returned file=$file\n";
+	    	if($file){
+	    		//print "p=$path f=$file\n"; 
+		        if( !in_array( $file, $ignore ) ){ 
+		            if( is_dir( "$path$file" ) ){
+		            //	print "calling dse_directory_ls( $path $file\n"; 
+		                //if($level==0){
+		                	//$tbr[]=array("DIR", "$path$file" );
+						//}else{
+							$tbr[]=array("DIR",dse_directory_ls( "$path$file", ($level+1) ) );
+						//} 
+		            } else { 
+		             	$tbr[]=array("FILE","$path$file");
+		            } 
+				}
+	        } 
+	    } 
+	    
+    	closedir( $dh );
+	}
 	dpv(4,"} DONE dse_directory_ls($path, $level)");
 	return $tbr;
 } 
@@ -966,7 +973,7 @@ function dse_ls( $search ){
 	$tbr=array();
 	foreach(split("\n",$r) as $Line){
 		if($Line){
-			if( is_dir( "$Line" ) ){ 
+			if( is_dir( "$search/$Line" ) ){ 
 	            $tbr[]=array("DIR","$Line");
 	        } else { 
 				$tbr[]=array("FILE","$Line");
@@ -1806,11 +1813,36 @@ function dse_file_put_contents($filename,$Str){
 	return file_put_contents($filename,$Str);
 }
 
+
+function dse_remove_comments_from_string($ConfigFileContents,$CommentChar='#'){
+	global $vars; dse_trace();
+	$LineArray=split("\n",$ConfigFileContents);
+	foreach($LineArray as $Line){
+		$Line=trim($Line);
+		if(str_contains($Line,"#")){
+			if(strpos($Line,"#")===0){
+				$Line="";
+			}else{	
+				$Line=substr($Line,0,strpos($Line,"#")-1);
+				$Line=trim($Line);
+			}
+		}
+	}
+	$tbr="";
+	foreach($LineArray as $Line){
+		if($Line){
+			$tbr.=$Line."\n";
+		}
+	}
+	return $tbr;
+}
+
 // returns array of Names=>Values
 function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 	global $vars; dse_trace();
 	global $strcut_post_haystack;
 	
+	//print "dse_read_config_file() filename=$filename\n";
 	$ConfigFileContents=@dse_file_get_contents($filename);
 	if($ConfigFileContents==""){
 		print "ERROR opening config file: $filename\n";
@@ -1824,6 +1856,7 @@ function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 		$ConfigFileContents=str_replace("  ", " ", $ConfigFileContents);
 	}
 	
+	$ConfigFileContents=dse_remove_comments_from_string($ConfigFileContents,"#");
 	
 	$IncludeCommand="INCLUDE ";	$Loops=0;
 	while( str_icontains($ConfigFileContents,$IncludeCommand) && $Loops<100 ){
@@ -1835,6 +1868,7 @@ function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 	        $ConfigFileIncludeFullFileName=$ConfigDirectory . "/" . $ConfigFileIncludeName;
 	        $ConfigFileIncludeContents=file_get_contents($ConfigFileIncludeFullFileName);
 	        $ConfigFileContents=$ConfigFileContentsPreInclude."\n#START OF INC: $ConfigFileIncludeFullFileName\n".$ConfigFileIncludeContents."\n#END OF INC: $ConfigFileIncludeFullFileName\n".$ConfigFileContentsPostInclude;
+			$ConfigFileContents=dse_remove_comments_from_string($ConfigFileContents,"#");	
 	}
 		
 	foreach(array("SET ","DEFINE ") as $IncludeCommand){
@@ -1846,7 +1880,7 @@ function dse_read_config_file($filename,$tbra=array(),$OverwriteExisting=FALSE){
 	        $HolderValue=stricut($NeV," ");
 			$Sets[$Holder]=$HolderValue;
 			$tbra[$Holder]=$HolderValue;
-			print "DEFINE $Holder = $HolderValue\n";
+		//	print "DEFINE $Holder = $HolderValue\n";
 	        $ConfigFileContentsPreInclude=stricut($ConfigFileContents,"",$IncludeCommand);
 	        //$ConfigFileContentsPostInclude=substr($strcut_post_haystack,strlen($NeV)+1);
 			$ConfigFileContentsPostInclude=$strcut_post_haystack;

@@ -12,8 +12,8 @@ $ShowCommand=TRUE;
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="GSS - Grep Search String";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="grep tailored for server admin manual usage, color, launch files, etc";
-$vars['DSE']['SCRIPT_VERSION']="v0.05b";
-$vars['DSE']['SCRIPT_VERSION_DATE']="2012/07/07";
+$vars['DSE']['SCRIPT_VERSION']="v0.06b";
+$vars['DSE']['SCRIPT_VERSION_DATE']="2014/01/27";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 $vars['DSE']['SCRIPT_COMMAND_FORMAT']="grep_string [start_directory]";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
@@ -25,7 +25,8 @@ $vars['DSE']['SCRIPT_COMMAND_FORMAT']="grep_string [start_directory]";
 $parameters_details = array(
    	array('h','help',"this message"),
   	array('q','quiet',"same as --verbosity 0"),
-  	array('r','search-results',"output mode of search results"),
+  	array('r','search-results',"output mode of search results"),  	
+  	array('w','web-files',"only greps: .htm(l) php phtml js txt"),
   	array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
  	array('g','grep',"default action; greps for arg1 in arg2"),
 
@@ -58,6 +59,10 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$OutputAsSearchResults=TRUE;
 		$ShowCommand=FALSE;
 		$vars['Verbosity']=0;
+		break;
+	case 'w':
+	case 'web-files':
+		$OnlyWebFiles=TRUE;		
 		break;
 }
 
@@ -98,7 +103,18 @@ if($DoGrep || (!$DidSomething)  ){
 	}	
 	
 	$String=str_replace('\\','\\\\',$String);
-	$find_cmd="sudo grep -i -n -R --with-filename \"$String\" $d 2>/dev/null";
+	$fileTypes="";
+	if($OnlyWebFiles){
+		$fileTypes.="--include=\"*.htm\" ";
+		$fileTypes.="--include=\"*.html\" ";
+		$fileTypes.="--include=\"*.phtml\" ";
+		$fileTypes.="--include=\"*.php\" ";
+		$fileTypes.="--include=\"*.inc\" ";
+		$fileTypes.="--include=\"*.js\" ";
+		$fileTypes.="--include=\"*.asp\" ";
+		$fileTypes.="--include=\"*.txt\" ";		
+	}
+	$find_cmd="sudo grep $fileTypes -i -n -R --with-filename \"$String\" $d 2>/dev/null";
 	$out=dse_exec($find_cmd,$ShowCommand||$vars[Verbosity]>=2); 
 	//$out=dse_exec($find_cmd,TRUE,TRUE);
 	foreach(split("\n",$out) as $L){
