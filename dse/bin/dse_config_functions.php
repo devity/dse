@@ -1311,9 +1311,9 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 
 @		IN	SOA	${NS1}.	louis.devity.com. (
 			${serial} ; serial
-			300 ; refresh
+			30000 ; refresh
 			300 ; retry
-			300 ; expire
+			3o00 ; expire
 			300 ; default_ttl
 			)
 @               IN      NS      ${NS1}.
