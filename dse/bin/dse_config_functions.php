@@ -1305,7 +1305,7 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 		$domain=strtolower($Domain);
 		//print "$domain *****\n";
 		$serial=date("YmdG");
-		$zone="";
+		$zone=""; 
 		//$zone.="\$ORIGIN	${Domain}.\n";
 		$zone.="\$TTL	300
 
@@ -1313,7 +1313,7 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 			${serial} ; serial
 			30000 ; refresh
 			300 ; retry
-			3o00 ; expire
+			3000 ; expire
 			300 ; default_ttl
 			)
 @               IN      NS      ${NS1}.
