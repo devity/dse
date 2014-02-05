@@ -5,7 +5,7 @@
 
 function dse_dsec_file_hash($Path){
 	global $vars; dse_trace();
-	$Skips=array("/dev","/proc","/tmp");
+	$Skips=array("/dev","/proc","/tmp","/sys");
 	$SkipParts=array("udev/devices","/var/log");
 	
 	//print "----------dse_dsec_file_hash($Path){\n";
