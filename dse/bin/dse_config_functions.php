@@ -240,6 +240,54 @@ function dse_server_configure_file_load(){
 	}
 	
 	
+	$LineArray=split("\n",$ProcessedFileContents);	
+	foreach($LineArray as $Line){
+		$Line=trim($Line);
+		if(str_contains($Line,"#")){
+			if(strpos($Line,"#")===0){
+				$Line="";
+			}else{	
+				$Line=substr($Line,0,strpos($Line,"#")-1);
+				$Line=trim($Line);
+			}
+		}
+		if($Line){
+			if(str_contains($Line,"+=")){
+				$Lpa=split("\\+=",$Line);
+				if($Lpa[0] && $Lpa[1]){
+					$vars['DSE'][$Lpa[0]].=$Lpa[1];
+				}
+			}else{
+				$Name=strcut($Line,"","=");
+				$Value=strcut($Line,"=");
+				if($Name && $Value){
+				//	print "if($Name && $Value){\n";
+					if(str_contains($Name,"[]")){
+						$Name=str_replace("[]","",$Name);
+						if( (!isset($vars['DSE'][$Name])) ){
+							$vars['DSE'][$Name]=array();
+						}
+						$vars['DSE'][$Name][]=$Value;
+					//	print "vars['DSE'][$Name][]=$Value;\n";
+					}elseif(str_contains($Name,"[")){
+						$NameBase=strcut($Name,"","[");
+						$NameIndex=strcut($Name,"[","]");
+						if( (!isset($vars['DSE'][$NameBase])) ){
+							$vars['DSE'][$NameBase]=array();
+						} 
+						$vars['DSE'][$NameBase][$NameIndex]=$Value;
+					}else{
+						if( (!isset($vars['DSE'][$Name])) || $OverwriteExisting){
+							$vars['DSE'][$Name]=$Value;
+						}
+					}	
+				}
+			}
+		}
+	}
+	
+	
+	
 	
 	dpv(2,"looking for domains");
 	//print "Defines="; print_r($Defines); print "\n";
