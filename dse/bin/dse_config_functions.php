@@ -1311,10 +1311,10 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 
 @		IN	SOA	${NS1}.	marqul.gmail.com. (
 			${serial} ; serial
-			10000 ; refresh
-			600 ; retry
-			50000 ; expire
-			1000 ; default_ttl
+			300 ; refresh
+			300 ; retry
+			300 ; expire
+			300 ; default_ttl
 			)
 @               IN      NS      ${NS1}.
 @               IN      NS      ${NS2}.                
