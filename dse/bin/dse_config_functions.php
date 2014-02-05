@@ -1309,7 +1309,7 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 		//$zone.="\$ORIGIN	${Domain}.\n";
 		$zone.="\$TTL	300
 
-@		IN	SOA	${NS1}.	marqul.gmail.com. (
+@		IN	SOA	${NS1}.	louis.devity.com. (
 			${serial} ; serial
 			300 ; refresh
 			300 ; retry
