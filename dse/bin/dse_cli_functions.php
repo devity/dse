@@ -1223,12 +1223,12 @@ function md5_of_file($f){
 	global $vars; dse_trace();
         $sw_vers=dse_which("md5");
         if($sw_vers){
-                $m=`md5 -q $f`;
+                $m=`md5 -q "$f"`;
                 return ($m);
         }else{
                 $sw_vers=dse_which("md5sum");
                 if($sw_vers){
-                        $m=`md5sum $f`;
+                        $m=`md5sum "$f"`;
                         $m=strcut($m,""," ");
                         return ($m);
                 }
