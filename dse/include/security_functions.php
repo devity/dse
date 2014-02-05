@@ -5,7 +5,9 @@
 
 function dse_dsec_file_hash($Path){
 	global $vars; dse_trace();
-	$Skips=array("/dev","/proc");
+	$Skips=array("/dev","/proc","/tmp");
+	$SkipParts=array("/lib/udev/devices");
+	
 	//print "----------dse_dsec_file_hash($Path){\n";
 	//print_r($Path);
 	//$Path=$Path."/";
@@ -31,6 +33,12 @@ function dse_dsec_file_hash($Path){
 				$Do=TRUE;
 				foreach($Skips as $Skip){
 					if($FileName==$Skip){
+						//print "if($FileName==$Skip){\n";
+						$Do=FALSE;
+					}		
+				}
+				foreach($SkipParts as $Skip){
+					if(str_contains($FileName,$Skip)){
 						//print "if($FileName==$Skip){\n";
 						$Do=FALSE;
 					}		
