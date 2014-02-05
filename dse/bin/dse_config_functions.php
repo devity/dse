@@ -1317,7 +1317,7 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 			300 ; default_ttl
 			)
 @               IN      NS      ${NS1}.
-@               IN      NS      ${NS2}.                
+@               IN      NS      ${NS2}.
                 IN      MX      10 smtp.devity.com.
 ";
 //			IN      MX      10 smtp.devity.com.
