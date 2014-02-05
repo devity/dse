@@ -59,23 +59,6 @@ if($argv[1]=="help" || $ShowUsage){
 }
 
 // ********* main script activity START ************
-foreach($vars['DSE']['APACHE_CONF_SETTING'] as $APACHE_CONF_SETTING){
-		$APACHE_CONF_SETTING=str_replace("\t"," ",$APACHE_CONF_SETTING);
-		list($APACHE_CONF_SETTING_var,$APACHE_CONF_SETTING_value)=explode(" ",$APACHE_CONF_SETTING);
-		$current=dse_get_cfg_file_value($vars['DSE']['APACHE_CONF_FILE'],$APACHE_CONF_SETTING_var);
-		print "APACHE_CONF_SETTING_var=$APACHE_CONF_SETTING_var APACHE_CONF_SETTING_value=$APACHE_CONF_SETTING_value current=$current\n";
-		if($current!=$APACHE_CONF_SETTING_value){
-			if($current){
-				print "Setting $APACHE_CONF_SETTING_var = $APACHE_CONF_SETTING_value in ".$vars['DSE']['APACHE_CONF_FILE']."  was $current\n"; 
-				$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['APACHE_CONF_FILE']." \"^$APACHE_CONF_SETTING_var.*$\" \"$APACHE_CONF_SETTING_var $APACHE_CONF_SETTING_value\"";
-				$r=`$Command`;
-			}else{
-				//add line
-			}
-		}	
-	}
-	
-	exit;
 
 
 dse_file_link("/sbin/service",trim(`which service`));
@@ -542,35 +525,22 @@ print "jlkj1k2l3542135\n";
 
 
 if(dse_file_exists($vars['DSE']['APACHE_CONF_FILE'])){
-print "jlkj1346k2l354211234135\n";
-	
-	foreach($vars['DSE']['APACHE_CONF_SETTING'] as $APACHE_CONF_SETTING){
-		$APACHE_CONF_SETTING=str_replace("\t"," ",$APACHE_CONF_SETTING);
-		list($APACHE_CONF_SETTING_var,$APACHE_CONF_SETTING_value)=explode(" ",$APACHE_CONF_SETTING);
-		$current=dse_get_cfg_file_value($vars['DSE']['APACHE_CONF_FILE'],$APACHE_CONF_SETTING_var);
-		print "APACHE_CONF_SETTING_var=$APACHE_CONF_SETTING_var APACHE_CONF_SETTING_value=$APACHE_CONF_SETTING_value current=$current\n";	
-	}
-	
-	
-	print "PHP error display/logging: ";
-	if( $display_errors!="On" || $display_startup_errors!="On" || $log_errors!="On" || $error_reporting!="(E_ALL & ~E_NOTICE) ^ E_DEPRECATED" ){
-		print "Not dse optimal for debugging. $NotOK.\n";
-		$A=dse_ask_yn(" Fix?");
-		if($A=='Y'){
-			$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['APACHE_CONF_FILE']." \"^display_errors.*$\" \"display_errors = On\"";
-			$r=`$Command | grep display_errors`;
-			$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['APACHE_CONF_FILE']." \"^display_startup_errors.*$\" \"display_startup_errors = On\"";
-			$r=`$Command | grep display_errors`;
-			$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['APACHE_CONF_FILE']." \"^log_errors.*$\" \"log_errors = On\"";
-			$r=`$Command | grep display_errors`;
-			$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['APACHE_CONF_FILE']." \"^error_reporting.*$\" \"error_reporting = (E_ALL & ~E_NOTICE) ^ E_DEPRECATED\"";
-			$r=`$Command | grep display_errors`;
-			//print $r;
-			print "$OK\n";
-		}else{
-			print "$NotChanged\n";
+	if(array_key_exists('APACHE_CONF_SETTING',$vars['DSE'])){	
+		foreach($vars['DSE']['APACHE_CONF_SETTING'] as $APACHE_CONF_SETTING){
+			$APACHE_CONF_SETTING=str_replace("\t"," ",$APACHE_CONF_SETTING);
+			list($APACHE_CONF_SETTING_var,$APACHE_CONF_SETTING_value)=explode(" ",$APACHE_CONF_SETTING);
+			$current=dse_get_cfg_file_value($vars['DSE']['APACHE_CONF_FILE'],$APACHE_CONF_SETTING_var);
+			print "APACHE_CONF_SETTING_var=$APACHE_CONF_SETTING_var APACHE_CONF_SETTING_value=$APACHE_CONF_SETTING_value current=$current\n";
+			if($current!=$APACHE_CONF_SETTING_value){
+				if($current){
+					print "Setting $APACHE_CONF_SETTING_var = $APACHE_CONF_SETTING_value in ".$vars['DSE']['APACHE_CONF_FILE']."  was $current\n"; 
+					$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['APACHE_CONF_FILE']." \"^$APACHE_CONF_SETTING_var.*$\" \"$APACHE_CONF_SETTING_var $APACHE_CONF_SETTING_value\"";
+					$r=`$Command`;
+				}else{
+					//add line
+				}
+			}	
 		}
-		print "$OK\n";
 	}
 }
 
