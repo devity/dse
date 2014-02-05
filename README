@@ -18,18 +18,21 @@
  \________ ___ ___ ___ ___ __ __ __ _ _ _  _  _    _     _     _
  /  DOWNLOAD DSE with:
 
-  git:  git clone git://github.com/devity/dse.git
-        to install git, if needed:  sudo apt-get install git git-core     
-             		   
-  http[s]:  download https://github.com/devity/dse/tarball/master 
+  git:
+        apt-get install git git-core php5
+        mkdir -p /dse_components/dse_git
+        cd /dse_components/dse_git 
+        git clone git://github.com/devity/dse.git
+                                  		   
+  http[s]:  
+        download https://github.com/devity/dse/tarball/master 
         and save as a .tar.gz then upzip and install to destination
  \________ ___ ___ ___ ___ __ __ __ _ _ _  _  _    _     _     _
- /  INSTALL DSE with:
-           
+ /  INSTALL DSE with:           
  From whatever directory DSE ends up in, start an interactive 
   install & configuration with:
-        php ./dse/dse/bin/dse-install
-        to install php, if needed:  sudo apt-get install php5    
+  
+        php ./dse/dse/bin/dse-install            
  \________ ___ ___ ___ ___ __ __ __ _ _ _  _  _    _     _     _
  /  DSE Commands:     ( /dse/bin  Scripts )
 |     These scripts exist as their native language extension e.g.:

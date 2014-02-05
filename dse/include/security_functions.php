@@ -5,6 +5,7 @@
 
 function dse_dsec_file_hash($Path){
 	global $vars; dse_trace();
+	$Skips=array("/dev","/proc");
 	//print "----------dse_dsec_file_hash($Path){\n";
 	//print_r($Path);
 	//$Path=$Path."/";
@@ -14,7 +15,8 @@ function dse_dsec_file_hash($Path){
 		list($Type,$Name)=$DirEntry;
 		//print "99999999 $Type,$Name\n";
 		if($Name!="." && $Name!=".."){
-			$FileName=$Path."/".$Name;		
+			$FileName=$Path."/".$Name;
+			$FileName=str_replace("//", "/", $FileName);
 			if($Type=="FILE"){
 				$Size=filesize($FileName);
 				$mtime=filemtime($FileName);
@@ -26,7 +28,16 @@ function dse_dsec_file_hash($Path){
 				print "$FileName\t$Size\t$mtime\t$ctime\t$FileUser\t$FileGroup\t$Permissions\t$MD5\n";
 			}elseif($Type=="DIR"){
 			//	print "DIR!\n";
-				dse_dsec_file_hash($FileName);	
+				$Do=TRUE;
+				foreach($Skips as $Skip){
+					if($FileName==$Skip){
+						//print "if($FileName==$Skip){\n";
+						$Do=FALSE;
+					}		
+				}
+				if($Do){
+					dse_dsec_file_hash($FileName);
+				}	
 			}else{
 				//error
 			}

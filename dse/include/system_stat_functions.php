@@ -1040,7 +1040,50 @@ function dse_is_disk_low($Limit=15){
 	return FALSE;
 }
 
+function dse_sysstats_disk_tests(){
+	global $vars;
 	
+	$darrays=dse_sysstats_disks($OnlyReal);
+	list($disks_array,$disks_detailed_array)=$darrays;
+	
+	foreach($disks_detailed_array as $DiskToTest=>$PercentFree){
+		$TestDir=$DiskToTest."/test_rw_dir.delete.me";
+		$TestDir=str_replace("//","/",$TestDir);
+		$TestFile=$TestDir."/test_rw_file.delete.me";
+		if(!file_exists($TestDir)){
+			mkdir($TestDir);
+		}
+		if(file_exists($TestDir) && is_dir($TestDir)){
+				
+			$A=dse_ask_yn(" run bonnie disk tests on $DiskToTest?");
+			if($A=='Y'){
+				$User=dse_exec("whoami"); $User=str_replace("\n", "", $User);
+				$c="bonnie -d $TestDir -u $User";
+				dse_passthru($c);
+			}
+			
+			$A=dse_ask_yn(" run dd write/read tests on $DiskToTest?");
+			if($A=='Y'){
+				if(file_exists($TestFile)) unlink($TestFile);
+				$c="time dd if=/dev/zero of=$TestFile bs=16k count=8k > /dev/null";
+				dse_exec($c,TRUE,TRUE);
+				dse_exec("sync",TRUE,TRUE);
+				if(file_exists($TestFile)) unlink($TestFile);
+			}
+		}
+	}
+	
+}
+
+
+function dse_sysstats_disks_info($OnlyReal=TRUE){
+	global $vars;
+	$darrays=dse_sysstats_disks($OnlyReal);
+	list($disks_array,$disks_detailed_array)=$darrays;
+	print_r($disks_array);
+	print "\n";
+}
+
 function dse_sysstats_disks($OnlyReal=TRUE){
 	global $vars;
 	$disks_array=array();

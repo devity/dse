@@ -22,6 +22,7 @@ $CFG_array=array();
 //$CFG_array=dse_read_config_file($vars['DSE']['DLB_CONFIG_FILE'],$CFG_array);	
 
 			
+		// ab d   hop rsvw P
 
 $parameters_details = array(
  
@@ -33,6 +34,7 @@ $parameters_details = array(
   array('p','prompt',"brief info for use in shell prompt w: export PS1=\"[\$(/dse/bin/dss --prompt)]  \w:\$ \""),
   array('d','df',"colorized version of df"),
   array('w','hardware',"basic system hardware info"),
+  array('d','disk',"disk info / tests"),
   array('P','process-summary',"process summary"),
   array('r','drop-caches',"sync n clear vm cache"),
   array('u','upgrade-all',"upgrade packages, gems, pecl, pear, geoip, etc."),
@@ -87,6 +89,14 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'basic':
 		print dse_os_summary();
 		print dse_sysstats_basic_summary();
+		exit(0);
+		
+	case 'd':
+  	case 'disk':
+		include_once ("/dse/include/system_stat_functions.php");		
+		dse_sysstats_disks_info(FALSE);
+		dse_sysstats_disk_tests();
+		$DidSomething=TRUE;
 		exit(0);
 		
 	case 'o':
