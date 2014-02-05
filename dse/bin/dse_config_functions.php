@@ -1763,8 +1763,14 @@ function dse_get_cfg_file_value($File,$VarName){
 	}
 	$Raw=dse_file_get_contents($File);
 	foreach(split("\n",$Raw) as $L){
-		if($L=trim(strcut($L,"",$CommentCharacter))){
-			list($Name,$Value)=split("=",$L);
+		if($L=trim(strcut($L,"",$CommentCharacter))){			
+			if(str_contains($File,"php.ini")){
+				list($Name,$Value)=split("=",$L);
+			}elseif(str_contains($File,"apache2.conf")){
+				list($Name,$Value)=split("[ \t]+",$L);
+			}else{
+				list($Name,$Value)=split("=",$L);
+			}
 			$Name=trim($Name); $Value=trim($Value);
 			$vars[$CacheName][$Name]=$Value;
 		}
