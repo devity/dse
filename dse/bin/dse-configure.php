@@ -499,7 +499,7 @@ print "jlkj1k2l3542135\n";
 	$log_errors=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"log_errors");
 	$error_reporting=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"error_reporting");
 	print "PHP error display/logging: ";
-	if( $display_errors!="On" || $display_startup_errors!="On" || $log_errors!="On" || $error_reporting!="(E_ALL & ~E_NOTICE) ^ E_DEPRECATED" ){
+	if( $display_errors!="On" || $display_startup_errors!="On" || $log_errors!="On" || $error_reporting!="E_COMPILE_ERROR|E_RECOVERABLE_ERROR|E_ERROR|E_CORE_ERROR" ){
 		print "Not dse optimal for debugging. $NotOK.\n";
 		$A=dse_ask_yn(" Fix?");
 		if($A=='Y'){
@@ -509,7 +509,7 @@ print "jlkj1k2l3542135\n";
 			$r=`$Command | grep display_errors`;
 			$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']." \"^log_errors.*$\" \"log_errors = On\"";
 			$r=`$Command | grep display_errors`;
-			$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']." \"^error_reporting.*$\" \"error_reporting = (E_ALL & ~E_NOTICE) ^ E_DEPRECATED\"";
+			$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']." \"^error_reporting.*$\" \"error_reporting = E_COMPILE_ERROR|E_RECOVERABLE_ERROR|E_ERROR|E_CORE_ERROR\"";
 			$r=`$Command | grep display_errors`;
 			//print $r;
 			print "$OK\n";
