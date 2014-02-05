@@ -63,7 +63,16 @@ foreach($vars['DSE']['APACHE_CONF_SETTING'] as $APACHE_CONF_SETTING){
 		$APACHE_CONF_SETTING=str_replace("\t"," ",$APACHE_CONF_SETTING);
 		list($APACHE_CONF_SETTING_var,$APACHE_CONF_SETTING_value)=explode(" ",$APACHE_CONF_SETTING);
 		$current=dse_get_cfg_file_value($vars['DSE']['APACHE_CONF_FILE'],$APACHE_CONF_SETTING_var);
-		print "APACHE_CONF_SETTING_var=$APACHE_CONF_SETTING_var APACHE_CONF_SETTING_value=$APACHE_CONF_SETTING_value current=$current\n";	
+		print "APACHE_CONF_SETTING_var=$APACHE_CONF_SETTING_var APACHE_CONF_SETTING_value=$APACHE_CONF_SETTING_value current=$current\n";
+		if($current!=$APACHE_CONF_SETTING_value){
+			if($current){
+				print "Setting $APACHE_CONF_SETTING_var = $APACHE_CONF_SETTING_value in ".$vars['DSE']['APACHE_CONF_FILE']."  was $current\n"; 
+				$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['APACHE_CONF_FILE']." \"^$APACHE_CONF_SETTING_var.*$\" \"$APACHE_CONF_SETTING_var $APACHE_CONF_SETTING_value\"";
+				$r=`$Command`;
+			}else{
+				//add line
+			}
+		}	
 	}
 	
 	exit;
