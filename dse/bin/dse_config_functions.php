@@ -2827,16 +2827,9 @@ function dse_do_dse_cfg() {
 	}else{
 		$INITD_SCRIPT_ARRAY['VarNetstat']="netstat -tap | egrep 7907";
 	}
-	dse_write_daemon_script($INITD_SCRIPT_ARRAY);		
-}	
-
-
-
-
-function dse_do_services_cfg() {
-	global $vars; dse_trace();
+	dse_write_daemon_script($INITD_SCRIPT_ARRAY);
 	
-
+	
 	if(str_contains($vars['DSE']['SERVICES'],"http") && str_contains($vars['DSE']['SERVICES'],"mysql")){
 		$vars['DSE']['LAMP_SERVER']=TRUE;
 	}
@@ -2988,7 +2981,16 @@ xulrunner /root/crowbar/trunk/xulapp/application.ini &
 	dse_configure_install_packages();
 	
 	print "CALLING dse_configure_directories_create(){\n";
-	dse_configure_directories_create();
+	dse_configure_directories_create();		
+}	
+
+
+
+
+function dse_do_services_cfg() {
+	global $vars; dse_trace();
+	
+
 	
 	print "CALLING dse_configure_services_init(){\n";
 	dse_configure_services_init();
