@@ -2834,19 +2834,6 @@ function dse_do_dse_cfg() {
 		$vars['DSE']['LAMP_SERVER']=TRUE;
 	}
 
-	dse_server_configure_file_load();
-	print colorize("Services to be Setup/Configured: ","yellow","black");
-	print colorize($vars['DSE']['SERVICES']."\n","red","cyan");
-	
-	if(str_contains($vars['DSE']['SERVICES'],"dns")){
-		dse_configure_create_named_conf();
-	}
-	if(str_contains($vars['DSE']['SERVICES'],"http")){
-		dse_configure_create_httpd_conf();
-	}
-	if(str_contains($vars['DSE']['SERVICES'],"smtp")){
-		dse_configure_create_smtp_conf();
-	}
 	
 	if(str_contains($vars['DSE']['SERVICES'],"desktop")){
 		print "Installing 'desktop' packages:\n";
@@ -2990,13 +2977,27 @@ xulrunner /root/crowbar/trunk/xulapp/application.ini &
 function dse_do_services_cfg() {
 	global $vars; dse_trace();
 	
-
+	dse_server_configure_file_load();
+	
+	print colorize("Services to be Setup/Configured: ","yellow","black");
+	print colorize($vars['DSE']['SERVICES']."\n","red","cyan");
+	
+	if(str_contains($vars['DSE']['SERVICES'],"dns")){
+		dse_configure_create_named_conf();
+	}
+	if(str_contains($vars['DSE']['SERVICES'],"http")){
+		dse_configure_create_httpd_conf();
+	}
+	if(str_contains($vars['DSE']['SERVICES'],"smtp")){
+		dse_configure_create_smtp_conf();
+	}	
 	
 	print "CALLING dse_configure_services_init(){\n";
 	dse_configure_services_init();
 	
 	exit();
-dse_configure_iptables_init();
+	
+	dse_configure_iptables_init();
 	//harden
 	
 
