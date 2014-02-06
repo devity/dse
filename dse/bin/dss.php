@@ -36,7 +36,8 @@ $parameters_details = array(
   array('w','hardware',"basic system hardware info"),
   array('d','disk',"disk info / tests"),
   array('P','process-summary',"process summary"),
-  array('r','drop-caches',"sync n clear vm cache"),
+  array('r','drop-caches',"sync n clear vm cache"),  
+  array('s','stats',"system stats: load, memory, disk, net..."),
   array('u','upgrade-all',"upgrade packages, gems, pecl, pear, geoip, etc."),
   
   
@@ -102,6 +103,11 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'o':
   	case 'os':
 		print dse_os_summary();
+		exit(0);
+		
+	case 's':
+  	case 'stats':
+		print dse_sysstats_stats();
 		exit(0);
 		
 	case 'd':

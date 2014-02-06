@@ -1,6 +1,49 @@
 <?
 
 
+function dse_sysstats_stats(){
+	global $vars; dse_trace();
+	
+	$ENDSESSION="??";
+	$PROCCOUNT=str_replace("\n", "", `ps -l | wc -l` ); $PROCCOUNT=str_replace("\n", "", `expr $PROCCOUNT - 4` );
+	$ProcsTotal=str_replace("\n", "", `ps aux | wc -l` ); $ProcsTotal=str_replace("\n", "", `expr $ProcsTotal - 4` );
+	$Kernel=str_replace("\n", "", `uname -r` );
+	$IPs=str_replace("\n", "", `ips` );
+	$Groups=str_replace("\n", "", `groups` );
+	$Hostname=str_replace("\n", "", `hostname` );
+	$Who=str_replace("\n", "", `whoami` );
+	$TotalMemory=str_replace("\n", "", `cat /proc/meminfo | grep MemTotal | awk {'print $2'}` );
+	$FreeMemory=str_replace("\n", "", `cat /proc/meminfo | grep MemFree | awk {'print $2'}` );
+	$MemUsedPercent=number_format(( ($TotalMemory-$FreeMemory)/$TotalMemory )*100,2);
+	$TotalMemory=intval($TotalMemory/1000);
+	$FreeMemory=intval($FreeMemory/1000);
+	
+	//$ProcLimit=str_replace("\n", "", `ulimit -u` );
+	$UserSessions=str_replace("\n", "", `who | grep $Who | wc -l` );
+	list($UpSeconds,$IdleSeconds)=explode(" ",str_replace("\n", "", `cat /proc/uptime` ));
+	$LoadAvg=str_replace("\n", "", `cat /proc/loadavg` );
+	
+	if($UpSeconds>60*60*24){
+		$Uptime=intval($UpSeconds/(60*60*24))." days";
+	}elseif($UpSeconds>60*60*4){
+		$Uptime=intval($UpSeconds/(60*60))." hours";
+	}elseif($UpSeconds>60*4){
+		$Uptime=intval($UpSeconds/(60))." minutes";
+	}else{
+		$Uptime=$UpSeconds." seconds";
+	}
+	$DiskInfo=dse_sysstats_disks();
+	
+	print "Host: $Hostname    $IPs    UP; $Uptime\n";
+	print "Memory: $FreeMemory MB free of $TotalMemory MB. $MemUsedPercent used.\n";
+	print "CPU Load: $LoadAvg    Processes: $ProcsTotal \n";
+	foreach($DiskInfo[1] as $Disk){
+		$Used=100-$Disk[PercentFree];
+		$FreeMB=intval($Disk[Free]/(1024*1024));
+		print "Disk: $Disk[Name]   $Used% used    $FreeMB MB free\n";
+	}
+}
+
 function dse_vm_drop_caches(){
 	global $vars; dse_trace();
 	$Command="sync; echo 3 > /proc/sys/vm/drop_caches";
