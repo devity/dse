@@ -381,13 +381,34 @@ function dse_server_configure_file_load(){
 							//$Txt=trim(strcut($Line,"$Host"));
 							$Txt="";
 							for($lpai=2;$lpai<sizeof($Lpa);$lpai++){
-								$Txt.=$Lpa[$lpai];
+								if($Txt){
+									$Txt.=" ";
+								}
+								$Txt.=$Lpa[$lpai];								
 							}
 							if(!array_key_exists($Domain, $vars['DSE']['SERVER_CONF']['DNStxt'])){
 								$vars['DSE']['SERVER_CONF']['DNStxt'][$Domain]=array();
 							}
 						//print "------- DNS_TXT h=$Host t=$Txt \n";
 							$vars['DSE']['SERVER_CONF']['DNStxt'][$Domain][]=array($Host,$Txt);
+							break;
+
+
+						case 'SPF':							
+							$Host=$Lpa[1];
+							//$Txt=trim(strcut($Line,"$Host"));
+							$Txt="";
+							for($lpai=2;$lpai<sizeof($Lpa);$lpai++){
+								if($Txt){
+									$Txt.=" ";
+								}
+								$Txt.=$Lpa[$lpai];								
+							}
+							if(!array_key_exists($Domain, $vars['DSE']['SERVER_CONF']['DNSspf'])){
+								$vars['DSE']['SERVER_CONF']['DNSspf'][$Domain]=array();
+							}
+						//print "------- DNS_TXT h=$Host t=$Txt \n";
+							$vars['DSE']['SERVER_CONF']['DNSspf'][$Domain][]=array($Host,$Txt);
 							break;
 						
 					}
@@ -1291,11 +1312,11 @@ function dse_configure_create_named_conf(){
 	 
 	
 	dse_service_stop("named");
-print "adding /etc/bind/local/$Domain to named conf\n";
+print "adding ".$vars['DSE']['NAMED_LOCAL_ZONE_DIR']."/$Domain to named conf\n";
 	$named_conf_local="";
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		$Domain=strtolower($Domain);
-		$named_conf_local.= "zone \"$Domain\"{ type master; file \"/etc/bind/local/$Domain\"; };\n";	
+		$named_conf_local.= "zone \"$Domain\"{ type master; file \"".$vars['DSE']['NAMED_LOCAL_ZONE_DIR']."/$Domain\"; };\n";	
 	}
 	
 	$NS1=$vars['DSE']['SERVER_CONF']['Sets']['NameServer1'];
@@ -1331,7 +1352,20 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 		if(array_key_exists($Domain,$vars['DSE']['SERVER_CONF']['DNStxt'])){
 			foreach($vars['DSE']['SERVER_CONF']['DNStxt'][$Domain] as $DNStxtArray){
 				list($DNStxtHost,$DNStxtTxt)=$DNStxtArray;
-				$zone.="$DNStxtHost.		IN      TXT     $DNStxtTxt\n";
+				if($DNStxtHost!="@" && !str_contains($DNStxtHost,".")){
+					$DNStxtHost=$DNStxtHost.".";
+				}
+				$zone.="$DNStxtHost		IN      TXT     $DNStxtTxt\n";
+			}
+		}
+		if(array_key_exists($Domain,$vars['DSE']['SERVER_CONF']['DNSspf'])){
+			foreach($vars['DSE']['SERVER_CONF']['DNSspf'][$Domain] as $DNStxtArray){
+				list($DNStxtHost,$DNStxtTxt)=$DNStxtArray;
+				if($DNStxtHost!="@" && !str_contains($DNStxtHost,".")){
+					$DNStxtHost=$DNStxtHost.".";
+				}
+				$zone.="$DNStxtHost		IN      TXT     $DNStxtTxt\n";
+				$zone.="$DNStxtHost		IN      SPF     $DNStxtTxt\n";
 			}
 		}
 
@@ -1355,7 +1389,8 @@ print "adding /etc/bind/local/$Domain to named conf\n";
 			//print  "$Host	IN	A	$IP\n";
 			
 		}
-		$zone_file="/etc/bind/local/$domain";
+		
+		$zone_file=$vars['DSE']['NAMED_LOCAL_ZONE_DIR']."/".$domain;
 		print "Saving file $zone_file\n";
 		dse_file_put_contents($zone_file, $zone);
 		dse_file_set_owner($zone_file,"root:bind");
@@ -1385,7 +1420,7 @@ function dse_configure_create_httpd_conf(){
 	$named_conf_local="";
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		$Domain=strtolower($Domain);
-		$named_conf_local.= "zone \"$Domain\"{ type master; file \"/etc/bind/local/$Domain\"; };\n";	
+		$named_conf_local.= "zone \"$Domain\"{ type master; file \"".$vars['DSE']['NAMED_LOCAL_ZONE_DIR']."/$Domain\"; };\n";	
 	}
 	$NS1=$vars['DSE']['SERVER_CONF']['Sets']['NameServer1'];
 	$NS2=$vars['DSE']['SERVER_CONF']['Sets']['NameServer2'];
@@ -1756,9 +1791,10 @@ function dse_configure_mysql_setup(){
 
 function dse_get_cfg_file_value($File,$VarName){
 	global $vars; dse_trace();
-	$CacheName="dse_get_cfg_file_value($File,$VarName)";
-	if($vars[$CacheName]) return $vars[$CacheName][$VarName];
-	if(is_array($vars[$CacheName])) return NULL;
+	$CacheName="dse_get_cfg_file_values_$File";
+	//$CacheName="dse_get_cfg_file_value($File,$VarName)";
+	//if($vars[$CacheName]) return $vars[$CacheName][$VarName];
+	//if(is_array($vars[$CacheName])) return NULL;
 	$CommentCharacter="#";
 	if(str_contains($File,"php.ini")){
 		$CommentCharacter=";";
@@ -1777,6 +1813,7 @@ function dse_get_cfg_file_value($File,$VarName){
 			$vars[$CacheName][$Name]=$Value;
 		}
 	}
+	//print "CacheName=$CacheName = "; print_r($vars[$CacheName]);
 	if($vars[$CacheName]) return $vars[$CacheName][$VarName];
 	return NULL;
 }
@@ -2413,7 +2450,7 @@ function dse_do_dse_cfg() {
 	 array($vars['DSE']['SYSTEM_SCRIPTS_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']),
 	);
 	if(str_contains($vars['DSE']['SERVICES'],"dns")){
-		$NeededDirs[]= array("/etc/bind/local","777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']);
+		$NeededDirs[]= array($vars['DSE']['NAMED_LOCAL_ZONE_DIR'],"777",$vars['DSE']['SYSTEM_ROOT_FILE_USER:GROUP']);
 	}
 	dse_configure_create_needed_directories($NeededDirs);
 	
@@ -2762,58 +2799,6 @@ function dse_do_dse_cfg() {
 		}
 	}
 	
-	if(dse_file_exists($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'])){
-	print "jlkj1k2l3542135\n";
-		$display_errors=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"display_errors");
-		$display_startup_errors=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"display_startup_errors");
-		$log_errors=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"log_errors");
-		$error_reporting=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"error_reporting");
-		print "PHP error display/logging: ";
-		if( $display_errors!="On" || $display_startup_errors!="On" || $log_errors!="On" || $error_reporting!="E_COMPILE_ERROR|E_RECOVERABLE_ERROR|E_ERROR|E_CORE_ERROR" ){
-			print "Not dse optimal for debugging. $NotOK.\n";
-			$A=dse_ask_yn(" Fix?");
-			if($A=='Y'){
-				$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']." \"^display_errors.*$\" \"display_errors = On\"";
-				$r=`$Command | grep display_errors`;
-				$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']." \"^display_startup_errors.*$\" \"display_startup_errors = On\"";
-				$r=`$Command | grep display_errors`;
-				$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']." \"^log_errors.*$\" \"log_errors = On\"";
-				$r=`$Command | grep display_errors`;
-				$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']." \"^error_reporting.*$\" \"error_reporting = E_COMPILE_ERROR|E_RECOVERABLE_ERROR|E_ERROR|E_CORE_ERROR\"";
-				$r=`$Command | grep display_errors`;
-				//print $r;
-				print "$OK\n";
-			}else{
-				print "$NotChanged\n";
-			}
-			print "$OK\n";
-		}
-	}
-	
-	//APACHE_PHP_INI_FILE
-	
-	
-	
-	if(dse_file_exists($vars['DSE']['APACHE_CONF_FILE'])){
-		if(array_key_exists('APACHE_CONF_SETTING',$vars['DSE'])){	
-			foreach($vars['DSE']['APACHE_CONF_SETTING'] as $APACHE_CONF_SETTING){
-				$APACHE_CONF_SETTING=str_replace("\t"," ",$APACHE_CONF_SETTING);
-				list($APACHE_CONF_SETTING_var,$APACHE_CONF_SETTING_value)=explode(" ",$APACHE_CONF_SETTING);
-				$current=dse_get_cfg_file_value($vars['DSE']['APACHE_CONF_FILE'],$APACHE_CONF_SETTING_var);
-				print "APACHE_CONF_SETTING_var=$APACHE_CONF_SETTING_var APACHE_CONF_SETTING_value=$APACHE_CONF_SETTING_value current=$current\n";
-				if($current!=$APACHE_CONF_SETTING_value){
-					if($current){
-						print "Setting $APACHE_CONF_SETTING_var = $APACHE_CONF_SETTING_value in ".$vars['DSE']['APACHE_CONF_FILE']."  was $current\n"; 
-						$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['APACHE_CONF_FILE']." \"^$APACHE_CONF_SETTING_var.*$\" \"$APACHE_CONF_SETTING_var $APACHE_CONF_SETTING_value\"";
-						$r=`$Command`;
-					}else{
-						//add line
-					}
-				}	
-			}
-		}
-	}
-	
 	
 	print "Creating dwi init.d script.\n";
 	$INITD_SCRIPT_ARRAY=array();
@@ -2981,7 +2966,83 @@ function dse_do_services_cfg() {
 	
 	print colorize("Services to be Setup/Configured: ","yellow","black");
 	print colorize($vars['DSE']['SERVICES']."\n","red","cyan");
+
 	
+	
+	
+	if(dse_file_exists($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'])){
+	print "jlkj1k2l3542135\n";
+		$display_errors=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"display_errors");
+		$display_startup_errors=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"display_startup_errors");
+		$log_errors=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"log_errors");
+		$error_reporting=dse_get_cfg_file_value($vars['DSE']['SYSTEM_PHP_CLI_INI_FILE'],"error_reporting");
+		print "PHP error display/logging: ";
+		if( $display_errors!="On" || $display_startup_errors!="On" || $log_errors!="On" || $error_reporting!="E_COMPILE_ERROR|E_RECOVERABLE_ERROR|E_ERROR|E_CORE_ERROR" ){
+			print "Not dse optimal for debugging. $NotOK.\n";
+			$A=dse_ask_yn(" Fix?");
+			if($A=='Y'){
+				$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']." \"^display_errors.*$\" \"display_errors = On\"";
+				$r=`$Command | grep display_errors`;
+				$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']." \"^display_startup_errors.*$\" \"display_startup_errors = On\"";
+				$r=`$Command | grep display_errors`;
+				$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']." \"^log_errors.*$\" \"log_errors = On\"";
+				$r=`$Command | grep display_errors`;
+				$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['SYSTEM_PHP_CLI_INI_FILE']." \"^error_reporting.*$\" \"error_reporting = E_COMPILE_ERROR|E_RECOVERABLE_ERROR|E_ERROR|E_CORE_ERROR\"";
+				$r=`$Command | grep display_errors`;
+				//print $r;
+				print "$OK\n";
+			}else{
+				print "$NotChanged\n";
+			}
+			print "$OK\n";
+		}
+	}
+	
+	
+	
+	
+	if(dse_file_exists($vars['DSE']['APACHE_PHP_INI_FILE'])){
+		if(array_key_exists('APACHE_PHP_INI_SETTING',$vars['DSE'])){	
+			foreach($vars['DSE']['APACHE_PHP_INI_SETTING'] as $PHP_CONF_SETTING){
+				$PHP_CONF_SETTING=str_replace("\t"," ",$PHP_CONF_SETTING);
+				list($PHP_CONF_SETTING_var,$PHP_CONF_SETTING_value)=explode(" ",$PHP_CONF_SETTING);
+				$current=dse_get_cfg_file_value($vars['DSE']['APACHE_PHP_INI_FILE'],$PHP_CONF_SETTING_var);
+				print "APACHE_PHP_INI_FILE=$PHP_CONF_SETTING_var PHP_CONF_SETTING_value=$PHP_CONF_SETTING_value current=$current\n";
+				if($current!=$APACHE_CONF_SETTING_value){
+					if($current){
+						print "Setting $PHP_CONF_SETTING_var = $PHP_CONF_SETTING_value in ".$vars['DSE']['APACHE_PHP_INI_FILE']."  was $current\n"; 
+						$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['APACHE_PHP_INI_FILE']." \"^$PHP_CONF_SETTING_var.*$\" \"$PHP_CONF_SETTING_var = $PHP_CONF_SETTING_value\"";
+						$r=`$Command`;
+					}else{
+						//add line
+					}
+				}	
+			}
+		}
+	}
+	
+	
+	if(dse_file_exists($vars['DSE']['APACHE_CONF_FILE'])){
+		if(array_key_exists('APACHE_CONF_SETTING',$vars['DSE'])){	
+			foreach($vars['DSE']['APACHE_CONF_SETTING'] as $APACHE_CONF_SETTING){
+				$APACHE_CONF_SETTING=str_replace("\t"," ",$APACHE_CONF_SETTING);
+				list($APACHE_CONF_SETTING_var,$APACHE_CONF_SETTING_value)=explode(" ",$APACHE_CONF_SETTING);
+				$current=dse_get_cfg_file_value($vars['DSE']['APACHE_CONF_FILE'],$APACHE_CONF_SETTING_var);
+				print "APACHE_CONF_SETTING_var=$APACHE_CONF_SETTING_var APACHE_CONF_SETTING_value=$APACHE_CONF_SETTING_value current=$current\n";
+				if($current!=$APACHE_CONF_SETTING_value){
+					if($current){
+						print "Setting $APACHE_CONF_SETTING_var = $APACHE_CONF_SETTING_value in ".$vars['DSE']['APACHE_CONF_FILE']."  was $current\n"; 
+						$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['APACHE_CONF_FILE']." \"^$APACHE_CONF_SETTING_var.*$\" \"$APACHE_CONF_SETTING_var $APACHE_CONF_SETTING_value\"";
+						$r=`$Command`;
+					}else{
+						//add line
+					}
+				}	
+			}
+		}
+	}
+	
+		
 	if(str_contains($vars['DSE']['SERVICES'],"dns")){
 		dse_configure_create_named_conf();
 	}
