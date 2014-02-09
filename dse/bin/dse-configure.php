@@ -83,7 +83,8 @@ if($DSEConfig){
 	dse_do_dse_cfg();
 }
 
-if($FullConfig || $ServicesConfig){	
+if($FullConfig || $ServicesConfig){
+	dse_server_configure_file_load();	
 	dse_do_services_cfg();
 }
 	
