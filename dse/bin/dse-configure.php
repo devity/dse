@@ -65,12 +65,14 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   		dse_server_configure_file_load();	
 		dse_configure_create_httpd_conf();
 		$DidSomething=TRUE;
+		$DSEConfig=FALSE;
 		break;
 	case 'd':
   	case 'dns':
 		dse_server_configure_file_load();	
 		dse_configure_create_named_conf();
 		$DidSomething=TRUE;
+		$DSEConfig=FALSE;
 		break;
 }
 
