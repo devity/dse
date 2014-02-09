@@ -1,11 +1,18 @@
 #!/usr/bin/php
 <?php
-error_reporting(E_ALL && ~E_NOTICE);
-ini_set('display_errors','On');	
+
+//error_reporting(E_COMPILE_ERROR|E_RECOVERABLE_ERROR|E_ERROR|E_CORE_ERROR);
+//error_reporting(E_ALL && ~E_NOTICE);
+error_reporting(0);
+//ini_set('display_errors','Off');
+ini_set('display_errors',0);	
 //$vars[dse_enable_debug_code]=TRUE; $vars['Verbosity']=6;
 include_once ("/dse/bin/dse_cli_functions.php");
 include_once ("/dse/bin/dse_config.php");
 $vars['Verbosity']=0;
+
+error_reporting(0);
+ini_set('display_errors',0);
 
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE Main Script";

@@ -386,6 +386,9 @@ function dse_server_configure_file_load(){
 								}
 								$Txt.=$Lpa[$lpai];								
 							}
+							if(!array_key_exists('DNStxt', $vars['DSE']['SERVER_CONF'])){
+								$vars['DSE']['SERVER_CONF']['DNStxt']=array();
+							}
 							if(!array_key_exists($Domain, $vars['DSE']['SERVER_CONF']['DNStxt'])){
 								$vars['DSE']['SERVER_CONF']['DNStxt'][$Domain]=array();
 							}
@@ -978,7 +981,7 @@ function dse_package_install($PackageName,$Remove=FALSE,$PreferedInstaller=""){
 		  		print getColoredString(" Unknown Package Name: $PackageName!\n","red","black");
 				return 1;
 		  	}else{
-			 print "cmd: $Command   r=".$r."\n";
+			 print "cmd: $Command   rrrr=".$r."rrrr\n";
 			    print getColoredString(" ERROR w/ cmd: $Command\n$r\n","red","black");
 				return -1;
 			}
