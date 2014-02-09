@@ -351,6 +351,12 @@ $PackageNamesArray[]="geoip-database";
 foreach($vars['DSE']['AddPkg'] as $Pkg){
 	$PackageNamesArray[]=$Pkg;
 }
+foreach($vars['DSE']['RemovePkg'] as $Pkg){
+	$PackageNamesRemoveArray[]=$Pkg;
+}
+foreach($vars['DSE']['PkgRemove'] as $Pkg){
+	$PackageNamesRemoveArray[]=$Pkg;
+}
 
 
 $NotOSXPackageNamesArray[]="memstat";
@@ -438,6 +444,15 @@ foreach($PackageNamesArray as $PackageName){
 		exit(-1);
 	}
 }
+foreach($PackageNamesRemoveArray as $PackageName){
+	$r=dse_package_install($PackageName,TRUE);
+	if($r<0){
+		print getColoredString("FATAL ERROR: removing package $PackageName\n","red","black");
+		print getColoredString($vars['DSE']['SCRIPT_FILENAME']."Exiting.\n","red","black");
+		exit(-1);
+	}
+}
+
 $PackageNamesArray=array();
 $OSXPackageNamesArray=array();
 $NotOSXPackageNamesArray=array();

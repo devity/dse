@@ -1088,6 +1088,8 @@ function dse_package_install($PackageName,$Remove=FALSE,$PreferedInstaller=""){
 	
 }
 
+
+
 function dse_package_run_upgrade(){
 	global $vars; dse_trace();
 	print pad("Updating Packages: ...   ","90%",colorize("-","blue"))."\n";

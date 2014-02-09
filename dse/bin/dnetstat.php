@@ -36,7 +36,7 @@ $parameters_details = array(
   array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   array('d:','deliminator:',"default is [space]"),
   array('o','open',"List OPEN ports"),
-  array('c:','connected',"List connections to port argv1"),
+  array('c:','connected',"List connections to all listening ports or port argv1"),
   array('x','xip',"Return External IP Address"),
   array('i','ip',"Return IP Address of interface[arg1] (defaults to eth0 or en0(mac))"),
   array('n','show-interface-names'," for use with -a  includes interface names"),
@@ -184,6 +184,7 @@ if($ShowConnected){
 		}
 	}
 }
+
 
 if($ShowExternalIP){
 	$ext_info = `curl --silent http://checkip.dyndns.org | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}'`;
