@@ -189,10 +189,11 @@ $vars['DSE']['YellowWords']=array("status","result","permission","login","logout
 	,"removed","configuration","config","version","disabled","message"); 
 
 
-$vars['DSE']['ComponentsAvailable']=array("image-processing","desktop","tor","xurlrunner","crowbar","synergy","flyback");
+//$vars['DSE']['ComponentsAvailable']=array("image-processing","desktop","tor","xurlrunner","crowbar","synergy","flyback");
 $vars['DSE']['AddComponents']=array();
 $vars['DSE']['AddPkg']=array();
-$vars['DSE']['DisabledComponents']=array();
+$vars['DSE']['RemovePkg']=array();
+$vars['DSE']['Components']=array();
 
 // *********************************************************************************
 // *********************************************************************************
@@ -203,6 +204,14 @@ $vars['DSE']['DisabledComponents']=array();
 // *********************************************************************************
 $vars['DSE']=dse_read_config_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],$vars['DSE'],TRUE);
 
+
+foreach($vars['DSE']['Components'] as $k=>$v){
+	if($v=="YES"){
+		$vars['DSE']['AddComponents'][]=$k;
+	}elseif($v=="NO"){
+		$vars['DSE']['DisabledComponents'][]=$k;	
+	}
+}
 
 
 if(str_contains($vars['DSE']['SERVICES'],"mysql")){

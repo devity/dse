@@ -968,7 +968,10 @@ function dse_package_install($PackageName,$Remove=FALSE,$PreferedInstaller=""){
 			if(str_contains($r,"will be installed")){
 				print getColoredString(" Installed.\n","green","black");
 				return 0;
-		  	}elseif(str_contains($r,"is already ")){
+		  	}elseif(str_contains($r,"is not installed, so not removed")){		  		
+				print getColoredString(" Already Removed.\n","green","black");
+				return 0;
+		  	}elseif(str_contains($r,"is already ")){		  		
 				print getColoredString(" Already Installed.\n","green","black");
 				return 0;
 		  	}elseif(str_contains($r,"ldn't find pack")){

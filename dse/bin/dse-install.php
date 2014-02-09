@@ -485,9 +485,10 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		print "\n";
 		if($A=='Y'){
 			$vars['DSE']['AddComponents'][]=$ComponentName;
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
-		}else{
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=YES");
+		}else{			
+			$vars['DSE']['DisabledComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=NO");
 		}
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
@@ -535,10 +536,11 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		$A=dse_ask_yn("Install Component $Component?");
 		print "\n";
 		if($A=='Y'){
-			$vars['DSE']['AddComponents'][]=$ComponentName;
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
-		}else{
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+			$vars['DSE']['AddComponents'][]=$ComponentName;			
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=YES");
+		}else{			
+			$vars['DSE']['DisabledComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=NO");
 		}
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
@@ -562,9 +564,10 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		print "\n";
 		if($A=='Y'){
 			$vars['DSE']['AddComponents'][]=$ComponentName;
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=YES");
 		}else{
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+			$vars['DSE']['DisabledComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=NO");
 		}
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
@@ -594,9 +597,10 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		print "\n";
 		if($A=='Y'){
 			$vars['DSE']['AddComponents'][]=$ComponentName;
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=YES");
 		}else{
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+			$vars['DSE']['DisabledComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=NO");
 		}
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
@@ -709,9 +713,10 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		print "\n";
 		if($A=='Y'){
 			$vars['DSE']['AddComponents'][]=$ComponentName;
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=YES");
 		}else{
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+			$vars['DSE']['DisabledComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=NO");
 		}
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
@@ -735,9 +740,10 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		print "\n";
 		if($A=='Y'){
 			$vars['DSE']['AddComponents'][]=$ComponentName;
-			$DidReplace=dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=YES");
 		}else{
-			$DidReplace=dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+			$vars['DSE']['DisabledComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=NO");
 		}
 		if(!$DidReplace){
 			dse_file_add_line_if_not($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"AddComponents[]=$ComponentName");
@@ -766,9 +772,10 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		print "\n";
 		if($A=='Y'){
 			$vars['DSE']['AddComponents'][]=$ComponentName;
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=YES");
 		}else{
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+			$vars['DSE']['DisabledComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=NO");
 		}
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
@@ -816,9 +823,10 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		print "\n";
 		if($A=='Y'){
 			$vars['DSE']['AddComponents'][]=$ComponentName;
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=YES");
 		}else{
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+			$vars['DSE']['DisabledComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=NO");
 		}
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
@@ -860,9 +868,10 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		print "\n";
 		if($A=='Y'){
 			$vars['DSE']['AddComponents'][]=$ComponentName;
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=YES");
 		}else{
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+			$vars['DSE']['DisabledComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=NO");
 		}
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
@@ -1052,9 +1061,10 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 					break;
 			}
 			
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","AddComponents[]=$ComponentName");
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=YES");
 		}else{
-			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"# ComponentsAvailable[]=$ComponentName","DisabledComponents[]=$ComponentName");
+			$vars['DSE']['DisabledComponents'][]=$ComponentName;
+			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=NO");
 		}
 	}
 	if(in_array("desktop", $vars['DSE']['AddComponents'])){
