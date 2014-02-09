@@ -24,6 +24,7 @@ $parameters_details = array(
   array('f','full',"full setup / configuration"),
   array('s','services',"(re)runs configuration of services"),
   array('H','http',"(re)runs configuration of http(s)"),
+  array('d','dns',"(re)runs configuration of dns"),
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -61,7 +62,14 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			
 	case 'H':
   	case 'http':
+  		dse_server_configure_file_load();	
 		dse_configure_create_httpd_conf();
+		$DidSomething=TRUE;
+		break;
+	case 'd':
+  	case 'dns':
+		dse_server_configure_file_load();	
+		dse_configure_create_named_conf();
 		$DidSomething=TRUE;
 		break;
 }

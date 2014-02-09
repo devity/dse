@@ -1309,6 +1309,7 @@ COMMIT*/
 function dse_configure_create_named_conf(){
 	global $vars; dse_trace();
 	
+	//dse_server_configure_file_load();
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		if($Domain) {
 			print "Domain: $Domain\n";	
@@ -1418,7 +1419,7 @@ print "adding ".$vars['DSE']['NAMED_LOCAL_ZONE_DIR']."/$Domain to named conf\n";
 
 function dse_configure_create_httpd_conf(){
 	global $vars; dse_trace();
-	dse_server_configure_file_load();
+//	dse_server_configure_file_load();
 	$DidAnSSL=FALSE;
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		print "Domain: $Domain\n";	
