@@ -978,6 +978,7 @@ function dse_package_install($PackageName,$Remove=FALSE,$PreferedInstaller=""){
 		  		print getColoredString(" Unknown Package Name: $PackageName!\n","red","black");
 				return 1;
 		  	}else{
+			 print "cmd: $Command   r=".$r."\n";
 			    print getColoredString(" ERROR w/ cmd: $Command\n$r\n","red","black");
 				return -1;
 			}
