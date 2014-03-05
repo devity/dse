@@ -1430,8 +1430,8 @@ function dse_configure_create_httpd_conf(){
 	dse_service_stop("httpd");
 	$named_conf_local="";
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
-		$Domain=strtolower($Domain);
-		$named_conf_local.= "zone \"$Domain\"{ type master; file \"".$vars['DSE']['NAMED_LOCAL_ZONE_DIR']."/$Domain\"; };\n";	
+		$domain=strtolower($Domain);
+		$named_conf_local.= "zone \"$domain\"{ type master; file \"".$vars['DSE']['NAMED_LOCAL_ZONE_DIR']."/$domain\"; };\n";	
 	}
 	$NS1=$vars['DSE']['SERVER_CONF']['Sets']['NameServer1'];
 	$NS2=$vars['DSE']['SERVER_CONF']['Sets']['NameServer2'];
@@ -1443,20 +1443,21 @@ function dse_configure_create_httpd_conf(){
 			$DocRoot=$vars['DSE']['HTTP_ROOT_DIR'];
 			print "$domain *****\n";
 			
-			foreach ($vars['DSE']['SERVER_CONF']['Webroots'][$Domain] as $Hosts=>$Webroot){
+			foreach ($vars['DSE']['SERVER_CONF']['Webroots'][$domain] as $Hosts=>$Webroot){
 				//if($i>4) break;
 				foreach(split(",",$Hosts) as $Host){
 					//if($i>4) break;
 					$Extra="";
-					$ServerAlias="$Host.$Domain";
-					if($Host=="_blank") $ServerAlias="$Domain";
+					$ServerAlias="$Host.$domain";
+					if($Host=="_blank") $ServerAlias="$domain";
 					$ServerName="$Host.$domain";
 					if($Host=="_blank") $ServerName="$domain";
-					$IP=$vars['DSE']['SERVER_CONF']['Hosts'][$Domain][$Host];
+					$IP=$vars['DSE']['SERVER_CONF']['Hosts'][$domain][$Host];
 					$File404="$DocRoot/$Webroot/404.php";
 					if(dse_file_exists($File404)){
 						$Extra.=" ErrorDocument   404     /404.php\n";
 					}
+					print "HTTP $Host.$domain ======\n";
 					$site="
 	<VirtualHost *:80>
 		ServerName $ServerName
@@ -1469,9 +1470,12 @@ function dse_configure_create_httpd_conf(){
 	";
 	
 		#ErrorLog /var/log/apache2/error.log
-					if($vars['DSE']['SERVER_CONF']['WebrootsSSL'][$Domain][$Host]){
+		print "q? vars['DSE']['SERVER_CONF']['WebrootsSSL'][$domain][$Host]\n";
+					if($vars['DSE']['SERVER_CONF']['WebrootsSSL'][$domain][$Host]){
+						
+						print "HTTPS $Host.$Domain =====SSL\n";
 						$DidAnSSL=TRUE;
-						$KeyFile=$Host.".".$Domain;
+						$KeyFile=$Host.".".$domain;
 						$site.="
 		<VirtualHost *:443>
 			ServerName $ServerName
