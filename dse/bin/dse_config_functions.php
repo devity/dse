@@ -1463,9 +1463,11 @@ function dse_configure_create_httpd_conf(){
 		ServerName $ServerName
 		ServerAlias $ServerAlias
 		DocumentRoot $DocRoot/$Webroot		
-		$Extra<Directory $DocRoot/$Webroot/>
-	    	#AllowOverride ErrorDocument
-	    </Directory>	
+		$Extra
+		<Directory $DocRoot/$Webroot/>
+	    		#AllowOverride ErrorDocument
+			Options -Indexes +MultiViews
+		</Directory>	
 	</VirtualHost>	
 	";
 	
@@ -1482,7 +1484,9 @@ function dse_configure_create_httpd_conf(){
 			ServerAlias $ServerAlias
 			DocumentRoot $DocRoot/$Webroot
 			#ErrorLog /var/log/apache2/error.log
-			$Extra<Directory $DocRoot/$Webroot/>				
+			$Extra
+			<Directory $DocRoot/$Webroot/>				
+				Options -Indexes +MultiViews
 				#AllowOverride ErrorDocument
 			</Directory>
 			SSLEngine On
