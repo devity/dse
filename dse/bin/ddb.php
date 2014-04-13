@@ -45,6 +45,7 @@ $parameters_details = array(
   array('u:','hotlive-backup:',"make a hotlive backup of a all db's or of db arg1"),
   array('c','check',"check all tables in all db's or of db arg1"),
   array('o','compare-schema',"compares schema of all tables between db arg1 and arg2"),
+  array('C'.'command'."run command arg1 on host arg2, user arg3, pw arg4"),
  // array('e','edit',"backs up and launches a vim of ".$vars['DSE']['DLB_CONFIG_FILE']),
 //  array('c','config-show',"prints contents of ".$vars['DSE']['DLB_CONFIG_FILE']),
  // array('d:','daemon:',"manages the checking daemon. options: [start|stop|restart|status]"),
@@ -87,7 +88,33 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 
 
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
-	
+  	case 'C':
+	case 'command':
+		if(sizeof($argv)>1){
+			$Command=$argv[1];
+		}else{
+			$Command="";
+		}
+		if(sizeof($argv)>2){
+			$Host=$argv[2];
+		}else{
+			$Host="";
+		}
+		if(sizeof($argv)>3){
+			$User=$argv[3];
+		}else{
+			$User="";
+		}
+		if(sizeof($argv)>4){
+			$Password=$argv[4];
+		}else{
+			$Password="";
+		}
+		$tbr=dse_database_do_command($Command,$Host,$User,$Password);
+		$tbr=serialize($tbr);
+		print $tbr;
+		exit();
+		break;
   	case 'u':
 	case 'hotlive-backup':
 		if($vars['options'][$opt]){

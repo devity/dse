@@ -40,6 +40,44 @@ function dse_database_stats($Show="ALL"){
 }
 
 
+function dse_database_do_command($Command,$Host="",$User="",$Password=""){
+	global $vars; dse_trace();
+
+	$Command=str_replace("\"", "\\\"", $Command);
+	$Options="";
+	if($User){
+		$Options.=" -u $User ";
+	}
+	if($Host){
+		$Options.=" -h $Host ";
+	}
+	if($Password){
+		$Options.=" -u $Password ";
+	}
+	$tbr=array();
+	$fc="echo \"$Command\" | mysql $Options";
+	$r=dse_exec($fc,FALSE,FALSE);
+	$rla=explode("\n",$r);
+	$First=TRUE;
+	foreach($rla as $l){
+		if(trim($l)){
+			if($First){
+				$First=FALSE;
+				$lpa=explode("\t",$l);
+				$ColumnNames=$lpa;
+			}else{
+				$lpa=explode("\t",$l);
+				$ta=array();
+				foreach($ColumnNames as $i=>$n){
+					$ta[$n]=$lpa[$i];
+				}
+				$tbr[]=$ta;
+			}
+		}
+	}
+	return $tbr;
+}
+
 function dse_database_service_name(){
 	global $vars; dse_trace();
 	return "mysql";
