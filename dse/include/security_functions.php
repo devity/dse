@@ -1,6 +1,30 @@
 <?
 
 
+function package_of_file($File){
+	global $vars; dse_trace();
+	$r=`dpkg -S "$File" 2>&1`;	
+	if(str_contains($r,"no path found")){
+		return "";
+	}
+	$Package=strcut($r,"",":");
+	return $Package;
+}
+
+
+function version_of_package($Package){
+	global $vars; dse_trace();
+	if(!$Package){
+		return "";
+	}
+	$r=`dpkg -s "$Package" 2>&1`;	
+	if(str_contains($r,"is not installed")){
+		return "";
+	}
+	$Version=strcut($r,"Version:","\n");
+	$Version=trim($Version);
+	return $Version;
+}
 
 
 function dse_dsec_file_hash($Path){
@@ -38,7 +62,9 @@ function dse_dsec_file_hash($Path){
 					$Permissions=fileperms($FileName);					
 					$FileUser=posix_getpwuid(fileowner($FileName));			$FileUser=$FileUser['name'];			
 					$FileGroup=posix_getgrgid(filegroup($FileName));		$FileGroup=$FileGroup['name'];
-					print "$FileName\t$Size\t$mtime\t$ctime\t$FileUser\t$FileGroup\t$Permissions\t$MD5\n";
+					$Pkg=package_of_file($FileName);
+					$PkgVer=version_of_package($Pkg);
+					print "$FileName\t$Size\t$mtime\t$ctime\t$FileUser\t$FileGroup\t$Permissions\t$MD5\t$Pkg\t$PkgVer\n";
 				}elseif($Type=="DIR"){
 				//	print "DIR!\n";
 					$Do=TRUE;

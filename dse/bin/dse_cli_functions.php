@@ -967,7 +967,7 @@ function dse_directory_ls( $path = '.', $level = 0 ){
 } 
 function dse_ls( $search ){ 
 	global $vars; dse_trace();
-	$Command="ls -a -1 $search";
+	$Command="ls -a -1 \"$search\"";
 	$r=`$Command`;
 	//print "Command: $Command\n$r\n";
 	$tbr=array();
