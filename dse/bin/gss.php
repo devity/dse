@@ -19,23 +19,52 @@ $vars['DSE']['SCRIPT_COMMAND_FORMAT']="grep_string [start_directory]";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
  
- 
 
 
 $parameters_details = array(
    	array('h','help',"this message"),
+  	array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
   	array('q','quiet',"same as --verbosity 0"),
+  	array('W','html-output',"uses html color codes for output. else terminal codes."),
   	array('r','search-results',"output mode of search results"),  	
   	array('w','web-files',"only greps: .htm(l) php phtml js txt"),
-  	array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),
  	array('g','grep',"default action; greps for arg1 in arg2"),
+ 	array('U','no-sudo',"runs as user, no sudo"),
+ 	 
 
  );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
 $vars['argv_origional']=$argv;
+$NoSudo=FALSE;
 
 dse_cli_script_start();
+
+foreach (array_keys($vars['options']) as $opt) switch ($opt) {
+	case 'W':
+	case 'html-output':
+		$vars['DSE']['OUTPUT_FORMAT']="HTML";
+		break;
+	case 'q':
+	case 'quiet':
+		$Quiet=TRUE;
+		$vars['ScriptHeaderShow']=FALSE;
+		$vars['Verbosity']=0;
+		break;
+  	case 'v':
+	case 'verbosity':
+		$vars['Verbosity']=$vars['options'][$opt];
+		dpv(2,"Verbosity set to ".$vars['Verbosity']."\n");
+		break;
+  	case 'U':
+	case 'no-sudo':
+		$NoSudo=TRUE;
+		break;
+		
+}
+ 
+ 
+
 	
 $DoGrep=TRUE;
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
@@ -114,7 +143,10 @@ if($DoGrep || (!$DidSomething)  ){
 		$fileTypes.="--include=\"*.asp\" ";
 		$fileTypes.="--include=\"*.txt\" ";		
 	}
-	$find_cmd="sudo grep $fileTypes -i -n -R --with-filename \"$String\" $d 2>/dev/null";
+	$find_cmd="grep $fileTypes -i -n -R --with-filename \"$String\" $d 2>/dev/null";
+	if(!$NoSudo){		
+		$find_cmd="sudo ".$find_cmd;
+	}
 	$out=dse_exec($find_cmd,$ShowCommand||$vars[Verbosity]>=2); 
 	//$out=dse_exec($find_cmd,TRUE,TRUE);
 	foreach(split("\n",$out) as $L){
