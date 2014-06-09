@@ -13,8 +13,8 @@ $vars['Verbosity']=0;
 // ********* DO NOT CHANGE below here ********** DO NOT CHANGE below here ********** DO NOT CHANGE below here ******
 $vars['DSE']['SCRIPT_NAME']="DSE G Code Generator";
 $vars['DSE']['SCRIPT_DESCRIPTION_BRIEF']="basic g-code file generator & manipulator";
-$vars['DSE']['SCRIPT_VERSION']="v0.01b";
-$vars['DSE']['SCRIPT_VERSION_DATE']="2012/11/22";
+$vars['DSE']['SCRIPT_VERSION']="v0.02b";
+$vars['DSE']['SCRIPT_VERSION_DATE']="2014/06/08";
 $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 $vars['DSE']['SCRIPT_COMMAND_FORMAT']="";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
@@ -23,6 +23,7 @@ $vars['DSE']['SCRIPT_COMMAND_FORMAT']="";
 
 $vars['DGCG']['Units']="in";
 $vars['DGCG']['Tool']['Diameter']=1;
+$vars['DGCG']['Tool']['Feed']=10;
 $vars['DGCG']['Current']['X']=0;
 $vars['DGCG']['Current']['Y']=0;
 $vars['DGCG']['Current']['Z']=0;
