@@ -75,7 +75,8 @@ if($argv[1]=="a"){
 	}
 	$data=$args."\n";
 	$filename="/backup/denote.txt";
-	file_put_contents($filename, $data, FILE_APPEND);	
+	file_put_contents($filename, $data, FILE_APPEND);
+	print "Added: $args\n";	
 	exit();
 }elseif($argv[1]=="s"){
 	$args="";
@@ -94,7 +95,7 @@ if($argv[1]=="a"){
 	$r=dse_exec($command,FALSE,FALSE);
 	$data_green=colorize($data,"green","black");
 	$r=str_replace($data, $data_green, $r);	
-	print "$r\n";	
+	print "Search Results:\n$r\n";	
 	exit();
 }
 //print "args=$args\n";
