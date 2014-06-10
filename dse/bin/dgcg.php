@@ -213,7 +213,7 @@ function dgcg_dngc_file_process($DNGC_Filename){
 
 function dgcg_grating($Width,$Height,$Depth,$Diameter,$Spacing){
 	global $vars,$OutFile;
-	
+	dpv(3,"dgcg_grating($Width,$Height,$Depth,$Diameter,$Spacing);\n");	
 	
 	$vars['DGCG']['Program']['Body']="";
 	
