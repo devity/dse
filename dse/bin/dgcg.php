@@ -182,6 +182,14 @@ function dgcg_dngc_file_process($DNGC_Filename){
 							}
 						}
 						break;
+					case 'hole':
+						$X=substr($La[1],1);
+						$Y=substr($La[2],1);
+						$Z=substr($La[3],1);
+						$Diameter=substr($La[4],1);
+						$Depth=substr($La[5],1);
+						dgcg_hole($Y, $Y, $Z, $Diameter, $Depth);
+						break;
 					default:
 						break;
 				}
