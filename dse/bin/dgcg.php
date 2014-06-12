@@ -194,6 +194,33 @@ function dgcg_dngc_file_process($DNGC_Filename){
 						$vars['DGCG']['Tool']['Radius']=$vars['DGCG']['Tool']['Diameter']/2;
 						$vars['DGCG']['Tool']['PassStep']=$vars['DGCG']['Tool']['Diameter']/3;
 						break;
+					case 'text':					
+						if($La[1][0]=="+"){
+							$X+=substr($La[1],1);
+						}else{
+							$X=$La[1];
+						}
+						if($La[2][0]=="+"){
+							$Y+=substr($La[2],1);
+						}else{
+							$Y=$La[2];
+						}
+						if($La[3][0]=="+"){
+							$Z+=substr($La[3],1);
+						}else{
+							$Z=$La[3];
+						}
+						$FontHeight=$La[4];
+						$Depth=$La[5];
+						$Text="";
+						for($ti=6;$ti<count($La);$ti++){
+							if($Text){
+								$Text.=" ";
+							}
+							$Text.=$La[$i];
+						}
+						dgcg_text($X,$Y,$Z,$Text,$Depth,$FontHeight);
+						break;
 					case 'go':
 						if(sizeof($La)==4){
 							$Xp=substr($La[1],1);
@@ -805,7 +832,7 @@ function dgcg_hole_oval($x,$y,$z,$DiameterX,$DiameterY,$Depth,$WidthOuterX=0,$Wi
 	$RadiusIncX=$vars['DGCG']['Tool']['PassStep'];
 	$RadiusIncY=$vars['DGCG']['Tool']['PassStep'];
 	while(!$Done){
-		dpv(6," while( $PointsOnPerimeter<$LinesSegmentsPerPerimeterApproximation*3 && $CurrentHoleRadiusX <= ($DiameterX/2)  && $CurrentHoleRadiusY <= ($DiameterY/2) ){\n");
+		dpv(6," while( $PointsOnPerimeter<$LinesSegmentsPerPerimeterApproximation*2 && $CurrentHoleRadiusX <= ($DiameterX/2)  && $CurrentHoleRadiusY <= ($DiameterY/2) ){\n");
 		$Angle+=$AngleIncrement;
 		if($Angle>=2*$Pi){
 			$Angle=0;
