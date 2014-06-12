@@ -122,7 +122,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			}
 		}		
 		if(!$OutFile){
-			$OutFilename=str_replace(".dngc", ".jpg", $DNGC_Filename);
+			$OutFilename=str_replace(".dngc", ".ngc", $DNGC_Filename);
 			if($OutFilename && $OutFilename!=$DNGC_Filename){
 				$OutFile=$OutFilename;
 				dpv(2,"Outfile set to $OutFile\n");
