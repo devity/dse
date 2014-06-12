@@ -652,13 +652,14 @@ function dgcg_hole($x,$y,$z,$Diameter,$Depth){
 	dgcg_go($x,$y,$z);
 	dgcg_go($x,$y,$z-$Depth);
 	$CurrentHoleRadius=$vars['DGCG']['Tool']['Diameter'];
-	$Angle=0;
-	while($CurrentHoleRadius<$Diameter/2){
-		dpv(5," while($CurrentHoleRadius<$Diameter/2){\n");
-		$Angle-=$AngleIncrement;
-		$AngleIncrement-=$AngleIncrement*.01;
-		$CurrentHoleRadius=abs(($Angle/(2*$Pi))*$vars['DGCG']['Tool']['PassStep']);		
-		dpv(5,"  $CurrentHoleRadius=($Angle/(2*$Pi))*".$vars['DGCG']['Tool']['PassStep'].";\n");
+	$Angle=0; $PointsOnPerimeter=0;
+	while( $PointsOnPerimeter<150 && $CurrentHoleRadius <= ($Diameter/2) ){		dpv(5," while($CurrentHoleRadius<$Diameter/2){\n");
+		$Angle+=$AngleIncrement;		
+		$CurrentHoleRadius=abs(($Angle/(2*$Pi))*$vars['DGCG']['Tool']['PassStep']);		dpv(5,"  $CurrentHoleRadius=($Angle/(2*$Pi))*".$vars['DGCG']['Tool']['PassStep'].";\n");
+		if($CurrentHoleRadius*2>=$Diameter){
+			$PointsOnPerimeter++;
+			$CurrentHoleRadius=$Diameter/2;
+		}
 		$cx=$x+(cos($Angle)*$CurrentHoleRadius);
 		$cy=$y+(sin($Angle)*$CurrentHoleRadius);
 		dgcg_go($cx,$cy,$z-$Depth);
