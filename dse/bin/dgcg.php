@@ -190,12 +190,46 @@ function dgcg_dngc_file_process($DNGC_Filename){
 						$Diameter=substr($La[4],1);
 						$Depth=substr($La[5],1);
 						 * */
-						$X=$La[1];
-						$Y=$La[2];
-						$Z=$La[3];
+						if($La[1][0]=="+"){
+							$X+=substr($La[1],1);
+						}else{
+							$X=$La[1];
+						}
+						if($La[2][0]=="+"){
+							$Y+=substr($La[2],1);
+						}else{
+							$Y=$La[2];
+						}
+						if($La[3][0]=="+"){
+							$Z+=substr($La[3],1);
+						}else{
+							$Z=$La[3];
+						}
 						$Diameter=$La[4];
 						$Depth=$La[5];
 						dgcg_hole($X, $Y, $Z, $Diameter, $Depth);
+						break;
+					case 'arc':						
+						if($La[1][0]=="+"){
+							$X+=substr($La[1],1);
+						}else{
+							$X=$La[1];
+						}
+						if($La[2][0]=="+"){
+							$Y+=substr($La[2],1);
+						}else{
+							$Y=$La[2];
+						}
+						if($La[3][0]=="+"){
+							$Z+=substr($La[3],1);
+						}else{
+							$Z=$La[3];
+						}
+						$Diameter=$La[4];
+						$Depth=$La[5];						
+						$RadiansStart=$La[6];
+						$RadiansStop=$La[7];
+						dgcg_arc($X,$Y,$Z,$Diameter,$RadiansStart,$RadiansStop,$Depth);
 						break;
 					default:
 						break;
