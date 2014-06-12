@@ -178,7 +178,7 @@ function dgcg_dngc_file_process($DNGC_Filename){
 			$L=trim($L);
 			if($L){
 				dpv(3,"DNGC infile line: $L\n");
-				$L=strtolower($L);
+				$L=strtolower($L);	
 				$La=explode(" ",$L);
 				switch($La[0]){
 					case 'units':
@@ -213,13 +213,7 @@ function dgcg_dngc_file_process($DNGC_Filename){
 							}
 						}
 						break;
-					case 'hole':
-						/*$X=substr($La[1],1);
-						$Y=substr($La[2],1);
-						$Z=substr($La[3],1);
-						$Diameter=substr($La[4],1);
-						$Depth=substr($La[5],1);
-						 * */
+					case 'hole':						
 						if($La[1][0]=="+"){
 							$X+=substr($La[1],1);
 						}else{
@@ -238,6 +232,27 @@ function dgcg_dngc_file_process($DNGC_Filename){
 						$Diameter=$La[4];
 						$Depth=$La[5];
 						dgcg_hole($X, $Y, $Z, $Diameter, $Depth);
+						break;
+					case 'hole-oval':						
+						if($La[1][0]=="+"){
+							$X+=substr($La[1],1);
+						}else{
+							$X=$La[1];
+						}
+						if($La[2][0]=="+"){
+							$Y+=substr($La[2],1);
+						}else{
+							$Y=$La[2];
+						}
+						if($La[3][0]=="+"){
+							$Z+=substr($La[3],1);
+						}else{
+							$Z=$La[3];
+						}
+						$DiameterX=$La[4];
+						$DiameterY=$La[5];
+						$Depth=$La[6];
+						dgcg_hole($X, $Y, $Z, $DiameterX, $DiameterY, $Depth);
 						break;
 					case 'arc':						
 						if($La[1][0]=="+"){
@@ -726,6 +741,35 @@ function dgcg_hole($x,$y,$z,$Diameter,$Depth){
 		}
 		$cx=$x+(cos($Angle)*$CurrentHoleRadius);
 		$cy=$y+(sin($Angle)*$CurrentHoleRadius);
+		dgcg_go($cx,$cy,$z-$Depth);
+	}
+	dgcg_go($x,$y,$z);
+}
+
+
+function dgcg_hole_oval($x,$y,$z,$DiameterX,$DiameterY,$Depth){
+	global $vars;
+	dpv(4,"dgcg_hole($x,$y,$z,$Diameter,$Depth){\n");
+	$Pi=3.14159;
+	$AngleIncrement=$Pi/50;
+	dgcg_go($x,$y,$z);
+	dgcg_go($x,$y,$z-$Depth);
+	$CurrentHoleRadiusX=$vars['DGCG']['Tool']['Diameter'];
+	$Angle=0; $PointsOnPerimeter=0;
+	while( $PointsOnPerimeter<250 && $CurrentHoleRadiusX <= ($DiameterX/2) ){		dpv(6," while($CurrentHoleRadiusX<$Diameter/2){\n");
+		$Angle+=$AngleIncrement;		
+		$CurrentHoleRadiusX=abs(($Angle/(2*$Pi))*$vars['DGCG']['Tool']['PassStep']);		dpv(7,"  $CurrentHoleRadiusX=($Angle/(2*$Pi))*".$vars['DGCG']['Tool']['PassStep'].";\n");
+		if($CurrentHoleRadiusX*2>=$DiameterX){
+			$PointsOnPerimeter++;		
+			$CurrentHoleRadiusY=$DiameterY/2;
+		}
+		$CurrentHoleRadiusY=abs(($Angle/(2*$Pi))*$vars['DGCG']['Tool']['PassStep']);		dpv(7,"  $CurrentHoleRadiusX=($Angle/(2*$Pi))*".$vars['DGCG']['Tool']['PassStep'].";\n");
+		if($CurrentHoleRadiusY*2>=$DiameterY){
+			$PointsOnPerimeter++;		
+			$CurrentHoleRadiusY=$DiameterY/2;
+		}
+		$cx=$x+(cos($Angle)*$CurrentHoleRadiusX);
+		$cy=$y+(sin($Angle)*$CurrentHoleRadiusY);
 		dgcg_go($cx,$cy,$z-$Depth);
 	}
 	dgcg_go($x,$y,$z);
