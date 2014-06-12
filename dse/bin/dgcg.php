@@ -252,7 +252,7 @@ function dgcg_dngc_file_process($DNGC_Filename){
 						$DiameterX=$La[4];
 						$DiameterY=$La[5];
 						$Depth=$La[6];
-						dgcg_hole($X, $Y, $Z, $DiameterX, $DiameterY, $Depth);
+						dgcg_hole_oval($X, $Y, $Z, $DiameterX, $DiameterY, $Depth);
 						break;
 					case 'arc':						
 						if($La[1][0]=="+"){
