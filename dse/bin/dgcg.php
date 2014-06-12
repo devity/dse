@@ -256,6 +256,28 @@ function dgcg_dngc_file_process($DNGC_Filename){
 						$Depth=$La[6];
 						dgcg_hole_oval($X, $Y, $Z, $DiameterX, $DiameterY, $Depth);
 						break;
+					case 'hole-oval-outline':						
+						if($La[1][0]=="+"){
+							$X+=substr($La[1],1);
+						}else{
+							$X=$La[1];
+						}
+						if($La[2][0]=="+"){
+							$Y+=substr($La[2],1);
+						}else{
+							$Y=$La[2];
+						}
+						if($La[3][0]=="+"){
+							$Z+=substr($La[3],1);
+						}else{
+							$Z=$La[3];
+						}
+						$DiameterX=$La[4];
+						$DiameterY=$La[5];
+						$Depth=$La[6];
+						$Width=$La[7];
+						dgcg_hole_oval($X, $Y, $Z, $DiameterX, $DiameterY, $Depth, $Width);
+						break;
 					case 'arc':						
 						if($La[1][0]=="+"){
 							$X+=substr($La[1],1);
@@ -749,18 +771,28 @@ function dgcg_hole($x,$y,$z,$Diameter,$Depth){
 }
 
 
-function dgcg_hole_oval($x,$y,$z,$DiameterX,$DiameterY,$Depth){
+function dgcg_hole_oval($x,$y,$z,$DiameterX,$DiameterY,$Depth,$WidthOuter=0){
 	global $vars;
-	dpv(4,"dgcg_hole_oval($x,$y,$z,$DiameterX,$DiameterY,$Depth){\n");
+	dpv(4,"dgcg_hole_oval($x,$y,$z,$DiameterX,$DiameterY,$Depth,$WidthOuter){\n");
 	$Pi=3.14159;
-	$AngleIncrement=$Pi/50;
+	$DiameterAvg=intval(($DiameterX+$DiameterY)/2);
+	$LinesSegmentsPerPerimeterApproximation=100;
+	$AngleIncrement=$Pi/($LinesSegmentsPerPerimeterApproximation/2);
 	dgcg_go($x,$y,$z);
 	dgcg_go($x,$y,$z-$Depth);
 	$CurrentHoleRadiusX=$vars['DGCG']['Tool']['Diameter'];
 	$CurrentHoleRadiusY=$vars['DGCG']['Tool']['Diameter'];
-	$Angle=0; $PointsOnPerimeter=0;
-	while( $PointsOnPerimeter<250 && $CurrentHoleRadiusX <= ($DiameterX/2)  && $CurrentHoleRadiusY <= ($DiameterY/2) ){
-			dpv(6," while($PointsOnPerimeter<250 && $CurrentHoleRadiusX <= ($DiameterX/2)  && $CurrentHoleRadiusY <= ($DiameterY/2)){\n");
+	if($WidthOuter){		
+		$HoleRadiusMaxXAngle=($DiameterX/$vars['DGCG']['Tool']['PassStep'])*(2*$Pi);
+		$OuterPerimeterCutPercent=$WidthOuter/$DiameterAvg;
+		$Angle=$HoleRadiusMaxXAngle*$OuterPerimeterCutPercent;
+		dpv(4," dgcg_hole_oval: HoleRadiusMaxXAngle=$HoleRadiusMaxXAngle Cut%=$OuterPerimeterCutPercent Angle=$Angle \n");
+	}else{
+		$Angle=0;
+	} 
+	$PointsOnPerimeter=0;
+	while( $PointsOnPerimeter<$LinesSegmentsPerPerimeterApproximation*3 && $CurrentHoleRadiusX <= ($DiameterX/2)  && $CurrentHoleRadiusY <= ($DiameterY/2) ){
+		dpv(6," while( $PointsOnPerimeter<$LinesSegmentsPerPerimeterApproximation*3 && $CurrentHoleRadiusX <= ($DiameterX/2)  && $CurrentHoleRadiusY <= ($DiameterY/2) ){\n");
 		$Angle+=$AngleIncrement;		
 		$CurrentHoleRadiusX=abs(($Angle/(2*$Pi))*$vars['DGCG']['Tool']['PassStep']);		dpv(7,"  $CurrentHoleRadiusX=($Angle/(2*$Pi))*".$vars['DGCG']['Tool']['PassStep'].";\n");
 		if($CurrentHoleRadiusX*2>=$DiameterX){					
