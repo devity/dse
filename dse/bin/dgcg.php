@@ -648,7 +648,7 @@ function dgcg_hole($x,$y,$z,$Diameter,$Depth){
 	global $vars;
 	dpv(4,"dgcg_hole($x,$y,$z,$Diameter,$Depth){\n");
 	$Pi=3.14159;
-	$AngleIncrement=$Pi/20;
+	$AngleIncrement=$Pi/50;
 	dgcg_go($x,$y,$z);
 	dgcg_go($x,$y,$z-$Depth);
 	$CurrentHoleRadius=$vars['DGCG']['Tool']['Diameter'];
