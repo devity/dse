@@ -99,7 +99,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 }
 
 $vars['DGCG']['Tool']['Radius']=$vars['DGCG']['Tool']['Diameter']/2;
-$vars['DGCG']['Tool']['PassStep']=$vars['DGCG']['Tool']['Diameter']/3;
+$vars['DGCG']['Tool']['PassStep']=$vars['DGCG']['Tool']['Diameter']/5;
 
 
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
@@ -187,10 +187,9 @@ function dgcg_dngc_file_process($DNGC_Filename){
 						break;
 					case 'tool-diameter':
 						$vars['DGCG']['Tool']['Diameter']=$La[1];
-						dpv(2,"Set Tool Diameter to: ".$vars['DGCG']['Tool']['Diameter']."\n");
-						
+						dpv(2,"Set Tool Diameter to: ".$vars['DGCG']['Tool']['Diameter']."\n");						
 						$vars['DGCG']['Tool']['Radius']=$vars['DGCG']['Tool']['Diameter']/2;
-						$vars['DGCG']['Tool']['PassStep']=$vars['DGCG']['Tool']['Diameter']/3;
+						$vars['DGCG']['Tool']['PassStep']=$vars['DGCG']['Tool']['Diameter']/5;
 						break;
 					case 'go':
 						if(sizeof($La)==4){
