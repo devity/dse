@@ -217,7 +217,7 @@ function dgcg_dngc_file_process($DNGC_Filename){
 							if($Text){
 								$Text.=" ";
 							}
-							$Text.=$La[$i];
+							$Text.=$La[$ti];
 						}
 						dgcg_text($X,$Y,$Z,$Text,$Depth,$FontHeight);
 						break;
