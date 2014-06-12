@@ -785,7 +785,7 @@ function dgcg_hole_oval($x,$y,$z,$DiameterX,$DiameterY,$Depth,$WidthOuterX=0,$Wi
 	
 	$CurrentHoleRadiusX=$vars['DGCG']['Tool']['Diameter'];
 	$CurrentHoleRadiusY=$vars['DGCG']['Tool']['Diameter'];
-	if($WidthOuter){		
+	if($WidthOuterX){		
 		$HoleRadiusMaxXAngle=($DiameterX/$vars['DGCG']['Tool']['PassStep'])*(2*$Pi);
 		$OuterPerimeterCutPercent=$WidthOuterX/$DiameterX;
 		$Angle=$HoleRadiusMaxXAngle*$OuterPerimeterCutPercent;
