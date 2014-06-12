@@ -99,7 +99,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 }
 
 $vars['DGCG']['Tool']['Radius']=$vars['DGCG']['Tool']['Diameter']/2;
-$vars['DGCG']['Tool']['PassStep']=$vars['DGCG']['Tool']['Diameter']/5;
+$vars['DGCG']['Tool']['PassStep']=$vars['DGCG']['Tool']['Diameter']/4;
 
 
 foreach (array_keys($vars['options']) as $opt) switch ($opt) {
@@ -189,7 +189,7 @@ function dgcg_dngc_file_process($DNGC_Filename){
 						$vars['DGCG']['Tool']['Diameter']=$La[1];
 						dpv(2,"Set Tool Diameter to: ".$vars['DGCG']['Tool']['Diameter']."\n");						
 						$vars['DGCG']['Tool']['Radius']=$vars['DGCG']['Tool']['Diameter']/2;
-						$vars['DGCG']['Tool']['PassStep']=$vars['DGCG']['Tool']['Diameter']/5;
+						$vars['DGCG']['Tool']['PassStep']=$vars['DGCG']['Tool']['Diameter']/4;
 						break;
 					case 'go':
 						if(sizeof($La)==4){
@@ -751,7 +751,7 @@ function dgcg_hole($x,$y,$z,$Diameter,$Depth){
 
 function dgcg_hole_oval($x,$y,$z,$DiameterX,$DiameterY,$Depth){
 	global $vars;
-	dpv(4,"dgcg_hole($x,$y,$z,$Diameter,$Depth){\n");
+	dpv(4,"dgcg_hole_oval($x,$y,$z,$DiameterX,$DiameterY,$Depth){\n");
 	$Pi=3.14159;
 	$AngleIncrement=$Pi/50;
 	dgcg_go($x,$y,$z);
