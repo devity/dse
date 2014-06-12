@@ -815,7 +815,11 @@ function dgcg_hole_oval($x,$y,$z,$DiameterX,$DiameterY,$Depth,$WidthOuterX=0,$Wi
 		$cy=$y+(sin($Angle)*$CurrentHoleRadiusY);
 		dgcg_go($cx,$cy,$z-$Depth);
 	}
-	dgcg_go($x,$y,$z);
+	
+	if($WidthOuterX){
+	}else{
+		dgcg_go($x,$y,$z);
+	}
 }
 
 
