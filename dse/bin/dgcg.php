@@ -86,12 +86,6 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 		$vars['DGCG']['Program']['Image']['FileName']=$vars['options'][$opt];
 		dpv(2,"Outfile set to $OutFile\n");
 		break;
-  	case 'f':
-	case 'file':
-		$DNGC_Filename=$vars['options'][$opt];
-		dgcg_dngc_file_process($DNGC_Filename);
-		exit();
-		break;
   	case 'u':
 	case 'units':
 		$vars['DGCG']['Units']=$vars['options'][$opt];
@@ -113,6 +107,12 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'help':
 		print $vars['Usage'];
 		exit(0);
+  	case 'f':
+	case 'file':
+		$DNGC_Filename=$vars['options'][$opt];
+		dgcg_dngc_file_process($DNGC_Filename);
+		exit();
+		break;
 	case 'd':
   	case 'demo':
 		dgcg_demo();
