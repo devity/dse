@@ -654,6 +654,7 @@ function dgcg_hole($x,$y,$z,$Diameter,$Depth){
 	$CurrentHoleRadius=$vars['DGCG']['Tool']['Diameter'];
 	$Angle=0;
 	while($CurrentHoleRadius<$Diameter/2){
+		dpv(5," while($CurrentHoleRadius<$Diameter/2){\n");
 		$Angle+=$AngleIncrement;
 		$CurrentHoleRadius=($Angle/(2*$Pi))*$vars['DGCG']['Tool']['PassStep'];
 		$cx=$x+(cos($Angle)*$CurrentHoleRadius);
