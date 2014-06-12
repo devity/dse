@@ -167,7 +167,7 @@ function dgcg_dngc_file_process($DNGC_Filename){
 		dgcg_program_start();
 //		dgcg_home();
 	
-	
+		$Done=FALSE;
 		$Lines=explode("\n",`cat $DNGC_Filename`);
 		foreach($Lines as $L){
 			$L=strcut($L,"","#");
@@ -176,11 +176,14 @@ function dgcg_dngc_file_process($DNGC_Filename){
 				$L=str_replace("  ", " ", $L);
 			}
 			$L=trim($L);
-			if($L){
+			if($L && !$Done){
 				dpv(3,"DNGC infile line: $L\n");
 				$L=strtolower($L);	
 				$La=explode(" ",$L);
 				switch($La[0]){
+					case 'done':
+						$Done=TRUE;
+						break;						
 					case 'units':
 						$vars['DGCG']['Units']=$La[1];
 						dpv(2,"Set Units to: ".$vars['DGCG']['Units']."\n");
