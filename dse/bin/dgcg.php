@@ -1433,6 +1433,7 @@ function dgcg_text($X,$Y,$Z,$Text,$Depth,$FontHeight,$FontWidthRatio=.7){
 		
 	
 	print "adding text: $Text\n";
+	$Text=strtoupper($Text);
 	for($ci=0;$ci<strlen($Text);$ci++){
 		$L=$Text[$ci];
 		if( $vars['DGCG']['CharacterMap'][$L]){
