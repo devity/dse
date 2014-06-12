@@ -802,7 +802,7 @@ function dgcg_hole_oval($x,$y,$z,$DiameterX,$DiameterY,$Depth,$WidthOuterX=0,$Wi
 	$StartRadiusY=0;
 	$CurrentHoleRadiusX=0;
 	$CurrentHoleRadiusY=0;
-	while($Done){
+	while(!$Done){
 		dpv(6," while( $PointsOnPerimeter<$LinesSegmentsPerPerimeterApproximation*3 && $CurrentHoleRadiusX <= ($DiameterX/2)  && $CurrentHoleRadiusY <= ($DiameterY/2) ){\n");
 		$Angle+=$AngleIncrement;
 		if($Angle>=2*$Pi){
@@ -819,6 +819,9 @@ function dgcg_hole_oval($x,$y,$z,$DiameterX,$DiameterY,$Depth,$WidthOuterX=0,$Wi
 		}*/
 		if($CurrentHoleRadiusX*2>=$DiameterX && $CurrentHoleRadiusY*2>=$DiameterY){
 			$PointsOnPerimeter++;
+		}
+		if($PointsOnPerimeter> ($LinesSegmentsPerPerimeterApproximation*3) ){
+			$Done=TRUE;
 		}
 		$cx=$x+(cos($Angle)*$CurrentHoleRadiusX);
 		$cy=$y+(sin($Angle)*$CurrentHoleRadiusY);
