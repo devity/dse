@@ -195,7 +195,7 @@ function dgcg_dngc_file_process($DNGC_Filename){
 						$Z=$La[3];
 						$Diameter=$La[4];
 						$Depth=$La[5];
-						dgcg_hole($Y, $Y, $Z, $Diameter, $Depth);
+						dgcg_hole($X, $Y, $Z, $Diameter, $Depth);
 						break;
 					default:
 						break;
