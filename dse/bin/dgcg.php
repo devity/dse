@@ -110,6 +110,22 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'f':
 	case 'file':
 		$DNGC_Filename=$vars['options'][$opt];
+		if(!$DNGC_Filename){
+			dpv(0,"--file option without filename-parameter!");
+			exit(-1);
+		}
+		if(!$vars['DGCG']['Program']['Image']['FileName']){
+			$ImgFilename=str_replace(".dngc", ".jpg", $DNGC_Filename);
+			if($ImgFilename && $ImgFilename!=$DNGC_Filename){
+				$vars['DGCG']['Program']['Image']['FileName']=$ImgFilename;
+			}
+		}		
+		if(!$OutFile){
+			$OutFilename=str_replace(".dngc", ".jpg", $DNGC_Filename);
+			if($OutFilename && $OutFilename!=$DNGC_Filename){
+				$OutFile=$OutFilename;
+			}
+		}		
 		dgcg_dngc_file_process($DNGC_Filename);
 		exit();
 		break;
@@ -159,6 +175,12 @@ function dgcg_dngc_file_process($DNGC_Filename){
 				$L=strtolower($L);
 				$La=explode(" ",$L);
 				switch($La[0]){
+					case 'units':
+						$vars['DGCG']['Units']=$La[1];
+						break;
+					case 'tool-diameter':
+						$vars['DGCG']['Tool']['Diameter']=$La[1];
+						break;
 					case 'go':
 						if(sizeof($La)==4){
 							$Xp=substr($La[1],1);
