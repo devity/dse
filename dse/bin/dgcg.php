@@ -188,6 +188,9 @@ function dgcg_dngc_file_process($DNGC_Filename){
 					case 'tool-diameter':
 						$vars['DGCG']['Tool']['Diameter']=$La[1];
 						dpv(2,"Set Tool Diameter to: ".$vars['DGCG']['Tool']['Diameter']."\n");
+						
+						$vars['DGCG']['Tool']['Radius']=$vars['DGCG']['Tool']['Diameter']/2;
+						$vars['DGCG']['Tool']['PassStep']=$vars['DGCG']['Tool']['Diameter']/3;
 						break;
 					case 'go':
 						if(sizeof($La)==4){
@@ -755,6 +758,7 @@ function dgcg_hole_oval($x,$y,$z,$DiameterX,$DiameterY,$Depth){
 	dgcg_go($x,$y,$z);
 	dgcg_go($x,$y,$z-$Depth);
 	$CurrentHoleRadiusX=$vars['DGCG']['Tool']['Diameter'];
+	$CurrentHoleRadiusY=$vars['DGCG']['Tool']['Diameter'];
 	$Angle=0; $PointsOnPerimeter=0;
 	while( $PointsOnPerimeter<250 && $CurrentHoleRadiusX <= ($DiameterX/2)  && $CurrentHoleRadiusY <= ($DiameterY/2) ){		dpv(6," while($CurrentHoleRadiusX<$Diameter/2){\n");
 		$Angle+=$AngleIncrement;		
