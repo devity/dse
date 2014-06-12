@@ -155,7 +155,7 @@ function dgcg_dngc_file_process($DNGC_Filename){
 			$L=strcut($L,"","#");
 			$L=trim($L);
 			if($L){
-				dpv(4,"DNGC infile line: $L\n");
+				dpv(3,"DNGC infile line: $L\n");
 				$L=strtolower($L);
 				$La=explode(" ",$L);
 				switch($La[0]){
@@ -646,6 +646,7 @@ function dgcg_go_z($z){
 
 function dgcg_hole($x,$y,$z,$Diameter,$Depth){
 	global $vars;
+	dpv(4,"dgcg_hole($x,$y,$z,$Diameter,$Depth){\n");
 	$Pi=3.14159;
 	$AngleIncrement=$Pi/20;
 	dgcg_go($x,$y,$z);
