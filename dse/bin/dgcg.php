@@ -84,7 +84,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 'i':
 	case 'image-outfile':
 		$vars['DGCG']['Program']['Image']['FileName']=$vars['options'][$opt];
-		dpv(2,"Outfile set to $OutFile\n");
+		dpv(2,"Image Output File set to ".$vars['DGCG']['Program']['Image']['FileName']."\n");
 		break;
   	case 'u':
 	case 'units':
@@ -118,12 +118,14 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 			$ImgFilename=str_replace(".dngc", ".jpg", $DNGC_Filename);
 			if($ImgFilename && $ImgFilename!=$DNGC_Filename){
 				$vars['DGCG']['Program']['Image']['FileName']=$ImgFilename;
+				dpv(2,"Image Output File set to ".$vars['DGCG']['Program']['Image']['FileName']."\n");
 			}
 		}		
 		if(!$OutFile){
 			$OutFilename=str_replace(".dngc", ".jpg", $DNGC_Filename);
 			if($OutFilename && $OutFilename!=$DNGC_Filename){
 				$OutFile=$OutFilename;
+				dpv(2,"Outfile set to $OutFile\n");
 			}
 		}		
 		dgcg_dngc_file_process($DNGC_Filename);
@@ -181,9 +183,11 @@ function dgcg_dngc_file_process($DNGC_Filename){
 				switch($La[0]){
 					case 'units':
 						$vars['DGCG']['Units']=$La[1];
+						dpv(2,"Set Units to: ".$vars['DGCG']['Units']."\n");
 						break;
 					case 'tool-diameter':
 						$vars['DGCG']['Tool']['Diameter']=$La[1];
+						dpv(2,"Set Tool Diameter to: ".$vars['DGCG']['Tool']['Diameter']."\n");
 						break;
 					case 'go':
 						if(sizeof($La)==4){
@@ -713,9 +717,9 @@ function dgcg_hole($x,$y,$z,$Diameter,$Depth){
 	dgcg_go($x,$y,$z-$Depth);
 	$CurrentHoleRadius=$vars['DGCG']['Tool']['Diameter'];
 	$Angle=0; $PointsOnPerimeter=0;
-	while( $PointsOnPerimeter<250 && $CurrentHoleRadius <= ($Diameter/2) ){		dpv(5," while($CurrentHoleRadius<$Diameter/2){\n");
+	while( $PointsOnPerimeter<250 && $CurrentHoleRadius <= ($Diameter/2) ){		dpv(6," while($CurrentHoleRadius<$Diameter/2){\n");
 		$Angle+=$AngleIncrement;		
-		$CurrentHoleRadius=abs(($Angle/(2*$Pi))*$vars['DGCG']['Tool']['PassStep']);		dpv(5,"  $CurrentHoleRadius=($Angle/(2*$Pi))*".$vars['DGCG']['Tool']['PassStep'].";\n");
+		$CurrentHoleRadius=abs(($Angle/(2*$Pi))*$vars['DGCG']['Tool']['PassStep']);		dpv(7,"  $CurrentHoleRadius=($Angle/(2*$Pi))*".$vars['DGCG']['Tool']['PassStep'].";\n");
 		if($CurrentHoleRadius*2>=$Diameter){
 			$PointsOnPerimeter++;
 			$CurrentHoleRadius=$Diameter/2;
