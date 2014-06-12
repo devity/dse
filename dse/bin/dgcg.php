@@ -100,7 +100,7 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
   	case 't':
 	case 'tool-diameter':
 		$vars['DGCG']['Tool']['Diameter']=$vars['options'][$opt];
-		dpv(2,"Units set to ".$vars['DGCG']['Tool']['Diameter']."\n");
+		dpv(2,"Tool Diameter set to ".$vars['DGCG']['Tool']['Diameter']."\n");
 		break;
 }
 
@@ -184,11 +184,17 @@ function dgcg_dngc_file_process($DNGC_Filename){
 						}
 						break;
 					case 'hole':
-						$X=substr($La[1],1);
+						/*$X=substr($La[1],1);
 						$Y=substr($La[2],1);
 						$Z=substr($La[3],1);
 						$Diameter=substr($La[4],1);
 						$Depth=substr($La[5],1);
+						 * */
+						$X=$La[1];
+						$Y=$La[2];
+						$Z=$La[3];
+						$Diameter=$La[4];
+						$Depth=$La[5];
 						dgcg_hole($Y, $Y, $Z, $Diameter, $Depth);
 						break;
 					default:
