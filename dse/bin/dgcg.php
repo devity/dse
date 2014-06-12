@@ -169,6 +169,10 @@ function dgcg_dngc_file_process($DNGC_Filename){
 		$Lines=explode("\n",`cat $DNGC_Filename`);
 		foreach($Lines as $L){
 			$L=strcut($L,"","#");
+			$L=str_replace("\t", " ",$L);
+			while(str_contains($L,"  ")){
+				$L=str_replace("  ", " ", $L);
+			}
 			$L=trim($L);
 			if($L){
 				dpv(3,"DNGC infile line: $L\n");
