@@ -155,6 +155,7 @@ function dgcg_dngc_file_process($DNGC_Filename){
 			$L=strcut($L,"","#");
 			$L=trim($L);
 			if($L){
+				dpv(4,"DNGC infile line: $L\n");
 				$L=strtolower($L);
 				$La=explode(" ",$L);
 				switch($La[0]){
