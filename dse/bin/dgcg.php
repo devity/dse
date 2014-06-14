@@ -755,7 +755,8 @@ function dgcg_go($x,$y,$z){
 		}
 		
 	//}
-	if($z>$vars['DGCG']['Current']['Z']){
+	print "if($z<".$vars['DGCG']['Current']['Z']."){\n";
+	if($z<$vars['DGCG']['Current']['Z']){
 		$Feed=$vars['DGCG']['Tool']['Feed'];
 	}else{
 		$Feed=$vars['DGCG']['Tool']['FeedPlunge'];
