@@ -23,7 +23,8 @@ $vars['DSE']['SCRIPT_COMMAND_FORMAT']="";
 
 $vars['DGCG']['Units']="in";
 $vars['DGCG']['Tool']['Diameter']=1;
-$vars['DGCG']['Tool']['Feed']=10;
+$vars['DGCG']['Tool']['Feed']=24;
+$vars['DGCG']['Tool']['FeedPlunge']=5;
 $vars['DGCG']['Current']['X']=0;
 $vars['DGCG']['Current']['Y']=0;
 $vars['DGCG']['Current']['Z']=0;
@@ -727,9 +728,6 @@ function dgcg_go($x,$y,$z){
 	$ZScaleFactor=2.5/1;
 	
 	
-		
-	
-	
 	//if($vars['DGCG']['Current']['X']!=$x || $vars['DGCG']['Current']['Y']!=$y){
 		if($vars['DGCG']['Current']['Z']==0){
 			$color="black";
@@ -757,10 +755,16 @@ function dgcg_go($x,$y,$z){
 		}
 		
 	//}
+	if($z<$vars['DGCG']['Current']['Z']){
+		$Feed=$vars['DGCG']['Tool']['Feed'];
+	}else{
+		$Feed=$vars['DGCG']['Tool']['FeedPlunge'];
+	}
 	$vars['DGCG']['Current']['X']=$x;
 	$vars['DGCG']['Current']['Y']=$y;
 	$vars['DGCG']['Current']['Z']=$z;
-	$vars['DGCG']['Program']['Body'].= "G1 X$x Y$y Z$z F100000\n";
+	
+	$vars['DGCG']['Program']['Body'].= "G1 X$x Y$y Z$z F$Feed\n";
 }
 function dgcg_go_x($x){
 	global $vars;
@@ -783,7 +787,7 @@ function dgcg_hole($x,$y,$z,$Diameter,$Depth){
 	dpv(4,"dgcg_hole($x,$y,$z,$Diameter,$Depth){\n");
 	$Pi=3.14159;
 	$AngleIncrement=$Pi/50;
-	dgcg_go($x,$y,$z);
+	dgcg_go($x,$y,$z);	
 	dgcg_go($x,$y,$z-$Depth);
 	$CurrentHoleRadius=$vars['DGCG']['Tool']['Diameter']/2;
 	$Angle=0; $PointsOnPerimeter=0;
@@ -1086,8 +1090,7 @@ function dgcg_scale($gfile_array,$Factor){
 
 function dgcg_program_start(){
 	global $vars;
-	$vars['DGCG']['Program']['Body']="";
-	
+	$vars['DGCG']['Program']['Body']="";	
 	if($vars['DGCG']['Units']=="mm"){
 		$vars['DGCG']['Program']['Body'].= "G21 G00 Z1\n"; //mm=G21  in=G20
 	}else{
@@ -1095,15 +1098,13 @@ function dgcg_program_start(){
 	}
 	$vars['DGCG']['Program']['Body'].= "G80 G90 G94\n"; //(set absolute distance mode)
 	$vars['DGCG']['Program']['Body'].= "G64 P1.0\n"; 
-	$vars['DGCG']['Program']['Body'].= "F100000\n"; 
-	$vars['DGCG']['Program']['convert_command']="";
-	
+	$vars['DGCG']['Program']['Body'].= "F".$vars['DGCG']['Tool']['Feed']."\n"; 
+	$vars['DGCG']['Program']['convert_command']="";	
 }
 
+
 function dgcg_program_end(){
-	global $vars;
-	
-	
+	global $vars;	
 	if($vars['DGCG']['Program']['Image']['Stereo']){
 		$vars['DGCG']['Program']['convert_command']= "convert -size "
 			.($vars['DGCG']['Program']['Image']['Width']*2)."x".$vars['DGCG']['Program']['Image']['Height']
@@ -1113,9 +1114,7 @@ function dgcg_program_end(){
 			.$vars['DGCG']['Program']['Image']['Width']."x".$vars['DGCG']['Program']['Image']['Height']
 			." xc:lightblue ".$vars['DGCG']['Program']['convert_command']; 
 	}
-	$vars['DGCG']['Program']['convert_command'].=" ".$vars['DGCG']['Program']['Image']['FileName'];
-	
-	
+	$vars['DGCG']['Program']['convert_command'].=" ".$vars['DGCG']['Program']['Image']['FileName'];	
 	$vars['DGCG']['Program']['Body'].="M2\n";// (end program)
 }
 
