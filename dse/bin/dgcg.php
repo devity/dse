@@ -755,13 +755,13 @@ function dgcg_go($x,$y,$z){
 		}
 		
 	//}
-	print "if($z<".$vars['DGCG']['Current']['Z']."){\n";
+//	print "if($z<".$vars['DGCG']['Current']['Z']."){\n";
 	if($z<$vars['DGCG']['Current']['Z']){
 		$Feed=$vars['DGCG']['Tool']['FeedPlunge'];
 	}else{
 		$Feed=$vars['DGCG']['Tool']['Feed'];
 	}
-	$vars['DGCG']['Program']['Body'].= "% if($z<".$vars['DGCG']['Current']['Z']."){ Feed=$Feed\n";
+//	$vars['DGCG']['Program']['Body'].= "% if($z<".$vars['DGCG']['Current']['Z']."){ Feed=$Feed\n";
 	$vars['DGCG']['Current']['X']=$x;
 	$vars['DGCG']['Current']['Y']=$y;
 	$vars['DGCG']['Current']['Z']=$z;
