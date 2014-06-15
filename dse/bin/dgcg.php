@@ -24,7 +24,7 @@ $vars['DSE']['SCRIPT_COMMAND_FORMAT']="";
 $vars['DGCG']['Units']="in";
 $vars['DGCG']['Tool']['Diameter']=1;
 $vars['DGCG']['Tool']['Feed']=24;
-$vars['DGCG']['Tool']['FeedPlunge']=5;
+$vars['DGCG']['Tool']['FeedPlunge']=2;
 $vars['DGCG']['Current']['X']=0;
 $vars['DGCG']['Current']['Y']=0;
 $vars['DGCG']['Current']['Z']=0;
@@ -796,7 +796,7 @@ function dgcg_hole($x,$y,$z,$Diameter,$Depth){
 	$Angle=0; $PointsOnPerimeter=0;
 	while( $PointsOnPerimeter<$LinesSegmentsPerPerimeterApproximation*2.5 && $CurrentHoleRadius <= ($Diameter/2) ){		dpv(6," while($CurrentHoleRadius<$Diameter/2){\n");
 		$Angle+=$AngleIncrement;		
-		$CurrentHoleRadius=abs(($Angle/(2*$Pi))*$vars['DGCG']['Tool']['PassStep']);		dpv(7,"  $CurrentHoleRadius=($Angle/(2*$Pi))*".$vars['DGCG']['Tool']['PassStep'].";\n");
+		$CurrentHoleRadius=abs(($Angle/(2*$Pi))*$vars['DGCG']['Tool']['PassStep']*1.5);		dpv(7,"  $CurrentHoleRadius=($Angle/(2*$Pi))*".$vars['DGCG']['Tool']['PassStep'].";\n");
 		if($CurrentHoleRadius*2>=$Diameter){
 			$PointsOnPerimeter++;
 			$CurrentHoleRadius=$Diameter/2;
