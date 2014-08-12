@@ -794,7 +794,7 @@ function dgcg_hole($x,$y,$z,$Diameter,$Depth){
 	dgcg_go($x,$y,$z-$Depth);
 	$CurrentHoleRadius=$vars['DGCG']['Tool']['Diameter']/2;
 	$Angle=0; $PointsOnPerimeter=0;
-	while( $PointsOnPerimeter<$LinesSegmentsPerPerimeterApproximation*2.5 && $CurrentHoleRadius <= ($Diameter/2) ){		dpv(6," while($CurrentHoleRadius<$Diameter/2){\n");
+	while( $PointsOnPerimeter<$LinesSegmentsPerPerimeterApproximation*$Pi && $CurrentHoleRadius <= ($Diameter/2) ){		dpv(6," while($CurrentHoleRadius<$Diameter/2){\n");
 		$Angle+=$AngleIncrement;		
 		$CurrentHoleRadius=abs(($Angle/(2*$Pi))*$vars['DGCG']['Tool']['PassStep']*1.5);		dpv(7,"  $CurrentHoleRadius=($Angle/(2*$Pi))*".$vars['DGCG']['Tool']['PassStep'].";\n");
 		if($CurrentHoleRadius*2>=$Diameter){
