@@ -19,8 +19,10 @@ print "Script: ".$vars['DSE']['SCRIPT_FILENAME']."\n";
 $parameters_details = array(
   array('h','help',"this message"),
   array('q','quiet',"same as --verbosity 0"),
-  array('l','list-backups',"lists when backups were made of file"),
-  array('y:','verbosity:',"0=none 1=some 2=more 3=debug"),  
+  array('d','dump',"dump data file"),
+  array('a:','add',"adds text of arg1"),
+  array('s:','search:',"search for string arg1"),
+  array('v:','verbosity:',"0=none 1=some 2=more 3=debug"),  
 );
 $vars['parameters']=dse_cli_get_paramaters_array($parameters_details);
 $vars['Usage']=dse_cli_get_usage($parameters_details);
@@ -63,7 +65,12 @@ foreach($argv as $i=>$arg){
 	}
 }
 
-if($argv[1]=="a"){
+if($argv[1]=="d" || $argv[1]=="-d" || $argv[1]=="--dump"){	
+	$filename="/backup/denote.txt";
+	$data=file_get_contents($filename);
+	print "$data\n";	
+	exit();
+}elseif($argv[1]=="a" || $argv[1]=="-a" || $argv[1]=="--add"){
 	$args="";
 	foreach($argv as $i=>$arg){
 		if($i>1){
@@ -78,7 +85,7 @@ if($argv[1]=="a"){
 	file_put_contents($filename, $data, FILE_APPEND);
 	print "Added: $args\n";	
 	exit();
-}elseif($argv[1]=="s"){
+}elseif($argv[1]=="s" || $argv[1]=="-s" || $argv[1]=="--search"){
 	$args="";
 	foreach($argv as $i=>$arg){
 		if($i>1){
