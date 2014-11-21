@@ -1810,6 +1810,7 @@ function dse_configure_mysql_setup(){
 
 function dse_get_cfg_file_value($File,$VarName){
 	global $vars; dse_trace();
+    //print "dse_get_cfg_file_value($File,$VarName){\n";
 	$CacheName="dse_get_cfg_file_values_$File";
 	//$CacheName="dse_get_cfg_file_value($File,$VarName)";
 	//if($vars[$CacheName]) return $vars[$CacheName][$VarName];
@@ -1820,15 +1821,25 @@ function dse_get_cfg_file_value($File,$VarName){
 	}
 	$Raw=dse_file_get_contents($File);
 	foreach(split("\n",$Raw) as $L){
-		if($L=trim(strcut($L,"",$CommentCharacter))){			
-			if(str_contains($File,"php.ini")){
+	//    if($File=="/etc/apache2/conf.d/security")   print " L=$L\n";
+		if($L=trim(strcut($L,"",$CommentCharacter))){
+		    $SplitChar="";			
+			if(str_contains($File,"php.ini") || str_contains($File,"/mysql/")){ 
 				list($Name,$Value)=split("=",$L);
-			}elseif(str_contains($File,"apache2.conf")){
+				$SplitChar="=";
+			}elseif(str_contains($File,"apache2.conf")||str_contains($File,"apache2/conf.d/security")){
 				list($Name,$Value)=split("[ \t]+",$L);
+                $SplitChar="whitespace";
 			}else{
 				list($Name,$Value)=split("=",$L);
+                $SplitChar="=";
 			}
 			$Name=trim($Name); $Value=trim($Value);
+            if($Name==$VarName){
+              //  print " NAME MATCH n=$Name v=$Value SplitChar==$SplitChar\n";
+            }else{
+              //  print "  n=$Name v=$Value SplitChar==$SplitChar\n";
+            }
 			$vars[$CacheName][$Name]=$Value;
 		}
 	}
@@ -3020,26 +3031,26 @@ function dse_do_services_cfg() {
 	
 	
 	
-	if(dse_file_exists($vars['DSE']['APACHE_PHP_INI_FILE'])){
-		if(array_key_exists('APACHE_PHP_INI_SETTING',$vars['DSE'])){	
-			foreach($vars['DSE']['APACHE_PHP_INI_SETTING'] as $PHP_CONF_SETTING){
-				$PHP_CONF_SETTING=str_replace("\t"," ",$PHP_CONF_SETTING);
-				list($PHP_CONF_SETTING_var,$PHP_CONF_SETTING_value)=explode(" ",$PHP_CONF_SETTING);
-				$current=dse_get_cfg_file_value($vars['DSE']['APACHE_PHP_INI_FILE'],$PHP_CONF_SETTING_var);
-				print "APACHE_PHP_INI_FILE=$PHP_CONF_SETTING_var PHP_CONF_SETTING_value=$PHP_CONF_SETTING_value current=$current\n";
-				if($current!=$APACHE_CONF_SETTING_value){
-					if($current){
-						print "Setting $PHP_CONF_SETTING_var = $PHP_CONF_SETTING_value in ".$vars['DSE']['APACHE_PHP_INI_FILE']."  was $current\n"; 
-						$Command="/dse/bin/dreplace -s -p ".$vars['DSE']['APACHE_PHP_INI_FILE']." \"^$PHP_CONF_SETTING_var.*$\" \"$PHP_CONF_SETTING_var = $PHP_CONF_SETTING_value\"";
-						$r=`$Command`;
-					}else{
-						//add line
-					}
-				}	
-			}
-		}
-	}
-	
+    if(dse_file_exists($vars['DSE']['APACHE_PHP_INI_FILE'])){
+        if(array_key_exists('APACHE_PHP_INI_SETTING',$vars['DSE'])){    
+            foreach($vars['DSE']['APACHE_PHP_INI_SETTING'] as $PHP_CONF_SETTING){
+                $PHP_CONF_SETTING=str_replace("\t"," ",$PHP_CONF_SETTING);
+                list($PHP_CONF_SETTING_var,$PHP_CONF_SETTING_value)=explode(" ",$PHP_CONF_SETTING);
+                $current=dse_get_cfg_file_value($vars['DSE']['APACHE_PHP_INI_FILE'],$PHP_CONF_SETTING_var);
+                print "APACHE_PHP_INI_FILE=$PHP_CONF_SETTING_var PHP_CONF_SETTING_value=$PHP_CONF_SETTING_value current=$current\n";
+                if($current!=$APACHE_CONF_SETTING_value){
+                    if($current){
+                        print "Setting $PHP_CONF_SETTING_var = $PHP_CONF_SETTING_value in ".$vars['DSE']['APACHE_PHP_INI_FILE']."  was $current\n"; 
+                        $Command="/dse/bin/dreplace -s -p ".$vars['DSE']['APACHE_PHP_INI_FILE']." \"^$PHP_CONF_SETTING_var.*$\" \"$PHP_CONF_SETTING_var = $PHP_CONF_SETTING_value\"";
+                        $r=`$Command`;
+                    }else{
+                        //add line
+                    }
+                }   
+            }
+        }
+    }
+    
 	
 	if(dse_file_exists($vars['DSE']['APACHE_CONF_FILE'])){
 		if(array_key_exists('APACHE_CONF_SETTING',$vars['DSE'])){	
@@ -3062,6 +3073,26 @@ function dse_do_services_cfg() {
 	}
 	
 		
+  
+    if(array_key_exists('CONF_SETTING',$vars['DSE'])){  
+        foreach($vars['DSE']['CONF_SETTING'] as $CONF_SETTING){
+            $CONF_SETTING=str_replace("\t"," ",$CONF_SETTING);
+            list($CONF_SETTING_file,$CONF_SETTING_var,$CONF_SETTING_value)=explode(" ",$CONF_SETTING);
+            $current=dse_get_cfg_file_value($CONF_SETTING_file,$CONF_SETTING_var);
+            print "CONF_SETTING: $CONF_SETTING_file $CONF_SETTING_var CONF_SETTING_value=$CONF_SETTING_value current=$current\n";
+            if($current!=$CONF_SETTING_value){
+                if($current){
+                    print "Setting $CONF_SETTING_var = $CONF_SETTING_value in $CONF_SETTING_file  was $current\n"; 
+                    $Command="/dse/bin/dreplace -s -p \"$CONF_SETTING_file\" \"^$CONF_SETTING_var.*$\" \"$CONF_SETTING_var $CONF_SETTING_value\"";
+                    $r=`$Command`;
+                }else{
+                    //add line
+                }
+            }   
+        }
+    }
+    
+    
 	if(str_contains($vars['DSE']['SERVICES'],"dns")){
 		dse_configure_create_named_conf();
 	}

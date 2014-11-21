@@ -253,9 +253,10 @@ if(str_contains($vars['DSE']['SERVICES'],"http")){
 	$vars['DSE']['SERVICE_NICKNAMES']["www"]=$httpd;
 }
 if(str_contains($vars['DSE']['SERVICES'],"mysql")){
-	if(dse_which("mysqld")) $mysqld="mysqld";
-		elseif(dse_which("mysql")) $mysqld="mysql";
-		else $mysqld="mysql";
+	//if(dse_which("mysqld")) $mysqld="mysqld";
+		//elseif(dse_which("mysql")) $mysqld="mysql";
+		//else $mysqld="mysql";
+	$mysqld="mysql";
 	if(!array_key_exists("mysqld", $vars['DSE']['SERVICE_NICKNAMES'])){
 		$vars['DSE']['SERVICE_NICKNAMES']["mysqld"]=$mysqld;
 	}

@@ -4470,7 +4470,7 @@ function dse_service_name_from_common_name($service){
 
 function dse_service_action($service,$action){
 	global $vars; dse_trace();
-	$service=dse_service_name_from_common_name($service);
+	$service_common=dse_service_name_from_common_name($service);
 	$Command="service $service_common $action";
 	$r=dse_exec($Command);
 	return TRUE;
