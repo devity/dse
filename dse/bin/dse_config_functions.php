@@ -1,4 +1,4 @@
-<?
+<?php
 
 /* backup package state!
 Code:

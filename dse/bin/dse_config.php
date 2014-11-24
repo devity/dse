@@ -1,4 +1,4 @@
-<?
+<?php
 $vars['DSE']['DSE_VERSION']="v0.031";
 $vars['DSE']['DSE_BUILD']="23";
 $vars['DSE']['DSE_RELEASE']="alpha";
