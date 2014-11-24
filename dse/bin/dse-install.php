@@ -572,7 +572,7 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
 		$PackageNamesArray[]="fail2ban";
-		//$PackageNamesArray[]="rkhunter";
+		$PackageNamesArray[]="rkhunter";
 		$PackageNamesArray[]="chkrootkit";
 		$PackageNamesArray[]="logwatch";
 		$PackageNamesArray[]="tripwire";
