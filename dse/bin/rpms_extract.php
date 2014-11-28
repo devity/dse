@@ -1,5 +1,5 @@
 #!/usr/bin/php
-<?
+<?php
 
 $rpms=`rpm -qa`;
 foreach(split("\n",$rpms) as $rpm){

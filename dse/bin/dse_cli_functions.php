@@ -472,6 +472,7 @@ if (!function_exists("readline")) { function readline( $prompt = '' ){
 if($vars['Verbosity']>5) print "dse_cli_functions.php: line 395\n";
 
 function dse_replace_in_file($File,$Needle,$Replacement){
+    print "dse_replace_in_file($File,$Needle,$Replacement);\n";
 	global $vars; dse_trace();
 	if(!dse_file_exists($File)) return FALSE;
 	$tmp=dse_exec("/dse/bin/dtmp");
