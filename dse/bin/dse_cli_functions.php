@@ -477,6 +477,7 @@ function dse_replace_in_file($File,$Needle,$Replacement){
 	$tmp=dse_exec("/dse/bin/dtmp");
 	$MD5=md5_of_file($File);
 	$Command="/dse/bin/dreplace $File \"$Needle\" \"$Replacement\" > $tmp";
+    print "c234=$Command\n";
 	dse_exec($Command);	
 	if(!dse_file_exists($tmp)) return FALSE;
 	$MD52=md5_of_file($tmp);
@@ -1220,6 +1221,7 @@ function dse_require_root(){
 }
 
 function md5_of_file($f){
+    print "md5_of_file($f);\n";
 	global $vars; dse_trace();
         $sw_vers=dse_which("md5");
         if($sw_vers){
