@@ -1421,18 +1421,13 @@ function dse_configure_create_httpd_conf(){
 	global $vars; dse_trace();
 //	dse_server_configure_file_load();
 	$DidAnSSL=FALSE;
-	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
-		print "Domain: $Domain\n";	
-		foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
-			print " Host: $Host.$Domain => $IP\n";
-		}	
-	}
-	dse_service_stop("httpd");
-	$named_conf_local="";
-	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
-		$domain=strtolower($Domain);
-		$named_conf_local.= "zone \"$domain\"{ type master; file \"".$vars['DSE']['NAMED_LOCAL_ZONE_DIR']."/$domain.conf\"; };\n";	
-	}
+	//foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
+		//print "Domain: $Domain\n";	
+		//foreach($vars['DSE']['SERVER_CONF']['Hosts'][$Domain] as $Host=>$IP){
+	//		print " Host: $Host.$Domain => $IP\n";
+//		}	
+	//}
+	dse_service_stop("httpd");	
 	$NS1=$vars['DSE']['SERVER_CONF']['Sets']['NameServer1'];
 	$NS2=$vars['DSE']['SERVER_CONF']['Sets']['NameServer2'];
 	$i=1;
