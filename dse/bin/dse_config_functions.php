@@ -1451,6 +1451,7 @@ function dse_configure_create_httpd_conf(){
 					$ServerAlias="$Host.$domain";
 					if($Host=="_blank") $ServerAlias="$domain";
 					$ServerName="$Host.$domain";
+                    $ServerNameStr=str_replace("*.", "",$ServerName);
 					if($Host=="_blank") $ServerName="$domain";
 					$IP=$vars['DSE']['SERVER_CONF']['Hosts'][$domain][$Host];
 					$File404="$DocRoot/$Webroot/404.php";
@@ -1460,7 +1461,7 @@ function dse_configure_create_httpd_conf(){
 					print "HTTP $Host.$domain ======\n";
 					$site="
 	<VirtualHost *:80>
-		ServerName $ServerName
+		ServerName $ServerNameStr
 		ServerAlias $ServerAlias
 		DocumentRoot $DocRoot/$Webroot		
 		$Extra
@@ -1480,7 +1481,7 @@ function dse_configure_create_httpd_conf(){
 						$KeyFile=$Host.".".$domain;
 						$site.="
 		<VirtualHost *:443>
-			ServerName $ServerName
+			ServerName $ServerNameStr
 			ServerAlias $ServerAlias
 			DocumentRoot $DocRoot/$Webroot
 			#ErrorLog /var/log/apache2/error.log
