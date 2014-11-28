@@ -1431,7 +1431,7 @@ function dse_configure_create_httpd_conf(){
 	$named_conf_local="";
 	foreach($vars['DSE']['SERVER_CONF']['Domains'] as $Domain){
 		$domain=strtolower($Domain);
-		$named_conf_local.= "zone \"$domain\"{ type master; file \"".$vars['DSE']['NAMED_LOCAL_ZONE_DIR']."/$domain\"; };\n";	
+		$named_conf_local.= "zone \"$domain\"{ type master; file \"".$vars['DSE']['NAMED_LOCAL_ZONE_DIR']."/$domain.conf\"; };\n";	
 	}
 	$NS1=$vars['DSE']['SERVER_CONF']['Sets']['NameServer1'];
 	$NS2=$vars['DSE']['SERVER_CONF']['Sets']['NameServer2'];
