@@ -595,7 +595,6 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 		$Component=colorize($ComponentName,"cyan");
 		$A=dse_ask_yn("Install Component $Component?");
 		print "\n";
-        print "asked.\n";
 		if($A=='Y'){
 			$vars['DSE']['AddComponents'][]=$ComponentName;
 			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=YES");
@@ -603,7 +602,6 @@ if(!in_array($ComponentName, $vars['DSE']['DisabledComponents'])){
 			$vars['DSE']['DisabledComponents'][]=$ComponentName;
 			dse_replace_in_file($vars['DSE']['DSE_CONFIG_FILE_GLOBAL'],"Components[$ComponentName]=ASK","Components[$ComponentName]=NO");
 		}
-        print "done.\n";
 	}
 	if(in_array($ComponentName, $vars['DSE']['AddComponents'])){
 	

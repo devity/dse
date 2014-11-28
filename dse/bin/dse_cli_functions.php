@@ -471,14 +471,12 @@ if (!function_exists("readline")) { function readline( $prompt = '' ){
 	
 if($vars['Verbosity']>5) print "dse_cli_functions.php: line 395\n";
 
-function dse_replace_in_file($File,$Needle,$Replacement){
-    print "dse_replace_in_file($File,$Needle,$Replacement);\n";
+function dse_replace_in_file($File,$Needle,$Replacement){    
 	global $vars; dse_trace();
 	if(!dse_file_exists($File)) return FALSE;
 	$tmp=dse_exec("/dse/bin/dtmp");
 	$MD5=md5_of_file($File);
 	$Command="/dse/bin/dreplace $File \"$Needle\" \"$Replacement\" > $tmp";
-    print "c234=$Command\n";
 	dse_exec($Command);	
 	if(!dse_file_exists($tmp)) return FALSE;
 	$MD52=md5_of_file($tmp);
@@ -1222,7 +1220,6 @@ function dse_require_root(){
 }
 
 function md5_of_file($f){
-    print "md5_of_file($f);\n";
 	global $vars; dse_trace();
         $sw_vers=dse_which("md5");
         if($sw_vers){

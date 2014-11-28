@@ -1,5 +1,5 @@
 #!/usr/bin/php
-<?
+<?php
 
 if(sizeof($argv)<3){
 	print "no arguments supplied. STDIN not supported. usage: chom username:group:permissions file\nexiting.\n";
