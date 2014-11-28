@@ -1,4 +1,4 @@
-<?
+<?php
 
 
 function dse_sysstats_stats(){

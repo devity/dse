@@ -3219,8 +3219,12 @@ function dse_ubuntu_release(){
 			$vars['DSE']['UBUNTU_RELEASE']="lucid";
 		}elseif(str_contains($EtcIssue,"Ubuntu 10.10.")){
 			$vars['DSE']['UBUNTU_RELEASE']="maverick";
-		}elseif(str_contains($EtcIssue,"Ubuntu 11.04.")){
-			$vars['DSE']['UBUNTU_RELEASE']="natty";
+        }elseif(str_contains($EtcIssue,"Ubuntu 11.04.")){
+            $vars['DSE']['UBUNTU_RELEASE']="natty";
+        }elseif(str_contains($EtcIssue,"Ubuntu 12.04.")){
+            $vars['DSE']['UBUNTU_RELEASE']="precise";
+        }elseif(str_contains($EtcIssue,"Ubuntu 14.04.")){
+            $vars['DSE']['UBUNTU_RELEASE']="trusty";
 		}else{
 			$vars['DSE']['UBUNTU_RELEASE']="unkown";
 		}

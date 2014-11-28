@@ -1,4 +1,4 @@
-<?
+<?php
 
 
 function package_of_file($File){
