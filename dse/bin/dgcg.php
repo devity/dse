@@ -19,7 +19,7 @@ $vars['DSE']['SCRIPT_FILENAME']=$argv[0];
 $vars['DSE']['SCRIPT_COMMAND_FORMAT']="";
 // ********* DO NOT CHANGE above here ********** DO NOT CHANGE above here ********** DO NOT CHANGE above here ******
 
-
+$Pi=3.14159;
 
 $vars['DGCG']['Units']="in";
 $vars['DGCG']['Tool']['Diameter']=1;
@@ -35,6 +35,9 @@ $vars['DGCG']['Program']['Image']['Margin']=50;
 $vars['DGCG']['Program']['Image']['Width']=1000;
 $vars['DGCG']['Program']['Image']['Height']=1000;
 $vars['DGCG']['Program']['Image']['ShowMoves']=TRUE;
+$vars['DGCG']['Actions']['Arc']['RadianIncrement']=$Pi/40;
+
+	
 
 global $CFG_array;
 $CFG_array=array();
@@ -197,6 +200,16 @@ function dgcg_dngc_file_process($DNGC_Filename){
 				$L=strtolower($L);	
 				$La=explode(" ",$L);
 				switch($La[0]){
+					case 'image-size':
+						$vars['DGCG']['Program']['Image']['Width']=$La[1];
+						$vars['DGCG']['Program']['Image']['Height']=$La[2];
+						if($La[3]){
+							$vars['DGCG']['Program']['Image']['Margin']=$La[3];						
+						}			
+						break;
+					case 'image-pixels-per-unit':
+						$vars['DGCG']['Program']['Image']['PixelsPerUnit']=$La[1];
+						break;
 					case 'done':
 						$Done=TRUE;
 						break;						
@@ -752,7 +765,7 @@ function dgcg_go($x,$y,$z){
 			$color="red";
 		}
 		if($vars['DGCG']['Current']['Z']!=$z){
-			$color="grey";
+			$color="white";
 		}
 		
 		
@@ -898,54 +911,6 @@ function dgcg_hole_oval($x,$y,$z,$DiameterX,$DiameterY,$Depth,$WidthOuterX=0,$Wi
 
 
 
-function dgcg_hole_oval_old($x,$y,$z,$DiameterX,$DiameterY,$Depth,$WidthOuterX=0,$WidthOuterY=0){
-	global $vars;
-	dpv(4,"dgcg_hole_oval($x,$y,$z,$DiameterX,$DiameterY,$Depth,$WidthOuterX,$WidthOuterY){\n");
-	$Pi=3.14159;
-	$DiameterAvg=intval(($DiameterX+$DiameterY)/2);
-	$LinesSegmentsPerPerimeterApproximation=100;
-	$AngleIncrement=$Pi/($LinesSegmentsPerPerimeterApproximation/2);
-	
-	$CurrentHoleRadiusX=$vars['DGCG']['Tool']['Diameter'];
-	$CurrentHoleRadiusY=$vars['DGCG']['Tool']['Diameter'];
-	if($WidthOuterX){		
-		$HoleRadiusMaxXAngle=($DiameterX/$vars['DGCG']['Tool']['PassStep'])*(2*$Pi);
-		$OuterPerimeterCutPercent=$WidthOuterX/$DiameterX;
-		$Angle=$HoleRadiusMaxXAngle*$OuterPerimeterCutPercent;
-		dpv(4," dgcg_hole_oval: HoleRadiusMaxXAngle=$HoleRadiusMaxXAngle Cut%=$OuterPerimeterCutPercent Angle=$Angle \n");
-	}else{
-		dgcg_go($x,$y,$z);
-		dgcg_go($x,$y,$z-$Depth);
-		$Angle=0;
-	} 
-	$PointsOnPerimeter=0;
-	while( $PointsOnPerimeter<$LinesSegmentsPerPerimeterApproximation*3 && $CurrentHoleRadiusX <= ($DiameterX/2)  && $CurrentHoleRadiusY <= ($DiameterY/2) ){
-		dpv(6," while( $PointsOnPerimeter<$LinesSegmentsPerPerimeterApproximation*3 && $CurrentHoleRadiusX <= ($DiameterX/2)  && $CurrentHoleRadiusY <= ($DiameterY/2) ){\n");
-		$Angle+=$AngleIncrement;		
-		$CurrentHoleRadiusX=abs(($Angle/(2*$Pi))*$vars['DGCG']['Tool']['PassStep']);		dpv(7,"  $CurrentHoleRadiusX=($Angle/(2*$Pi))*".$vars['DGCG']['Tool']['PassStep'].";\n");
-		if($CurrentHoleRadiusX*2>=$DiameterX){					
-			$CurrentHoleRadiusX=$DiameterX/2;
-		}
-		$CurrentHoleRadiusY=abs(($Angle/(2*$Pi))*$vars['DGCG']['Tool']['PassStep']);		dpv(7,"  $CurrentHoleRadiusX=($Angle/(2*$Pi))*".$vars['DGCG']['Tool']['PassStep'].";\n");
-		if($CurrentHoleRadiusY*2>=$DiameterY){
-			$PointsOnPerimeter++;		
-			$CurrentHoleRadiusY=$DiameterY/2;
-		}
-		if($CurrentHoleRadiusX*2>=$DiameterX && $CurrentHoleRadiusY*2>=$DiameterY){
-			$PointsOnPerimeter++;
-		}
-		$cx=$x+(cos($Angle)*$CurrentHoleRadiusX);
-		$cy=$y+(sin($Angle)*$CurrentHoleRadiusY);
-		dgcg_go($cx,$cy,$z-$Depth);
-	}
-	
-	if($WidthOuterX){
-	}else{
-		dgcg_go($x,$y,$z);
-	}
-}
-
-
 function dgcg_line($x,$y,$z,$Depth){
 	global $vars;
 	dgcg_go_z( $vars['DGCG']['Current']['Z']-$Depth);
@@ -976,11 +941,12 @@ function dgcg_arc($X,$Y,$Z,$Diameter,$RadiansStart,$RadiansStop,$Depth){
 
 function dgcg_oval_arc($X,$Y,$Z,$DiameterX,$DiameterY,$RadiansStart,$RadiansStop,$Depth){
 	global $vars;
-	dgcg_go($X,$Y,$Z);
-	dgcg_go_z( $Z);
-	$Pi=3.14159;
-	$RadianIncrement=$Pi/20;
-	for($Radians=$RadiansStart ; $Radians<$RadiansStop ; $Radians+=$RadianIncrement){
+	//dgcg_go($X,$Y,$Z);
+	//dgcg_go_z( $Z);
+	$cx=$X+cos($RadiansStart)*$DiameterX/2;
+	$cy=$Y+sin($RadiansStart)*$DiameterY/2;
+	dgcg_go($cx,$cy,$Z);
+	for($Radians=$RadiansStart ; $Radians<$RadiansStop ; $Radians+=$vars['DGCG']['Actions']['Arc']['RadianIncrement']){
 		$cx=$X+cos($Radians)*$DiameterX/2;
 		$cy=$Y+sin($Radians)*$DiameterY/2;
 		dgcg_go($cx,$cy,$Z-$Depth);
