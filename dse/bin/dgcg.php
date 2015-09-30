@@ -47,6 +47,7 @@ $parameters_details = array(
  // array('l','log-to-screen',"log to screen too"),
  // array('','log-show:',"shows tail of log ".$CFG_array['LogFile']."  argv1 lines"),
   array('h','help',"this message"),
+  array('c','commands',"commands help"),
   array('q','quiet',"same as --verbosity 0"),
   array('d','demo',"output demo gcode and image"),
   array('g','grid',"outputs a graph-paper-type grid of: arg1 x arg2 by arg3 deep"),
@@ -76,6 +77,20 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'verbosity':
 		$vars['Verbosity']=$vars['options'][$opt];
 		dpv(2,"Verbosity set to ".$vars['Verbosity']."\n");
+		break;
+	case 'c':
+	case 'commands':
+		print "Commands:
+	done
+	units (mm|in)
+	tool-diameter #
+	text x y z h d text
+	go (x y z)|x# y# z#
+	hole x y z dia d
+	hole-oval hole x y z Xdia Ydia d
+	hole-oval-outline x y z Xdia Ydia d Xwidth Ywidth
+	arc x y z dia d RadStart RadEnd
+	";
 		break;
   	case 'o':
 	case 'gcode-outfile':
