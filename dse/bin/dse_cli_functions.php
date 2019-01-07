@@ -64,11 +64,11 @@ function dse_cli_script_shutdown(){
 	global $vars; dse_trace();
 	//print "dse_shutdown()\n";
 	$tbr="";
-	if(is_array($vars[dse_Trace_Stack]) && sizeof($vars[dse_Trace_Stack])>0 ){
+	if(is_array($vars['dse_Trace_Stack']) && sizeof($vars['dse_Trace_Stack'])>0 ){
 		print "isarray(vars[dse_Trace_Stack])=TRUE\n";
 		
 		$tn=0;
-		foreach ($vars[dse_Trace_Stack] as $t){
+		foreach ($vars['dse_Trace_Stack'] as $t){
 			$tn++;
 			
 	//print "tn=$tn\n";
@@ -130,30 +130,30 @@ function dse_firewall_internet_hide(){
 }
 
 $dse_Trace_Stack=Array();
-$vars[dse_Trace_Stack]=Array();
+$vars['dse_Trace_Stack']=Array();
 if($vars['DSE']['OUTPUT_FORMAT']=="HTML"){
-	$vars[dse_Trace_Indent_String]="&nbsp; &nbsp; + ";
+	$vars['dse_Trace_Indent_String']="&nbsp; &nbsp; + ";
 }else{
-	$vars[dse_Trace_Indent_String]=colorize("   + ","green","black");
+	$vars['dse_Trace_Indent_String']=colorize("   + ","green","black");
 }
-$vars[dse_Trace_Indent_Current]=0;
-$vars[dse_Trace_Count]=0;
-$vars[dse_Trace_Count_Max]=100000;
+$vars['dse_Trace_Indent_Current']=0;
+$vars['dse_Trace_Count']=0;
+$vars['dse_Trace_Count_Max']=100000;
 function dse_trace(){
 	//$tbr=debug_tostring($bt);
 	global $vars,$dseTrace_Stack;
 //if($vars['Verbosity']>5) print "dse_cli_functions.php: dse_trace() start\n";
    // if(!$vars[dse_enable_debug_code]) return;
-	$vars[dse_Trace_Count]++;
-    if( $vars[Verbosity]<3 || $vars[dse_Trace_Count]>$vars[dse_Trace_Count_Max] ) return;
+	$vars['dse_Trace_Count']++;
+    if( $vars['Verbosity']<3 || $vars['dse_Trace_Count']>$vars['dse_Trace_Count_Max'] ) return;
 	
 //if($vars['Verbosity']>5) print "dse_cli_functions.php: dse_trace() calling  debug_backtrace()\n";
    	$bt=debug_backtrace();
 	
 //if($vars['Verbosity']>5) print "dse_cli_functions.php: dse_trace() did debug_backtrace()\n";
 	if($vars[dse_enable_debug_code_markpoints_in_html]){
-		$section=$vars[dse_Trace_Count];
-		print "<font class='f7pt'>[<A href=#section$section>t".$vars[dse_Trace_Count]."</a>]</font>";
+		$section=$vars['dse_Trace_Count'];
+		print "<font class='f7pt'>[<A href=#section$section>t".$vars['dse_Trace_Count']."</a>]</font>";
 	}
    	//array_walk( debug_backtrace(), create_function( '$a,$b', 'print "<br /><b>". basename( $a[\'file\'] ). "</b> &nbsp; <font color=\"red\">{$a[\'line\']}</font> &nbsp; <font color=\"green\">{$a[\'function\']} ()</font> &nbsp; -- ". dirname( $a[\'file\'] ). "/";' ) ); 
 	 
