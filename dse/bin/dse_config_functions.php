@@ -2039,9 +2039,9 @@ function dse_backup_mysqld_each() {
 			foreach($Tables as $Table){
 				if($Table && $Table!=""){
 					$ThisDumpTableFile=$ThisDumpDirDB."/".$Table.".sql";
-					$Command="mysqldump --user=".$vars['DSE']['MYSQL_USER']." --comments 
-					 --debug-info --disable-keys --dump-date --force --quick
-					 --routines --verbose --result-file=$ThisDumpTableFile $DB $Table"; 
+					$Command="mysqldump --user=".$vars['DSE']['MYSQL_USER']." --comments "
+					 ." --debug-info --disable-keys --dump-date --force --quick "
+					 ." --routines --verbose --result-file=$ThisDumpTableFile $DB $Table"; 
 					print "running: $Command\n";
 					print `$Command`;
 				}
