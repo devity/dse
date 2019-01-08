@@ -1978,6 +1978,7 @@ function dse_backup_mysqld() {
    
 function dse_backup_mysqld_each() {
 	global $vars; dse_trace();
+	include_once ("/dse/include/db_functions.php");
 	dse_detect_os_info();
 	dse_exec("/dse/aliases/cdf",FALSE,TRUE);	
 	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
