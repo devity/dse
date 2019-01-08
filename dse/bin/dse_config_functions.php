@@ -2027,7 +2027,7 @@ function dse_backup_mysqld_each() {
 	
 	
 	print " Dumping mysqld Data: ";
- 	
+ 	$RestoreScript="";
 	$DBa=dse_database_list_array();	
 	foreach($DBa as $DB){
 		if($DB && $DB!="" && $DB!="information_schema"){
@@ -2035,6 +2035,7 @@ function dse_backup_mysqld_each() {
 			if(!is_dir($ThisDumpDirDB)){
 				dse_directory_create($ThisDumpDirDB,"777","root:root");
 			}
+			$RestoreScript.="echo \"CREATE DATABASE $DB;\" | mysql\n";
 			$Tables=dse_table_list_array($DB);
 			foreach($Tables as $Table){
 				if($Table && $Table!=""){
@@ -2044,12 +2045,16 @@ function dse_backup_mysqld_each() {
 					 ." --routines --verbose --result-file=$ThisDumpTableFile $DB $Table"; 
 					print "running: $Command\n";
 					print `$Command`;
+					$RestoreScript.="cat $ThisDumpTableFile | mysql\n";
 				}
 			}
 		}
 	}
-		
+	$RestoreScriptFile=$ThisDumpDir."/restore.sh";
+	file_put_contents($RestoreScriptFile, $RestoreScript);
+	
 	print " $_OK MySQL backup saved at: $ThisDumpDir\n";
+	print "  Restore Script: $RestoreScriptFile\nDone. Exiting.\n";
 	
 	dse_exec("/dse/aliases/cdf",FALSE,TRUE);
 }
