@@ -1976,6 +1976,83 @@ function dse_backup_mysqld() {
 	dse_exec("/dse/aliases/cdf",FALSE,TRUE);
 }
    
+function dse_backup_mysqld_each() {
+	global $vars; dse_trace();
+	dse_detect_os_info();
+	dse_exec("/dse/aliases/cdf",FALSE,TRUE);	
+	$DATE_TIME_NOW=trim(`date +"%y%m%d%H%M%S"`);
+	
+	print bar("Backing up MYSQL ","-","blue","white","white","blue")."n";
+	
+	
+	print "MySQL Backup Directory: ".$vars['DSE']['BACKUP_DIR_MYSQL']." ";
+	if(!is_dir($vars['DSE']['BACKUP_DIR_MYSQL'])){
+		print " $Missing. Create? ";
+		$A=dse_ask_yn();
+		if($A=='Y'){
+			dse_directory_create($vars['DSE']['BACKUP_DIR_MYSQL'],"777","root:root");
+		}else{
+			print "\n  Can't backup w/o backup dir. Exiting.\n";
+			exit(-1);	
+		}
+	}else{
+		print $OK;
+	}
+	print "\n";
+	
+	
+	$ThisDumpDir=$vars['DSE']['BACKUP_DIR_MYSQL']."/".$DATE_TIME_NOW;
+	print "MySQL Backup Directory: ".$ThisDumpDir." ";
+	if(!is_dir($ThisDumpDir)){
+		print " $ThisDumpDir Missing. Create? ";
+		$A=dse_ask_yn();
+		if($A=='Y'){
+			dse_directory_create($ThisDumpDir,"777","root:root");
+		}else{
+			print "\n  Can't backup w/o backup dir. Exiting.\n";
+			exit(-1);	
+		}
+	}else{
+		print " $ThisDumpDir Exists Already. Use Still? ";
+		$A=dse_ask_yn();
+		if($A=='Y'){
+			//dse_directory_create($ThisDumpDir,"777","root:root");
+		}else{
+			print "\n Exiting.\n";
+			exit(-1);	
+		}
+	}
+	print "\n";
+	
+	
+	print " Dumping mysqld Data: ";
+ 	
+	$DBa=dse_database_list_array();	
+	foreach($DBa as $DB){
+		if($DB && $DB!="" && $DB!="information_schema"){
+			$ThisDumpDirDB=$ThisDumpDir."/".$DB;
+			if(!is_dir($ThisDumpDirDB)){
+				dse_directory_create($ThisDumpDirDB,"777","root:root");
+			}
+			$Tables=dse_table_list_array($DB);
+			foreach($Tables as $Table){
+				if($Table && $Table!=""){
+					$ThisDumpTableFile=$ThisDumpDirDB."/".$Table.".sql";
+					$Command="mysqldump --user=".$vars['DSE']['MYSQL_USER']." --comments 
+					 --debug-info --disable-keys --dump-date --force --quick
+					 --routines --verbose --result-file=$ThisDumpTableFile $DB $Table"; 
+					print "running: $Command\n";
+					print `$Command`;
+				}
+			}
+		}
+	}
+		
+	print " $_OK MySQL backup saved at: $ThisDumpDir\n";
+	
+	dse_exec("/dse/aliases/cdf",FALSE,TRUE);
+}
+   
    
 function dse_backup_mysqld_raw() {
 	global $vars; dse_trace();

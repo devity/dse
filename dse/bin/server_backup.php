@@ -29,6 +29,7 @@ $parameters_details = array(
   array('c','clone',"build a recreate / clone script"),
   array('a','http',"backup webroot and http confs"),
   array('m','mysql',"backup mysql data and confs"),
+  array('M','mysql-each',"backup mysql data and confs each table to own file"),
   array('r','mysql-raw',"backup mysql using hotcopy"),
   array('v','env',"backup environment info"),
   //interact w etckeeper
@@ -100,6 +101,12 @@ foreach (array_keys($vars['options']) as $opt) switch ($opt) {
 	case 'm':
   	case 'mysql':
 		dse_backup_mysqld();
+		exit(0);
+		$DidSomething=TRUE;
+		break;
+	case 'M':
+  	case 'mysql-each':
+		dse_backup_mysqld_each();
 		exit(0);
 		$DidSomething=TRUE;
 		break;
