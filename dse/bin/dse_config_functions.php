@@ -2039,6 +2039,7 @@ function dse_backup_mysqld_each() {
 			$Tables=dse_table_list_array($DB);
 			foreach($Tables as $Table){
 				if($Table && $Table!=""){
+					print "${DB}.${Table}\n";
 					$ThisDumpTableFile=$ThisDumpDirDB."/".$Table.".sql";
 					$Command="mysqldump --user=".$vars['DSE']['MYSQL_USER']." --comments "
 					 ." --debug-info --skip-add-drop-table --disable-keys --dump-date --force --quick "
