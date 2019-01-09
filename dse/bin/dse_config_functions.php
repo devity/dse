@@ -2041,11 +2041,11 @@ function dse_backup_mysqld_each() {
 				if($Table && $Table!=""){
 					$ThisDumpTableFile=$ThisDumpDirDB."/".$Table.".sql";
 					$Command="mysqldump --user=".$vars['DSE']['MYSQL_USER']." --comments "
-					 ." --debug-info --disable-keys --dump-date --force --quick "
+					 ." --debug-info --skip-add-drop-table --disable-keys --dump-date --force --quick "
 					 ." --routines --verbose --result-file=$ThisDumpTableFile $DB $Table"; 
 					print "running: $Command\n";
 					print `$Command`;
-					$RestoreScript.="cat ./${DB}/${Table}.sql | mysql\n";
+					$RestoreScript.="cat ./${DB}/${Table}.sql | mysql --database $DB\n";
 				}
 			}
 		}
