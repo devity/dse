@@ -2045,7 +2045,7 @@ function dse_backup_mysqld_each() {
 					 ." --routines --verbose --result-file=$ThisDumpTableFile $DB $Table"; 
 					print "running: $Command\n";
 					print `$Command`;
-					$RestoreScript.="cat ./${DB}/${Table}.sql | mysql --database $DB\n";
+					$RestoreScript.="cat ./${DB}/${Table}.sql | mysql --database $DB\n"; 
 				}
 			}
 		}
