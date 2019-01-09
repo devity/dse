@@ -1988,14 +1988,14 @@ function dse_backup_mysqld_each() {
 	
 	print "MySQL Backup Directory: ".$vars['DSE']['BACKUP_DIR_MYSQL']." ";
 	if(!is_dir($vars['DSE']['BACKUP_DIR_MYSQL'])){
-		print " $Missing. Create? ";
-		$A=dse_ask_yn();
-		if($A=='Y'){
+		//print " $Missing. Create? ";
+		//$A=dse_ask_yn();
+		//if($A=='Y'){
 			dse_directory_create($vars['DSE']['BACKUP_DIR_MYSQL'],"777","root:root");
-		}else{
-			print "\n  Can't backup w/o backup dir. Exiting.\n";
-			exit(-1);	
-		}
+		//}else{
+			//print "\n  Can't backup w/o backup dir. Exiting.\n";
+			//exit(-1);	
+		//}
 	}else{
 		print $OK;
 	}
@@ -2005,14 +2005,14 @@ function dse_backup_mysqld_each() {
 	$ThisDumpDir=$vars['DSE']['BACKUP_DIR_MYSQL']."/".$DATE_TIME_NOW;
 	print "MySQL Backup Directory: ".$ThisDumpDir." ";
 	if(!is_dir($ThisDumpDir)){
-		print " $ThisDumpDir Missing. Create? ";
-		$A=dse_ask_yn();
-		if($A=='Y'){
+		//print " $ThisDumpDir Missing. Create? ";
+		//$A=dse_ask_yn();
+		//if($A=='Y'){
 			dse_directory_create($ThisDumpDir,"777","root:root");
-		}else{
-			print "\n  Can't backup w/o backup dir. Exiting.\n";
-			exit(-1);	
-		}
+		//}else{
+			//print "\n  Can't backup w/o backup dir. Exiting.\n";
+			//exit(-1);	
+		//}
 	}else{
 		print " $ThisDumpDir Exists Already. Use Still? ";
 		$A=dse_ask_yn();
@@ -2030,7 +2030,7 @@ function dse_backup_mysqld_each() {
  	$RestoreScript="";
 	$DBa=dse_database_list_array();	
 	foreach($DBa as $DB){
-		if($DB && $DB!="" && $DB!="information_schema" && $DB=="QuickPages"){
+		if($DB && $DB!="" && $DB!="information_schema" ){
 			$ThisDumpDirDB=$ThisDumpDir."/".$DB;
 			if(!is_dir($ThisDumpDirDB)){
 				dse_directory_create($ThisDumpDirDB,"777","root:root");
