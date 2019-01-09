@@ -2030,7 +2030,7 @@ function dse_backup_mysqld_each() {
  	$RestoreScript="";
 	$DBa=dse_database_list_array();	
 	foreach($DBa as $DB){
-		if($DB && $DB!="" && $DB!="information_schema"){
+		if($DB && $DB!="" && $DB!="information_schema" && $DB=="QuickPages"){
 			$ThisDumpDirDB=$ThisDumpDir."/".$DB;
 			if(!is_dir($ThisDumpDirDB)){
 				dse_directory_create($ThisDumpDirDB,"777","root:root");
@@ -2058,7 +2058,7 @@ function dse_backup_mysqld_each() {
 	
 	dse_exec("/dse/aliases/cdf",FALSE,TRUE);
 }
-   
+  
    
 function dse_backup_mysqld_raw() {
 	global $vars; dse_trace();
