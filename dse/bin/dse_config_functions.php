@@ -2228,6 +2228,16 @@ function dse_backup_server_environment() {
 	 
 	//}
 
+    $pid=dse_exec_bg("uname -a 2>&1 > ${dir}/uname-a.out",TRUE);
+    $pid=dse_exec_bg("uname -a 2>&1 > ${dir}/uname-m.out",TRUE);
+    $pid=dse_exec_bg("uname -a 2>&1 > ${dir}/uname-r.out",TRUE);
+    $pid=dse_exec_bg("cat /etc/issue 2>&1 > ${dir}/etc.issue.out",TRUE);
+	$pid=dse_exec_bg("service --status-all 2>&1 > ${dir}/service--status-all.out",TRUE);
+	$pid=dse_exec_bg("sysv-rc-conf --list 2>&1 > ${dir}/sysv-rc-conf--list.out",TRUE);	
+    $pid=dse_exec_bg("initctl list 2>&1 > ${dir}/initctl.list.out",TRUE);
+    $pid=dse_exec_bg("initctl show-config 2>&1 > ${dir}/initctl.show-config.out",TRUE);
+	
+	
     $pid=dse_exec_bg("mount 2>&1 > ${dir}/mount.out",TRUE);
 	while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
 	
@@ -2269,6 +2279,8 @@ function dse_backup_server_environment() {
   
    	if(dse_is_osx() || dse_is_ubuntu()){
    		$pid=dse_exec_bg("dpkg --get-selections 2>&1 > ${dir}/dpkg--get-selections.out",TRUE);
+		$pid=dse_exec_bg("dpkg -l 2>&1 > ${dir}/dpkg-l.out",TRUE);
+		
 		while(dse_pid_is_running($pid)){ progress_bar();sleep(1);}
 	
    	}
