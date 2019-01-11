@@ -1103,7 +1103,7 @@ function dse_sysstats_disk_tests(){
 				$User=dse_exec("whoami"); $User=str_replace("\n", "", $User);
 				$c="bonnie -d $TestDir -u $User";
 				dse_passthru($c);
-			}
+			} 
 			
 			$A=dse_ask_yn(" run dd write/read tests on $DiskToTest?");
 			if($A=='Y'){
